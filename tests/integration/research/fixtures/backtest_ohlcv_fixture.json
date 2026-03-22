@@ -1,0 +1,26 @@
+[
+  {
+    "timestamp": 60,
+    "open": 100.0,
+    "high": 105.0,
+    "low": 95.0,
+    "close": 104.0,
+    "volume": 10.0
+  },
+  {
+    "timestamp": 120,
+    "open": 110.0,
+    "high": 112.0,
+    "low": 108.0,
+    "close": 109.0,
+    "volume": 12.0
+  },
+  {
+    "timestamp": 180,
+    "open": 109.0,
+    "high": 115.0,
+    "low": 107.0,
+    "close": 114.0,
+    "volume": 14.0
+  }
+]

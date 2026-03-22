@@ -1,0 +1,18 @@
+# Completed Execution Plans
+
+This directory indexes completed execution work once plans graduate from active status.
+
+## Metadata
+
+- index_status: completed
+
+## Transition
+
+Historical plans currently remain in `docs/plans/` until they are reindexed into the new structure.
+
+## Plans
+
+| Plan | Status | Note |
+| --- | --- | --- |
+| [`2026-03-21-backtest-mvp-implementation.md`](2026-03-21-backtest-mvp-implementation.md) | completed | All five Backtest MVP slices are marked complete and the plan is archived. |
+| [`2026-03-22-harness-quality-improvement.md`](2026-03-22-harness-quality-improvement.md) | completed | Harness-quality improvement slices are complete and the plan is archived. |

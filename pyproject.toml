@@ -1,0 +1,75 @@
+[project]
+name = "quantcraft"
+version = "0.1.0"
+description = "Quant research and trading infrastructure toolkit"
+readme = "README.md"
+authors = [
+    { name = "nbsp1221", email = "nbsp1221@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "ccxt>=4.5.43",
+]
+
+[dependency-groups]
+dev = [
+    "ipykernel>=7.2.0",
+    "matplotlib>=3.10.8",
+    "mypy>=1.19.1",
+    "nbclient>=0.10.4",
+    "nbformat>=5.10.4",
+    "poethepoet>=0.42.1",
+    "pytest>=9.0.2",
+    "ruff>=0.15.5",
+]
+
+[build-system]
+requires = ["uv_build>=0.9.17,<0.10.0"]
+build-backend = "uv_build"
+
+[tool.poe]
+executor = "uv"
+
+[tool.poe.tasks]
+lint = { cmd = "ruff check .", help = "Run Ruff lint checks" }
+format = { cmd = "ruff format .", help = "Format the repository with Ruff" }
+typecheck = { cmd = "mypy src", help = "Run mypy against the package source" }
+test = { cmd = "pytest -q", help = "Run the default test lane" }
+test-unit = { cmd = "pytest tests/unit -q", help = "Run unit tests" }
+test-integration = { cmd = "pytest tests/integration -q", help = "Run integration tests" }
+test-structure = { cmd = "pytest tests/structure -q", help = "Run repository structure tests" }
+test-smoke = { cmd = "pytest tests/smoke/local -q", help = "Run local smoke tests" }
+test-live = { cmd = "pytest tests/smoke/live -q", help = "Run live smoke tests explicitly" }
+build = { cmd = "uv build", help = "Build the package artifacts" }
+"repo-check" = { cmd = "uv run python scripts/repo_check.py", help = "Run repository harness checks" }
+"notebook-validate" = { cmd = "uv run python scripts/notebook_validate.py", help = "Execute tracked notebooks" }
+"live-smoke" = { cmd = "uv run python scripts/live_smoke.py", help = "Run the live smoke harness script" }
+verify = { sequence = ["lint", "typecheck", "test", "build", "repo-check", "notebook-validate"], help = "Run the default local verification bundle" }
+
+[tool.pytest.ini_options]
+addopts = ["--import-mode=importlib"]
+markers = [
+    "unit: deterministic isolated behavior tests",
+    "integration: deterministic cross-module and command-surface tests",
+    "structure: repository structure and architecture rule tests",
+    "smoke: minimal sanity checks",
+    "live: external-network or real-service smoke tests",
+    "slow: intentionally slower verification paths",
+]
+testpaths = ["tests"]
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+packages = ["quantcraft"]
+
+[[tool.mypy.overrides]]
+module = ["ccxt", "ccxt.*"]
+ignore_missing_imports = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
