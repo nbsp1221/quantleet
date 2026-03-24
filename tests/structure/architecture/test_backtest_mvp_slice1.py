@@ -6,6 +6,7 @@ import re
 from pathlib import Path
 from types import ModuleType
 
+import quantcraft.research as research_package
 import quantcraft.trading.domain as trading_domain_package
 from quantcraft.trading.domain import __all__ as trading_domain_exports
 from quantcraft.trading.domain import events as trading_events
@@ -50,6 +51,10 @@ def test_trading_to_research_dependency_is_rejected() -> None:
     issue = check_architecture.validate_domain_dependency("trading", "research")
 
     assert issue == "Cross-domain dependency violation: trading cannot depend on research"
+
+
+def test_research_public_surface_exposes_slice_1_entrypoints() -> None:
+    assert set(research_package.__all__) == {"Strategy", "ta", "qc", "run_backtest"}
 
 
 def test_slice_1_public_trading_surface_excludes_deferred_event_types() -> None:

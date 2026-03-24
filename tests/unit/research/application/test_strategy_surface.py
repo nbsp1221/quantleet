@@ -1,10 +1,17 @@
 from __future__ import annotations
 
 import inspect
+from abc import ABC
+from typing import cast
 
 import pytest
 
+from quantcraft.research import Strategy as PublicStrategy
+from quantcraft.research.adapters.synthetic_events import OHLCVBar
+from quantcraft.research.application._runtime import _StrategyDriver
+from quantcraft.research.application.backtest import run_backtest
 from quantcraft.research.application.strategy import Strategy
+from quantcraft.trading.domain.costs import CostConfig
 from quantcraft.trading.domain.events import BarEvent
 from quantcraft.trading.domain.intents import OrderIntent
 
@@ -37,18 +44,55 @@ class RaisesAfterBuyStrategy(Strategy):
         raise RuntimeError("boom")
 
 
+class OrdersFromInitStrategy(Strategy):
+    def init(self) -> None:
+        self.buy(symbol="BTC/USDT", quantity=1.0)
+
+    def on_bar(self, bar: BarEvent) -> None:
+        return None
+
+
+class RecordsInitCallsStrategy(Strategy):
+    def __init__(self) -> None:
+        super().__init__()
+        self.init_calls = 0
+
+    def init(self) -> None:
+        self.init_calls += 1
+
+    def on_bar(self, bar: BarEvent) -> None:
+        return None
+
+
+def _runtime(strategy: Strategy) -> _StrategyDriver:
+    return _StrategyDriver(strategy)
+
+
 def test_strategy_surface_is_self_based_and_on_bar_is_the_first_hook() -> None:
     signature = inspect.signature(Strategy.on_bar)
 
     assert tuple(signature.parameters) == ("self", "bar")
     assert not hasattr(Strategy, "activate_pending_order_intents")
+    assert tuple(inspect.signature(Strategy.init).parameters) == ("self",)
+    assert not hasattr(Strategy, "prepare")
+    assert not hasattr(Strategy, "handle_bar")
+
+
+def test_public_research_strategy_surface_exports_strategy() -> None:
+    assert PublicStrategy is Strategy
+
+
+def test_strategy_is_an_abstract_base_class() -> None:
+    assert issubclass(Strategy, ABC)
+    assert inspect.isabstract(Strategy)
 
 
 def test_on_bar_requires_a_closed_bar() -> None:
     strategy = BuyOnFirstBarStrategy()
+    runtime = _runtime(strategy)
 
     with pytest.raises(ValueError, match="closed bar"):
-        strategy.handle_bar(
+        runtime.handle_bar(
             BarEvent(
                 bar_type="time",
                 bar_spec="1m",
@@ -76,8 +120,41 @@ def test_order_intake_methods_are_restricted_to_bar_handling_callback() -> None:
         strategy.sell(symbol="BTC/USDT", quantity=1.0)
 
 
+def test_init_cannot_create_orders() -> None:
+    strategy = OrdersFromInitStrategy()
+
+    with pytest.raises(ValueError, match="only be used during on_bar"):
+        strategy.init()
+
+
+def test_run_backtest_calls_init_once_before_processing() -> None:
+    strategy = RecordsInitCallsStrategy()
+
+    run_backtest(
+        symbol="BTC/USDT",
+        bar_type="time",
+        bar_spec="1m",
+        rows=(
+            OHLCVBar(
+                timestamp=60,
+                open=100.0,
+                high=105.0,
+                low=95.0,
+                close=104.0,
+                volume=10.0,
+            ),
+        ),
+        strategy=strategy,
+        initial_cash=1_000.0,
+        costs=CostConfig(tick_size=0.1, slippage_ticks=1.0, fee_rate=0.001),
+    )
+
+    assert strategy.init_calls == 1
+
+
 def test_order_intents_from_on_bar_become_effective_on_the_next_bar() -> None:
     strategy = BuyOnFirstBarStrategy()
+    runtime = _runtime(strategy)
 
     first_bar = BarEvent(
         bar_type="time",
@@ -91,10 +168,10 @@ def test_order_intents_from_on_bar_become_effective_on_the_next_bar() -> None:
         volume=10.0,
         is_closed=True,
     )
-    strategy.handle_bar(first_bar)
+    runtime.handle_bar(first_bar)
 
-    assert strategy.active_order_intents() == ()
-    assert strategy.pending_order_intents() == (
+    assert runtime.order_state().active == ()
+    assert runtime.order_state().pending == (
         OrderIntent(
             symbol="BTC/USDT",
             side="buy",
@@ -107,6 +184,7 @@ def test_order_intents_from_on_bar_become_effective_on_the_next_bar() -> None:
 
 def test_sell_forwards_order_type_limit_price_and_tag() -> None:
     strategy = LimitSellOnFirstBarStrategy()
+    runtime = _runtime(strategy)
     first_bar = BarEvent(
         bar_type="time",
         bar_spec="1m",
@@ -119,8 +197,8 @@ def test_sell_forwards_order_type_limit_price_and_tag() -> None:
         volume=10.0,
         is_closed=True,
     )
-    strategy.handle_bar(first_bar)
-    assert strategy.pending_order_intents() == (
+    runtime.handle_bar(first_bar)
+    assert runtime.order_state().pending == (
         OrderIntent(
             symbol="BTC/USDT",
             side="sell",
@@ -130,11 +208,12 @@ def test_sell_forwards_order_type_limit_price_and_tag() -> None:
             tag="take-profit",
         ),
     )
-    assert strategy.active_order_intents() == ()
+    assert runtime.order_state().active == ()
 
 
 def test_failed_on_bar_does_not_leak_staged_intents_to_the_next_bar() -> None:
     strategy = RaisesAfterBuyStrategy()
+    runtime = _runtime(strategy)
     first_bar = BarEvent(
         bar_type="time",
         bar_spec="1m",
@@ -161,13 +240,23 @@ def test_failed_on_bar_does_not_leak_staged_intents_to_the_next_bar() -> None:
     )
 
     with pytest.raises(RuntimeError, match="boom"):
-        strategy.handle_bar(first_bar)
+        runtime.handle_bar(first_bar)
 
-    assert strategy.pending_order_intents() == ()
-    assert strategy.active_order_intents() == ()
+    assert runtime.order_state().pending == ()
+    assert runtime.order_state().active == ()
 
     with pytest.raises(RuntimeError, match="boom"):
-        strategy.handle_bar(second_bar)
+        runtime.handle_bar(second_bar)
 
-    assert strategy.pending_order_intents() == ()
-    assert strategy.active_order_intents() == ()
+    assert runtime.order_state().pending == ()
+    assert runtime.order_state().active == ()
+
+
+def test_sell_is_the_current_long_exit_surface() -> None:
+    sell_signature = inspect.signature(Strategy.sell)
+
+    tag_parameter = cast(inspect.Parameter, sell_signature.parameters.get("tag"))
+    quantity_parameter = cast(inspect.Parameter, sell_signature.parameters.get("quantity"))
+
+    assert tag_parameter is not None
+    assert quantity_parameter is not None

@@ -1,5 +1,11 @@
 # Backtest Spec
 
+## Status
+
+- Status: `implemented`
+- Role: English domain entry for the current implemented backtest baseline
+- Canonical implementation contract: [backtest-mvp.md](backtest-mvp.md)
+
 ## Purpose
 
 Provide deterministic backtesting workflows built from checked-in code and documented assumptions.
@@ -10,8 +16,8 @@ Backtests must be reproducible and must not depend on undocumented local state.
 
 ## Current MVP Baseline
 
-The current approved MVP spec is tracked in:
+The current implemented backtest baseline is tracked in:
 
 - [`backtest-mvp.md`](backtest-mvp.md)
 
-This spec defines the current backtest slice boundary while the broader backtest domain continues to evolve.
+That canonical spec currently defines the shipped single-symbol, long-only, deterministic backtest baseline that the `research` ergonomics surface builds on. Broader backtest expansion should start from this implemented baseline rather than treating it as an upcoming slice.

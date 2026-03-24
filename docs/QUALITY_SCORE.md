@@ -4,7 +4,7 @@ This file tracks the current repository quality state with explicit freshness an
 
 ## Metadata
 
-- as_of: 2026-03-22
+- as_of: 2026-03-25
 - freshness_window_days: 30
 - evidence_rule: Scores must cite current repository evidence and stay conservative when code, tests, and docs do not all align.
 - freshness_rule: Update this file when implemented scope, verification coverage, or repository control-plane checks materially change.
@@ -34,9 +34,9 @@ This file tracks the current repository quality state with explicit freshness an
 | Area | Score | Evidence | Notes |
 | --- | --- | --- | --- |
 | data | C | Exchange-backed market-data code exists in `src/quantcraft/exchange.py` and has unit coverage in `tests/unit/market_data/test_exchange_fetch_ohlcv.py`. | The approved `data` bounded-context package is scaffolded but not yet the main implementation home. |
-| research | C | Backtest orchestration and strategy surface exist in `src/quantcraft/research/application/`, with unit and integration coverage under `tests/unit/research/` and `tests/integration/research/`. | The research surface is still narrow and tied to the current MVP slice. |
+| research | C | The shipped research surface exists in `src/quantcraft/research/__init__.py`, `src/quantcraft/research/application/backtest.py`, and `docs/references/research-ergonomics-quickstart.md`, with unit and integration coverage under `tests/unit/research/` and `tests/integration/research/`. | Research ergonomics is implemented, but it is still intentionally narrow: single-symbol, long-only, and centered on the current backtest MVP baseline. |
 | trading | C | Trading domain modules exist in `src/quantcraft/trading/domain/` with contract and state tests under `tests/unit/trading/`. | The shared trading kernel direction is only partially implemented and not yet proven across multiple environments. |
 | execution | D | `docs/design-docs/quantcraft-architecture.md` keeps `execution` as a higher-scrutiny bounded context. | No `src/quantcraft/execution/` implementation or execution-specific tests exist yet. |
-| docs_system | B | `docs/design-docs/index.md`, `docs/design-docs/golden-principles.md`, `docs/feedback-promotion-log.md`, and `tests/structure/docs/test_system_of_record_docs.py` define and verify the system-of-record surface. | The promotion loop is now explicit, but adding new rows to the feedback log is still a maintenance action rather than an automated capture. |
-| verification | B | `scripts/repo_check.py`, `scripts/update_quality_score.py`, and `tests/structure/repo/test_quality_scaffolding.py` exercise the quality-score contract. | Verification coverage is improving, but some control-plane checks are still being promoted from docs into enforcement. |
+| docs_system | B | `README.md`, `docs/product-specs/index.md`, `docs/design-docs/index.md`, `docs/feedback-promotion-log.md`, and `tests/structure/docs/test_system_of_record_docs.py` define and verify the system-of-record surface. | The control-plane docs are aligned again, but implemented-scope status still depends on disciplined maintenance until more drift checks are added. |
+| verification | B | `scripts/repo_check.py`, `scripts/update_quality_score.py`, `tests/structure/repo/test_quality_scaffolding.py`, and `pyproject.toml` exercise the quality-score and repo-check contract. | The harness surface is solid for docs and repo rules, but verification still relies on separate lanes and ongoing promotion of repeated drift into enforcement. |
 | ml | D | `docs/design-docs/quantcraft-architecture.md` keeps `ml` deferred until the core four contexts stabilize. | There is no implemented `ml` package or verification surface yet. |

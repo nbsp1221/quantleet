@@ -16,3 +16,5 @@ Historical plans currently remain in `docs/plans/` until they are reindexed into
 | --- | --- | --- |
 | [`2026-03-21-backtest-mvp-implementation.md`](2026-03-21-backtest-mvp-implementation.md) | completed | All five Backtest MVP slices are marked complete and the plan is archived. |
 | [`2026-03-22-harness-quality-improvement.md`](2026-03-22-harness-quality-improvement.md) | completed | Harness-quality improvement slices are complete and the plan is archived. |
+| [`2026-03-24-research-ergonomics-implementation.md`](2026-03-24-research-ergonomics-implementation.md) | completed | Research ergonomics slices are complete and the plan is archived. |
+| [`2026-03-25-implemented-scope-sync.md`](2026-03-25-implemented-scope-sync.md) | completed | Implemented-scope docs and drift guards are synced to the current shipped baseline. |

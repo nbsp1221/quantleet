@@ -8,8 +8,8 @@ This file is the short map for agent work in `quantcraft`.
 - [`ARCHITECTURE.md`](ARCHITECTURE.md): domain map, safety tiers, dependency rules
 - [`docs/DESIGN.md`](docs/DESIGN.md): long-lived design index
 - [`docs/design-docs/index.md`](docs/design-docs/index.md): long-lived design-doc status map with explicit `Status`, `Canonical`, `Applicability`, and `Read When` fields
-- [`docs/product-specs/index.md`](docs/product-specs/index.md): product-spec status map with the same explicit fields for implemented, approved, and future scope
-- [`docs/product-specs/backtest.md`](docs/product-specs/backtest.md): approved next-slice backtest spec entry and pointer to the canonical MVP spec
+- [`docs/product-specs/index.md`](docs/product-specs/index.md): product-spec status map with the same explicit fields for implemented, approved expansion, and future scope
+- [`docs/product-specs/backtest.md`](docs/product-specs/backtest.md): current implemented backtest baseline entry and pointer to the canonical MVP spec
 - [`docs/PLANS.md`](docs/PLANS.md): execution plan index
 - [`docs/RELIABILITY.md`](docs/RELIABILITY.md): verification and reproducibility rules
 - [`docs/SECURITY.md`](docs/SECURITY.md): secrets and financial safety rules

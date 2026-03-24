@@ -2,9 +2,9 @@
 
 ## Status
 
-- Status: `approved`
+- Status: `implemented`
 - Class: `product-spec`
-- Scope: the first implementation slice for the shared trading kernel
+- Scope: the current implemented backtest baseline for the shared trading kernel
 
 Related documents:
 
@@ -12,7 +12,7 @@ Related documents:
 - [../design-docs/trading-kernel-contract-draft-ko.md](../design-docs/trading-kernel-contract-draft-ko.md)
 - [../design-docs/architecture-governance.md](../design-docs/architecture-governance.md)
 
-This document is the approved slice-specific contract for the first backtest implementation.
+This document is the canonical current implemented-scope contract for the shipped backtest MVP.
 
 ## Goal
 

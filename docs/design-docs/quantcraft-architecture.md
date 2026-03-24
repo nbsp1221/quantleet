@@ -219,9 +219,13 @@ Additional constraints:
 
 ## Current Repository State
 
-The current codebase is still pre-domain in implementation terms and remains centered on exchange-backed market-data functionality.
+The current codebase now includes:
 
-That does not change the architectural baseline above. It means the architecture is approved before the codebase has fully grown into it.
+- exchange-backed market-data utilities
+- an implemented Backtest MVP
+- an implemented first `research` ergonomics surface on top of that backtest baseline
+
+That does not change the architectural baseline above. It means the long-lived architecture remains ahead of the final package shape even though the first current-scope `research` and `trading` surfaces are now implemented.
 
 ## Relationship To Other Documents
 
@@ -230,5 +234,6 @@ This document defines the approved top-level architecture only.
 It does not replace:
 
 - [trading-kernel-contract-draft-ko.md](trading-kernel-contract-draft-ko.md): long-lived trading-kernel contract draft
-- [../product-specs/backtest-mvp.md](../product-specs/backtest-mvp.md): approved first implementation slice
+- [../product-specs/backtest-mvp.md](../product-specs/backtest-mvp.md): canonical current implemented-scope backtest baseline
+- [../product-specs/research-ergonomics.md](../product-specs/research-ergonomics.md): canonical current implemented-scope research usability surface
 - [architecture-governance.md](architecture-governance.md): approved harness and promotion policy

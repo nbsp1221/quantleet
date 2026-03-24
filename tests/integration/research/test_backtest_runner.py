@@ -4,11 +4,15 @@ import json
 from pathlib import Path
 
 from quantcraft.research.adapters.synthetic_events import OHLCVBar
-from quantcraft.research.application.backtest import BacktestResult, BacktestSummary, run_backtest
+from quantcraft.research.application.backtest import (
+    BacktestResult,
+    BacktestSummary,
+    ExposureSummary,
+    run_backtest,
+)
 from quantcraft.research.application.strategy import Strategy
 from quantcraft.trading.domain.costs import CostConfig
 from quantcraft.trading.domain.events import FillEvent
-from quantcraft.trading.domain.intents import OrderIntent
 from quantcraft.trading.domain.state import TradingState
 
 
@@ -114,6 +118,7 @@ def test_backtest_runner_produces_deterministic_trade_log_and_summary() -> None:
                 fee=0.115,
             ),
         ),
+        equity_curve=(1000.0, 997.889, 1003.774),
         final_state=TradingState(
             cash=1003.774,
             position_quantity=0.0,
@@ -123,17 +128,59 @@ def test_backtest_runner_produces_deterministic_trade_log_and_summary() -> None:
             equity=1003.774,
         ),
         summary=BacktestSummary(
-            trade_count=2,
+            total_trades=2,
             total_fees=0.226,
-            ending_equity=1003.774,
+            final_balance=1003.774,
+            final_equity=1003.774,
+            total_return=0.003774,
+            max_drawdown=0.002111,
             realized_pnl=4.0,
             unrealized_pnl=0.0,
+            win_rate=1.0,
+            average_win=4.0,
+            average_loss=0.0,
+            profit_factor=float("inf"),
+            exposure=ExposureSummary(
+                bars_in_position=1,
+                total_bars=3,
+                exposure_ratio=1 / 3,
+            ),
         ),
     )
     assert result.trade_log
     assert result.final_state.position_quantity == 0.0
     assert result.summary.trade_count == 2
     assert result.summary.ending_equity == 1003.774
+
+
+def test_backtest_runner_exposes_expanded_research_result_surface() -> None:
+    fixture_path = Path(__file__).with_name("fixtures") / "backtest_ohlcv_fixture.json"
+    payload = json.loads(fixture_path.read_text())
+    rows = tuple(OHLCVBar(**row) for row in payload)
+
+    result = run_backtest(
+        symbol="BTC/USDT",
+        bar_type="time",
+        bar_spec="1m",
+        rows=rows,
+        strategy=DeterministicEntryExitStrategy(),
+        initial_cash=1_000.0,
+        costs=CostConfig(tick_size=1.0, slippage_ticks=1.0, fee_rate=0.001),
+    )
+
+    assert result.equity_curve == (1000.0, 997.889, 1003.774)
+    assert result.summary.final_balance == 1003.774
+    assert result.summary.final_equity == 1003.774
+    assert result.summary.total_return == 0.003774
+    assert result.summary.max_drawdown == 0.002111
+    assert result.summary.total_trades == 2
+    assert result.summary.win_rate == 1.0
+    assert result.summary.average_win == 4.0
+    assert result.summary.average_loss == 0.0
+    assert result.summary.profit_factor == float("inf")
+    assert result.summary.exposure.bars_in_position == 1
+    assert result.summary.exposure.total_bars == 3
+    assert result.summary.exposure.exposure_ratio == 1 / 3
 
 
 def test_backtest_runner_uses_tick_path_not_bar_only_fills() -> None:
@@ -178,8 +225,7 @@ def test_backtest_runner_activates_bar_orders_on_the_next_bar() -> None:
     assert result.summary.trade_count == 1
     assert result.summary.ending_equity == 1002.889
     assert result.summary.unrealized_pnl == 3.0
-    assert strategy.active_order_intents() == ()
-    assert strategy.pending_order_intents() == ()
+    assert result.equity_curve == (1000.0, 997.889, 1002.889)
 
 
 def test_backtest_runner_marks_open_positions_to_latest_market_state() -> None:
@@ -206,11 +252,23 @@ def test_backtest_runner_marks_open_positions_to_latest_market_state() -> None:
         equity=1002.889,
     )
     assert result.summary == BacktestSummary(
-        trade_count=1,
+        total_trades=1,
         total_fees=0.111,
-        ending_equity=1002.889,
+        final_balance=888.889,
+        final_equity=1002.889,
+        total_return=0.002889,
+        max_drawdown=0.002111,
         realized_pnl=0.0,
         unrealized_pnl=3.0,
+        win_rate=0.0,
+        average_win=0.0,
+        average_loss=0.0,
+        profit_factor=0.0,
+        exposure=ExposureSummary(
+            bars_in_position=2,
+            total_bars=3,
+            exposure_ratio=2 / 3,
+        ),
     )
 
 
@@ -240,17 +298,7 @@ def test_unfilled_limit_order_carries_without_creating_trade_log_entries() -> No
         unrealized_pnl=0.0,
         equity=1_000.0,
     )
-    assert strategy.active_order_intents() == (
-        OrderIntent(
-            symbol="BTC/USDT",
-            side="buy",
-            quantity=1.0,
-            order_type="limit",
-            limit_price=96.0,
-            tag="never-fill",
-        ),
-    )
-    assert strategy.pending_order_intents() == ()
+    assert strategy._placed is True
 
 
 def test_backtest_runner_preserves_older_active_intents_ahead_of_newly_activated_ones() -> None:

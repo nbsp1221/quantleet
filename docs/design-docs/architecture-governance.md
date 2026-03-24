@@ -31,14 +31,17 @@ The repository uses four distinct document classes for this area:
 3. [architecture-governance.md](architecture-governance.md)
    - approved governance and promotion policy
 4. [../product-specs/backtest-mvp.md](../product-specs/backtest-mvp.md)
-   - approved slice-specific product spec for the first implementation slice
+   - canonical current implemented-scope backtest baseline
+5. [../product-specs/research-ergonomics.md](../product-specs/research-ergonomics.md)
+   - canonical current implemented-scope research usability surface
 
 This split prevents agents from conflating:
 
 - structural architecture
 - trading semantics
 - harness policy
-- current implementation-slice scope
+- current implemented scope
+- approved expansion scope
 
 ## What We Enforce Mechanically Now
 
@@ -94,7 +97,7 @@ Each implementation slice should explicitly separate:
 1. questions that block starting implementation
 2. questions that may stay deferred
 
-For the current first slice, [../product-specs/backtest-mvp.md](../product-specs/backtest-mvp.md) is the authority on that distinction.
+For the current implemented backtest baseline, [../product-specs/backtest-mvp.md](../product-specs/backtest-mvp.md) is the authority on that distinction. For the shipped `research` usability layer built on top of it, [../product-specs/research-ergonomics.md](../product-specs/research-ergonomics.md) is the authority.
 
 ## Current Governance Priority
 
@@ -103,7 +106,7 @@ Before new code work begins, the harness should ensure:
 - agents can find the right documents quickly
 - top-level architecture and trading-kernel contracts remain distinct
 - the repository catches the most obvious structural drift
-- the active implementation slice does not erode the long-lived architecture
+- current implemented-scope docs and any active expansion slice do not erode the long-lived architecture
 
 ## Summary
 

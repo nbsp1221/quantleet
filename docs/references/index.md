@@ -8,3 +8,4 @@ Current entries:
 - [`tooling.md`](tooling.md)
 - [`developer-tasks.md`](developer-tasks.md)
 - [`openai-harness-engineering.md`](openai-harness-engineering.md)
+- [`research-ergonomics-quickstart.md`](research-ergonomics-quickstart.md)
