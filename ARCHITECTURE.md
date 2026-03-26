@@ -43,6 +43,7 @@ Shared support belongs in explicitly named cross-cutting areas only:
 
 ## Dependency Rules
 
+- `research` may depend on `data` for normalized historical data contracts and ingestion paths.
 - `research` may depend on `trading`, but `trading` must not depend on `research`.
 - `execution` may depend on `trading`, but `trading` must not depend on `execution`.
 - `data` must stay focused on data acquisition and normalization, not trading state transitions.
@@ -74,6 +75,7 @@ The current approved architecture fixes the following top-level decisions:
 - `portfolio` and `risk` semantics belong with the `trading` kernel
 - each bounded context should follow `domain / application / adapters` internally
 - dependency direction remains:
+  - `research -> data`
   - `research -> trading`
   - `execution -> trading`
   - never the reverse

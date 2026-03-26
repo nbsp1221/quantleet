@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import pytest
 
+import quantcraft.data.adapters.exchange_backend as exchange_backend
 import quantcraft.exchange as exchange_module
 
 
@@ -41,7 +42,7 @@ def test_exchange_fetch_ohlcv_normalizes_rows_for_binance_spot(
 ) -> None:
     fake_client = FakeExchangeClient([[1_700_000_000_000, 1.0, 2.0, 0.5, 1.5, 10.0]])
 
-    monkeypatch.setattr(exchange_module, "_make_ccxt_exchange", lambda **_: fake_client)
+    monkeypatch.setattr(exchange_backend, "_make_ccxt_exchange", lambda **_: fake_client)
 
     exchange = exchange_module.Exchange(name="binance", market_type=exchange_module.MarketType.SPOT)
     rows = exchange.fetch_ohlcv(
@@ -77,7 +78,7 @@ def test_exchange_fetch_ohlcv_forwards_end_for_binance_usdm(
 ) -> None:
     fake_client = FakeExchangeClient()
 
-    monkeypatch.setattr(exchange_module, "_make_ccxt_exchange", lambda **_: fake_client)
+    monkeypatch.setattr(exchange_backend, "_make_ccxt_exchange", lambda **_: fake_client)
 
     exchange = exchange_module.Exchange(name="binance", market_type=exchange_module.MarketType.USDM)
     rows = exchange.fetch_ohlcv(
@@ -117,7 +118,7 @@ def test_make_ccxt_exchange_uses_generic_spot_exchange_name(
         created.append(client)
         return client
 
-    monkeypatch.setattr(exchange_module.ccxt, "bybit", fake_bybit)
+    monkeypatch.setattr(exchange_backend.ccxt, "bybit", fake_bybit)
 
     exchange = exchange_module.Exchange(name="bybit", market_type=exchange_module.MarketType.SPOT)
 
@@ -136,7 +137,7 @@ def test_make_ccxt_exchange_uses_explicit_usdm_class_when_available(
         created.append(client)
         return client
 
-    monkeypatch.setattr(exchange_module.ccxt, "binanceusdm", fake_binanceusdm)
+    monkeypatch.setattr(exchange_backend.ccxt, "binanceusdm", fake_binanceusdm)
 
     exchange = exchange_module.Exchange(name="binance", market_type=exchange_module.MarketType.USDM)
 
@@ -155,8 +156,8 @@ def test_make_ccxt_exchange_falls_back_to_swap_default_type_for_usdm(
         created.append(client)
         return client
 
-    monkeypatch.setattr(exchange_module.ccxt, "bybit", fake_bybit)
-    monkeypatch.delattr(exchange_module.ccxt, "bybitusdm", raising=False)
+    monkeypatch.setattr(exchange_backend.ccxt, "bybit", fake_bybit)
+    monkeypatch.delattr(exchange_backend.ccxt, "bybitusdm", raising=False)
 
     exchange = exchange_module.Exchange(name="bybit", market_type=exchange_module.MarketType.USDM)
 
@@ -174,7 +175,7 @@ def test_exchange_supports_other_ccxt_spot_exchanges_without_source_changes(
     def fake_exchange() -> FakeExchangeClient:
         return FakeExchangeClient()
 
-    monkeypatch.setattr(exchange_module.ccxt, exchange_name, fake_exchange)
+    monkeypatch.setattr(exchange_backend.ccxt, exchange_name, fake_exchange)
 
     exchange = exchange_module.Exchange(
         name=exchange_name,

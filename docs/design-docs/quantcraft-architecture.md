@@ -207,6 +207,7 @@ Not allowed in `shared`:
 
 The approved dependency directions are:
 
+- `research -> data`
 - `research -> trading`
 - `execution -> trading`
 - never the reverse
@@ -214,6 +215,7 @@ The approved dependency directions are:
 Additional constraints:
 
 - `data` stays focused on data acquisition and normalization
+- `research -> data` is allowed narrowly for normalized historical data contracts and ingestion paths; it is not a general license for `research` to absorb `data` internals
 - `shared` must not absorb business concepts
 - temporary exceptions must be documented where the exception is introduced
 

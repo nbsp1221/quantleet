@@ -22,6 +22,35 @@ def test_allowed_dependency_into_trading_kernel_is_permitted() -> None:
     assert check_architecture.validate_domain_dependency("execution", "trading") is None
 
 
+def test_allowed_research_dependency_into_data_is_permitted() -> None:
+    assert check_architecture.validate_domain_dependency("research", "data") is None
+
+
+def test_repository_scan_rejects_research_into_execution_even_with_data_allowed(
+    tmp_path: Path,
+) -> None:
+    src_root = tmp_path / "src" / "quantcraft"
+    research_root = src_root / "research"
+    execution_root = src_root / "execution"
+    research_root.mkdir(parents=True)
+    execution_root.mkdir(parents=True)
+
+    (research_root / "__init__.py").write_text(
+        "from __future__ import annotations\n"
+        "from quantcraft.execution import runtime\n",
+        encoding="utf-8",
+    )
+    (execution_root / "__init__.py").write_text(
+        "from __future__ import annotations\n",
+        encoding="utf-8",
+    )
+
+    assert check_architecture.collect_issues(tmp_path) == [
+        f"{research_root / '__init__.py'}: "
+        "Tier A boundary violation: research cannot depend on execution"
+    ]
+
+
 def test_shared_modules_are_allowed_from_any_domain() -> None:
     assert check_architecture.validate_domain_dependency("data", "shared") is None
 

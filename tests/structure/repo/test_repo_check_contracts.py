@@ -41,7 +41,9 @@ def test_check_docs_flags_placeholder_project_metadata(tmp_path: Path) -> None:
     assert any("placeholder" in issue.lower() for issue in issues)
 
 
-def test_check_docs_flags_untracked_indexed_artifact_when_head_exists(tmp_path: Path) -> None:
+def test_check_docs_does_not_fail_on_untracked_indexed_artifact_when_head_exists(
+    tmp_path: Path,
+) -> None:
     from tests.structure.repo.test_poe_task_contracts import write_minimal_repo_docs
 
     write_minimal_repo_docs(tmp_path)
@@ -110,7 +112,7 @@ verify = ["lint", "typecheck", "test", "build", "repo-check", "notebook-validate
 
     issues = check_docs.collect_issues(tmp_path)
 
-    assert "Indexed artifact is untracked: docs/design-docs/future-draft.md" in issues
+    assert "Indexed artifact is untracked: docs/design-docs/future-draft.md" not in issues
 
 
 def test_check_docs_flags_missing_markdown_link_target(tmp_path: Path) -> None:

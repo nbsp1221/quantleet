@@ -7,8 +7,8 @@ from pathlib import Path
 
 import pytest
 
+from quantcraft.data import OHLCVBar
 from quantcraft.research.adapters.synthetic_events import (
-    OHLCVBar,
     convert_ohlcv_to_backtest_events,
     infer_intrabar_prices,
 )

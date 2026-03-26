@@ -14,16 +14,20 @@ The public research API for this slice is the `quantcraft.research` import above
 
 ```python
 from quantcraft.research import Strategy, ta, qc, run_backtest
-from quantcraft.research.adapters.synthetic_events import OHLCVBar
+from quantcraft.data import DataFrameDataSource
 from quantcraft.trading.domain.costs import CostConfig
 
-rows = (
-    OHLCVBar(timestamp=60, open=5.0, high=5.0, low=5.0, close=5.0, volume=1.0),
-    OHLCVBar(timestamp=120, open=4.0, high=4.0, low=4.0, close=4.0, volume=1.0),
-    OHLCVBar(timestamp=180, open=1.0, high=1.0, low=1.0, close=1.0, volume=1.0),
-    OHLCVBar(timestamp=240, open=10.0, high=10.0, low=10.0, close=10.0, volume=1.0),
-    OHLCVBar(timestamp=300, open=11.0, high=11.0, low=11.0, close=11.0, volume=1.0),
-)
+rows = DataFrameDataSource(
+    frame=[
+        {"timestamp": "1970-01-01T00:01:00+00:00", "open": 5.0, "high": 5.0, "low": 5.0, "close": 5.0, "volume": 1.0},
+        {"timestamp": "1970-01-01T00:02:00+00:00", "open": 4.0, "high": 4.0, "low": 4.0, "close": 4.0, "volume": 1.0},
+        {"timestamp": "1970-01-01T00:03:00+00:00", "open": 1.0, "high": 1.0, "low": 1.0, "close": 1.0, "volume": 1.0},
+        {"timestamp": "1970-01-01T00:04:00+00:00", "open": 10.0, "high": 10.0, "low": 10.0, "close": 10.0, "volume": 1.0},
+        {"timestamp": "1970-01-01T00:05:00+00:00", "open": 11.0, "high": 11.0, "low": 11.0, "close": 11.0, "volume": 1.0},
+    ],
+    symbol="BTC/USDT",
+    timeframe="1m",
+).load()
 
 costs = CostConfig(tick_size=1.0, slippage_ticks=1.0, fee_rate=0.001)
 ```

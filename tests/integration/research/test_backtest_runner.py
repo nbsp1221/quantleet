@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from quantcraft.research.adapters.synthetic_events import OHLCVBar
+from quantcraft.data import OHLCVBar
 from quantcraft.research.application.backtest import (
     BacktestResult,
     BacktestSummary,

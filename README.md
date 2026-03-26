@@ -6,6 +6,7 @@ The current implemented scope is intentionally small:
 
 - typed exchange access for OHLCV market data
 - spot and USD-M support through a stable `Exchange` API
+- a first `quantcraft.data` ingestion surface with `CCXTDataSource`, `CSVDataSource`, and `DataFrameDataSource`
 - a deterministic single-symbol Backtest MVP built on the shared trading kernel
 - a first `quantcraft.research` ergonomics surface with `Strategy`, `run_backtest`, `ta`, and `qc`
 - canonical quickstart and notebook assets for the current research workflow

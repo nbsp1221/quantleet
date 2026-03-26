@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from quantcraft.research.adapters.synthetic_events import OHLCVBar, convert_ohlcv_to_backtest_events
+from quantcraft.data import OHLCVBar
+from quantcraft.research.adapters.synthetic_events import convert_ohlcv_to_backtest_events
 from quantcraft.research.application._runtime import _StrategyDriver
 from quantcraft.research.application.strategy import Strategy
 from quantcraft.trading.domain.costs import CostConfig

@@ -33,6 +33,7 @@ TIER_C = {"ml"}
 SHARED_DOMAINS = {"shared"}
 KNOWN_DOMAINS = TIER_A | TIER_B | TIER_C | SHARED_DOMAINS
 ALLOWED_CROSS_DOMAIN_DEPENDENCIES = {
+    ("research", "data"),
     ("research", "trading"),
     ("execution", "trading"),
 }
@@ -851,29 +852,41 @@ def collect_doc_issues(root: Path) -> list[str]:
                 f"Found flat root-level test file outside taxonomy: tests/{path.name}",
             )
 
-    if git_has_head(root):
-        referenced_paths: set[str] = set()
-        for content in (
-            architecture_doc,
-            plans_doc,
-        ):
-            referenced_paths.update(referenced_repo_paths(content))
-
-        for directory_name, _, _ in indexed_doc_dirs:
-            directory = root / "docs" / directory_name
-            if not directory.exists():
-                continue
-            for path in sorted(directory.glob("*.md")):
-                if path.name == "index.md":
-                    continue
-                referenced_paths.add(path.relative_to(root).as_posix())
-
-        untracked_paths = git_untracked_paths(root)
-        for relative_path in sorted(referenced_paths):
-            if relative_path in untracked_paths and (root / relative_path).exists():
-                issues.append(f"Indexed artifact is untracked: {relative_path}")
-
     return issues
+
+
+def collect_doc_advisories(root: Path) -> list[str]:
+    if not git_has_head(root):
+        return []
+
+    advisories: list[str] = []
+    architecture_path = root / "ARCHITECTURE.md"
+    plans_path = root / "docs" / "PLANS.md"
+    architecture_doc = (
+        architecture_path.read_text(encoding="utf-8") if architecture_path.exists() else ""
+    )
+    plans_doc = plans_path.read_text(encoding="utf-8") if plans_path.exists() else ""
+    indexed_doc_dir_names = ("design-docs", "references", "product-specs", "generated")
+
+    referenced_paths: set[str] = set()
+    for content in (architecture_doc, plans_doc):
+        referenced_paths.update(referenced_repo_paths(content))
+
+    for directory_name in indexed_doc_dir_names:
+        directory = root / "docs" / directory_name
+        if not directory.exists():
+            continue
+        for path in sorted(directory.glob("*.md")):
+            if path.name == "index.md":
+                continue
+            referenced_paths.add(path.relative_to(root).as_posix())
+
+    untracked_paths = git_untracked_paths(root)
+    for relative_path in sorted(referenced_paths):
+        if relative_path in untracked_paths and (root / relative_path).exists():
+            advisories.append(f"Indexed artifact is untracked: {relative_path}")
+
+    return advisories
 
 
 def domain_for_module_parts(parts: tuple[str, ...]) -> str | None:

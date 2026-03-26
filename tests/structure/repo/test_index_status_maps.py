@@ -54,12 +54,15 @@ def test_current_index_docs_use_explicit_status_map_fields() -> None:
     assert "| [`golden-principles.md`](golden-principles.md) | approved | yes |" in design_index
 
 
-def test_product_spec_index_lists_implemented_backtest_and_research_specs() -> None:
+def test_product_spec_index_lists_implemented_backtest_research_and_data_specs() -> None:
     product_index = (ROOT / "docs/product-specs/index.md").read_text(encoding="utf-8")
     entries, duplicates = parse_index_status_map_entries(product_index)
     entries_by_target = {entry["target"]: entry for entry in entries}
 
     assert duplicates == []
+    assert entries_by_target["data-ingestion.md"]["status"] == "implemented"
+    assert entries_by_target["data-ingestion.md"]["canonical"] == "yes"
+    assert entries_by_target["data-ingestion.md"]["applicability"] == "current implemented scope"
     assert entries_by_target["backtest-mvp.md"]["status"] == "implemented"
     assert entries_by_target["backtest-mvp.md"]["canonical"] == "yes"
     assert entries_by_target["backtest-mvp.md"]["applicability"] == "current implemented scope"

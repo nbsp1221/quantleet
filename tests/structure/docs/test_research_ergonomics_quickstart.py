@@ -19,6 +19,7 @@ def test_research_ergonomics_quickstart_doc_covers_canonical_usage_path() -> Non
     ).read_text(encoding="utf-8")
 
     assert "from quantcraft.research import Strategy, ta, qc, run_backtest" in quickstart_doc
+    assert "from quantcraft.data import DataFrameDataSource" in quickstart_doc
     assert "quantity=1" in quickstart_doc
     assert "SMA crossover" in quickstart_doc
     assert "RSI 30/70 mean reversion" in quickstart_doc
@@ -30,6 +31,7 @@ def test_research_ergonomics_quickstart_notebook_uses_canonical_import_path() ->
     notebook_source = "\n".join("".join(cell.get("source", [])) for cell in notebook["cells"])
 
     assert "from quantcraft.research import " in notebook_source
+    assert "from quantcraft.data import DataFrameDataSource" in notebook_source
     assert "Strategy" in notebook_source
     assert "ta" in notebook_source
     assert "qc" in notebook_source

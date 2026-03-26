@@ -47,3 +47,4 @@ Current historical plans are stored in:
 - `docs/plans/2026-03-18-agent-first-repository-setup.md`
 - `docs/plans/2026-03-18-test-taxonomy-and-layout-design.md`
 - `docs/plans/2026-03-18-test-taxonomy-and-layout.md`
+- `docs/plans/2026-03-26-data-ingestion-implementation.md`
