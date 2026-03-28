@@ -11,9 +11,13 @@ class FakeExchangeClient:
         self,
         rows: list[list[float]] | None = None,
         *,
+        pages: list[list[list[float]]] | None = None,
         options: dict | None = None,
     ) -> None:
+        if rows is not None and pages is not None:
+            raise ValueError("rows and pages are mutually exclusive")
         self.rows = rows or []
+        self.pages = pages[:] if pages is not None else None
         self.options = options or {}
         self.calls: list[dict[str, object]] = []
 
@@ -34,6 +38,10 @@ class FakeExchangeClient:
                 "params": params,
             }
         )
+        if self.pages is not None:
+            if self.pages:
+                return self.pages.pop(0)
+            return []
         return self.rows
 
 
@@ -192,3 +200,49 @@ def test_exchange_rejects_unknown_exchange_name() -> None:
             name="not-a-real-exchange",
             market_type=exchange_module.MarketType.SPOT,
         )
+
+
+def test_exchange_fetch_ohlcv_remains_single_call_primitive(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    fake_client = FakeExchangeClient(
+        pages=[
+            [
+                [1_700_000_000_000, 1.0, 2.0, 0.5, 1.5, 10.0],
+                [1_700_000_300_000, 2.0, 3.0, 1.5, 2.5, 20.0],
+            ],
+            [
+                [1_700_000_600_000, 3.0, 4.0, 2.5, 3.5, 30.0],
+            ],
+        ]
+    )
+
+    monkeypatch.setattr(exchange_backend, "_make_ccxt_exchange", lambda **_: fake_client)
+
+    exchange = exchange_module.Exchange(name="binance", market_type=exchange_module.MarketType.SPOT)
+    rows = exchange.fetch_ohlcv(
+        symbol="BTC/USDT",
+        timeframe="5m",
+        start=1_700_000_000_000,
+        limit=2,
+    )
+
+    assert len(fake_client.calls) == 1
+    assert rows == [
+        exchange_module.TimeBar(
+            timestamp=1_700_000_000_000,
+            open=1.0,
+            high=2.0,
+            low=0.5,
+            close=1.5,
+            volume=10.0,
+        ),
+        exchange_module.TimeBar(
+            timestamp=1_700_000_300_000,
+            open=2.0,
+            high=3.0,
+            low=1.5,
+            close=2.5,
+            volume=20.0,
+        ),
+    ]

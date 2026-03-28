@@ -24,6 +24,8 @@ def _suppress_import_stderr() -> Iterator[None]:
 with _suppress_import_stderr():
     import ccxt
 
+_DEFAULT_PAGINATION_LIMIT = 1_000
+
 __all__ = [
     "CCXTBackend",
     "Exchange",
@@ -120,6 +122,91 @@ class CCXTBackend:
                 params=params,
             ),
         )
+
+
+def _fetch_ohlcv_range(
+    *,
+    name: str,
+    market_type: MarketType,
+    symbol: str,
+    timeframe: str,
+    start: int | None = None,
+    end: int | None = None,
+    limit: int | None = None,
+) -> list[TimeBar]:
+    _validate_symbol_contract(market_type, symbol)
+    if start is None:
+        return Exchange(name=name, market_type=market_type).fetch_ohlcv(
+            symbol=symbol,
+            timeframe=timeframe,
+            start=start,
+            end=end,
+            limit=limit,
+        )
+
+    backend = CCXTBackend(name=name, market_type=market_type)
+    cursor = start
+    remaining = limit
+    rows: list[TimeBar] = []
+
+    while True:
+        request_limit = (
+            min(remaining, _DEFAULT_PAGINATION_LIMIT)
+            if remaining is not None
+            else _DEFAULT_PAGINATION_LIMIT
+        )
+        page = backend.fetch_ohlcv(
+            symbol=symbol,
+            timeframe=timeframe,
+            start=cursor,
+            end=end,
+            limit=request_limit,
+        )
+        if not page:
+            break
+
+        page_last_timestamp = int(page[-1][0])
+        if page_last_timestamp < cursor:
+            raise ValueError("provider returned a non-advancing OHLCV page")
+
+        added = 0
+        for raw_row in page:
+            timestamp = int(raw_row[0])
+            if timestamp < cursor:
+                continue
+            if end is not None and timestamp >= end:
+                continue
+            if rows and timestamp <= rows[-1].timestamp:
+                continue
+
+            rows.append(
+                TimeBar(
+                    timestamp=timestamp,
+                    open=float(raw_row[1]),
+                    high=float(raw_row[2]),
+                    low=float(raw_row[3]),
+                    close=float(raw_row[4]),
+                    volume=float(raw_row[5]),
+                )
+            )
+            added += 1
+
+            if remaining is not None:
+                remaining -= 1
+                if remaining == 0:
+                    return rows
+
+        next_cursor = page_last_timestamp + 1
+        if next_cursor <= cursor:
+            raise ValueError("provider returned a non-advancing OHLCV page")
+        if end is not None and next_cursor >= end:
+            break
+        if added == 0:
+            break
+
+        cursor = next_cursor
+
+    return rows
 
 
 def _make_ccxt_exchange(*, name: str, market_type: MarketType) -> Any:

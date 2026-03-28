@@ -48,3 +48,5 @@ Current historical plans are stored in:
 - `docs/plans/2026-03-18-test-taxonomy-and-layout-design.md`
 - `docs/plans/2026-03-18-test-taxonomy-and-layout.md`
 - `docs/plans/2026-03-26-data-ingestion-implementation.md`
+- `docs/plans/2026-03-27-ccxt-pagination-implementation.md`
+- `docs/plans/2026-03-28-trade-summary-semantics-implementation.md`

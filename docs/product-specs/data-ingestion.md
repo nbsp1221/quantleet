@@ -84,6 +84,8 @@ The minimal public contract for this slice is intentionally small:
 2. call `load()`
 3. receive the typed OHLCV bar sequence
 
+For `CCXTDataSource`, `load()` now assembles historical ranges automatically through internal pagination when a bounded historical query is requested.
+
 This slice does not require or expose a broader lifecycle such as:
 
 - `connect()`
@@ -96,6 +98,12 @@ This slice does not require or expose a broader lifecycle such as:
 - credential management surfaces
 
 Those belong to later feed or execution work, not to this historical-ingestion slice.
+
+Pagination remains an internal implementation detail:
+
+- no public `paginate=` flag is added
+- no public page-size knob is added
+- `limit`, when supplied, remains a cap on the final returned row count
 
 ## Official Source Baseline
 
@@ -174,6 +182,18 @@ However:
 - other venues may work or fail depending on venue-specific behavior
 
 This keeps the support boundary realistic without destroying the value of using `ccxt`.
+
+### Current Pagination Semantics
+
+The current implemented `CCXTDataSource.load()` behavior is:
+
+- use provider-native constructor inputs
+- internally assemble multi-page historical ranges for bounded queries
+- keep `Exchange.fetch_ohlcv(...)` as the lower-level single-call primitive
+- treat `limit` as the total returned-row cap
+- return the best available closed historical bars for the requested range
+
+This slice does not guarantee a separate completeness validator. Data quality or venue gaps remain a separate concern.
 
 ## CSVDataSource And DataFrameDataSource
 

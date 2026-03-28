@@ -115,6 +115,12 @@ Derived accounting values such as closing PnL do not belong in `FillEvent`. They
 - position, balance, realized PnL, unrealized PnL, and equity updates
 - simple summary statistics
 
+Current summary semantics:
+
+- the raw trade log is fill-level
+- user-facing trade-count metrics should be interpreted as closed trades, not raw fills
+- fee-aware trade statistics belong in the user-facing summary layer
+
 ## Excluded Scope
 
 This MVP does not include:
@@ -182,6 +188,7 @@ This is the slice's lookahead-bias guardrail.
 - `market` consumes opposite-side liquidity at the first executable price, with adverse slippage applied
 - `limit` may only fill at a price no worse than the limit price
 - under the simplified MVP liquidity model, a `limit` may appear as an at-limit fill in practice
+- in the current long-only MVP scope, a `sell` intent while flat is treated as an exit-only no-op rather than a short entry
 
 ### Gap Semantics
 

@@ -23,6 +23,7 @@ class ExposureSummary:
 @dataclass(frozen=True, slots=True)
 class BacktestSummary:
     total_trades: int
+    total_fills: int
     total_fees: float
     final_balance: float
     final_equity: float
@@ -69,6 +70,7 @@ def run_backtest(
     trade_log: list[FillEvent] = []
     equity_curve: list[float] = []
     closing_trade_pnls: list[float] = []
+    open_entry_fee_pool = 0.0
     bars_in_position = 0
     total_bars = 0
     current_tick_timestamp: int | None = None
@@ -90,16 +92,37 @@ def run_backtest(
 
             remaining_intents: list[OrderIntent] = []
             for intent in runtime.order_state().active:
+                if _is_flat_exit_intent(intent=intent, state=state):
+                    continue
+
                 fill = match_order_intent(intent, event, costs)
                 if fill is None:
                     remaining_intents.append(intent)
                     continue
 
-                previous_realized_pnl = state.realized_pnl
-                state = apply_fill(state, fill, mark_price=event.last)
-                realized_delta = round(state.realized_pnl - previous_realized_pnl, 12)
+                previous_state = state
+                allocated_entry_fee = 0.0
                 if fill.side == "sell":
-                    closing_trade_pnls.append(realized_delta)
+                    allocated_entry_fee = _allocated_entry_fee(
+                        open_entry_fee_pool=open_entry_fee_pool,
+                        fill=fill,
+                        state=previous_state,
+                    )
+
+                state = apply_fill(state, fill, mark_price=event.last)
+                if fill.side == "buy":
+                    open_entry_fee_pool = round(open_entry_fee_pool + fill.fee, 12)
+                if fill.side == "sell":
+                    closing_trade_pnls.append(
+                        _net_closed_trade_pnl(
+                            state=previous_state,
+                            fill=fill,
+                            allocated_entry_fee=allocated_entry_fee,
+                        )
+                    )
+                    open_entry_fee_pool = round(open_entry_fee_pool - allocated_entry_fee, 12)
+                    if state.position_quantity == 0.0:
+                        open_entry_fee_pool = 0.0
                 trade_log.append(fill)
             runtime.replace_active_order_intents(tuple(remaining_intents))
             continue
@@ -125,7 +148,8 @@ def run_backtest(
         tuple(closing_trade_pnls)
     )
     summary = BacktestSummary(
-        total_trades=len(trade_log),
+        total_trades=len(closing_trade_pnls),
+        total_fills=len(trade_log),
         total_fees=total_fees,
         final_balance=state.cash,
         final_equity=state.equity,
@@ -206,3 +230,30 @@ def _trade_statistics(closing_trade_pnls: tuple[float, ...]) -> tuple[float, flo
     else:
         profit_factor = round(gross_profit / gross_loss, 12)
     return average_win, average_loss, win_rate, profit_factor
+
+
+def _allocated_entry_fee(
+    *,
+    open_entry_fee_pool: float,
+    fill: FillEvent,
+    state: TradingState,
+) -> float:
+    if state.position_quantity <= 0.0:
+        raise ValueError("cannot allocate entry fees without an open position")
+    allocated = open_entry_fee_pool * (fill.quantity / state.position_quantity)
+    return round(allocated, 12)
+
+
+def _is_flat_exit_intent(*, intent: OrderIntent, state: TradingState) -> bool:
+    return intent.side == "sell" and state.position_quantity <= 0.0
+
+
+def _net_closed_trade_pnl(
+    *,
+    state: TradingState,
+    fill: FillEvent,
+    allocated_entry_fee: float,
+) -> float:
+    gross = (fill.price - state.average_entry_price) * fill.quantity
+    net = gross - allocated_entry_fee - fill.fee
+    return round(net, 12)

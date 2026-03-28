@@ -23,6 +23,9 @@ def test_research_ergonomics_quickstart_doc_covers_canonical_usage_path() -> Non
     assert "quantity=1" in quickstart_doc
     assert "SMA crossover" in quickstart_doc
     assert "RSI 30/70 mean reversion" in quickstart_doc
+    assert "self.in_position = False" in quickstart_doc
+    assert "(not self.in_position)" in quickstart_doc
+    assert "elif self.in_position" in quickstart_doc
 
 
 def test_research_ergonomics_quickstart_notebook_uses_canonical_import_path() -> None:
@@ -39,4 +42,7 @@ def test_research_ergonomics_quickstart_notebook_uses_canonical_import_path() ->
     assert "quantity=1" in notebook_source
     assert "SmaCrossStrategy" in notebook_source
     assert "Rsi3070Strategy" in notebook_source
+    assert "self.in_position = False" in notebook_source
+    assert "(not self.in_position)" in notebook_source
+    assert "elif self.in_position" in notebook_source
     assert "trade_log" in notebook_source

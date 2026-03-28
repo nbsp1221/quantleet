@@ -109,6 +109,8 @@ Current order semantics for this slice:
 - `buy()` and `sell()` currently require an explicit `symbol=...` argument
 - `buy()` means long entry or long increase
 - `sell()` means long exit in the current long-only MVP scope, not short entry
+- `sell()` while flat is treated as a no-op in the current long-only backtest path
+- one-position strategies that do not intend long increases should track local state explicitly under the current API
 
 Examples and quickstarts must explain that `sell()` is an exit operation in the current scope.
 
@@ -367,11 +369,18 @@ Required result content:
 - total return
 - max drawdown
 - total trades
+- total fills
 - win rate
 - average win
 - average loss
 - profit factor
 - simple exposure summary
+
+Current summary semantics for the implemented slice:
+
+- `total_trades` means closed trades, not raw fills
+- `total_fills` means the raw fill count from `trade_log`
+- `win_rate`, `average_win`, `average_loss`, and `profit_factor` are based on net closed-trade PnL after fees
 
 This slice does not attempt a large analytics surface such as:
 

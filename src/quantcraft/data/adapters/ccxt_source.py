@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from quantcraft.data.adapters.exchange_backend import Exchange, MarketType
+from quantcraft.data.adapters.exchange_backend import MarketType, _fetch_ohlcv_range
 from quantcraft.data.domain import HistoricalDataSource, OHLCVBar
 
 
@@ -17,10 +17,9 @@ class CCXTDataSource(HistoricalDataSource):
     limit: int | None = None
 
     def load(self) -> tuple[OHLCVBar, ...]:
-        rows = Exchange(
+        rows = _fetch_ohlcv_range(
             name=self.exchange,
             market_type=MarketType(self.market),
-        ).fetch_ohlcv(
             symbol=self.symbol,
             timeframe=self.timeframe,
             start=self.start,

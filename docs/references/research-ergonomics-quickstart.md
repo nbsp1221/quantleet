@@ -64,19 +64,31 @@ Inspect:
 - `result.equity_curve`
 - `result.summary`
 
+Current summary semantics:
+
+- `result.summary.total_trades` = closed trades
+- `result.summary.total_fills` = raw fill count
+- `result.summary.win_rate` and `result.summary.profit_factor` use net closed-trade PnL after fees
+
 ## Secondary Example: RSI 30/70 mean reversion
 
 ```python
 class Rsi3070Strategy(Strategy):
     def init(self) -> None:
         self.rsi = ta.rsi(self.data.close, length=2)
+        self.in_position = False
 
     def on_bar(self, bar) -> None:
-        if not qc.is_na(self.rsi[0]) and self.rsi[0] < 30:
+        if (not self.in_position) and not qc.is_na(self.rsi[0]) and self.rsi[0] < 30:
             self.buy(symbol=bar.symbol, quantity=1)
-        elif not qc.is_na(self.rsi[0]) and self.rsi[0] > 70:
+            self.in_position = True
+        elif self.in_position and not qc.is_na(self.rsi[0]) and self.rsi[0] > 70:
             self.sell(symbol=bar.symbol, quantity=1)
+            self.in_position = False
 ```
+
+In the current long-only backtest path, repeated `sell()` calls while flat are treated as exit-only no-ops, not short entries.
+For one-position strategies like this RSI example, track local state explicitly when you do not intend long increases.
 
 The supporting notebook demonstrates the same flow in executable form:
 
