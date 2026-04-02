@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from quantcraft._repo_tools import collect_plan_lifecycle_issues
+from quantcraft._repo_tools import collect_plan_lifecycle_issues, parse_exec_plan_index_entries
 from scripts import repo_check
 from tests.structure.repo.test_quality_scaffolding import write_valid_quality_fixture
 from tests.support import ROOT
@@ -96,10 +96,11 @@ def test_current_exec_plan_docs_use_explicit_lifecycle_metadata() -> None:
     assert "## Lifecycle Metadata" in plans_doc
     assert "| Plan | Status | Note |" in active_index
     assert "| Plan | Status | Note |" in completed_index
-    assert "_None currently active_" in active_index
+    assert "2026-04-02-indicator-performance-handoff.md" in active_index
     assert "2026-03-25-implemented-scope-sync.md" not in active_index
     assert "2026-03-24-research-ergonomics-implementation.md" not in active_index
     assert "2026-03-30-coverage-harness-implementation.md" not in active_index
+    assert "2026-04-02-agent-harness-anti-gaming-improvement.md" not in active_index
     assert "- status: completed" in completed_harness_plan
     assert "Slice 5: complete" in completed_harness_plan
     assert "- status: completed" in completed_plan
@@ -109,6 +110,58 @@ def test_current_exec_plan_docs_use_explicit_lifecycle_metadata() -> None:
     assert "2026-03-22-harness-quality-improvement.md" in completed_index
     assert "2026-03-25-implemented-scope-sync.md" in completed_index
     assert "2026-03-30-coverage-harness-implementation.md" in completed_index
+    assert "2026-04-02-agent-harness-anti-gaming-improvement.md" in completed_index
+
+
+def test_parse_exec_plan_index_entries_accepts_backticked_md_target_without_link() -> None:
+    content = "\n".join(
+        [
+            "# Active Execution Plans",
+            "",
+            "## Metadata",
+            "- index_status: active",
+            "",
+            "## Plans",
+            "| Plan | Status | Note |",
+            "| --- | --- | --- |",
+            "| `2026-04-02-sample.md` | active | Work in progress. |",
+            "",
+        ]
+    )
+
+    entries, duplicates = parse_exec_plan_index_entries(content)
+
+    assert duplicates == []
+    assert entries == [
+        {
+            "target": "2026-04-02-sample.md",
+            "status": "active",
+            "note": "Work in progress.",
+        }
+    ]
+
+
+def test_parse_exec_plan_index_entries_ignores_non_plan_placeholder_rows() -> None:
+    content = "\n".join(
+        [
+            "# Active Execution Plans",
+            "",
+            "## Metadata",
+            "- index_status: active",
+            "",
+            "## Plans",
+            "| Plan | Status | Note |",
+            "| --- | --- | --- |",
+            "| _None currently active_ | active | "
+            "Open a new execution plan here when the next batch starts. |",
+            "",
+        ]
+    )
+
+    entries, duplicates = parse_exec_plan_index_entries(content)
+
+    assert entries == []
+    assert duplicates == []
 
 
 def test_collect_plan_lifecycle_issues_flags_status_directory_mismatch(tmp_path: Path) -> None:

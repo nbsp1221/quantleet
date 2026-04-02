@@ -9,6 +9,24 @@ This document defines repository-level reliability expectations.
 - Backtest and paper-trading behavior must be reproducible from checked-in inputs and documented assumptions.
 - Notebook validation and smoke checks should remain part of the local verification surface.
 
+## Evaluation Modes
+
+Repository reliability work uses three distinct evaluation modes:
+
+- `mechanical checks` for objective pass/fail contracts
+- `LLM-assisted critique` for adversarial review of confusion paths, weak proxies, and missing failure modes
+- `human judgment` for value, product direction, and whether a proposed proxy is worth keeping
+
+Use [design-docs/architecture-governance.md](design-docs/architecture-governance.md) as the canonical source for the full taxonomy, promotion ladder, and metric/check admission rule.
+
+Reliability policy must not collapse these into one score or one gate.
+
+In particular:
+
+- passing a mechanical check does not prove a change is valuable
+- LLM critique is evidence-bearing review input, not a final verdict
+- human judgment remains required when a proposed evaluation changes product direction or evaluation philosophy
+
 ## Safety Tiers
 
 - Tier A: `trading`, `execution`

@@ -24,6 +24,22 @@ def test_research_ergonomics_quickstart_doc_covers_canonical_usage_path() -> Non
     assert "quantity=1" in quickstart_doc
     assert "SMA crossover" in quickstart_doc
     assert "RSI 30/70 mean reversion" in quickstart_doc
+    assert "Canonical User Journeys" in quickstart_doc
+    for journey_marker in [
+        "Clean Install To Public Imports",
+        "DataFrame-Like Quickstart To First Backtest",
+        "Materialized `BarSeries`",
+        "Exchange-Backed Historical Research Flow",
+    ]:
+        assert journey_marker in quickstart_doc
+    for required_field in [
+        "starting state:",
+        "user intent:",
+        "success artifact:",
+        "superficially passing but still bad:",
+    ]:
+        assert required_field in quickstart_doc
+    assert "strict merge gates" in quickstart_doc
     assert "self.position.is_open" in quickstart_doc
     assert "not self.position.is_open" in quickstart_doc
     assert "source.load() returns `BarSeries`" in quickstart_doc

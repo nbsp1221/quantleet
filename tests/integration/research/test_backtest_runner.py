@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 import json
+from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
 
 import quantcraft.data.adapters.exchange_backend as exchange_backend
-from quantcraft.data import BarSeries, CCXTDataSource, TimeBar
+from quantcraft.data import BarSeries, CCXTDataSource, DataFrameDataSource, TimeBar
 from quantcraft.research import BacktestEngine
 from quantcraft.research.application.backtest import (
     BacktestResult,
@@ -193,6 +194,20 @@ def _fixture_bar_series() -> BarSeries:
     return _make_bar_series(_fixture_rows())
 
 
+def _fixture_dataframe_records() -> list[dict[str, object]]:
+    return [
+        {
+            "timestamp": datetime.fromtimestamp(row.timestamp / 1000, tz=UTC).isoformat(),
+            "open": row.open,
+            "high": row.high,
+            "low": row.low,
+            "close": row.close,
+            "volume": row.volume,
+        }
+        for row in _fixture_rows()
+    ]
+
+
 def _run_engine_backtest(
     *,
     bars: BarSeries,
@@ -203,6 +218,20 @@ def _run_engine_backtest(
     used_costs = costs or CostConfig(tick_size=1.0, slippage_ticks=1.0, fee_rate=0.001)
     return BacktestEngine(initial_cash=initial_cash, costs=used_costs).run(
         bars=bars,
+        strategy=strategy,
+    )
+
+
+def _run_engine_backtest_from_source(
+    *,
+    source: object,
+    strategy: Strategy,
+    initial_cash: float = 1_000.0,
+    costs: CostConfig | None = None,
+) -> BacktestResult:
+    used_costs = costs or CostConfig(tick_size=1.0, slippage_ticks=1.0, fee_rate=0.001)
+    return BacktestEngine(initial_cash=initial_cash, costs=used_costs).run(
+        source=source,
         strategy=strategy,
     )
 
@@ -288,16 +317,30 @@ def test_backtest_engine_runs_materialized_bar_series() -> None:
 def test_backtest_engine_runs_source_that_loads_bar_series() -> None:
     source = InMemoryBarSeriesSource()
 
-    result = BacktestEngine(
-        initial_cash=1_000.0,
-        costs=CostConfig(tick_size=1.0, slippage_ticks=1.0, fee_rate=0.001),
-    ).run(
+    result = _run_engine_backtest_from_source(
         source=source,
         strategy=DeterministicEntryExitStrategy(),
     )
 
     assert isinstance(result, BacktestResult)
     assert result.summary.total_trades == 1
+
+
+def test_backtest_engine_runs_dataframe_source_quickstart_path() -> None:
+    source = DataFrameDataSource(
+        frame=_fixture_dataframe_records(),
+        symbol="BTC/USDT",
+        timeframe="1m",
+    )
+
+    result = _run_engine_backtest_from_source(
+        source=source,
+        strategy=DeterministicEntryExitStrategy(),
+    )
+
+    assert isinstance(result, BacktestResult)
+    assert result.summary.total_trades == 1
+    assert result.summary.total_fills == 2
 
 
 def test_backtest_engine_rejects_missing_and_duplicate_inputs() -> None:
@@ -378,6 +421,44 @@ def test_backtest_runner_accepts_paginated_ccxt_source_rows(
     )
 
     assert tuple(row.timestamp for row in bars.rows) == (60_000, 120_000, 180_000)
+    assert len(result.trade_log) == 2
+    assert result.summary.total_trades == 1
+    assert result.summary.final_equity > 0.0
+
+
+def test_backtest_engine_runs_exchange_backed_source_path(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(exchange_backend, "_DEFAULT_PAGINATION_LIMIT", 2)
+    fake_client = FakeExchangeClient(
+        pages=[
+            [
+                [60_000, 100.0, 105.0, 95.0, 104.0, 10.0],
+                [120_000, 110.0, 112.0, 108.0, 109.0, 12.0],
+            ],
+            [
+                [120_000, 110.0, 112.0, 108.0, 109.0, 12.0],
+                [180_000, 109.0, 114.0, 107.0, 113.0, 14.0],
+            ],
+            [],
+        ]
+    )
+    monkeypatch.setattr(exchange_backend, "_make_ccxt_exchange", lambda **_: fake_client)
+
+    source = CCXTDataSource(
+        exchange="binance",
+        market="spot",
+        symbol="BTC/USDT",
+        timeframe="1m",
+        start=60_000,
+    )
+
+    result = _run_engine_backtest_from_source(
+        source=source,
+        strategy=DeterministicEntryExitStrategy(),
+    )
+
+    assert isinstance(result, BacktestResult)
     assert len(result.trade_log) == 2
     assert result.summary.total_trades == 1
     assert result.summary.final_equity > 0.0

@@ -2,6 +2,8 @@
 
 This file tracks the current repository quality state with explicit freshness and evidence expectations.
 
+It is a coarse repository-health artifact, not a user-value meter or merge-time approval score.
+
 ## Metadata
 
 - as_of: 2026-03-30
@@ -21,6 +23,7 @@ This file tracks the current repository quality state with explicit freshness an
 - `verification` scores of `A` or `B` must include at least one harness-check path such as `scripts/`, `tests/`, or `pyproject.toml`; repo docs alone are not enough.
 - For implementation areas (`data`, `research`, `trading`, `execution`, `ml`), any score above `D` must include at least one implementation or test path, not docs alone.
 - Notes should identify the main limitation that keeps the area from the next grade.
+- Scores here must not be treated as a substitute for human judgment about product value or public API direction.
 
 ## Score Rubric
 

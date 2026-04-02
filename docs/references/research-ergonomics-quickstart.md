@@ -10,6 +10,40 @@ from quantcraft.research import BacktestEngine, Strategy, ta, qc
 
 The public research API for this slice is the `quantcraft.research` import above. The lower-layer imports below are current supporting setup types used to construct backtest inputs; they are not part of the research public surface.
 
+## Canonical User Journeys
+
+The current quickstart and examples are anchored to four initial canonical user journeys.
+These journeys are reference workflows for docs, reviews, and later automation.
+They are not automatically all strict merge gates.
+
+### Journey 1: Clean Install To Public Imports
+
+- starting state: a fresh environment with the package installed
+- user intent: verify that the documented public imports actually work
+- success artifact: importing `BacktestEngine`, `Strategy`, `ta`, `qc`, `BarSeries`, `TimeBar`, and the documented data sources works without hidden setup
+- superficially passing but still bad: the package installs, but the documented imports or import paths drift
+
+### Journey 2: DataFrame-Like Quickstart To First Backtest
+
+- starting state: the canonical `DataFrameDataSource` path in this quickstart
+- user intent: get to a first successful backtest with minimal setup
+- success artifact: the quickstart flow runs and produces a `BacktestResult`
+- superficially passing but still bad: the example needs undocumented setup or hidden assumptions to work
+
+### Journey 3: Materialized `BarSeries` To `engine.run(bars=...)`
+
+- starting state: user-created `TimeBar` and `BarSeries`
+- user intent: run a backtest from explicit materialized historical bars
+- success artifact: `BacktestEngine.run(bars=..., strategy=...)` works with the documented canonical types
+- superficially passing but still bad: the path only works because docs or code silently rely on lower-layer internals
+
+### Journey 4: Exchange-Backed Historical Research Flow
+
+- starting state: the documented `CCXTDataSource` historical path
+- user intent: load historical bars and run a research workflow through `engine.run(source=...)`
+- success artifact: the documented exchange-backed flow remains coherent enough for humans and agents to follow
+- superficially passing but still bad: the flow remains "documented" but becomes too hidden, flaky, or environment-dependent to serve as a trustworthy reference workflow
+
 ## Minimal Setup
 
 ```python

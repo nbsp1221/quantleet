@@ -14,6 +14,41 @@ The current implemented scope is intentionally small:
 - canonical backtest execution paths via `BacktestEngine.run(bars=..., strategy=...)` and `BacktestEngine.run(source=..., strategy=...)`
 - canonical quickstart and notebook assets for the current research workflow
 
+## Initial Canonical User Journeys
+
+These journeys are the first frozen library-consumption paths for both human users and AI agents.
+
+They exist to anchor docs, examples, reviews, and later automation to real use of the public library surface.
+They are not automatically equivalent to strict merge gates.
+
+### 1. Clean Install To Public Imports
+
+- starting state: a fresh environment with the built package artifact or synced repository environment
+- user intent: confirm the package installs cleanly and exposes the documented public API
+- success artifact: importing `BacktestEngine`, `Strategy`, `ta`, `qc`, `BarSeries`, `TimeBar`, and the documented data sources works exactly as the docs imply
+- superficially passing but still bad: the package builds, but documented imports or import paths drift
+
+### 2. DataFrame-Like Quickstart To First Backtest
+
+- starting state: the canonical `DataFrameDataSource` quickstart path
+- user intent: reach a first successful backtest with minimal setup
+- success artifact: the documented quickstart flow runs and produces a `BacktestResult`
+- superficially passing but still bad: the example only works with hidden setup or undocumented assumptions
+
+### 3. Materialized `BarSeries` To `engine.run(bars=...)`
+
+- starting state: user-created `TimeBar` and `BarSeries` values
+- user intent: run the engine from explicit materialized historical bars
+- success artifact: `BacktestEngine.run(bars=..., strategy=...)` works with the documented canonical types
+- superficially passing but still bad: the path only works because code or docs silently rely on lower-layer internals
+
+### 4. Exchange-Backed Historical Research Flow
+
+- starting state: the documented `CCXTDataSource` historical path
+- user intent: load historical bars and run a real research workflow through `engine.run(source=...)`
+- success artifact: the documented exchange-backed flow remains coherent and reproducible enough for humans and agents to follow
+- superficially passing but still bad: the path stays "documented" but becomes too hidden, flaky, or environment-dependent to serve as a trustworthy reference workflow
+
 ## Setup
 
 Requirements:

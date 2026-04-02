@@ -23,6 +23,9 @@ def test_data_public_import_surface_exposes_time_bar_and_bar_series() -> None:
 
     assert getattr(data_module, "TimeBar", None) is not None
     assert getattr(data_module, "BarSeries", None) is not None
+    assert getattr(data_module, "CCXTDataSource", None) is not None
+    assert getattr(data_module, "CSVDataSource", None) is not None
+    assert getattr(data_module, "DataFrameDataSource", None) is not None
 
 
 def test_root_time_bar_resolves_to_the_canonical_data_time_bar() -> None:
@@ -37,5 +40,7 @@ def test_research_public_import_surface_exposes_backtest_engine_and_hides_run_ba
 
     assert getattr(research_module, "BacktestEngine", None) is not None
     assert getattr(research_module, "Strategy", None) is not None
+    assert getattr(research_module, "ta", None) is not None
+    assert getattr(research_module, "qc", None) is not None
     assert not hasattr(research_module, "run_backtest")
     assert not hasattr(application_module, "run_backtest")

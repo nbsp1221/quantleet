@@ -33,6 +33,15 @@ def test_readme_current_scope_mentions_implemented_backtest_research_and_data_su
     assert "`BacktestEngine.run(bars=..., strategy=...)`" in pre_setup_section
     assert "`BacktestEngine.run(source=..., strategy=...)`" in pre_setup_section
     assert "automatic historical pagination" in pre_setup_section
+    assert "## Initial Canonical User Journeys" in readme
+    for journey_marker in [
+        "Clean Install To Public Imports",
+        "DataFrame-Like Quickstart To First Backtest",
+        "Materialized `BarSeries`",
+        "Exchange-Backed Historical Research Flow",
+    ]:
+        assert journey_marker in readme
+    assert "strict merge gates" in readme
 
 
 def test_current_docs_describe_closed_trade_and_fill_count_summary_terms_and_new_engine_surface(
@@ -65,6 +74,15 @@ def test_current_docs_describe_closed_trade_and_fill_count_summary_terms_and_new
     assert "`BacktestEngine`" in research_spec
     assert "`BacktestEngine(...).run(bars=..., strategy=...)`" in research_spec
     assert "`BacktestEngine(...).run(source=..., strategy=...)`" in research_spec
+    assert "### Initial Canonical User Journeys" in research_spec
+    for journey_marker in [
+        "Clean Install To Public Imports",
+        "DataFrame-Like Quickstart To First Backtest",
+        "Materialized `BarSeries`",
+        "Exchange-Backed Historical Research Flow",
+    ]:
+        assert journey_marker in research_spec
+    assert "superficially passing but still bad" in research_spec
     assert "`BacktestEngine(...).run(bars=..., strategy=...)`" in backtest_spec
     assert "`BacktestEngine(...).run(source=..., strategy=...)`" in backtest_spec
     assert "`quantcraft.data.TimeBar`" in research_spec

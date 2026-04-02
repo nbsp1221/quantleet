@@ -58,6 +58,55 @@ Current enforced or intended-to-enforce-now rules include:
 - live tests stay out of the default lane
 - context dependency rules should be promoted into structure tests as packages materialize
 
+## Evaluation Taxonomy
+
+The repository uses three distinct evaluation modes.
+
+They answer different questions and must not be conflated:
+
+1. `mechanical checks`
+   - answer whether an objective documented contract still holds
+2. `LLM-assisted critique`
+   - surfaces likely confusion, suspicious proxies, missing failure modes, and prompt-shaped local optimization risk
+3. `human judgment`
+   - closes questions about product direction, value, taste, and whether a proposed proxy is worth institutionalizing
+
+Current rule:
+
+- do not replace a human judgment question with a fake objective score
+- do not let an LLM critic act like a final approver
+- do not promote a first-draft critique directly into a repository check
+
+## Promotion Ladder
+
+The approved promotion order is:
+
+1. critique
+2. documented policy
+3. repeated manual use
+4. narrow mechanical enforcement
+
+This order exists to prevent the repository from turning first-draft heuristics into fake rigor.
+
+If a proposed metric, evaluator output, or benchmark cannot survive repeated manual use with a clear decision impact, it should remain a doc or review prompt artifact rather than becoming a hard check.
+
+## Metric And Check Admission Rule
+
+Before a new metric, benchmark, or repository check is promoted into the harness, it must document:
+
+1. the protected behavior
+2. the measured proxy
+3. the likely gaming vector
+4. the decision the artifact is expected to change
+5. the revalidation or removal condition
+
+If any of those fields are weak or missing:
+
+- the artifact must remain in docs or review prompts
+- it must not be promoted into a repository check yet
+
+This rule exists because a measurable target without decision impact is fake rigor, and a proxy without a revalidation path will eventually become stale.
+
 ## What Stays In Documents And Prompts For Now
 
 The following areas are still intentionally document-led:
@@ -89,6 +138,10 @@ Promote a rule from prose into a check when one or more of these are true:
 3. agents repeatedly misunderstand the same boundary
 4. a single mistake can damage financial semantics
 5. the rule is objective and cheap to evaluate
+
+Additional requirement:
+
+6. the rule protects a declared contract or canonical user journey strongly enough to justify the maintenance cost
 
 ## Open Questions And Blockers
 

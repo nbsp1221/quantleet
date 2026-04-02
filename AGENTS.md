@@ -64,6 +64,7 @@ Tier A changes require stronger human gate, explicit plan coverage, and matching
   - current implemented scope work should start from the current implemented-scope spec
   - approved expansion work should start from the approved next-slice spec
 - Keep plans and behavioral changes in the repository.
+- Use [docs/design-docs/architecture-governance.md](docs/design-docs/architecture-governance.md) as the canonical source for evaluation taxonomy, promotion ladder, and metric/check admission policy; evaluator/reviewer agents should act as findings-first critics, not final approvers, and scalar scores or generic approval language are not evidence.
 - Do not bypass architecture checks or document checks.
 - If code touches Tier A domains, stop short of claiming autonomous completion.
 - Prefer the documented command surface and repository docs over local memory.

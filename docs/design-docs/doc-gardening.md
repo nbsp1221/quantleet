@@ -9,6 +9,16 @@ This note defines the recurring cleanup loop for repository docs and lightweight
 3. If the rule is objective and cheap, promote it into `repo_check` or a structure test, following [architecture-governance.md](architecture-governance.md).
 4. If the promotion changes docs-system or verification evidence, update [`../QUALITY_SCORE.md`](../QUALITY_SCORE.md).
 
+When the promoted artifact is a metric, benchmark, or new check, record:
+
+- the protected behavior
+- the measured proxy
+- the likely gaming vector
+- the decision the artifact should change
+- the revalidation or removal condition
+
+If those fields are not clear yet, keep the rule in docs or review prompts instead of promoting it into enforcement.
+
 ## Recurring Checks
 
 - remove placeholder text
@@ -17,6 +27,7 @@ This note defines the recurring cleanup loop for repository docs and lightweight
 - update quality notes when the repository structure changes
 - capture repeated review comments as docs or checks
 - keep [../feedback-promotion-log.md](../feedback-promotion-log.md) aligned with promoted docs and checks
+- remove stale proxies or checks that no longer change decisions
 
 ## Local Trigger
 

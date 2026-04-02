@@ -97,6 +97,41 @@ Current rules:
 
 `run_backtest(...)` is not part of the public `quantcraft.research` or `quantcraft.research.application` surface for this slice.
 
+### Initial Canonical User Journeys
+
+The current shipped `research` usability surface should stay anchored to a small set of canonical user journeys.
+
+These journeys exist so future docs, examples, benchmarks, and automation stay tied to real library use rather than easier surrogate tasks.
+They are reference workflows, not automatically all strict merge gates.
+
+#### 1. Clean Install To Public Imports
+
+- starting state: a fresh environment with the package installed
+- user intent: confirm the documented public imports work exactly as presented
+- success artifact: importing `BacktestEngine`, `Strategy`, `ta`, `qc`, `BarSeries`, `TimeBar`, and the documented data sources works cleanly
+- superficially passing but still bad: the package installs, but the documented public import paths drift
+
+#### 2. DataFrame-Like Quickstart To First Backtest
+
+- starting state: the canonical `DataFrameDataSource` quickstart path
+- user intent: reach a first successful backtest with minimal setup
+- success artifact: the documented quickstart flow runs and produces a `BacktestResult`
+- superficially passing but still bad: the example still needs hidden setup or undocumented assumptions
+
+#### 3. Materialized `BarSeries` To `BacktestEngine.run(bars=...)`
+
+- starting state: user-created `TimeBar` and `BarSeries`
+- user intent: run the engine from explicit materialized historical bars
+- success artifact: `BacktestEngine.run(bars=..., strategy=...)` works with the documented canonical types
+- superficially passing but still bad: the path only works because docs or code silently rely on lower-layer internals
+
+#### 4. Exchange-Backed Historical Research Flow
+
+- starting state: the documented `CCXTDataSource` historical path
+- user intent: load historical bars and run a research workflow through `BacktestEngine.run(source=...)`
+- success artifact: the documented exchange-backed flow remains coherent and reproducible enough for humans and agents to follow
+- superficially passing but still bad: the path remains "documented" but becomes too hidden, flaky, or environment-dependent to serve as a trustworthy reference workflow
+
 ## Strategy Contract
 
 ### Strategy Type
