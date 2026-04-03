@@ -55,3 +55,7 @@ Current historical plans are stored in:
 - `docs/plans/2026-03-30-backtest-engine-design.md`
 - `docs/plans/2026-03-30-backtest-engine-implementation.md`
 - `docs/plans/2026-04-02-agent-harness-anti-gaming-design.md`
+- `docs/plans/2026-04-02-backtest-throughput-benchmark-design.md`
+- `docs/plans/2026-04-02-backtest-throughput-benchmark-implementation.md`
+- `docs/plans/2026-04-03-rsi-performance-gate-design.md`
+- `docs/plans/2026-04-03-rsi-performance-gate-implementation.md`

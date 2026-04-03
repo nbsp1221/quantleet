@@ -14,22 +14,48 @@ def pytest_addoption(parser: pytest.Parser) -> None:
         default=False,
         help="run live tests under tests/smoke/live",
     )
+    parser.addoption(
+        "--run-perf",
+        action="store_true",
+        default=False,
+        help="run performance tests under tests/perf",
+    )
 
 
 def pytest_collection_modifyitems(
     config: pytest.Config,
     items: list[pytest.Item],
 ) -> None:
-    if config.getoption("--run-live"):
-        return
-
-    selected_live_path = any(
-        "tests/smoke/live" in str(arg) for arg in config.invocation_params.args
+    _apply_explicit_only_skips(
+        items,
+        skip_live=not _should_run_live(config),
+        skip_perf=not _should_run_perf(config),
     )
-    if selected_live_path:
-        return
 
-    skip_live = pytest.mark.skip(reason="live tests are explicit-only")
+
+def _selected_path(config: pytest.Config, fragment: str) -> bool:
+    return any(fragment in str(arg) for arg in config.invocation_params.args)
+
+
+def _should_run_live(config: pytest.Config) -> bool:
+    return config.getoption("--run-live") or _selected_path(config, "tests/smoke/live")
+
+
+def _should_run_perf(config: pytest.Config) -> bool:
+    return config.getoption("--run-perf") or _selected_path(config, "tests/perf")
+
+
+def _apply_explicit_only_skips(
+    items: list[pytest.Item],
+    *,
+    skip_live: bool,
+    skip_perf: bool,
+) -> None:
+    skip_live_marker = pytest.mark.skip(reason="live tests are explicit-only")
+    skip_perf_marker = pytest.mark.skip(reason="performance tests are explicit-only")
+
     for item in items:
-        if "live" in item.keywords:
-            item.add_marker(skip_live)
+        if skip_live and "live" in item.keywords:
+            item.add_marker(skip_live_marker)
+        if skip_perf and "tests/perf/" in item.nodeid:
+            item.add_marker(skip_perf_marker)

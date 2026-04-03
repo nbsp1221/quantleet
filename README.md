@@ -82,6 +82,7 @@ The repository currently relies on:
 
 - unit tests
 - integration tests
+- explicit performance regression checks
 - structure and repo-rule checks
 - static analysis
 - packaging checks
@@ -91,6 +92,7 @@ For day-to-day development, use the Poe task layer:
 
 - `uv run poe lint`
 - `uv run poe format`
+- `uv run poe perf-check`
 - `uv run poe typecheck`
 - `uv run poe test`
 - `uv run poe test-unit`
@@ -105,6 +107,10 @@ For day-to-day development, use the Poe task layer:
 - `uv run poe live-smoke`
 - `uv run poe verify`
 
+For runtime-sensitive changes, also run the explicit performance lane:
+
+- `uv run poe perf-check`
+
 Agent-first repository harnessing keeps documentation, architecture rules, and local verification as first-class repository features.
 
 The harness is repo-local DX infrastructure. It lives in `scripts/` and is orchestrated by Poe; it is not modeled as an installed package CLI.
@@ -115,6 +121,7 @@ The test suite is being organized by test type at the top level:
 
 - `tests/unit`
 - `tests/integration`
+- `tests/perf`
 - `tests/structure`
 - `tests/smoke`
 

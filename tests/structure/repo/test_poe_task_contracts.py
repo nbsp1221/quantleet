@@ -7,6 +7,7 @@ from tests.support import ROOT
 REQUIRED_POE_TASKS = [
     "lint",
     "format",
+    "perf-check",
     "typecheck",
     "test",
     "test-unit",
@@ -25,12 +26,13 @@ REQUIRED_POE_TASKS = [
 
 def write_minimal_repo_docs(tmp_path) -> None:
     (tmp_path / "README.md").write_text(
-        "# quantcraft\n\n## Setup\n\nuv run poe verify\n",
+        "# quantcraft\n\n## Setup\n\nuv run poe verify\nuv run poe perf-check\n",
         encoding="utf-8",
     )
     (tmp_path / "AGENTS.md").write_text(
         (
             "uv run poe verify\n"
+            "uv run poe perf-check\n"
             "uv run poe coverage\n"
             "repo-local harness commands\n"
             "docs/design-docs/index.md\n"
@@ -117,6 +119,7 @@ def write_minimal_repo_docs(tmp_path) -> None:
     (references_dir / "tooling.md").write_text(
         (
             "uv run poe verify\n"
+            "uv run poe perf-check\n"
             "uv run poe coverage\n"
             "uv run poe format\n"
             "uv run poe test-live\n"
@@ -171,6 +174,7 @@ def test_poe_task_surface_is_documented() -> None:
 
     for command in [
         "uv run poe verify",
+        "uv run poe perf-check",
         "uv run poe coverage",
         "uv run poe format",
         "uv run poe test-live",
@@ -228,6 +232,7 @@ type = "uv"
 [tool.poe.tasks]
 lint = "ruff check ."
 format = "ruff format ."
+perf-check = "pytest tests/perf -q"
 typecheck = "mypy src"
 test = "pytest -q"
 test-unit = "pytest tests/unit -q"

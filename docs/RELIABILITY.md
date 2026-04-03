@@ -57,6 +57,14 @@ Low-level repository commands remain available for direct use:
 
 `uv run poe` is the preferred developer entry point for common local workflows. It is a harnessed convenience layer above the repo-local scripts.
 
+The performance gate is explicit:
+
+- `uv run poe verify` remains the correctness lane
+- `uv run poe perf-check` is the canonical RSI performance-regression lane
+- `perf-check` uses the checked-in BTC USD-M 1h 2025 CSV fixture and measures the backtest execution call only
+- the gate fails unless first-run runtime is `< 1.0s`
+- the gate also fails unless steady-state median runtime is `< 1.0s`
+
 ## Coverage Guardrail
 
 The repository treats coverage as a repo-local reliability floor for source code under `src/quantcraft`.

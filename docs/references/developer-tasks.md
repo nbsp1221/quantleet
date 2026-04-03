@@ -13,6 +13,7 @@ Do not collapse these layers together.
 
 - `uv run poe lint`
 - `uv run poe format`
+- `uv run poe perf-check`
 - `uv run poe typecheck`
 - `uv run poe test`
 - `uv run poe test-unit`

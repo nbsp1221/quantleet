@@ -8,10 +8,10 @@ class _SeriesBuffer:
     __slots__ = ("values",)
 
     def __init__(self, values: tuple[float, ...] = ()) -> None:
-        self.values = values
+        self.values = list(values)
 
     def append(self, value: float) -> None:
-        self.values = self.values + (value,)
+        self.values.append(value)
 
 
 class SeriesView:

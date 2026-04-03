@@ -21,6 +21,7 @@ dev = [
     "nbformat>=5.10.4",
     "poethepoet>=0.42.1",
     "pytest>=9.0.2",
+    "pytest-benchmark>=5.2.2",
     "ruff>=0.15.5",
 ]
 
@@ -34,6 +35,7 @@ executor = "uv"
 [tool.poe.tasks]
 lint = { cmd = "ruff check .", help = "Run Ruff lint checks" }
 format = { cmd = "ruff format .", help = "Format the repository with Ruff" }
+"perf-check" = { cmd = "pytest tests/perf/test_rsi_backtest_benchmark.py -q -x --run-perf", help = "Run the canonical performance regression gate" }
 typecheck = { cmd = "mypy src", help = "Run mypy against the package source" }
 test = { cmd = "pytest -q", help = "Run the default test lane" }
 test-unit = { cmd = "pytest tests/unit -q", help = "Run unit tests" }

@@ -96,7 +96,7 @@ def test_current_exec_plan_docs_use_explicit_lifecycle_metadata() -> None:
     assert "## Lifecycle Metadata" in plans_doc
     assert "| Plan | Status | Note |" in active_index
     assert "| Plan | Status | Note |" in completed_index
-    assert "2026-04-02-indicator-performance-handoff.md" in active_index
+    assert "2026-04-03-indicator-performance-optimization.md" not in active_index
     assert "2026-03-25-implemented-scope-sync.md" not in active_index
     assert "2026-03-24-research-ergonomics-implementation.md" not in active_index
     assert "2026-03-30-coverage-harness-implementation.md" not in active_index
@@ -111,6 +111,7 @@ def test_current_exec_plan_docs_use_explicit_lifecycle_metadata() -> None:
     assert "2026-03-25-implemented-scope-sync.md" in completed_index
     assert "2026-03-30-coverage-harness-implementation.md" in completed_index
     assert "2026-04-02-agent-harness-anti-gaming-improvement.md" in completed_index
+    assert "2026-04-03-indicator-performance-optimization.md" in completed_index
 
 
 def test_parse_exec_plan_index_entries_accepts_backticked_md_target_without_link() -> None:

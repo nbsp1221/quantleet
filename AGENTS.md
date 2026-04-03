@@ -34,6 +34,7 @@ Use `uv run poe` as the developer task layer on top of those repo-local harness 
 
 - `uv run poe lint`
 - `uv run poe format`
+- `uv run poe perf-check`
 - `uv run poe typecheck`
 - `uv run poe test`
 - `uv run poe test-unit`
@@ -70,6 +71,7 @@ Tier A changes require stronger human gate, explicit plan coverage, and matching
 - Prefer the documented command surface and repository docs over local memory.
 - Treat `scripts/` plus `poe` as the harness contract; do not reintroduce package-level CLI shims for repo-local DX flows.
 - Live tests are explicit-only and excluded from the default `pytest` lane.
+- Performance checks are explicit-only and excluded from the default `verify` lane.
 - Place new tests under the taxonomy, not as flat `tests/test_*.py` files.
 - Mirror source structure inside `tests/unit` and `tests/integration` once a matching source package path exists.
 - Keep repository-rule checks under `tests/structure`.
