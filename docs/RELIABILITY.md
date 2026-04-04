@@ -40,6 +40,7 @@ Tier A work requires stronger human gate and must not be treated as agent-autono
 Current baseline verification commands:
 
 - `uv run poe verify`
+- `uv run poe verify-runtime`
 - `uv run poe coverage`
 - `uv run poe format`
 - `uv run poe test-live`
@@ -61,9 +62,17 @@ The performance gate is explicit:
 
 - `uv run poe verify` remains the correctness lane
 - `uv run poe perf-check` is the canonical RSI performance-regression lane
+- `uv run poe verify-runtime` is the stronger explicit lane for runtime-sensitive research changes
 - `perf-check` uses the checked-in BTC USD-M 1h 2025 CSV fixture and measures the backtest execution call only
 - the gate fails unless first-run runtime is `< 1.0s`
 - the gate also fails unless steady-state median runtime is `< 1.0s`
+
+Run `uv run poe verify-runtime` when a change touches the runtime-sensitive research path, especially:
+
+- `src/quantcraft/research/_indicator_runtime.py`
+- `src/quantcraft/research/_indicator_kernels.py`
+- `src/quantcraft/research/ta.py`
+- `src/quantcraft/research/application/backtest.py`
 
 ## Coverage Guardrail
 

@@ -48,6 +48,7 @@ Use `uv run poe` as the developer task layer on top of those repo-local harness 
 - `uv run poe notebook-validate`
 - `uv run poe live-smoke`
 - `uv run poe verify`
+- `uv run poe verify-runtime`
 
 ## Safety Tiers
 
@@ -72,6 +73,7 @@ Tier A changes require stronger human gate, explicit plan coverage, and matching
 - Treat `scripts/` plus `poe` as the harness contract; do not reintroduce package-level CLI shims for repo-local DX flows.
 - Live tests are explicit-only and excluded from the default `pytest` lane.
 - Performance checks are explicit-only and excluded from the default `verify` lane.
+- Runtime-sensitive `research` changes under `src/quantcraft/research/_indicator_runtime.py`, `src/quantcraft/research/_indicator_kernels.py`, `src/quantcraft/research/ta.py`, or `src/quantcraft/research/application/backtest.py` should also run `uv run poe verify-runtime`.
 - Place new tests under the taxonomy, not as flat `tests/test_*.py` files.
 - Mirror source structure inside `tests/unit` and `tests/integration` once a matching source package path exists.
 - Keep repository-rule checks under `tests/structure`.

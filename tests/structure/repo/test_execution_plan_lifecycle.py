@@ -92,10 +92,15 @@ def test_current_exec_plan_docs_use_explicit_lifecycle_metadata() -> None:
     completed_plan = (
         ROOT / "docs/exec-plans/completed/2026-03-21-backtest-mvp-implementation.md"
     ).read_text(encoding="utf-8")
+    completed_stabilization_plan = (
+        ROOT / "docs/exec-plans/completed/2026-04-03-test-harness-stabilization.md"
+    ).read_text(encoding="utf-8")
 
     assert "## Lifecycle Metadata" in plans_doc
     assert "| Plan | Status | Note |" in active_index
     assert "| Plan | Status | Note |" in completed_index
+    assert "2026-04-03-test-harness-stabilization.md" not in active_index
+    assert "2026-04-03-test-harness-stabilization.md" in completed_index
     assert "2026-04-03-indicator-performance-optimization.md" not in active_index
     assert "2026-03-25-implemented-scope-sync.md" not in active_index
     assert "2026-03-24-research-ergonomics-implementation.md" not in active_index
@@ -112,6 +117,7 @@ def test_current_exec_plan_docs_use_explicit_lifecycle_metadata() -> None:
     assert "2026-03-30-coverage-harness-implementation.md" in completed_index
     assert "2026-04-02-agent-harness-anti-gaming-improvement.md" in completed_index
     assert "2026-04-03-indicator-performance-optimization.md" in completed_index
+    assert "- status: completed" in completed_stabilization_plan
 
 
 def test_parse_exec_plan_index_entries_accepts_backticked_md_target_without_link() -> None:
@@ -239,6 +245,55 @@ def test_collect_plan_lifecycle_issues_flags_cross_index_contradiction(
     assert (
         "Execution plan index docs/exec-plans/active/index.md references missing "
         "plan file: docs/exec-plans/active/2026-03-21-backtest-mvp-implementation.md"
+    ) in issues
+
+
+def test_collect_plan_lifecycle_issues_flags_duplicate_index_targets(tmp_path: Path) -> None:
+    write_exec_plan_indexes(
+        tmp_path,
+        active_rows=[
+            "| [`2026-03-22-sample.md`](2026-03-22-sample.md) | active | Work in progress. |",
+            "| [`2026-03-22-sample.md`](2026-03-22-sample.md) | active | Duplicate row. |",
+        ],
+        completed_rows=[],
+    )
+    write_exec_plan(
+        tmp_path,
+        relative_path="docs/exec-plans/active/2026-03-22-sample.md",
+        status="active",
+        status_reason="still collecting follow-up cleanup",
+        slice_statuses=["complete"],
+    )
+
+    issues = collect_plan_lifecycle_issues(tmp_path)
+
+    assert (
+        "Execution plan index docs/exec-plans/active/index.md has duplicate entry target: "
+        "2026-03-22-sample.md"
+    ) in issues
+
+
+def test_collect_plan_lifecycle_issues_flags_missing_index_note(tmp_path: Path) -> None:
+    write_exec_plan_indexes(
+        tmp_path,
+        active_rows=[
+            "| [`2026-03-22-sample.md`](2026-03-22-sample.md) | active |  |",
+        ],
+        completed_rows=[],
+    )
+    write_exec_plan(
+        tmp_path,
+        relative_path="docs/exec-plans/active/2026-03-22-sample.md",
+        status="active",
+        status_reason="still collecting follow-up cleanup",
+        slice_statuses=["complete"],
+    )
+
+    issues = collect_plan_lifecycle_issues(tmp_path)
+
+    assert (
+        "Execution plan index docs/exec-plans/active/index.md is missing a note for "
+        "docs/exec-plans/active/2026-03-22-sample.md"
     ) in issues
 
 

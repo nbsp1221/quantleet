@@ -8,6 +8,7 @@ REQUIRED_POE_TASKS = [
     "lint",
     "format",
     "perf-check",
+    "verify-runtime",
     "typecheck",
     "test",
     "test-unit",
@@ -26,13 +27,19 @@ REQUIRED_POE_TASKS = [
 
 def write_minimal_repo_docs(tmp_path) -> None:
     (tmp_path / "README.md").write_text(
-        "# quantcraft\n\n## Setup\n\nuv run poe verify\nuv run poe perf-check\n",
+        (
+            "# quantcraft\n\n## Setup\n\n"
+            "uv run poe verify\n"
+            "uv run poe perf-check\n"
+            "uv run poe verify-runtime\n"
+        ),
         encoding="utf-8",
     )
     (tmp_path / "AGENTS.md").write_text(
         (
             "uv run poe verify\n"
             "uv run poe perf-check\n"
+            "uv run poe verify-runtime\n"
             "uv run poe coverage\n"
             "repo-local harness commands\n"
             "docs/design-docs/index.md\n"
@@ -44,7 +51,7 @@ def write_minimal_repo_docs(tmp_path) -> None:
         encoding="utf-8",
     )
     (tmp_path / "agent-development-guide-ko.md").write_text(
-        "scripts/\nuv run poe verify\n",
+        "scripts/\nuv run poe verify\nuv run poe verify-runtime\n",
         encoding="utf-8",
     )
 
@@ -120,6 +127,7 @@ def write_minimal_repo_docs(tmp_path) -> None:
         (
             "uv run poe verify\n"
             "uv run poe perf-check\n"
+            "uv run poe verify-runtime\n"
             "uv run poe coverage\n"
             "uv run poe format\n"
             "uv run poe test-live\n"
@@ -175,6 +183,7 @@ def test_poe_task_surface_is_documented() -> None:
     for command in [
         "uv run poe verify",
         "uv run poe perf-check",
+        "uv run poe verify-runtime",
         "uv run poe coverage",
         "uv run poe format",
         "uv run poe test-live",
@@ -233,6 +242,7 @@ type = "uv"
 lint = "ruff check ."
 format = "ruff format ."
 perf-check = "pytest tests/perf -q"
+verify-runtime = ["verify", "perf-check"]
 typecheck = "mypy src"
 test = "pytest -q"
 test-unit = "pytest tests/unit -q"

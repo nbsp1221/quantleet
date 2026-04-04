@@ -106,10 +106,12 @@ For day-to-day development, use the Poe task layer:
 - `uv run poe notebook-validate`
 - `uv run poe live-smoke`
 - `uv run poe verify`
+- `uv run poe verify-runtime`
 
 For runtime-sensitive changes, also run the explicit performance lane:
 
 - `uv run poe perf-check`
+- `uv run poe verify-runtime`
 
 Agent-first repository harnessing keeps documentation, architecture rules, and local verification as first-class repository features.
 

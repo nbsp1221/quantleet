@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import tomllib
 
+from scripts import coverage_check
 from tests.support import ROOT
 
 
@@ -22,17 +23,10 @@ def test_poe_verify_includes_coverage_gate() -> None:
 
 
 def test_repository_defines_approved_coverage_thresholds() -> None:
-    script_path = ROOT / "scripts" / "coverage_check.py"
-
-    assert script_path.exists()
-
-    script = script_path.read_text(encoding="utf-8")
-    assert "90.0" in script
-    assert "100.0" in script
-    assert "src/quantcraft/trading/domain/" in script
+    assert coverage_check.GLOBAL_MIN_COVERAGE == 90.0
+    assert coverage_check.TRADING_DOMAIN_MIN_COVERAGE == 100.0
+    assert coverage_check.TRADING_DOMAIN_PREFIX == "src/quantcraft/trading/domain/"
 
 
 def test_coverage_harness_targets_source_only() -> None:
-    script = (ROOT / "scripts" / "coverage_check.py").read_text(encoding="utf-8")
-
-    assert "src/quantcraft/*" in script
+    assert coverage_check.INCLUDE_PATTERN == "src/quantcraft/*"

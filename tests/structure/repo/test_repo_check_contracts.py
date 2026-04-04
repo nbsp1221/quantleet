@@ -62,6 +62,8 @@ executor = "uv"
 [tool.poe.tasks]
 lint = "ruff check ."
 format = "ruff format ."
+perf-check = "pytest tests/perf/test_rsi_backtest_benchmark.py -q -x --run-perf"
+verify-runtime = ["verify", "perf-check"]
 typecheck = "mypy src"
 test = "pytest -q"
 test-unit = "pytest tests/unit -q"
@@ -149,6 +151,8 @@ executor = "uv"
 [tool.poe.tasks]
 lint = "ruff check ."
 format = "ruff format ."
+perf-check = "pytest tests/perf/test_rsi_backtest_benchmark.py -q -x --run-perf"
+verify-runtime = ["verify", "perf-check"]
 typecheck = "mypy src"
 test = "pytest -q"
 test-unit = "pytest tests/unit -q"
@@ -200,6 +204,8 @@ executor = "uv"
 [tool.poe.tasks]
 lint = "ruff check ."
 format = "ruff format ."
+perf-check = "pytest tests/perf/test_rsi_backtest_benchmark.py -q -x --run-perf"
+verify-runtime = ["verify", "perf-check"]
 typecheck = "mypy src"
 test = "pytest -q"
 test-unit = "pytest tests/unit -q"

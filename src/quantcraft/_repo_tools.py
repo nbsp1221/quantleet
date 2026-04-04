@@ -143,6 +143,8 @@ INDEX_STATUS_MAP_CONFIG = {
 REQUIRED_POE_TASKS = (
     "lint",
     "format",
+    "perf-check",
+    "verify-runtime",
     "typecheck",
     "test",
     "test-unit",

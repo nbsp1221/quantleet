@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import inspect
 from abc import ABC
-from typing import cast
 
 import pytest
 
@@ -268,10 +267,37 @@ def test_failed_on_bar_does_not_leak_staged_intents_to_the_next_bar() -> None:
 
 
 def test_sell_is_the_current_long_exit_surface() -> None:
-    sell_signature = inspect.signature(Strategy.sell)
+    class SellWhileFlatInLongOnlyScopeStrategy(Strategy):
+        def on_bar(self, bar: BarEvent) -> None:
+            self.sell(symbol=bar.symbol, quantity=1.0, tag="flat-exit")
 
-    tag_parameter = cast(inspect.Parameter, sell_signature.parameters.get("tag"))
-    quantity_parameter = cast(inspect.Parameter, sell_signature.parameters.get("quantity"))
+    result = BacktestEngine(
+        initial_cash=1_000.0,
+        costs=CostConfig(tick_size=0.1, slippage_ticks=0.0, fee_rate=0.0),
+    ).run(
+        bars=_make_bar_series(
+            (
+                TimeBar(
+                    timestamp=60,
+                    open=100.0,
+                    high=101.0,
+                    low=99.0,
+                    close=100.5,
+                    volume=10.0,
+                ),
+                TimeBar(
+                    timestamp=120,
+                    open=101.0,
+                    high=102.0,
+                    low=100.0,
+                    close=101.5,
+                    volume=10.0,
+                ),
+            )
+        ),
+        strategy=SellWhileFlatInLongOnlyScopeStrategy(),
+    )
 
-    assert tag_parameter is not None
-    assert quantity_parameter is not None
+    assert result.trade_log == ()
+    assert result.final_state.position_quantity == 0.0
+    assert result.final_state.cash == 1_000.0

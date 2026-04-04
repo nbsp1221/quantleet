@@ -244,6 +244,40 @@ def test_repo_check_flags_future_quality_as_of_date(tmp_path: Path) -> None:
     assert "Quality metadata field as_of cannot be in the future" in issues
 
 
+def test_repo_check_flags_invalid_quality_as_of_format(tmp_path: Path) -> None:
+    write_valid_quality_fixture(
+        tmp_path,
+        metadata_lines=[
+            "- as_of: 03-22-2026",
+            FRESHNESS_WINDOW_DAYS,
+            "- evidence_rule: Scores must cite current repository evidence and "
+            "stay conservative.",
+            FRESHNESS_RULE,
+        ],
+    )
+
+    issues = collect_quality_issues(tmp_path)
+
+    assert "Quality metadata field as_of must use YYYY-MM-DD" in issues
+
+
+def test_repo_check_flags_non_positive_freshness_window_days(tmp_path: Path) -> None:
+    write_valid_quality_fixture(
+        tmp_path,
+        metadata_lines=[
+            "- as_of: 2026-03-22",
+            "- freshness_window_days: 0",
+            "- evidence_rule: Scores must cite current repository evidence and "
+            "stay conservative.",
+            FRESHNESS_RULE,
+        ],
+    )
+
+    issues = collect_quality_issues(tmp_path)
+
+    assert "Quality metadata field freshness_window_days must be a positive integer" in issues
+
+
 def test_repo_check_flags_missing_required_quality_area_row(tmp_path: Path) -> None:
     write_valid_quality_fixture(
         tmp_path,

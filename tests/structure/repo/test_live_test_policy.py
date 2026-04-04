@@ -3,21 +3,27 @@ from types import SimpleNamespace
 import pytest
 
 from tests import conftest as root_conftest
-from tests.support import ROOT
 
 
-def test_conftest_declares_explicit_live_test_policy() -> None:
-    conftest = (ROOT / "tests/conftest.py").read_text(encoding="utf-8")
+class _FakeParser:
+    def __init__(self) -> None:
+        self.options: dict[str, dict[str, object]] = {}
 
-    assert "--run-live" in conftest
-    assert "tests/smoke/live" in conftest
+    def addoption(self, name: str, **kwargs: object) -> None:
+        self.options[name] = kwargs
 
 
-def test_conftest_declares_explicit_perf_test_policy() -> None:
-    conftest = (ROOT / "tests/conftest.py").read_text(encoding="utf-8")
+def test_pytest_addoption_registers_live_and_perf_flags() -> None:
+    parser = _FakeParser()
 
-    assert "--run-perf" in conftest
-    assert "tests/perf" in conftest
+    root_conftest.pytest_addoption(parser)  # type: ignore[arg-type]
+
+    assert parser.options["--run-live"]["action"] == "store_true"
+    assert parser.options["--run-live"]["default"] is False
+    assert "tests/smoke/live" in str(parser.options["--run-live"]["help"])
+    assert parser.options["--run-perf"]["action"] == "store_true"
+    assert parser.options["--run-perf"]["default"] is False
+    assert "tests/perf" in str(parser.options["--run-perf"]["help"])
 
 
 class _FakeConfig:

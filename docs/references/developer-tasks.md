@@ -14,6 +14,7 @@ Do not collapse these layers together.
 - `uv run poe lint`
 - `uv run poe format`
 - `uv run poe perf-check`
+- `uv run poe verify-runtime`
 - `uv run poe typecheck`
 - `uv run poe test`
 - `uv run poe test-unit`
@@ -26,6 +27,9 @@ Do not collapse these layers together.
 - `uv run poe notebook-validate`
 - `uv run poe live-smoke`
 - `uv run poe verify`
+
+Use `uv run poe verify-runtime` for runtime-sensitive research changes.
+Canonical trigger paths live in `docs/RELIABILITY.md` and `AGENTS.md`.
 
 ## Direct Harness Commands
 
