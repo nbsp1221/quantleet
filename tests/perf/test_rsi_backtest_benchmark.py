@@ -1,65 +1,14 @@
 from __future__ import annotations
 
-import csv
-from pathlib import Path
 from time import perf_counter
 
 import pytest
 
-from quantcraft.data import BarSeries, DataFrameDataSource
-from quantcraft.research import BacktestEngine, Strategy, qc, ta
-from quantcraft.trading.domain.costs import CostConfig
+from tests.support_backtest import load_canonical_rsi_bars, run_canonical_rsi_backtest
 
-FIXTURE_PATH = (
-    Path(__file__).resolve().parents[1]
-    / "fixtures"
-    / "backtest"
-    / "binance_usdm_btcusdtusdt_1h_2025.csv"
-)
-EXPECTED_COLUMNS = ("timestamp", "open", "high", "low", "close", "volume")
-EXPECTED_ROWS = 8_760
 FIRST_RUN_THRESHOLD_SECONDS = 1.0
 STEADY_STATE_THRESHOLD_SECONDS = 1.0
 STEADY_STATE_ROUNDS = 5
-
-
-class Rsi3070Strategy(Strategy):
-    def init(self) -> None:
-        self.rsi = ta.rsi(self.data.close, length=14)
-
-    def on_bar(self, bar) -> None:
-        if qc.is_na(self.rsi[0]):
-            return
-        if (not self.position.is_open) and self.rsi[0] < 30:
-            self.buy(symbol=bar.symbol, quantity=1.0)
-        elif self.position.is_open and self.rsi[0] > 70:
-            self.sell(symbol=bar.symbol, quantity=1.0)
-
-
-def _load_canonical_bars() -> BarSeries:
-    with FIXTURE_PATH.open(newline="", encoding="utf-8") as handle:
-        reader = csv.DictReader(handle)
-        assert tuple(reader.fieldnames or ()) == EXPECTED_COLUMNS
-        rows = list(reader)
-
-    assert len(rows) == EXPECTED_ROWS
-    assert rows[0]["timestamp"] == "2025-01-01T00:00:00+00:00"
-    assert rows[-1]["timestamp"] == "2025-12-31T23:00:00+00:00"
-    assert rows == sorted(rows, key=lambda row: str(row["timestamp"]))
-
-    return DataFrameDataSource(
-        frame=rows,
-        symbol="BTC/USDT:USDT",
-        timeframe="1h",
-    ).load()
-
-
-def _run_canonical_backtest(bars: BarSeries):
-    engine = BacktestEngine(
-        initial_cash=1_000_000.0,
-        costs=CostConfig(tick_size=0.1, slippage_ticks=1.0, fee_rate=0.0004),
-    )
-    return engine.run(bars=bars, strategy=Rsi3070Strategy())
 
 
 def _assert_canonical_result_shape(result) -> None:
@@ -70,10 +19,10 @@ def _assert_canonical_result_shape(result) -> None:
 
 @pytest.mark.slow
 def test_rsi_backtest_first_run_is_within_threshold() -> None:
-    bars = _load_canonical_bars()
+    bars = load_canonical_rsi_bars()
 
     first_run_started_at = perf_counter()
-    first_result = _run_canonical_backtest(bars)
+    first_result = run_canonical_rsi_backtest(bars)
     first_run_seconds = perf_counter() - first_run_started_at
 
     _assert_canonical_result_shape(first_result)
@@ -86,10 +35,10 @@ def test_rsi_backtest_first_run_is_within_threshold() -> None:
 
 @pytest.mark.slow
 def test_rsi_backtest_steady_state_median_is_within_threshold(benchmark) -> None:
-    bars = _load_canonical_bars()
+    bars = load_canonical_rsi_bars()
 
     steady_result = benchmark.pedantic(
-        _run_canonical_backtest,
+        run_canonical_rsi_backtest,
         args=(bars,),
         rounds=STEADY_STATE_ROUNDS,
         iterations=1,
