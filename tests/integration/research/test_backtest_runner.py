@@ -133,6 +133,15 @@ class PositionViewProbeStrategy(Strategy):
             self.sell(symbol=bar.symbol, quantity=2.0, tag="full-exit")
 
 
+class ReusedStrategyInstanceProbe(Strategy):
+    def on_bar(self, bar) -> None:
+        observed_bars = len(self.data.close)
+        if observed_bars == 1:
+            self.buy(symbol=bar.symbol, quantity=1.0, tag="entry")
+        elif observed_bars == 2 and self.position.is_open:
+            self.sell(symbol=bar.symbol, quantity=1.0, tag="exit")
+
+
 class FakeExchangeClient:
     def __init__(self, *, pages: list[list[list[float]]]) -> None:
         self.pages = pages[:]
@@ -718,3 +727,21 @@ def test_backtest_runner_exposes_position_view_during_on_bar() -> None:
         (True, 2.0, 113.333333333333),
         (False, 0.0, 0.0),
     ]
+
+
+def test_backtest_engine_reuses_strategy_instance_without_cross_run_state_leakage() -> None:
+    strategy = ReusedStrategyInstanceProbe()
+    bars = _fixture_bar_series()
+
+    first_result = _run_engine_backtest(
+        bars=bars,
+        strategy=strategy,
+    )
+    second_result = _run_engine_backtest(
+        bars=bars,
+        strategy=strategy,
+    )
+
+    assert second_result.trade_log == first_result.trade_log
+    assert second_result.summary.total_fills == first_result.summary.total_fills
+    assert second_result.summary.total_trades == first_result.summary.total_trades
