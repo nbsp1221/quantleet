@@ -176,6 +176,21 @@ def test_pyproject_defines_required_poe_tasks() -> None:
         assert task_name in task_names
 
 
+def test_poe_verify_sequence_matches_default_local_verification_bundle() -> None:
+    pyproject = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    verify = pyproject["tool"]["poe"]["tasks"]["verify"]
+
+    assert verify["sequence"] == [
+        "lint",
+        "typecheck",
+        "test",
+        "coverage",
+        "build",
+        "repo-check",
+        "notebook-validate",
+    ]
+
+
 def test_poe_task_surface_is_documented() -> None:
     agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
     tooling = (ROOT / "docs" / "references" / "tooling.md").read_text(encoding="utf-8")

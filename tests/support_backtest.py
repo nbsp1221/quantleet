@@ -11,7 +11,10 @@ from quantcraft.trading.domain.costs import CostConfig
 from quantcraft.trading.domain.events import FillEvent
 
 CANONICAL_BACKTEST_FIXTURE_PATH = (
-    Path(__file__).resolve().parent / "fixtures" / "backtest" / "binance_usdm_btcusdtusdt_1h_2025.csv"
+    Path(__file__).resolve().parent
+    / "fixtures"
+    / "backtest"
+    / "binance_usdm_btcusdtusdt_1h_2025.csv"
 )
 CANONICAL_BACKTEST_EXPECTED_COLUMNS = (
     "timestamp",
