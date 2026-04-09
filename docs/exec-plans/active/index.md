@@ -15,5 +15,3 @@ Historical plans currently remain in `docs/plans/` while the repository moves to
 | Plan | Status | Note |
 | --- | --- | --- |
 | _None currently active_ | active | Open a new execution plan here when the next batch starts. |
-
-Historical implementation plans remain discoverable under `docs/plans/` until they are either superseded or re-indexed into the active/completed execution-plan system.
