@@ -12,9 +12,9 @@ STEADY_STATE_ROUNDS = 5
 
 
 def _assert_canonical_result_shape(result) -> None:
-    assert result.summary.total_trades == 118
-    assert result.summary.total_fills == 236
-    assert result.summary.final_equity == pytest.approx(1_038_523.5766)
+    assert result.summary.total_trades == 34
+    assert result.summary.total_fills == 68
+    assert result.summary.final_equity == pytest.approx(1_007_629.82664)
 
 
 @pytest.mark.slow

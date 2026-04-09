@@ -62,7 +62,7 @@ def _run_backtest(
     costs: CostConfig,
 ) -> BacktestResult:
     runtime = _StrategyDriver(strategy)
-    runtime.initialize()
+    runtime.initialize(bars=bars)
     state = TradingState(cash=initial_cash, equity=initial_cash)
     trade_log: list[FillEvent] = []
     equity_curve: list[float] = []

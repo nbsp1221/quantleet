@@ -1,87 +1,38 @@
 from __future__ import annotations
 
-import math
 from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Any, Generic, Protocol, TypeVar
+from typing import Generic, TypeVar
 
+from quantcraft.research.indicators.runtime.base import IndicatorKernel, IndicatorState, SeriesLike
+from quantcraft.research.indicators.runtime.views import IndicatorSeriesView
 
-class _SeriesLike(Protocol):
-    def __getitem__(self, index: int) -> float: ...
-
-    def __len__(self) -> int: ...
-
-    @property
-    def latest(self) -> float: ...
-
-    @property
-    def is_empty(self) -> bool: ...
-
-
-class _IndicatorState(Protocol):
-    @property
-    def outputs(self) -> tuple[Sequence[float], ...]: ...
-
-
-_KernelState = TypeVar("_KernelState", bound=_IndicatorState)
-
-
-class _IndicatorKernel(Protocol[_KernelState]):
-    def build(self, sources: tuple[tuple[float, ...], ...]) -> _KernelState: ...
-
-    def append(self, state: _KernelState, values: tuple[float, ...]) -> None: ...
-
-
-class _IndicatorSeriesView:
-    __slots__ = ("_runtime", "_output_index")
-
-    def __init__(self, runtime: _IndicatorRuntime[Any], output_index: int) -> None:
-        self._runtime = runtime
-        self._output_index = output_index
-
-    def __getitem__(self, index: int) -> float:
-        if index < 0:
-            raise ValueError("computed series does not allow negative indices")
-        values = self._runtime.values(self._output_index)
-        if index >= len(values):
-            return math.nan
-        return values[-(index + 1)]
-
-    def __len__(self) -> int:
-        return len(self._runtime.values(self._output_index))
-
-    @property
-    def latest(self) -> float:
-        return self[0]
-
-    @property
-    def is_empty(self) -> bool:
-        return len(self) == 0
+_KernelState = TypeVar("_KernelState", bound=IndicatorState)
 
 
 @dataclass(frozen=True, slots=True)
-class _RebuildPlan:
+class RebuildPlan:
     lengths: tuple[int, ...]
     sources: tuple[tuple[float, ...], ...]
 
 
 @dataclass(frozen=True, slots=True)
-class _AppendPlan:
+class AppendPlan:
     lengths: tuple[int, ...]
     rows: tuple[tuple[float, ...], ...]
 
 
-class _SourceSynchronizer:
+class SourceSynchronizer:
     __slots__ = ("_sources", "_lengths")
 
-    def __init__(self, sources: tuple[_SeriesLike, ...]) -> None:
+    def __init__(self, sources: tuple[SeriesLike, ...]) -> None:
         self._sources = sources
         self._lengths: tuple[int, ...] | None = None
 
-    def plan(self) -> _RebuildPlan | _AppendPlan | None:
+    def plan(self) -> RebuildPlan | AppendPlan | None:
         current_lengths = tuple(len(source) for source in self._sources)
         if self._lengths is None:
-            return _RebuildPlan(
+            return RebuildPlan(
                 lengths=current_lengths,
                 sources=tuple(self._materialize_source(source) for source in self._sources),
             )
@@ -89,14 +40,14 @@ class _SourceSynchronizer:
             return None
         append_delta = self._append_delta(current_lengths)
         if append_delta is None:
-            return _RebuildPlan(
+            return RebuildPlan(
                 lengths=current_lengths,
                 sources=tuple(self._materialize_source(source) for source in self._sources),
             )
         appended = tuple(
             self._materialize_appended_values(source, append_delta) for source in self._sources
         )
-        return _AppendPlan(lengths=current_lengths, rows=tuple(zip(*appended)))
+        return AppendPlan(lengths=current_lengths, rows=tuple(zip(*appended)))
 
     def commit(self, lengths: tuple[int, ...]) -> None:
         self._lengths = lengths
@@ -117,31 +68,31 @@ class _SourceSynchronizer:
         return deltas[0]
 
     @staticmethod
-    def _materialize_source(series: _SeriesLike) -> tuple[float, ...]:
+    def _materialize_source(series: SeriesLike) -> tuple[float, ...]:
         return tuple(series[index] for index in range(len(series) - 1, -1, -1))
 
     @staticmethod
-    def _materialize_appended_values(series: _SeriesLike, delta: int) -> tuple[float, ...]:
+    def _materialize_appended_values(series: SeriesLike, delta: int) -> tuple[float, ...]:
         if delta <= 0:
             return ()
         return tuple(series[index] for index in range(delta - 1, -1, -1))
 
 
-class _IndicatorRuntime(Generic[_KernelState]):
+class IndicatorRuntime(Generic[_KernelState]):
     __slots__ = ("_kernel", "_state", "_synchronizer")
 
     def __init__(
         self,
         *,
-        sources: tuple[_SeriesLike, ...],
-        kernel: _IndicatorKernel[_KernelState],
+        sources: tuple[SeriesLike, ...],
+        kernel: IndicatorKernel[_KernelState],
     ) -> None:
         self._kernel = kernel
         self._state: _KernelState | None = None
-        self._synchronizer = _SourceSynchronizer(sources)
+        self._synchronizer = SourceSynchronizer(sources)
 
-    def view(self, output_index: int = 0) -> _IndicatorSeriesView:
-        return _IndicatorSeriesView(self, output_index)
+    def view(self, output_index: int = 0) -> IndicatorSeriesView:
+        return IndicatorSeriesView(self, output_index)
 
     def values(self, output_index: int) -> Sequence[float]:
         self._sync()
@@ -153,7 +104,7 @@ class _IndicatorRuntime(Generic[_KernelState]):
         plan = self._synchronizer.plan()
         if plan is None:
             return
-        if isinstance(plan, _RebuildPlan):
+        if isinstance(plan, RebuildPlan):
             self._state = self._kernel.build(plan.sources)
             self._synchronizer.commit(plan.lengths)
             return
@@ -162,3 +113,6 @@ class _IndicatorRuntime(Generic[_KernelState]):
         for values in plan.rows:
             self._kernel.append(self._state, values)
         self._synchronizer.commit(plan.lengths)
+
+
+__all__ = ["AppendPlan", "IndicatorRuntime", "RebuildPlan", "SourceSynchronizer"]

@@ -321,12 +321,13 @@ The approved baseline signatures are:
 - `ta.rsi(series, length=14)`
 - `ta.atr(high, low, close, length=14)`
 - `ta.cci(high, low, close, length=20)`
-- `ta.bollinger_bands(series, length=20, stddev=2)`
+- `ta.bb(series, length=20, stddev=2)`
 - `ta.macd(series, fast=12, slow=26, signal=9)`
 
 Rules:
 
 - the public contract belongs to `quantcraft`
+- `TA-Lib` semantics are the canonical truth for warmup, lookback, seed, and `NaN` behavior
 - internal implementations may wrap `TA-Lib` or another calculation backend
 - external dependencies are implementation details, not public API ownership
 - the baseline does not allow multiple argument aliases such as `period`, `window`, or `n`
@@ -377,7 +378,7 @@ The implemented baseline indicator API for this slice is:
 - `macd`
 - `atr`
 - `cci`
-- `bollinger_bands`
+- `bb`
 
 Canonical shipped quickstart assets currently demonstrate:
 
@@ -402,7 +403,7 @@ Multi-output indicators must return named result objects, not tuples or dicts.
 
 Applies to:
 
-- `ta.bollinger_bands(...)`
+- `ta.bb(...)`
 - `ta.macd(...)`
 
 Rules:
@@ -486,7 +487,7 @@ The shipped canonical example strategy set for this slice is:
 1. `SMA crossover`
 2. `RSI 30/70 mean reversion`
 
-Other implemented indicators, including `bollinger_bands` and `macd`, remain part of the supported API surface, but they are not part of the current canonical example set.
+Other implemented indicators, including `bb` and `macd`, remain part of the supported API surface, but they are not part of the current canonical example set.
 
 ### Example Placement
 
@@ -563,7 +564,7 @@ This slice is successful only if all of the following are true:
    - `macd`
    - `atr`
    - `cci`
-   - `bollinger_bands`
+   - `bb`
 
 4. the result surface is expanded to the approved medium baseline
 

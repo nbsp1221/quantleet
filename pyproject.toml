@@ -9,6 +9,7 @@ authors = [
 requires-python = ">=3.13"
 dependencies = [
     "ccxt>=4.5.43",
+    "ta-lib>=0.6.8",
 ]
 
 [dependency-groups]
@@ -70,6 +71,10 @@ packages = ["quantcraft"]
 
 [[tool.mypy.overrides]]
 module = ["ccxt", "ccxt.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["talib", "talib.*"]
 ignore_missing_imports = true
 
 [tool.ruff]

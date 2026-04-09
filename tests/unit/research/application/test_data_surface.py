@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from quantcraft.data import BarSeries, TimeBar
 from quantcraft.research.application._runtime import _StrategyDriver
 from quantcraft.research.application.strategy import Strategy
 from quantcraft.trading.domain.events import BarEvent
@@ -84,3 +85,66 @@ def test_strategy_init_sees_empty_data_surface() -> None:
 
     assert seen["is_empty"] is True
     assert seen["latest"] != seen["latest"]
+
+
+def test_strategy_init_stays_causal_when_backtest_history_is_preloaded() -> None:
+    seen = {}
+
+    class InitReadsDataStrategy(Strategy):
+        def init(self) -> None:
+            seen["is_empty"] = self.data.close.is_empty
+            seen["latest"] = self.data.close.latest
+            seen["visible_length"] = len(self.data.close)
+
+        def on_bar(self, bar: BarEvent) -> None:
+            seen["on_bar_latest"] = self.data.close[0]
+            seen["on_bar_previous"] = self.data.close[1]
+
+    bars = BarSeries(
+        symbol="BTC/USDT",
+        timeframe="1m",
+        bar_type="time",
+        rows=(
+            TimeBar(
+                timestamp=60,
+                open=100.0,
+                high=105.0,
+                low=95.0,
+                close=104.0,
+                volume=10.0,
+            ),
+            TimeBar(
+                timestamp=120,
+                open=104.0,
+                high=108.0,
+                low=101.0,
+                close=107.0,
+                volume=12.0,
+            ),
+        ),
+    )
+
+    runtime = _StrategyDriver(InitReadsDataStrategy())
+    runtime.initialize(bars=bars)
+
+    assert seen["is_empty"] is True
+    assert seen["latest"] != seen["latest"]
+    assert seen["visible_length"] == 0
+
+    runtime.handle_bar(
+        BarEvent(
+            bar_type="time",
+            bar_spec="1m",
+            symbol="BTC/USDT",
+            timestamp=60,
+            open=100.0,
+            high=105.0,
+            low=95.0,
+            close=104.0,
+            volume=10.0,
+            is_closed=True,
+        )
+    )
+
+    assert seen["on_bar_latest"] == 104.0
+    assert seen["on_bar_previous"] != seen["on_bar_previous"]

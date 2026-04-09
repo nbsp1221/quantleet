@@ -1,18 +1,35 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 from typing import Protocol
 
-from ._indicator_kernels import (
-    _AtrKernel,
-    _BollingerKernel,
-    _CciKernel,
-    _EmaKernel,
-    _MacdKernel,
-    _RsiKernel,
-    _SmaKernel,
+from .indicators.pure import (
+    atr as pure_atr,
 )
-from ._indicator_runtime import _IndicatorRuntime, _SeriesLike
+from .indicators.pure import (
+    bb as pure_bb,
+)
+from .indicators.pure import (
+    cci as pure_cci,
+)
+from .indicators.pure import (
+    ema as pure_ema,
+)
+from .indicators.pure import (
+    macd as pure_macd,
+)
+from .indicators.pure import (
+    rsi as pure_rsi,
+)
+from .indicators.pure import (
+    sma as pure_sma,
+)
+from .indicators.pure.bb import PureBollingerBandsResult as BollingerBandsResult
+from .indicators.pure.macd import PureMACDResult as MACDResult
+from .indicators.runtime import (
+    SeriesLike,
+    bind_indicator_from_pure,
+    bind_multi_output_indicator_from_pure,
+)
 
 
 class _IndicatorView(Protocol):
@@ -27,96 +44,94 @@ class _IndicatorView(Protocol):
     def is_empty(self) -> bool: ...
 
 
-@dataclass(frozen=True, slots=True)
-class BollingerBandsResult:
-    upper: _IndicatorView
-    middle: _IndicatorView
-    lower: _IndicatorView
-
-
-@dataclass(frozen=True, slots=True)
-class MACDResult:
-    macd: _IndicatorView
-    signal: _IndicatorView
-    histogram: _IndicatorView
-
-
-def sma(series: _SeriesLike, length: int = 20) -> _IndicatorView:
+def sma(series: SeriesLike, length: int = 20) -> _IndicatorView:
     _validate_length(length)
-    return _IndicatorRuntime(sources=(series,), kernel=_SmaKernel(length)).view()
+    return bind_indicator_from_pure(
+        sources=(series,),
+        compute=lambda values: pure_sma(values, length=length),
+    )
 
 
-def ema(series: _SeriesLike, length: int = 20) -> _IndicatorView:
+def ema(series: SeriesLike, length: int = 20) -> _IndicatorView:
     _validate_length(length)
-    return _IndicatorRuntime(sources=(series,), kernel=_EmaKernel(length)).view()
+    return bind_indicator_from_pure(
+        sources=(series,),
+        compute=lambda values: pure_ema(values, length=length),
+    )
 
 
-def rsi(series: _SeriesLike, length: int = 14) -> _IndicatorView:
+def rsi(series: SeriesLike, length: int = 14) -> _IndicatorView:
     _validate_length(length)
-    return _IndicatorRuntime(sources=(series,), kernel=_RsiKernel(length)).view()
+    return bind_indicator_from_pure(
+        sources=(series,),
+        compute=lambda values: pure_rsi(values, length=length),
+    )
 
 
 def atr(
-    high: _SeriesLike,
-    low: _SeriesLike,
-    close: _SeriesLike,
+    high: SeriesLike,
+    low: SeriesLike,
+    close: SeriesLike,
     length: int = 14,
 ) -> _IndicatorView:
     _validate_length(length)
-    return _IndicatorRuntime(
+    return bind_indicator_from_pure(
         sources=(high, low, close),
-        kernel=_AtrKernel(length),
-    ).view()
+        compute=lambda source_high, source_low, source_close: pure_atr(
+            source_high,
+            source_low,
+            source_close,
+            length=length,
+        ),
+    )
 
 
 def cci(
-    high: _SeriesLike,
-    low: _SeriesLike,
-    close: _SeriesLike,
+    high: SeriesLike,
+    low: SeriesLike,
+    close: SeriesLike,
     length: int = 20,
 ) -> _IndicatorView:
     _validate_length(length)
-    return _IndicatorRuntime(
+    return bind_indicator_from_pure(
         sources=(high, low, close),
-        kernel=_CciKernel(length),
-    ).view()
-
-
-def bollinger_bands(
-    series: _SeriesLike,
-    length: int = 20,
-    stddev: int | float = 2,
-) -> BollingerBandsResult:
-    _validate_length(length)
-    runtime = _IndicatorRuntime(
-        sources=(series,),
-        kernel=_BollingerKernel(length=length, stddev=float(stddev)),
+        compute=lambda source_high, source_low, source_close: pure_cci(
+            source_high,
+            source_low,
+            source_close,
+            length=length,
+        ),
     )
 
-    return BollingerBandsResult(
-        upper=runtime.view(0),
-        middle=runtime.view(1),
-        lower=runtime.view(2),
+
+def bb(
+    series: SeriesLike,
+    length: int = 20,
+    stddev: int | float = 2,
+) -> BollingerBandsResult[_IndicatorView]:
+    _validate_length(length)
+    return bind_multi_output_indicator_from_pure(
+        sources=(series,),
+        compute=lambda values: pure_bb(values, length=length, stddev=stddev),
+        result_type=BollingerBandsResult,
+        field_names=("upper", "middle", "lower"),
     )
 
 
 def macd(
-    series: _SeriesLike,
+    series: SeriesLike,
     fast: int = 12,
     slow: int = 26,
     signal: int = 9,
-) -> MACDResult:
+) -> MACDResult[_IndicatorView]:
     _validate_length(fast)
     _validate_length(slow)
     _validate_length(signal)
-    runtime = _IndicatorRuntime(
+    return bind_multi_output_indicator_from_pure(
         sources=(series,),
-        kernel=_MacdKernel(fast=fast, slow=slow, signal=signal),
-    )
-    return MACDResult(
-        macd=runtime.view(0),
-        signal=runtime.view(1),
-        histogram=runtime.view(2),
+        compute=lambda values: pure_macd(values, fast=fast, slow=slow, signal=signal),
+        result_type=MACDResult,
+        field_names=("macd", "signal", "histogram"),
     )
 
 
@@ -129,7 +144,7 @@ __all__ = [
     "BollingerBandsResult",
     "MACDResult",
     "atr",
-    "bollinger_bands",
+    "bb",
     "cci",
     "ema",
     "macd",

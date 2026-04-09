@@ -83,6 +83,12 @@ Current ingestion rule:
 - `source.load()` returns `BarSeries`
 - source.load() returns `BarSeries`
 
+Indicator semantics note:
+
+- indicator warmup and `NaN` behavior follow `TA-Lib` semantics
+- early bars may therefore remain `na` longer than the previous handwritten implementation did
+- prefer `qc.is_na(...)` checks before using fresh indicator values in early history
+
 ## Primary Example: SMA crossover
 
 ```python

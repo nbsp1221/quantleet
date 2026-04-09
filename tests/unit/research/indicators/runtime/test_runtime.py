@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from quantcraft.research._indicator_runtime import _IndicatorRuntime
+from quantcraft.research.indicators.runtime.runtime import IndicatorRuntime
 
 
 class MutableSeries:
@@ -90,7 +90,7 @@ class MultiSourceKernel:
 def test_runtime_uses_append_path_for_monotonic_growth() -> None:
     series = MutableSeries((1.0, 2.0, 3.0))
     kernel = RecordingKernel()
-    runtime = _IndicatorRuntime(sources=(series,), kernel=kernel)
+    runtime = IndicatorRuntime(sources=(series,), kernel=kernel)
     view = runtime.view()
 
     assert view[0] == 3.0
@@ -106,7 +106,7 @@ def test_runtime_uses_append_path_for_monotonic_growth() -> None:
 def test_runtime_rebuilds_when_source_shape_is_not_append_only() -> None:
     series = MutableSeries((1.0, 2.0, 3.0))
     kernel = RecordingKernel()
-    runtime = _IndicatorRuntime(sources=(series,), kernel=kernel)
+    runtime = IndicatorRuntime(sources=(series,), kernel=kernel)
     view = runtime.view()
 
     assert view[0] == 3.0
@@ -124,7 +124,7 @@ def test_runtime_rebuilds_when_source_shape_is_not_append_only() -> None:
 def test_runtime_shares_cache_across_multiple_output_views() -> None:
     series = MutableSeries((1.0, 2.0, 3.0))
     kernel = DualOutputKernel()
-    runtime = _IndicatorRuntime(sources=(series,), kernel=kernel)
+    runtime = IndicatorRuntime(sources=(series,), kernel=kernel)
     primary = runtime.view(0)
     secondary = runtime.view(1)
 
@@ -137,7 +137,7 @@ def test_runtime_uses_append_path_for_multi_source_growth() -> None:
     left = MutableSeries((1.0, 2.0, 3.0))
     right = MutableSeries((10.0, 20.0, 30.0))
     kernel = MultiSourceKernel()
-    runtime = _IndicatorRuntime(sources=(left, right), kernel=kernel)
+    runtime = IndicatorRuntime(sources=(left, right), kernel=kernel)
     view = runtime.view()
 
     assert view[0] == 33.0
@@ -154,7 +154,7 @@ def test_runtime_rebuilds_when_multi_source_growth_is_misaligned() -> None:
     left = MutableSeries((1.0, 2.0, 3.0))
     right = MutableSeries((10.0, 20.0, 30.0))
     kernel = MultiSourceKernel()
-    runtime = _IndicatorRuntime(sources=(left, right), kernel=kernel)
+    runtime = IndicatorRuntime(sources=(left, right), kernel=kernel)
     view = runtime.view()
 
     assert view[0] == 33.0

@@ -29,9 +29,9 @@ def test_runtime_verification_lane_is_documented_with_trigger_paths() -> None:
         assert "uv run poe verify-runtime" in content
 
     for path in [
-        "src/quantcraft/research/_indicator_runtime.py",
-        "src/quantcraft/research/_indicator_kernels.py",
         "src/quantcraft/research/ta.py",
+        "src/quantcraft/research/indicators/runtime/",
+        "src/quantcraft/research/indicators/pure/",
         "src/quantcraft/research/application/backtest.py",
     ]:
         assert path in reliability or path in agents

@@ -69,9 +69,10 @@ The performance gate is explicit:
 
 Run `uv run poe verify-runtime` when a change touches the runtime-sensitive research path, especially:
 
-- `src/quantcraft/research/_indicator_runtime.py`
-- `src/quantcraft/research/_indicator_kernels.py`
 - `src/quantcraft/research/ta.py`
+- `src/quantcraft/research/indicators/runtime/runtime.py`
+- `src/quantcraft/research/indicators/runtime/factory.py`
+- `src/quantcraft/research/indicators/pure/`
 - `src/quantcraft/research/application/backtest.py`
 
 ## Coverage Guardrail
