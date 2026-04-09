@@ -44,8 +44,7 @@ def test_readme_current_scope_mentions_implemented_backtest_research_and_data_su
     assert "strict merge gates" in readme
 
 
-def test_current_docs_describe_closed_trade_and_fill_count_summary_terms_and_new_engine_surface(
-) -> None:
+def test_current_docs_describe_summary_terms_and_engine_surface() -> None:
     research_spec = (ROOT / "docs" / "product-specs" / "research-ergonomics.md").read_text(
         encoding="utf-8"
     )
@@ -96,7 +95,7 @@ def test_current_docs_describe_closed_trade_and_fill_count_summary_terms_and_new
     assert "`CSVDataSource.load()` returns `BarSeries`" in data_ingestion_spec
     assert "`DataFrameDataSource.load()` returns `BarSeries`" in data_ingestion_spec
     assert "`BarSeries.rows` is `tuple[TimeBar, ...]`" in data_ingestion_spec
-    assert "`BarSeries.bar_type` is fixed to `\"time\"`" in data_ingestion_spec
+    assert '`BarSeries.bar_type` is fixed to `"time"`' in data_ingestion_spec
     assert (
         "from quantcraft.research import BacktestEngine, Strategy, ta, qc, run_backtest"
         not in quickstart

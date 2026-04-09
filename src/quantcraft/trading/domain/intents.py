@@ -15,4 +15,3 @@ class OrderIntent:
     order_type: OrderType
     limit_price: float | None = None
     tag: str | None = None
-

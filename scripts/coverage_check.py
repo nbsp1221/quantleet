@@ -27,9 +27,7 @@ def main() -> int:
         data_file = temp_path / ".coverage"
         json_file = temp_path / "coverage.json"
 
-        test_run = _run(
-            _coverage_command("run", f"--data-file={data_file}", "-m", "pytest", "-q")
-        )
+        test_run = _run(_coverage_command("run", f"--data-file={data_file}", "-m", "pytest", "-q"))
         if test_run.returncode != 0:
             return test_run.returncode
 

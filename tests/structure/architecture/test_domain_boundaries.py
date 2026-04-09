@@ -16,9 +16,7 @@ def test_forbidden_crossing_into_tier_a_is_rejected() -> None:
 
 
 def test_allowed_dependency_into_trading_kernel_is_permitted() -> None:
-    assert (
-        check_architecture.validate_domain_dependency("research", "trading") is None
-    )
+    assert check_architecture.validate_domain_dependency("research", "trading") is None
     assert check_architecture.validate_domain_dependency("execution", "trading") is None
 
 
@@ -36,8 +34,7 @@ def test_repository_scan_rejects_research_into_execution_even_with_data_allowed(
     execution_root.mkdir(parents=True)
 
     (research_root / "__init__.py").write_text(
-        "from __future__ import annotations\n"
-        "from quantcraft.execution import runtime\n",
+        "from __future__ import annotations\nfrom quantcraft.execution import runtime\n",
         encoding="utf-8",
     )
     (execution_root / "__init__.py").write_text(
@@ -91,8 +88,7 @@ def test_repository_scan_rejects_root_level_non_domain_module_imports(tmp_path: 
 
     (src_root / "exchange.py").write_text("from __future__ import annotations\n", encoding="utf-8")
     (trading_root / "__init__.py").write_text(
-        "from __future__ import annotations\n"
-        "from quantcraft.exchange import Exchange\n",
+        "from __future__ import annotations\nfrom quantcraft.exchange import Exchange\n",
         encoding="utf-8",
     )
 
@@ -107,13 +103,11 @@ def test_repository_scan_allows_explicit_root_level_module_allowlist(tmp_path: P
     src_root.mkdir(parents=True)
 
     (src_root / "__init__.py").write_text(
-        "from __future__ import annotations\n"
-        "from quantcraft.exchange import Exchange\n",
+        "from __future__ import annotations\nfrom quantcraft.exchange import Exchange\n",
         encoding="utf-8",
     )
     (src_root / "_repo_tools.py").write_text(
-        "from __future__ import annotations\n"
-        "from quantcraft.exchange import Exchange\n",
+        "from __future__ import annotations\nfrom quantcraft.exchange import Exchange\n",
         encoding="utf-8",
     )
     (src_root / "exchange.py").write_text("from __future__ import annotations\n", encoding="utf-8")
@@ -129,8 +123,7 @@ def test_repository_scan_rejects_forbidden_initializer_imports(tmp_path: Path) -
     research_root.mkdir(parents=True)
 
     (trading_root / "__init__.py").write_text(
-        "from __future__ import annotations\n"
-        "from quantcraft.research import domain\n",
+        "from __future__ import annotations\nfrom quantcraft.research import domain\n",
         encoding="utf-8",
     )
     (research_root / "__init__.py").write_text(
@@ -152,8 +145,7 @@ def test_repository_scan_rejects_absolute_package_alias_imports(tmp_path: Path) 
     research_root.mkdir(parents=True)
 
     (trading_root / "__init__.py").write_text(
-        "from __future__ import annotations\n"
-        "from quantcraft import research\n",
+        "from __future__ import annotations\nfrom quantcraft import research\n",
         encoding="utf-8",
     )
     (research_root / "__init__.py").write_text(
@@ -175,8 +167,7 @@ def test_repository_scan_rejects_relative_cross_domain_imports(tmp_path: Path) -
     research_root.mkdir(parents=True)
 
     (trading_root / "__init__.py").write_text(
-        "from __future__ import annotations\n"
-        "from ..research import domain\n",
+        "from __future__ import annotations\nfrom ..research import domain\n",
         encoding="utf-8",
     )
     (research_root / "__init__.py").write_text(

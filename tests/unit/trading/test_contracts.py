@@ -27,10 +27,12 @@ def test_order_intent_matches_backtest_mvp_minimum_contract() -> None:
             "quantity": float,
         },
         predicates={
-            "side": lambda annotation: get_origin_and_args(annotation)
-            == (Literal, ("buy", "sell")),
-            "order_type": lambda annotation: get_origin_and_args(annotation)
-            == (Literal, ("market", "limit")),
+            "side": lambda annotation: (
+                get_origin_and_args(annotation) == (Literal, ("buy", "sell"))
+            ),
+            "order_type": lambda annotation: (
+                get_origin_and_args(annotation) == (Literal, ("market", "limit"))
+            ),
             "limit_price": lambda annotation: set(get_args(annotation)) == {float, type(None)},
             "tag": lambda annotation: set(get_args(annotation)) == {str, type(None)},
         },
@@ -134,8 +136,9 @@ def test_fill_event_matches_backtest_mvp_minimum_contract() -> None:
             "fee": float,
         },
         predicates={
-            "side": lambda annotation: get_origin_and_args(annotation)
-            == (Literal, ("buy", "sell")),
+            "side": lambda annotation: (
+                get_origin_and_args(annotation) == (Literal, ("buy", "sell"))
+            ),
         },
     )
 

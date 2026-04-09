@@ -45,10 +45,7 @@ def test_current_index_docs_use_explicit_status_map_fields() -> None:
     for content in [design_index, product_index]:
         assert "## Metadata" in content
         assert "## Documents" in content
-        assert (
-            "| Document | Status | Canonical | Applicability | Read When | Notes |"
-            in content
-        )
+        assert "| Document | Status | Canonical | Applicability | Read When | Notes |" in content
 
     assert "Status`, `Canonical`, `Applicability`, and `Read When`" in agents
     assert "| [`golden-principles.md`](golden-principles.md) | approved | yes |" in design_index
@@ -69,8 +66,7 @@ def test_product_spec_index_lists_implemented_backtest_research_and_data_specs()
     assert entries_by_target["research-ergonomics.md"]["status"] == "implemented"
     assert entries_by_target["research-ergonomics.md"]["canonical"] == "yes"
     assert (
-        entries_by_target["research-ergonomics.md"]["applicability"]
-        == "current implemented scope"
+        entries_by_target["research-ergonomics.md"]["applicability"] == "current implemented scope"
     )
 
 

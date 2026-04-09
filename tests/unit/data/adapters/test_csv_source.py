@@ -30,8 +30,7 @@ def test_csv_source_requires_minimal_schema(tmp_path: Path) -> None:
     csv_path = tmp_path / "bars.csv"
     _write_csv(
         csv_path,
-        "timestamp,open,high,low\n"
-        "2026-01-01T00:00:00+00:00,1,2,0.5\n",
+        "timestamp,open,high,low\n2026-01-01T00:00:00+00:00,1,2,0.5\n",
     )
 
     source = _csv_source_type()(
@@ -48,8 +47,7 @@ def test_csv_source_rejects_naive_timestamps(tmp_path: Path) -> None:
     csv_path = tmp_path / "bars.csv"
     _write_csv(
         csv_path,
-        "timestamp,open,high,low,close\n"
-        "2026-01-01T00:00:00,1,2,0.5,1.5\n",
+        "timestamp,open,high,low,close\n2026-01-01T00:00:00,1,2,0.5,1.5\n",
     )
 
     source = _csv_source_type()(
@@ -66,8 +64,7 @@ def test_csv_source_materializes_bar_series_with_time_bar_rows(tmp_path: Path) -
     csv_path = tmp_path / "bars.csv"
     _write_csv(
         csv_path,
-        "timestamp,open,high,low,close\n"
-        "2026-01-01T00:00:00+09:00,1,2,0.5,1.5\n",
+        "timestamp,open,high,low,close\n2026-01-01T00:00:00+09:00,1,2,0.5,1.5\n",
     )
 
     source = _csv_source_type()(
@@ -118,8 +115,7 @@ def test_csv_source_rejects_empty_constructor_metadata(tmp_path: Path) -> None:
     csv_path = tmp_path / "bars.csv"
     _write_csv(
         csv_path,
-        "timestamp,open,high,low,close\n"
-        "2026-01-01T00:00:00+00:00,1,2,0.5,1.5\n",
+        "timestamp,open,high,low,close\n2026-01-01T00:00:00+00:00,1,2,0.5,1.5\n",
     )
 
     csv_source_type = _csv_source_type()

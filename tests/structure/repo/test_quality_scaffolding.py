@@ -199,8 +199,7 @@ def test_repo_check_flags_missing_quality_metadata(tmp_path: Path) -> None:
         tmp_path,
         metadata_lines=[
             FRESHNESS_WINDOW_DAYS,
-            "- evidence_rule: Scores must cite current repository evidence and "
-            "stay conservative.",
+            "- evidence_rule: Scores must cite current repository evidence and stay conservative.",
             FRESHNESS_RULE,
         ],
     )
@@ -216,8 +215,7 @@ def test_repo_check_flags_stale_quality_as_of_date(tmp_path: Path) -> None:
         metadata_lines=[
             "- as_of: 2026-02-01",
             FRESHNESS_WINDOW_DAYS,
-            "- evidence_rule: Scores must cite current repository evidence and "
-            "stay conservative.",
+            "- evidence_rule: Scores must cite current repository evidence and stay conservative.",
             FRESHNESS_RULE,
         ],
     )
@@ -233,8 +231,7 @@ def test_repo_check_flags_future_quality_as_of_date(tmp_path: Path) -> None:
         metadata_lines=[
             "- as_of: 9999-01-01",
             FRESHNESS_WINDOW_DAYS,
-            "- evidence_rule: Scores must cite current repository evidence and "
-            "stay conservative.",
+            "- evidence_rule: Scores must cite current repository evidence and stay conservative.",
             FRESHNESS_RULE,
         ],
     )
@@ -250,8 +247,7 @@ def test_repo_check_flags_invalid_quality_as_of_format(tmp_path: Path) -> None:
         metadata_lines=[
             "- as_of: 03-22-2026",
             FRESHNESS_WINDOW_DAYS,
-            "- evidence_rule: Scores must cite current repository evidence and "
-            "stay conservative.",
+            "- evidence_rule: Scores must cite current repository evidence and stay conservative.",
             FRESHNESS_RULE,
         ],
     )
@@ -267,8 +263,7 @@ def test_repo_check_flags_non_positive_freshness_window_days(tmp_path: Path) -> 
         metadata_lines=[
             "- as_of: 2026-03-22",
             "- freshness_window_days: 0",
-            "- evidence_rule: Scores must cite current repository evidence and "
-            "stay conservative.",
+            "- evidence_rule: Scores must cite current repository evidence and stay conservative.",
             FRESHNESS_RULE,
         ],
     )
@@ -370,8 +365,7 @@ def test_repo_check_flags_generic_evidence_for_stronger_data_grade(tmp_path: Pat
     issues = collect_quality_issues(tmp_path, today=date(2026, 3, 22))
 
     assert (
-        "Quality evidence for data score B must include at least one area-relevant path"
-        in issues
+        "Quality evidence for data score B must include at least one area-relevant path" in issues
     )
 
 
@@ -391,8 +385,7 @@ def test_repo_check_flags_planned_direction_only_for_data_score_c(tmp_path: Path
     issues = collect_quality_issues(tmp_path, today=date(2026, 3, 22))
 
     assert (
-        "Quality evidence for data score C must include at least one "
-        "implementation or test path"
+        "Quality evidence for data score C must include at least one implementation or test path"
     ) in issues
 
 
@@ -412,8 +405,7 @@ def test_repo_check_flags_docs_only_verification_score_b(tmp_path: Path) -> None
     issues = collect_quality_issues(tmp_path, today=date(2026, 3, 22))
 
     assert (
-        "Quality evidence for verification score B must include at least one "
-        "harness-check path"
+        "Quality evidence for verification score B must include at least one harness-check path"
     ) in issues
 
 
@@ -438,8 +430,7 @@ def test_update_quality_score_report_marks_docs_only_verification_as_invalid(
     )
 
     assert (
-        "Quality evidence for verification score B must include at least one "
-        "harness-check path"
+        "Quality evidence for verification score B must include at least one harness-check path"
     ) in report["quality_issues"]
     assert report["quality_validation"]["evidence_status"]["verification"] == "invalid"
 
@@ -477,8 +468,7 @@ def test_update_quality_score_report_surfaces_validation_status(tmp_path: Path) 
         metadata_lines=[
             "- as_of: 9999-01-01",
             FRESHNESS_WINDOW_DAYS,
-            "- evidence_rule: Scores must cite current repository evidence and "
-            "stay conservative.",
+            "- evidence_rule: Scores must cite current repository evidence and stay conservative.",
             FRESHNESS_RULE,
         ],
         area_rows=[

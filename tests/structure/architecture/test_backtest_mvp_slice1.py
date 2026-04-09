@@ -15,9 +15,7 @@ from tests.support import ROOT
 
 
 def test_backtest_mvp_spec_marks_order_and_timer_events_as_deferred() -> None:
-    spec_text = (
-        ROOT / "docs" / "product-specs" / "backtest-mvp.md"
-    ).read_text(encoding="utf-8")
+    spec_text = (ROOT / "docs" / "product-specs" / "backtest-mvp.md").read_text(encoding="utf-8")
 
     event_contract = parse_engine_and_events_contract(spec_text)
 
@@ -63,9 +61,7 @@ def test_research_public_surface_exposes_slice_1_entrypoints() -> None:
 
 
 def test_slice_1_public_trading_surface_excludes_deferred_event_types() -> None:
-    spec_text = (
-        ROOT / "docs" / "product-specs" / "backtest-mvp.md"
-    ).read_text(encoding="utf-8")
+    spec_text = (ROOT / "docs" / "product-specs" / "backtest-mvp.md").read_text(encoding="utf-8")
     event_contract = parse_engine_and_events_contract(spec_text)
 
     exported_event_types = {name for name in trading_domain_exports if name.endswith("Event")}

@@ -129,8 +129,7 @@ def test_check_docs_flags_missing_markdown_link_target(tmp_path: Path) -> None:
     issues = check_docs.collect_issues(tmp_path)
 
     assert (
-        "ARCHITECTURE.md points to missing target: docs/design-docs/missing-draft-ko.md"
-        in issues
+        "ARCHITECTURE.md points to missing target: docs/design-docs/missing-draft-ko.md" in issues
     )
 
 

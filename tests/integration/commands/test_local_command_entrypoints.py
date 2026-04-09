@@ -7,7 +7,7 @@ def test_local_command_wrappers_exist() -> None:
         "scripts/repo_check.py",
         "scripts/notebook_validate.py",
         "scripts/live_smoke.py",
-        ]:
+    ]:
         assert (ROOT / relative_path).exists(), f"missing {relative_path}"
 
 

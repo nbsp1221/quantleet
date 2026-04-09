@@ -87,7 +87,7 @@ Evidence in the current code:
 - `sma`, `ema`, `rsi`, `atr`, and `cci` all return `_ComputedSeriesView`
   instances keyed by `len(...)` or length tuples in
   [ta.py](/home/retn0/repositories/nbsp1221/quantcraft/src/quantcraft/research/ta.py)
-- `bollinger_bands` and `macd` also use memoized full-series bundles that
+- `bb` and `macd` also use memoized full-series bundles that
   invalidate on the same append-driven version changes
 - all of those paths depend on `_series_values(...)`, which rebuilds visible
   history through repeated reverse `SeriesView.__getitem__`
@@ -228,9 +228,9 @@ So the benchmark remained RSI, but the optimization target was the generic
 indicator runtime, and the intended code shape is:
 
 - public facade: `src/quantcraft/research/ta.py`
-- shared runtime: `src/quantcraft/research/_indicator_runtime.py`
-- indicator kernels/state definitions:
-  `src/quantcraft/research/_indicator_kernels.py`
+- shared runtime: `src/quantcraft/research/indicators/runtime/`
+- indicator wrappers/state adapters:
+  `src/quantcraft/research/indicators/pure/`
 
 Under that structure:
 

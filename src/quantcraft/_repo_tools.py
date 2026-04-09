@@ -275,9 +275,7 @@ def parse_quality_area_table(content: str) -> tuple[dict[str, dict[str, str]], l
         return {}, []
 
     table_lines = [
-        line.strip()
-        for line in areas_section.splitlines()
-        if line.strip().startswith("|")
+        line.strip() for line in areas_section.splitlines() if line.strip().startswith("|")
     ]
     if len(table_lines) < 2:
         return {}, []
@@ -316,9 +314,7 @@ def parse_exec_plan_index_entries(content: str) -> tuple[list[dict[str, str]], l
         return [], []
 
     table_lines = [
-        line.strip()
-        for line in plans_section.splitlines()
-        if line.strip().startswith("|")
+        line.strip() for line in plans_section.splitlines() if line.strip().startswith("|")
     ]
     if len(table_lines) < 2:
         return [], []
@@ -365,9 +361,7 @@ def parse_index_status_map_entries(content: str) -> tuple[list[dict[str, str]], 
         return [], []
 
     table_lines = [
-        line.strip()
-        for line in documents_section.splitlines()
-        if line.strip().startswith("|")
+        line.strip() for line in documents_section.splitlines() if line.strip().startswith("|")
     ]
     if len(table_lines) < 2:
         return [], []
@@ -426,9 +420,7 @@ def parse_exec_plan_slice_statuses(content: str) -> list[str]:
     return statuses
 
 
-def resolve_exec_plan_index_target(
-    root: Path, *, index_path: Path, target: str
-) -> str | None:
+def resolve_exec_plan_index_target(root: Path, *, index_path: Path, target: str) -> str | None:
     relative_base = index_path.parent.relative_to(root)
     relative_path = (relative_base / target).as_posix()
     if relative_path.startswith("../"):
@@ -436,9 +428,7 @@ def resolve_exec_plan_index_target(
     return relative_path
 
 
-def resolve_index_status_map_target(
-    root: Path, *, index_path: Path, target: str
-) -> str | None:
+def resolve_index_status_map_target(root: Path, *, index_path: Path, target: str) -> str | None:
     relative_base = index_path.parent.relative_to(root)
     relative_path = (relative_base / target).as_posix()
     if relative_path.startswith("../"):
@@ -497,8 +487,7 @@ def evaluate_quality_area_evidence(
     for evidence_path in evidence_paths:
         if not (root / evidence_path).exists():
             issues.append(
-                f"Quality evidence for {area} references missing repository path: "
-                f"{evidence_path}"
+                f"Quality evidence for {area} references missing repository path: {evidence_path}"
             )
             continue
         valid_evidence_paths.append(evidence_path)
@@ -579,8 +568,7 @@ def quality_score_snapshot_for_date(root: Path, *, today: date) -> dict[str, obj
         elif as_of_date > today:
             validation["as_of_status"] = "future"
         elif (
-            freshness_window_days is not None
-            and (today - as_of_date).days > freshness_window_days
+            freshness_window_days is not None and (today - as_of_date).days > freshness_window_days
         ):
             validation["as_of_status"] = "stale"
         else:
@@ -646,9 +634,7 @@ def collect_doc_issues(root: Path) -> list[str]:
         issues.append("AGENTS.md is missing repo-local harness command guidance")
 
     local_guide_path = root / "agent-development-guide-ko.md"
-    local_guide = (
-        local_guide_path.read_text(encoding="utf-8") if local_guide_path.exists() else ""
-    )
+    local_guide = local_guide_path.read_text(encoding="utf-8") if local_guide_path.exists() else ""
     if "project.scripts" in local_guide:
         issues.append("agent-development-guide-ko.md still references project.scripts")
 
@@ -737,15 +723,11 @@ def collect_doc_issues(root: Path) -> list[str]:
 
         metadata = parse_bullet_metadata_section(markdown_section(content, "Metadata"))
         if metadata.get("index_kind") != config["index_kind"]:
-            issues.append(
-                f"{index_relative_path} must declare index_kind: {config['index_kind']}"
-            )
+            issues.append(f"{index_relative_path} must declare index_kind: {config['index_kind']}")
 
         header = "| " + " | ".join(INDEX_STATUS_MAP_COLUMNS) + " |"
         if header not in content:
-            issues.append(
-                f"{index_relative_path} is missing table header: {header}"
-            )
+            issues.append(f"{index_relative_path} is missing table header: {header}")
 
         entries, duplicates = parse_index_status_map_entries(content)
         for duplicate in duplicates:
@@ -809,9 +791,7 @@ def collect_doc_issues(root: Path) -> list[str]:
 
     architecture_doc_path = root / "ARCHITECTURE.md"
     architecture_doc = (
-        architecture_doc_path.read_text(encoding="utf-8")
-        if architecture_doc_path.exists()
-        else ""
+        architecture_doc_path.read_text(encoding="utf-8") if architecture_doc_path.exists() else ""
     )
     if "docs/design-docs/" not in architecture_doc:
         issues.append("ARCHITECTURE.md is missing a design-docs architecture reference")
@@ -1219,8 +1199,7 @@ def collect_plan_lifecycle_issues(root: Path) -> list[str]:
     for directory_status, directory in directories.items():
         if not directory.exists():
             issues.append(
-                "Missing execution-plan directory: "
-                f"{directory.relative_to(root).as_posix()}"
+                f"Missing execution-plan directory: {directory.relative_to(root).as_posix()}"
             )
             continue
 
@@ -1242,14 +1221,11 @@ def collect_plan_lifecycle_issues(root: Path) -> list[str]:
             status = metadata.get("status")
             if not status:
                 issues.append(
-                    f"Execution plan {relative_path} is missing lifecycle metadata field: "
-                    "status"
+                    f"Execution plan {relative_path} is missing lifecycle metadata field: status"
                 )
                 continue
             if status not in EXEC_PLAN_ALLOWED_STATUSES:
-                issues.append(
-                    f"Execution plan {relative_path} has invalid status: {status}"
-                )
+                issues.append(f"Execution plan {relative_path} has invalid status: {status}")
                 continue
             if status != directory_status:
                 issues.append(
@@ -1262,8 +1238,7 @@ def collect_plan_lifecycle_issues(root: Path) -> list[str]:
                 status == "active"
                 and slice_statuses
                 and all(
-                    slice_status in EXEC_PLAN_COMPLETE_STATUSES
-                    for slice_status in slice_statuses
+                    slice_status in EXEC_PLAN_COMPLETE_STATUSES for slice_status in slice_statuses
                 )
                 and not metadata.get("status_reason")
             ):

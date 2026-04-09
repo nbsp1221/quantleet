@@ -32,13 +32,13 @@ class CCXTDataSource(HistoricalDataSource):
             bar_type="time",
             rows=tuple(
                 TimeBar(
-                timestamp=row.timestamp,
-                open=row.open,
-                high=row.high,
-                low=row.low,
-                close=row.close,
-                volume=row.volume,
-            )
-            for row in rows
+                    timestamp=row.timestamp,
+                    open=row.open,
+                    high=row.high,
+                    low=row.low,
+                    close=row.close,
+                    volume=row.volume,
+                )
+                for row in rows
             ),
         )

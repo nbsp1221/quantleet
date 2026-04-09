@@ -47,9 +47,7 @@ def test_architecture_doc_points_to_design_docs_not_plans() -> None:
 
 def test_feedback_promotion_loop_docs_are_discoverable_from_operating_docs() -> None:
     core_beliefs = (ROOT / "docs/design-docs/core-beliefs.md").read_text(encoding="utf-8")
-    doc_gardening = (ROOT / "docs/design-docs/doc-gardening.md").read_text(
-        encoding="utf-8"
-    )
+    doc_gardening = (ROOT / "docs/design-docs/doc-gardening.md").read_text(encoding="utf-8")
     quality_score = (ROOT / "docs/QUALITY_SCORE.md").read_text(encoding="utf-8")
 
     assert "golden-principles.md" in core_beliefs
@@ -61,9 +59,7 @@ def test_feedback_promotion_loop_docs_are_discoverable_from_operating_docs() -> 
 
 
 def test_governance_and_reliability_docs_define_evaluation_taxonomy() -> None:
-    governance = (ROOT / "docs/design-docs/architecture-governance.md").read_text(
-        encoding="utf-8"
-    )
+    governance = (ROOT / "docs/design-docs/architecture-governance.md").read_text(encoding="utf-8")
     reliability = (ROOT / "docs/RELIABILITY.md").read_text(encoding="utf-8")
     quality_score = (ROOT / "docs/QUALITY_SCORE.md").read_text(encoding="utf-8")
 
@@ -93,12 +89,8 @@ def test_governance_and_reliability_docs_define_evaluation_taxonomy() -> None:
 
 
 def test_metric_admission_rule_is_documented_in_governance_and_promotion_loop() -> None:
-    governance = (ROOT / "docs/design-docs/architecture-governance.md").read_text(
-        encoding="utf-8"
-    )
-    doc_gardening = (ROOT / "docs/design-docs/doc-gardening.md").read_text(
-        encoding="utf-8"
-    )
+    governance = (ROOT / "docs/design-docs/architecture-governance.md").read_text(encoding="utf-8")
+    doc_gardening = (ROOT / "docs/design-docs/doc-gardening.md").read_text(encoding="utf-8")
     feedback_log = (ROOT / "docs/feedback-promotion-log.md").read_text(encoding="utf-8")
 
     assert "## Metric And Check Admission Rule" in governance
@@ -120,12 +112,8 @@ def test_metric_admission_rule_is_documented_in_governance_and_promotion_loop() 
 
 def test_agents_and_belief_docs_define_findings_first_reviewer_contract() -> None:
     agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
-    core_beliefs = (ROOT / "docs/design-docs/core-beliefs.md").read_text(
-        encoding="utf-8"
-    )
-    golden_principles = (ROOT / "docs/design-docs/golden-principles.md").read_text(
-        encoding="utf-8"
-    )
+    core_beliefs = (ROOT / "docs/design-docs/core-beliefs.md").read_text(encoding="utf-8")
+    golden_principles = (ROOT / "docs/design-docs/golden-principles.md").read_text(encoding="utf-8")
 
     for concept in ["evaluator/reviewer agents", "approval", "architecture-governance.md"]:
         assert concept in agents

@@ -14,9 +14,9 @@ def test_research_ergonomics_quickstart_doc_and_notebook_exist() -> None:
 
 
 def test_research_ergonomics_quickstart_doc_covers_canonical_usage_path() -> None:
-    quickstart_doc = (
-        ROOT / "docs" / "references" / "research-ergonomics-quickstart.md"
-    ).read_text(encoding="utf-8")
+    quickstart_doc = (ROOT / "docs" / "references" / "research-ergonomics-quickstart.md").read_text(
+        encoding="utf-8"
+    )
 
     canonical_import = "from quantcraft.research import BacktestEngine, Strategy, ta, qc"
     assert canonical_import in quickstart_doc
