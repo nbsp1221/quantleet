@@ -37,100 +37,18 @@ def write_minimal_repo_docs(tmp_path) -> None:
     )
     (tmp_path / "AGENTS.md").write_text(
         (
-            "uv run poe verify\n"
-            "uv run poe perf-check\n"
-            "uv run poe verify-runtime\n"
-            "uv run poe coverage\n"
-            "repo-local harness commands\n"
+            "docs/product-specs/index.md\n"
             "docs/design-docs/index.md\n"
-        ),
-        encoding="utf-8",
-    )
-    (tmp_path / "ARCHITECTURE.md").write_text(
-        "docs/design-docs/quantcraft-architecture-draft-ko.md\n",
-        encoding="utf-8",
-    )
-    (tmp_path / "agent-development-guide-ko.md").write_text(
-        "scripts/\nuv run poe verify\nuv run poe verify-runtime\n",
-        encoding="utf-8",
-    )
-
-    docs_dir = tmp_path / "docs"
-    docs_dir.mkdir()
-    (docs_dir / "DESIGN.md").write_text("design docs live here\n", encoding="utf-8")
-    (docs_dir / "PLANS.md").write_text(
-        (
-            "docs/plans/\n"
-            "docs/exec-plans/active/\n"
-            "docs/exec-plans/completed/\n"
-            "Durable architecture or contract drafts do not belong in `docs/plans/`;\n"
-        ),
-        encoding="utf-8",
-    )
-    (docs_dir / "QUALITY_SCORE.md").write_text(
-        "docs_system\ndocs/feedback-promotion-log.md\n",
-        encoding="utf-8",
-    )
-    (docs_dir / "RELIABILITY.md").write_text("reliability\n", encoding="utf-8")
-    (docs_dir / "SECURITY.md").write_text("security\n", encoding="utf-8")
-    (docs_dir / "feedback-promotion-log.md").write_text(
-        "feedback promotion log\n",
-        encoding="utf-8",
-    )
-
-    design_docs_dir = docs_dir / "design-docs"
-    design_docs_dir.mkdir()
-    (design_docs_dir / "index.md").write_text(
-        (
-            "# Design Docs\n\n"
-            "## Metadata\n"
-            "- index_kind: design-doc-status-map\n\n"
-            "## Documents\n"
-            "| Document | Status | Canonical | Applicability | Read When | Notes |\n"
-            "| --- | --- | --- | --- | --- | --- |\n"
-            "| [`quantcraft-architecture-draft-ko.md`](quantcraft-architecture-draft-ko.md) "
-            "| approved | yes | architecture work | Before changing bounded contexts. "
-            "| Canonical architecture doc. |\n"
-            "| [`trading-kernel-contract-draft-ko.md`](trading-kernel-contract-draft-ko.md) "
-            "| draft | no | trading-kernel planning | When evaluating draft kernel semantics. "
-            "| Still draft. |\n"
-            "| [`golden-principles.md`](golden-principles.md) "
-            "| approved | yes | all agent work | Before promoting repository-wide drift rules. "
-            "| Canonical cleanup invariants. |\n"
-            "| [`architecture-governance-draft-ko.md`](architecture-governance-draft-ko.md) "
-            "| approved | yes | harness governance work | Before changing repo checks. "
-            "| Governance baseline. |\n"
-        ),
-        encoding="utf-8",
-    )
-    (design_docs_dir / "quantcraft-architecture-draft-ko.md").write_text(
-        "draft architecture\n",
-        encoding="utf-8",
-    )
-    (design_docs_dir / "trading-kernel-contract-draft-ko.md").write_text(
-        "draft trading contract\n",
-        encoding="utf-8",
-    )
-    (design_docs_dir / "golden-principles.md").write_text(
-        "golden principles\n",
-        encoding="utf-8",
-    )
-    (design_docs_dir / "architecture-governance-draft-ko.md").write_text(
-        "draft governance\n",
-        encoding="utf-8",
-    )
-
-    references_dir = docs_dir / "references"
-    references_dir.mkdir()
-    (references_dir / "index.md").write_text("tooling.md\n", encoding="utf-8")
-    (references_dir / "tooling.md").write_text(
-        (
+            "docs/RELIABILITY.md\n"
+            "docs/SECURITY.md\n"
             "uv run poe verify\n"
             "uv run poe perf-check\n"
             "uv run poe verify-runtime\n"
             "uv run poe coverage\n"
-            "uv run poe format\n"
             "uv run poe test-live\n"
+            "uv run poe repo-check\n"
+            "repo-local harness commands\n"
+            "uv run pytest -q\n"
             "uv run python scripts/coverage_check.py\n"
             "uv run python scripts/repo_check.py\n"
             "uv run python scripts/notebook_validate.py\n"
@@ -138,28 +56,159 @@ def write_minimal_repo_docs(tmp_path) -> None:
         ),
         encoding="utf-8",
     )
+    (tmp_path / "ARCHITECTURE.md").write_text(
+        "[architecture](docs/design-docs/quantcraft-architecture.md)\n",
+        encoding="utf-8",
+    )
+
+    docs_dir = tmp_path / "docs"
+    docs_dir.mkdir()
+    (docs_dir / "DESIGN.md").write_text(
+        (
+            "# Design Pointers\n\n"
+            "- [design-docs/index.md](design-docs/index.md)\n"
+            "- [../ARCHITECTURE.md](../ARCHITECTURE.md)\n"
+            "- [design-docs/quantcraft-architecture.md]"
+            "(design-docs/quantcraft-architecture.md)\n"
+            "- [design-docs/architecture-governance.md]"
+            "(design-docs/architecture-governance.md)\n"
+            "- [product-specs/](product-specs/)\n"
+            "- [plans/](plans/)\n"
+        ),
+        encoding="utf-8",
+    )
+    (docs_dir / "PLANS.md").write_text(
+        (
+            "# Plan Pointers\n\n"
+            "- [plans/](plans/)\n"
+            "- [plans/trials/](plans/trials/)\n"
+            "- [../AGENTS.md](../AGENTS.md)\n"
+            "- [design-docs/](design-docs/)\n"
+            "- Durable architecture or contract drafts do not belong in `docs/plans/`\n"
+            "- [plans/2026-04-13-ce-workflow-migration-plan.md]"
+            "(plans/2026-04-13-ce-workflow-migration-plan.md)\n"
+            "- [plans/TEMPLATE.md](plans/TEMPLATE.md)\n"
+            "- [plans/trials/TEMPLATE.md](plans/trials/TEMPLATE.md)\n"
+        ),
+        encoding="utf-8",
+    )
+    (docs_dir / "RELIABILITY.md").write_text(
+        "uv run poe verify\nuv run poe verify-runtime\nuv build\n",
+        encoding="utf-8",
+    )
+    (docs_dir / "SECURITY.md").write_text(
+        "Tier A domains are trading and execution.\n",
+        encoding="utf-8",
+    )
+
+    plans_dir = docs_dir / "plans"
+    plans_dir.mkdir()
+    (plans_dir / "TEMPLATE.md").write_text("plan template\n", encoding="utf-8")
+    (plans_dir / "2026-04-13-ce-workflow-migration-plan.md").write_text(
+        "migration plan\n",
+        encoding="utf-8",
+    )
+    trials_dir = plans_dir / "trials"
+    trials_dir.mkdir()
+    (trials_dir / "TEMPLATE.md").write_text("trial template\n", encoding="utf-8")
+
+    design_docs_dir = docs_dir / "design-docs"
+    design_docs_dir.mkdir()
+    (design_docs_dir / "index.md").write_text(
+        (
+            "# Design Doc Routing Index\n\n"
+            "| Task Area | Document | Role | Scope | Read When |\n"
+            "| --- | --- | --- | --- | --- |\n"
+            "| Repository workflow and operating norms | [`core-beliefs.md`](core-beliefs.md) "
+            "| Governing | all agent work | Before changing repository workflow, "
+            "harness docs, or operating norms. |\n"
+            "| Cleanup and promotion defaults | [`golden-principles.md`](golden-principles.md) "
+            "| Governing | repository cleanup and promotion work | Before promoting "
+            "repeated review findings into docs or checks. |\n"
+            "| Cleanup loops and doc upkeep | [`doc-gardening.md`](doc-gardening.md) "
+            "| Governing | harness maintenance | Before changing cleanup loops, "
+            "doc upkeep, or quality-tracking expectations. |\n"
+            "| Architecture and bounded contexts | "
+            "[`quantcraft-architecture.md`](quantcraft-architecture.md) | Governing "
+            "| architecture and bounded-context work | Before changing top-level "
+            "contexts, dependency rules, or package ownership. |\n"
+            "| Governance for docs versus checks | "
+            "[`architecture-governance.md`](architecture-governance.md) | Governing "
+            "| harness governance and repo-check changes | Before promoting a "
+            "repeated rule from docs into checks or changing system-of-record "
+            "policy. |\n"
+            "| Shared trading-kernel semantics planning | "
+            "[`trading-kernel-contract-draft-ko.md`](trading-kernel-contract-draft-ko.md) "
+            "| Draft | future trading-kernel planning | Only when evaluating future "
+            "shared trading semantics; read the current implemented product specs "
+            "first. |\n"
+        ),
+        encoding="utf-8",
+    )
+    (design_docs_dir / "core-beliefs.md").write_text("core beliefs\n", encoding="utf-8")
+    (design_docs_dir / "golden-principles.md").write_text(
+        "golden principles\n",
+        encoding="utf-8",
+    )
+    (design_docs_dir / "doc-gardening.md").write_text("doc gardening\n", encoding="utf-8")
+    (design_docs_dir / "quantcraft-architecture.md").write_text(
+        "quantcraft architecture\n",
+        encoding="utf-8",
+    )
+    (design_docs_dir / "architecture-governance.md").write_text(
+        "architecture governance\n",
+        encoding="utf-8",
+    )
+    (design_docs_dir / "trading-kernel-contract-draft-ko.md").write_text(
+        "draft trading contract\n",
+        encoding="utf-8",
+    )
 
     product_specs_dir = docs_dir / "product-specs"
     product_specs_dir.mkdir()
     (product_specs_dir / "index.md").write_text(
         (
-            "# Product Specs\n\n"
-            "## Metadata\n"
-            "- index_kind: product-spec-status-map\n\n"
-            "## Documents\n"
-            "| Document | Status | Canonical | Applicability | Read When | Notes |\n"
-            "| --- | --- | --- | --- | --- | --- |\n"
-            "| [`market-data.md`](market-data.md) | implemented | yes | "
-            "current implemented scope | Before changing the current "
-            "market-data surface. | Current implemented-scope entry. |\n"
-            "| [`backtest-mvp.md`](backtest-mvp.md) | approved | yes | "
-            "approved next slice | Before changing current backtest slice "
-            "behavior. | Canonical slice spec. |\n"
+            "# Product Spec Routing Index\n\n"
+            "| Task Area | Document | Role | Scope | Read When |\n"
+            "| --- | --- | --- | --- | --- |\n"
+            "| Existing market-data behavior | [`market-data.md`](market-data.md) "
+            "| Governing | current implemented scope | Before changing the existing "
+            "market-data codebase or its tests. |\n"
+            "| Historical ingestion under `quantcraft.data` | "
+            "[`data-ingestion.md`](data-ingestion.md) | Governing | current "
+            "implemented scope | Before changing the shipped historical ingestion "
+            "surface for exchange, CSV, and dataframe-backed backtest workflows. |\n"
+            "| Backtest baseline orientation | [`backtest.md`](backtest.md) | "
+            "Pointer | current implemented baseline orientation | When scoping "
+            "backtest expansion work from the shipped baseline; then read "
+            "[`backtest-mvp.md`](backtest-mvp.md). |\n"
+            "| Backtest MVP behavior | [`backtest-mvp.md`](backtest-mvp.md) | "
+            "Governing | current implemented scope | Before changing the current "
+            "backtest MVP behavior, tests, or documented baseline constraints. |\n"
+            "| Research ergonomics surface | "
+            "[`research-ergonomics.md`](research-ergonomics.md) | Governing | "
+            "current implemented scope | Before changing strategy ergonomics, "
+            "series contracts, indicators, result reporting, examples, or "
+            "quickstart assets for the research layer. |\n"
+            "| Paper-trading planning | [`paper-trading.md`](paper-trading.md) | "
+            "Future-only | future planning only | Only when discussing simulated "
+            "execution work beyond the current approved slices. |\n"
+            "| Live-trading planning | [`live-trading.md`](live-trading.md) | "
+            "Future-only | future planning only | Only when discussing Tier A "
+            "live-trading scope with explicit human approval. |\n"
         ),
         encoding="utf-8",
     )
     (product_specs_dir / "market-data.md").write_text("market data\n", encoding="utf-8")
+    (product_specs_dir / "data-ingestion.md").write_text("data ingestion\n", encoding="utf-8")
+    (product_specs_dir / "backtest.md").write_text("backtest pointer\n", encoding="utf-8")
     (product_specs_dir / "backtest-mvp.md").write_text("backtest mvp\n", encoding="utf-8")
+    (product_specs_dir / "research-ergonomics.md").write_text(
+        "research ergonomics\n",
+        encoding="utf-8",
+    )
+    (product_specs_dir / "paper-trading.md").write_text("paper trading\n", encoding="utf-8")
+    (product_specs_dir / "live-trading.md").write_text("live trading\n", encoding="utf-8")
 
 
 def test_repo_check_accepts_current_poe_task_contract() -> None:
@@ -202,7 +251,6 @@ def test_default_test_tasks_use_plain_pytest_commands() -> None:
 
 def test_poe_task_surface_is_documented() -> None:
     agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
-    tooling = (ROOT / "docs" / "references" / "tooling.md").read_text(encoding="utf-8")
 
     for command in [
         "uv run poe verify",
@@ -212,7 +260,7 @@ def test_poe_task_surface_is_documented() -> None:
         "uv run poe format",
         "uv run poe test-live",
     ]:
-        assert command in agents or command in tooling
+        assert command in agents
     assert "project.scripts" not in agents
     for command in [
         "uv run python scripts/coverage_check.py",
@@ -220,7 +268,7 @@ def test_poe_task_surface_is_documented() -> None:
         "uv run python scripts/notebook_validate.py",
         "uv run python scripts/live_smoke.py",
     ]:
-        assert command in agents or command in tooling
+        assert command in agents
 
 
 def test_repo_check_flags_missing_required_poe_task(tmp_path) -> None:

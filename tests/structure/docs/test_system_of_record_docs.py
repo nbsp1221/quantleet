@@ -1,24 +1,22 @@
+from quantcraft._repo_tools import parse_routing_index_entries
 from tests.support import ROOT
 
 
-def test_system_of_record_docs_exist() -> None:
+def test_core_guardrail_and_routing_docs_exist() -> None:
     required_paths = [
+        "README.md",
+        "AGENTS.md",
+        "ARCHITECTURE.md",
         "docs/DESIGN.md",
         "docs/PLANS.md",
-        "docs/QUALITY_SCORE.md",
         "docs/RELIABILITY.md",
         "docs/SECURITY.md",
-        "docs/feedback-promotion-log.md",
         "docs/design-docs/index.md",
-        "docs/design-docs/core-beliefs.md",
-        "docs/design-docs/golden-principles.md",
-        "docs/design-docs/doc-gardening.md",
-        "docs/exec-plans/active/index.md",
-        "docs/exec-plans/completed/index.md",
-        "docs/exec-plans/tech-debt-tracker.md",
+        "docs/design-docs/quantcraft-architecture.md",
+        "docs/design-docs/architecture-governance.md",
         "docs/product-specs/index.md",
-        "docs/references/index.md",
-        "docs/generated/index.md",
+        "docs/product-specs/backtest-mvp.md",
+        "docs/product-specs/research-ergonomics.md",
     ]
 
     for relative_path in required_paths:
@@ -27,15 +25,30 @@ def test_system_of_record_docs_exist() -> None:
         assert path.read_text(encoding="utf-8").strip(), f"{relative_path} is empty"
 
 
-def test_current_korean_design_drafts_are_indexed_and_not_misfiled() -> None:
+def test_design_docs_are_discoverable_from_routing_index() -> None:
     design_index = (ROOT / "docs/design-docs/index.md").read_text(encoding="utf-8")
+    entries, duplicates = parse_routing_index_entries(design_index)
+    indexed_targets = {entry["target"] for entry in entries}
 
+    assert duplicates == []
     for path in sorted((ROOT / "docs/design-docs").glob("*.md")):
         if path.name == "index.md":
             continue
-        assert path.name in design_index
+        assert path.name in indexed_targets
 
     assert not (ROOT / "docs/plans/2026-03-18-quantcraft-architecture-draft-ko.md").exists()
+
+
+def test_product_specs_are_discoverable_from_routing_index() -> None:
+    product_index = (ROOT / "docs/product-specs/index.md").read_text(encoding="utf-8")
+    entries, duplicates = parse_routing_index_entries(product_index)
+    entries_by_target = {entry["target"]: entry for entry in entries}
+
+    assert duplicates == []
+    assert entries_by_target["backtest-mvp.md"]["role"] == "Governing"
+    assert entries_by_target["backtest-mvp.md"]["scope"] == "current implemented scope"
+    assert entries_by_target["research-ergonomics.md"]["role"] == "Governing"
+    assert entries_by_target["research-ergonomics.md"]["scope"] == "current implemented scope"
 
 
 def test_architecture_doc_points_to_design_docs_not_plans() -> None:
@@ -45,79 +58,19 @@ def test_architecture_doc_points_to_design_docs_not_plans() -> None:
     assert "docs/plans/2026-03-18-quantcraft-architecture-draft-ko.md" not in architecture
 
 
-def test_feedback_promotion_loop_docs_are_discoverable_from_operating_docs() -> None:
-    core_beliefs = (ROOT / "docs/design-docs/core-beliefs.md").read_text(encoding="utf-8")
-    doc_gardening = (ROOT / "docs/design-docs/doc-gardening.md").read_text(encoding="utf-8")
-    quality_score = (ROOT / "docs/QUALITY_SCORE.md").read_text(encoding="utf-8")
-
-    assert "golden-principles.md" in core_beliefs
-    assert "feedback-promotion-log.md" in core_beliefs
-    assert "golden-principles.md" in doc_gardening
-    assert "feedback-promotion-log.md" in doc_gardening
-    assert "checks" in doc_gardening.lower()
-    assert "docs/feedback-promotion-log.md" in quality_score
-
-
-def test_governance_and_reliability_docs_define_evaluation_taxonomy() -> None:
-    governance = (ROOT / "docs/design-docs/architecture-governance.md").read_text(encoding="utf-8")
-    reliability = (ROOT / "docs/RELIABILITY.md").read_text(encoding="utf-8")
-    quality_score = (ROOT / "docs/QUALITY_SCORE.md").read_text(encoding="utf-8")
-
-    assert "## Evaluation Taxonomy" in governance
-    assert "`mechanical checks`" in governance
-    assert "`LLM-assisted critique`" in governance
-    assert "`human judgment`" in governance
-    assert "## Promotion Ladder" in governance
-    for concept in [
-        "critique",
-        "documented policy",
-        "repeated manual use",
-        "narrow mechanical enforcement",
-    ]:
-        assert concept in governance
-    assert "## Evaluation Modes" in reliability
-    assert "`mechanical checks`" in reliability
-    assert "`LLM-assisted critique`" in reliability
-    assert "`human judgment`" in reliability
-    assert "architecture-governance.md" in reliability
-    for concept in [
-        "repository-health artifact",
-        "user-value meter",
-        "approval score",
-    ]:
-        assert concept in quality_score
-
-
-def test_metric_admission_rule_is_documented_in_governance_and_promotion_loop() -> None:
-    governance = (ROOT / "docs/design-docs/architecture-governance.md").read_text(encoding="utf-8")
-    doc_gardening = (ROOT / "docs/design-docs/doc-gardening.md").read_text(encoding="utf-8")
-    feedback_log = (ROOT / "docs/feedback-promotion-log.md").read_text(encoding="utf-8")
-
-    assert "## Metric And Check Admission Rule" in governance
-    assert "the protected behavior" in governance
-    assert "the measured proxy" in governance
-    assert "the likely gaming vector" in governance
-    assert "the decision the artifact is expected to change" in governance
-    assert "the revalidation or removal condition" in governance
-    for concept in [
-        "protected behavior",
-        "measured proxy",
-        "likely gaming vector",
-        "revalidation or removal condition",
-    ]:
-        assert concept in doc_gardening
-    assert "2026-04-02" in feedback_log
-    assert "Proxy metrics and evaluator outputs could become fake rigor" in feedback_log
-
-
-def test_agents_and_belief_docs_define_findings_first_reviewer_contract() -> None:
+def test_agents_routes_to_governing_docs_and_repo_checks() -> None:
     agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
-    core_beliefs = (ROOT / "docs/design-docs/core-beliefs.md").read_text(encoding="utf-8")
-    golden_principles = (ROOT / "docs/design-docs/golden-principles.md").read_text(encoding="utf-8")
 
-    for concept in ["evaluator/reviewer agents", "approval", "architecture-governance.md"]:
-        assert concept in agents
-    for concept in ["architecture-governance.md", "evaluator agents", "failure modes"]:
-        assert concept in core_beliefs
-    for concept in ["architecture-governance.md", "reviewer output", "failure mode"]:
-        assert concept in golden_principles
+    for reference in [
+        "docs/product-specs/index.md",
+        "docs/design-docs/index.md",
+        "docs/RELIABILITY.md",
+        "docs/SECURITY.md",
+        "uv run poe verify",
+        "uv run poe repo-check",
+        "uv run poe verify-runtime",
+    ]:
+        assert reference in agents
+
+    assert "Compound Engineering" in agents
+    assert "Tier A domains are `trading` and `execution`" in agents

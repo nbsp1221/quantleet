@@ -79,10 +79,10 @@ docs/
 │   ├── index.md
 │   ├── core-beliefs.md
 │   └── ...
-├── exec-plans/
-│   ├── active/
-│   ├── completed/
-│   └── tech-debt-tracker.md
+├── plans/
+│   ├── TEMPLATE.md
+│   ├── trials/
+│   └── ...
 ├── generated/
 │   └── db-schema.md
 ├── product-specs/
@@ -98,16 +98,15 @@ docs/
 ├── FRONTEND.md
 ├── PLANS.md
 ├── PRODUCT_SENSE.md
-├── QUALITY_SCORE.md
 ├── RELIABILITY.md
 └── SECURITY.md
 ```
 
 In-repository knowledge store layout.
 
-Design documentation is catalogued and indexed, including verification status and a set of core beliefs that define agent-first operating principles. [Architecture documentation](https://matklad.github.io/2021/02/06/ARCHITECTURE.md.html) provides a top-level map of domains and package layering. A quality document grades each product domain and architectural layer, tracking gaps over time.
+Design documentation is catalogued and indexed, including a set of core beliefs that define agent-first operating principles. [Architecture documentation](https://matklad.github.io/2021/02/06/ARCHITECTURE.md.html) provides a top-level map of domains and package layering.
 
-Plans are treated as first-class artifacts. Ephemeral lightweight plans are used for small changes, while complex work is captured in [execution plans](https://cookbook.openai.com/articles/codex_exec_plans) with progress and decision logs that are checked into the repository. Active plans, completed plans, and known technical debt are all versioned and co-located, allowing agents to operate without relying on external context.
+Plans are treated as first-class artifacts. The active surface is a lightweight `docs/plans/` system with a shared template and trial or exception records for workflow experiments. Historical execution plans and scorecards may remain in the repository for audit continuity, but they are not part of the active entry surface for new work.
 
 This enables **progressive disclosure**: agents start with a small, stable entry point and are taught where to look next, rather than being overwhelmed up front.
 

@@ -1,19 +1,17 @@
-# Design Docs
+# Design Doc Routing Index
 
-Use this directory for long-lived design rationale and repository operating principles.
+Use this directory to route to the governing long-lived design document for the
+task at hand.
 
-## Metadata
+Start with the row whose task area and scope match your work. Read rows marked
+`Governing` first. Rows marked `Draft` are future-looking and should not be
+treated as the current source of truth.
 
-- index_kind: design-doc-status-map
-- default_read: Start with rows marked `Canonical: yes` whose applicability matches the task.
-
-## Documents
-
-| Document | Status | Canonical | Applicability | Read When | Notes |
-| --- | --- | --- | --- | --- | --- |
-| [`core-beliefs.md`](core-beliefs.md) | approved | yes | all agent work | Before changing repository workflow, harness docs, or operating norms. | Repository-wide agent-first beliefs. |
-| [`golden-principles.md`](golden-principles.md) | approved | yes | repository cleanup and promotion work | Before promoting repeated review findings into docs or checks. | Canonical cleanup invariants and promotion defaults. |
-| [`doc-gardening.md`](doc-gardening.md) | approved | yes | harness maintenance | Before changing cleanup loops, doc upkeep, or quality-tracking expectations. | Recurring cleanup and repository gardening guidance. |
-| [`quantcraft-architecture.md`](quantcraft-architecture.md) | approved | yes | architecture and bounded-context work | Before changing top-level contexts, dependency rules, or package ownership. | Canonical long-lived architecture for contexts, layers, and dependency rules. |
-| [`trading-kernel-contract-draft-ko.md`](trading-kernel-contract-draft-ko.md) | draft | no | trading-kernel planning | Only when evaluating future shared trading semantics that are still draft, after reading the current implemented product specs first. | Future-only draft; do not treat it as the current implemented contract or current source of truth. |
-| [`architecture-governance.md`](architecture-governance.md) | approved | yes | harness governance and repo-check changes | Before promoting a repeated rule from docs into checks or changing system-of-record policy. | Canonical governance for mechanical enforcement versus prompt guidance. |
+| Task Area | Document | Role | Scope | Read When |
+| --- | --- | --- | --- | --- |
+| Repository workflow and operating norms | [`core-beliefs.md`](core-beliefs.md) | Governing | all agent work | Before changing repository workflow, entry-contract docs, or operating norms. |
+| Cleanup and promotion defaults | [`golden-principles.md`](golden-principles.md) | Governing | repository cleanup and promotion work | Before promoting repeated review findings into docs or checks, or deleting workflow bureaucracy. |
+| Cleanup loops and doc upkeep | [`doc-gardening.md`](doc-gardening.md) | Governing | harness maintenance | Before changing cleanup loops, doc upkeep, or maintenance triggers. |
+| Architecture and bounded contexts | [`quantcraft-architecture.md`](quantcraft-architecture.md) | Governing | architecture and bounded-context work | Before changing top-level contexts, dependency rules, or package ownership. |
+| Governance for docs versus checks | [`architecture-governance.md`](architecture-governance.md) | Governing | harness governance and repo-check changes | Before promoting a repeated rule from docs into checks, retiring a legacy control-plane artifact, or changing discoverability policy. |
+| Shared trading-kernel semantics planning | [`trading-kernel-contract-draft-ko.md`](trading-kernel-contract-draft-ko.md) | Draft | future trading-kernel planning | Only when evaluating future shared trading semantics; read the current implemented product specs first. |

@@ -119,6 +119,20 @@ The following areas are still intentionally document-led:
 
 These topics are too likely to evolve to justify early hard-coding into rigid checks.
 
+## Retired Control-Plane Artifacts
+
+Older workflow-control artifacts such as scorecards, promotion logs, and legacy
+execution-plan archives may remain in the repository for audit continuity, but
+they are not part of the active workflow surface.
+
+When one of those artifacts is retired:
+
+- keep only the minimal rationale needed for future operators in the surviving
+  governing docs
+- route current work through `AGENTS.md`, the active plan under `docs/plans/`,
+  and the governing design or product docs instead
+- do not preserve retired artifacts as a second workflow authority
+
 ## Slice-Specific Defaults
 
 Product specs are allowed to narrow open global questions for a specific implementation slice.

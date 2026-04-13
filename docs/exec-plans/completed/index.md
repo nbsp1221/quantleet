@@ -1,6 +1,9 @@
 # Completed Execution Plans
 
-This directory indexes completed execution work once plans graduate from active status.
+This directory indexes completed execution work from the legacy execution-plan
+system.
+
+It is a historical archive, not part of the current active planning workflow.
 
 ## Metadata
 
@@ -8,7 +11,8 @@ This directory indexes completed execution work once plans graduate from active 
 
 ## Transition
 
-Historical plans currently remain in `docs/plans/` until they are reindexed into the new structure.
+Current active planning lives in `docs/plans/`. This archive remains only for
+retrospective lookup and audit continuity while it stays in the repository.
 
 ## Plans
 

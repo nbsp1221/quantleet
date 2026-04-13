@@ -1,7 +1,7 @@
 import subprocess
 from pathlib import Path
 
-from scripts import check_docs  # noqa: E402
+from scripts import check_docs, repo_check  # noqa: E402
 from tests.structure.repo.test_poe_task_contracts import write_minimal_repo_docs
 from tests.support import ROOT
 
@@ -11,30 +11,20 @@ def test_check_docs_reports_no_issues_for_current_required_docs() -> None:
 
 
 def test_check_docs_flags_missing_required_doc(tmp_path: Path) -> None:
-    (tmp_path / "README.md").write_text("# quantcraft\n\n## Setup\n", encoding="utf-8")
-    (tmp_path / "AGENTS.md").write_text("agents", encoding="utf-8")
-    (tmp_path / "docs").mkdir()
+    write_minimal_repo_docs(tmp_path)
+    (tmp_path / "ARCHITECTURE.md").unlink()
 
     issues = check_docs.collect_issues(tmp_path)
 
-    assert any("ARCHITECTURE.md" in issue for issue in issues)
+    assert "Missing required document: ARCHITECTURE.md" in issues
 
 
 def test_check_docs_flags_placeholder_project_metadata(tmp_path: Path) -> None:
-    readme = "# quantcraft\n\nAdd your description here\n"
-    (tmp_path / "README.md").write_text(readme, encoding="utf-8")
-    (tmp_path / "AGENTS.md").write_text("agents", encoding="utf-8")
-    (tmp_path / "ARCHITECTURE.md").write_text("architecture", encoding="utf-8")
-    docs_dir = tmp_path / "docs"
-    docs_dir.mkdir()
-    for relative_path in [
-        "DESIGN.md",
-        "PLANS.md",
-        "QUALITY_SCORE.md",
-        "RELIABILITY.md",
-        "SECURITY.md",
-    ]:
-        (docs_dir / relative_path).write_text("ok", encoding="utf-8")
+    write_minimal_repo_docs(tmp_path)
+    (tmp_path / "README.md").write_text(
+        "# quantcraft\n\n## Setup\n\nAdd your description here\n",
+        encoding="utf-8",
+    )
 
     issues = check_docs.collect_issues(tmp_path)
 
@@ -172,8 +162,8 @@ verify = ["lint", "typecheck", "test", "coverage", "build", "repo-check", "noteb
     design_index_path.write_text(
         design_index_path.read_text(encoding="utf-8").replace(
             "| [`golden-principles.md`](golden-principles.md) "
-            "| approved | yes | all agent work | Before promoting repository-wide "
-            "drift rules. | Canonical cleanup invariants. |\n",
+            "| Governing | repository cleanup and promotion work | Before promoting "
+            "repeated review findings into docs or checks. |\n",
             "",
         ),
         encoding="utf-8",
@@ -184,7 +174,16 @@ verify = ["lint", "typecheck", "test", "coverage", "build", "repo-check", "noteb
     assert "docs/design-docs/index.md is missing design doc: golden-principles.md" in issues
 
 
-def test_check_docs_flags_feedback_promotion_log_missing_quality_score_reference(
+def test_check_docs_flags_missing_plan_pointer_doc(tmp_path: Path) -> None:
+    write_minimal_repo_docs(tmp_path)
+    (tmp_path / "docs" / "PLANS.md").unlink()
+
+    issues = check_docs.collect_issues(tmp_path)
+
+    assert "Missing required document: docs/PLANS.md" in issues
+
+
+def test_repo_check_accepts_minimal_active_contract_without_legacy_harness_artifacts(
     tmp_path: Path,
 ) -> None:
     write_minimal_repo_docs(tmp_path)
@@ -221,17 +220,8 @@ verify = ["lint", "typecheck", "test", "coverage", "build", "repo-check", "noteb
 """.strip(),
         encoding="utf-8",
     )
-    feedback_log_path = tmp_path / "docs" / "feedback-promotion-log.md"
-    feedback_log_path.write_text("feedback log\n", encoding="utf-8")
-    quality_score_path = tmp_path / "docs" / "QUALITY_SCORE.md"
-    quality_score_path.write_text(
-        "# Quality Score\n\n## Metadata\n- as_of: 2026-03-22\n",
-        encoding="utf-8",
-    )
+    package_root = tmp_path / "src" / "quantcraft"
+    package_root.mkdir(parents=True)
+    (package_root / "__init__.py").write_text("", encoding="utf-8")
 
-    issues = check_docs.collect_issues(tmp_path)
-
-    assert (
-        "docs/QUALITY_SCORE.md is missing canonical feedback artifact reference: "
-        "docs/feedback-promotion-log.md"
-    ) in issues
+    assert repo_check.collect_issues(tmp_path) == []

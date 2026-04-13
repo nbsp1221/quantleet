@@ -1,11 +1,9 @@
 from __future__ import annotations
 
 import ast
-import json
 import re
 import subprocess
 import tomllib
-from datetime import date
 from pathlib import Path
 from typing import cast
 
@@ -13,15 +11,12 @@ REQUIRED_DOCS = (
     "README.md",
     "AGENTS.md",
     "ARCHITECTURE.md",
-    "agent-development-guide-ko.md",
     "docs/DESIGN.md",
     "docs/PLANS.md",
-    "docs/QUALITY_SCORE.md",
     "docs/RELIABILITY.md",
     "docs/SECURITY.md",
-    "docs/feedback-promotion-log.md",
-    "docs/design-docs/golden-principles.md",
-    "docs/references/tooling.md",
+    "docs/design-docs/index.md",
+    "docs/product-specs/index.md",
 )
 
 PLACEHOLDER_TOKENS = ("Add your description here",)
@@ -42,76 +37,8 @@ ALLOWED_ROOT_MODULE_DEPENDENCIES = {
     ("quantcraft._repo_tools", "quantcraft.exchange"),
 }
 
-EXPECTED_QUALITY_AREAS = (
-    "data",
-    "research",
-    "trading",
-    "execution",
-    "docs_system",
-    "verification",
-)
-REQUIRED_QUALITY_METADATA_FIELDS = (
-    "as_of",
-    "freshness_window_days",
-    "evidence_rule",
-    "freshness_rule",
-)
-QUALITY_CONTRACT_HEADINGS = (
-    "## Metadata",
-    "## Evidence Expectations",
-    "## Score Rubric",
-    "## Areas",
-)
-QUALITY_AREA_COLUMNS = ("Area", "Score", "Evidence", "Notes")
-ALLOWED_QUALITY_SCORES = {"A", "B", "C", "D"}
-QUALITY_STRONG_GRADES = {"A", "B"}
-QUALITY_IMPLEMENTED_GRADES = {"A", "B", "C"}
-QUALITY_AREA_RELEVANT_PATHS = {
-    "data": (
-        "src/quantcraft/data/",
-        "src/quantcraft/exchange.py",
-        "tests/unit/market_data/",
-        "tests/integration/research/fixtures/",
-    ),
-    "research": (
-        "src/quantcraft/research/",
-        "tests/unit/research/",
-        "tests/integration/research/",
-        "docs/product-specs/backtest-mvp.md",
-    ),
-    "trading": (
-        "src/quantcraft/trading/",
-        "tests/unit/trading/",
-        "docs/product-specs/backtest-mvp.md",
-    ),
-    "execution": (
-        "src/quantcraft/execution/",
-        "tests/smoke/live/",
-        "docs/design-docs/quantcraft-architecture.md",
-    ),
-    "docs_system": (
-        "docs/",
-        "AGENTS.md",
-        "ARCHITECTURE.md",
-        "README.md",
-        "tests/structure/docs/",
-        "tests/structure/repo/",
-    ),
-    "verification": (
-        "scripts/",
-        "pyproject.toml",
-        "tests/structure/repo/",
-        "docs/references/tooling.md",
-    ),
-    "ml": (
-        "src/quantcraft/ml/",
-        "docs/design-docs/quantcraft-architecture.md",
-    ),
-}
-QUALITY_IMPLEMENTATION_AREAS = {"data", "research", "trading", "execution", "ml"}
-QUALITY_IMPLEMENTATION_PATH_PREFIXES = ("src/", "tests/", "scripts/")
-QUALITY_HARNESS_PATH_PREFIXES = ("scripts/", "tests/")
-INDEX_STATUS_MAP_COLUMNS = (
+ROUTING_INDEX_COLUMNS = ("Task Area", "Document", "Role", "Scope", "Read When")
+LEGACY_INDEX_STATUS_MAP_COLUMNS = (
     "Document",
     "Status",
     "Canonical",
@@ -119,25 +46,17 @@ INDEX_STATUS_MAP_COLUMNS = (
     "Read When",
     "Notes",
 )
-INDEX_STATUS_MAP_REQUIRED_HEADINGS = ("## Metadata", "## Documents")
-INDEX_STATUS_MAP_REQUIRED_FIELDS = (
-    "status",
-    "canonical",
-    "applicability",
-    "read_when",
-    "notes",
-)
-INDEX_STATUS_MAP_CANONICAL_VALUES = {"yes", "no"}
-INDEX_STATUS_MAP_CONFIG = {
+ROUTING_INDEX_REQUIRED_FIELDS = ("task_area", "role", "scope", "read_when")
+ROUTING_INDEX_CONFIG = {
     "docs/design-docs/index.md": {
-        "index_kind": "design-doc-status-map",
         "directory": "docs/design-docs",
         "label": "design doc",
+        "allowed_roles": {"Governing", "Draft"},
     },
     "docs/product-specs/index.md": {
-        "index_kind": "product-spec-status-map",
         "directory": "docs/product-specs",
         "label": "product spec",
+        "allowed_roles": {"Governing", "Pointer", "Future-only"},
     },
 }
 REQUIRED_POE_TASKS = (
@@ -159,10 +78,6 @@ REQUIRED_POE_TASKS = (
     "live-smoke",
     "verify",
 )
-EXEC_PLAN_ALLOWED_STATUSES = {"active", "completed"}
-EXEC_PLAN_INDEX_COLUMNS = ("Plan", "Status", "Note")
-EXEC_PLAN_COMPLETE_STATUSES = {"complete", "completed"}
-CANONICAL_FEEDBACK_ARTIFACT = "docs/feedback-promotion-log.md"
 
 
 def git_has_head(root: Path) -> bool:
@@ -254,14 +169,6 @@ def parse_bullet_metadata_section(section: str | None) -> dict[str, str]:
     return metadata
 
 
-def parse_quality_metadata(content: str) -> dict[str, str]:
-    return parse_bullet_metadata_section(markdown_section(content, "Metadata"))
-
-
-def parse_exec_plan_lifecycle_metadata(content: str) -> dict[str, str]:
-    return parse_bullet_metadata_section(markdown_section(content, "Lifecycle"))
-
-
 def parse_markdown_row(line: str) -> list[str]:
     stripped = line.strip()
     if not stripped.startswith("|") or not stripped.endswith("|"):
@@ -269,113 +176,46 @@ def parse_markdown_row(line: str) -> list[str]:
     return [cell.strip() for cell in stripped.strip("|").split("|")]
 
 
-def parse_quality_area_table(content: str) -> tuple[dict[str, dict[str, str]], list[str]]:
-    areas_section = markdown_section(content, "Areas")
-    if areas_section is None:
-        return {}, []
-
-    table_lines = [
-        line.strip() for line in areas_section.splitlines() if line.strip().startswith("|")
-    ]
-    if len(table_lines) < 2:
-        return {}, []
-
-    header = parse_markdown_row(table_lines[0])
-    if tuple(header) != QUALITY_AREA_COLUMNS:
-        return {}, []
-
-    area_rows: dict[str, dict[str, str]] = {}
-    duplicate_areas: list[str] = []
-    for line in table_lines[2:]:
-        cells = parse_markdown_row(line)
-        if len(cells) != len(QUALITY_AREA_COLUMNS):
+def find_markdown_table_lines(content: str, header_columns: tuple[str, ...]) -> list[str]:
+    lines = [line.strip() for line in content.splitlines()]
+    for index, line in enumerate(lines):
+        if tuple(parse_markdown_row(line)) != header_columns:
             continue
-        area, score, evidence, notes = cells
-        if area in area_rows:
-            duplicate_areas.append(area)
-            continue
-        area_rows[area] = {
-            "score": score,
-            "evidence": evidence,
-            "notes": notes,
-        }
 
-    return area_rows, duplicate_areas
+        table_lines = [line]
+        cursor = index + 1
+        while cursor < len(lines):
+            candidate = lines[cursor]
+            if not candidate.startswith("|"):
+                break
+            table_lines.append(candidate)
+            cursor += 1
+        return table_lines
 
-
-def parse_quality_area_rows(content: str) -> dict[str, dict[str, str]]:
-    area_rows, _ = parse_quality_area_table(content)
-    return area_rows
-
-
-def parse_exec_plan_index_entries(content: str) -> tuple[list[dict[str, str]], list[str]]:
-    plans_section = markdown_section(content, "Plans")
-    if plans_section is None:
-        return [], []
-
-    table_lines = [
-        line.strip() for line in plans_section.splitlines() if line.strip().startswith("|")
-    ]
-    if len(table_lines) < 2:
-        return [], []
-
-    header = parse_markdown_row(table_lines[0])
-    if tuple(header) != EXEC_PLAN_INDEX_COLUMNS:
-        return [], []
-
-    entries: list[dict[str, str]] = []
-    duplicates: list[str] = []
-    seen_targets: set[str] = set()
-    for line in table_lines[2:]:
-        cells = parse_markdown_row(line)
-        if len(cells) != len(EXEC_PLAN_INDEX_COLUMNS):
-            continue
-        target_cell, status, note = cells
-        match = re.search(r"\(([^)#]+\.md)\)", target_cell)
-        if match is None:
-            stripped = target_cell.strip().strip("`")
-            if stripped.endswith(".md"):
-                target = stripped
-            else:
-                continue
-        else:
-            target = match.group(1).strip()
-        if target in seen_targets:
-            duplicates.append(target)
-            continue
-        seen_targets.add(target)
-        entries.append(
-            {
-                "target": target,
-                "status": status.strip(),
-                "note": note.strip(),
-            }
-        )
-
-    return entries, duplicates
+    return []
 
 
 def parse_index_status_map_entries(content: str) -> tuple[list[dict[str, str]], list[str]]:
-    documents_section = markdown_section(content, "Documents")
-    if documents_section is None:
-        return [], []
-
-    table_lines = [
-        line.strip() for line in documents_section.splitlines() if line.strip().startswith("|")
-    ]
+    table_lines = find_markdown_table_lines(content, LEGACY_INDEX_STATUS_MAP_COLUMNS)
     if len(table_lines) < 2:
-        return [], []
-
-    header = parse_markdown_row(table_lines[0])
-    if tuple(header) != INDEX_STATUS_MAP_COLUMNS:
-        return [], []
+        documents_section = markdown_section(content, "Documents")
+        if documents_section is None:
+            return [], []
+        table_lines = [
+            line.strip() for line in documents_section.splitlines() if line.strip().startswith("|")
+        ]
+        if len(table_lines) < 2:
+            return [], []
+        header = parse_markdown_row(table_lines[0])
+        if tuple(header) != LEGACY_INDEX_STATUS_MAP_COLUMNS:
+            return [], []
 
     entries: list[dict[str, str]] = []
     duplicates: list[str] = []
     seen_targets: set[str] = set()
     for line in table_lines[2:]:
         cells = parse_markdown_row(line)
-        if len(cells) != len(INDEX_STATUS_MAP_COLUMNS):
+        if len(cells) != len(LEGACY_INDEX_STATUS_MAP_COLUMNS):
             continue
         target_cell, status, canonical, applicability, read_when, notes = cells
         match = re.search(r"\(([^)#]+\.md)\)", target_cell)
@@ -405,188 +245,90 @@ def parse_index_status_map_entries(content: str) -> tuple[list[dict[str, str]], 
     return entries, duplicates
 
 
-def parse_exec_plan_slice_statuses(content: str) -> list[str]:
-    current_status_section = markdown_section(content, "Current Status")
-    if current_status_section is None:
-        return []
-
-    statuses: list[str] = []
-    for line in current_status_section.splitlines():
-        match = re.match(r"^\s*[-*]\s*Slice\s+\d+:\s*(.+?)\s*$", line)
-        if match is None:
-            continue
-        statuses.append(match.group(1).strip().lower())
-
-    return statuses
-
-
-def resolve_exec_plan_index_target(root: Path, *, index_path: Path, target: str) -> str | None:
-    relative_base = index_path.parent.relative_to(root)
-    relative_path = (relative_base / target).as_posix()
-    if relative_path.startswith("../"):
-        return None
-    return relative_path
-
-
-def resolve_index_status_map_target(root: Path, *, index_path: Path, target: str) -> str | None:
-    relative_base = index_path.parent.relative_to(root)
-    relative_path = (relative_base / target).as_posix()
-    if relative_path.startswith("../"):
-        return None
-    return relative_path
-
-
-def quality_score_snapshot(root: Path) -> dict[str, object]:
-    return quality_score_snapshot_for_date(root, today=date.today())
-
-
-def parse_iso_date(value: str) -> date | None:
-    try:
-        return date.fromisoformat(value)
-    except ValueError:
-        return None
-
-
-def parse_positive_int(value: str) -> int | None:
-    try:
-        parsed = int(value)
-    except ValueError:
-        return None
-    return parsed if parsed > 0 else None
-
-
-def is_area_relevant_path(area: str, path: str) -> bool:
-    for candidate in QUALITY_AREA_RELEVANT_PATHS.get(area, ()):
-        if path == candidate or path.startswith(candidate):
-            return True
-    return False
-
-
-def is_implementation_path(path: str) -> bool:
-    return path.startswith(QUALITY_IMPLEMENTATION_PATH_PREFIXES)
-
-
-def is_harness_check_path(path: str) -> bool:
-    return path == "pyproject.toml" or path.startswith(QUALITY_HARNESS_PATH_PREFIXES)
-
-
-def evaluate_quality_area_evidence(
-    root: Path,
+def parse_routing_index_entries(
+    content: str,
     *,
-    area: str,
-    score: str,
-    evidence: str,
-) -> tuple[list[str], str]:
-    issues: list[str] = []
-    evidence_paths = sorted(referenced_repo_paths(evidence))
-    if not evidence_paths:
-        issues.append(f"Quality evidence for {area} must reference at least one repository path")
-        return issues, "missing_paths"
-
-    valid_evidence_paths: list[str] = []
-    for evidence_path in evidence_paths:
-        if not (root / evidence_path).exists():
-            issues.append(
-                f"Quality evidence for {area} references missing repository path: {evidence_path}"
+    allowed_roles: set[str] | None = None,
+) -> tuple[list[dict[str, str]], list[str]]:
+    table_lines = find_markdown_table_lines(content, ROUTING_INDEX_COLUMNS)
+    if len(table_lines) >= 2:
+        entries: list[dict[str, str]] = []
+        duplicates: list[str] = []
+        seen_targets: set[str] = set()
+        for line in table_lines[2:]:
+            cells = parse_markdown_row(line)
+            if len(cells) != len(ROUTING_INDEX_COLUMNS):
+                continue
+            task_area, target_cell, role, scope, read_when = cells
+            match = re.search(r"\(([^)#]+\.md)\)", target_cell)
+            if match is None:
+                stripped = target_cell.strip().strip("`")
+                if stripped.endswith(".md"):
+                    target = stripped
+                else:
+                    continue
+            else:
+                target = match.group(1).strip()
+            if target in seen_targets:
+                duplicates.append(target)
+                continue
+            seen_targets.add(target)
+            entries.append(
+                {
+                    "task_area": task_area.strip(),
+                    "target": target,
+                    "role": role.strip(),
+                    "scope": scope.strip(),
+                    "read_when": read_when.strip(),
+                    "schema": "routing_index",
+                }
             )
-            continue
-        valid_evidence_paths.append(evidence_path)
+        return entries, duplicates
 
-    if score in QUALITY_STRONG_GRADES:
-        if len(valid_evidence_paths) < 2:
-            issues.append(
-                f"Quality evidence for {area} score {score} must reference at least "
-                "two valid repository paths"
-            )
-        relevant_paths = [
-            path for path in valid_evidence_paths if is_area_relevant_path(area, path)
-        ]
-        if not relevant_paths:
-            issues.append(
-                f"Quality evidence for {area} score {score} must include at least one "
-                "area-relevant path"
-            )
-        if area == "verification" and not any(
-            is_harness_check_path(path) for path in valid_evidence_paths
-        ):
-            issues.append(
-                f"Quality evidence for {area} score {score} must include at least one "
-                "harness-check path"
-            )
+    legacy_entries, duplicates = parse_index_status_map_entries(content)
+    normalized_entries: list[dict[str, str]] = []
+    for entry in legacy_entries:
+        role = normalize_legacy_routing_role(entry, allowed_roles=allowed_roles)
 
-    if area in QUALITY_IMPLEMENTATION_AREAS and score in QUALITY_IMPLEMENTED_GRADES:
-        if not any(
-            is_area_relevant_path(area, path) and is_implementation_path(path)
-            for path in valid_evidence_paths
-        ):
-            issues.append(
-                f"Quality evidence for {area} score {score} must include at least one "
-                "implementation or test path"
-            )
-
-    return issues, "invalid" if issues else "valid"
-
-
-def quality_score_snapshot_for_date(root: Path, *, today: date) -> dict[str, object]:
-    relative_path = "docs/QUALITY_SCORE.md"
-    quality_score_path = root / relative_path
-    snapshot: dict[str, object] = {
-        "path": relative_path,
-        "metadata": {},
-        "tracked_areas": {},
-        "missing_metadata": list(REQUIRED_QUALITY_METADATA_FIELDS),
-        "missing_areas": list(EXPECTED_QUALITY_AREAS),
-        "validation": {
-            "today": today.isoformat(),
-            "as_of_status": "missing",
-            "evidence_status": {},
-            "issue_count": 0,
-        },
-    }
-    if not quality_score_path.exists():
-        return snapshot
-
-    content = quality_score_path.read_text(encoding="utf-8")
-    metadata = parse_quality_metadata(content)
-    tracked_areas, duplicate_areas = parse_quality_area_table(content)
-    snapshot["metadata"] = metadata
-    snapshot["tracked_areas"] = tracked_areas
-    snapshot["duplicate_areas"] = duplicate_areas
-    snapshot["missing_metadata"] = [
-        field for field in REQUIRED_QUALITY_METADATA_FIELDS if not metadata.get(field)
-    ]
-    snapshot["missing_areas"] = [
-        area for area in EXPECTED_QUALITY_AREAS if area not in tracked_areas
-    ]
-    validation = cast(dict[str, object], snapshot["validation"])
-    as_of = metadata.get("as_of")
-    freshness_window_days = parse_positive_int(metadata.get("freshness_window_days", ""))
-    if as_of:
-        as_of_date = parse_iso_date(as_of)
-        if as_of_date is None:
-            validation["as_of_status"] = "invalid"
-        elif as_of_date > today:
-            validation["as_of_status"] = "future"
-        elif (
-            freshness_window_days is not None and (today - as_of_date).days > freshness_window_days
-        ):
-            validation["as_of_status"] = "stale"
-        else:
-            validation["as_of_status"] = "valid"
-
-    evidence_status: dict[str, str] = {}
-    for area, row in tracked_areas.items():
-        _, status = evaluate_quality_area_evidence(
-            root,
-            area=area,
-            score=row.get("score", ""),
-            evidence=row.get("evidence", ""),
+        normalized_entries.append(
+            {
+                "task_area": entry["notes"] or Path(entry["target"]).stem.replace("-", " "),
+                "target": entry["target"],
+                "role": role,
+                "scope": entry["applicability"],
+                "read_when": entry["read_when"],
+                "schema": "legacy_status_map",
+            }
         )
-        evidence_status[area] = status
 
-    validation["evidence_status"] = evidence_status
-    return snapshot
+    return normalized_entries, duplicates
 
+
+def normalize_legacy_routing_role(
+    entry: dict[str, str],
+    *,
+    allowed_roles: set[str] | None = None,
+) -> str:
+    status = entry["status"].strip().lower()
+    canonical = entry["canonical"].strip().lower()
+    if canonical == "yes":
+        return "Governing"
+    if status == "draft":
+        return "Draft"
+    if status == "future":
+        if allowed_roles is None or "Future-only" in allowed_roles:
+            return "Future-only"
+        return "Draft"
+    if allowed_roles is None or "Pointer" in allowed_roles:
+        return "Pointer"
+    return "Draft"
+
+def resolve_routing_index_target(root: Path, *, index_path: Path, target: str) -> str | None:
+    relative_base = index_path.parent.relative_to(root)
+    relative_path = (relative_base / target).as_posix()
+    if relative_path.startswith("../"):
+        return None
+    return relative_path
 
 def collect_doc_issues(root: Path) -> list[str]:
     issues: list[str] = []
@@ -615,11 +357,7 @@ def collect_doc_issues(root: Path) -> list[str]:
 
     plans_doc_path = root / "docs/PLANS.md"
     plans_doc = plans_doc_path.read_text(encoding="utf-8") if plans_doc_path.exists() else ""
-    required_plan_references = (
-        "docs/plans/",
-        "docs/exec-plans/active/",
-        "docs/exec-plans/completed/",
-    )
+    required_plan_references = ("plans/", "plans/trials/")
     for required_reference in required_plan_references:
         if required_reference not in plans_doc:
             issues.append(f"docs/PLANS.md is missing plan reference: {required_reference}")
@@ -632,11 +370,6 @@ def collect_doc_issues(root: Path) -> list[str]:
         issues.append("AGENTS.md is missing uv run poe guidance")
     if "repo-local harness commands" not in agents:
         issues.append("AGENTS.md is missing repo-local harness command guidance")
-
-    local_guide_path = root / "agent-development-guide-ko.md"
-    local_guide = local_guide_path.read_text(encoding="utf-8") if local_guide_path.exists() else ""
-    if "project.scripts" in local_guide:
-        issues.append("agent-development-guide-ko.md still references project.scripts")
 
     pyproject_path = root / "pyproject.toml"
     if not pyproject_path.exists():
@@ -655,31 +388,6 @@ def collect_doc_issues(root: Path) -> list[str]:
         for task_name in REQUIRED_POE_TASKS:
             if task_name not in poe_tasks:
                 issues.append(f"Missing required Poe task: {task_name}")
-
-    tooling_path = root / "docs" / "references" / "tooling.md"
-    tooling = tooling_path.read_text(encoding="utf-8") if tooling_path.exists() else ""
-    for command in (
-        "uv run poe verify",
-        "uv run poe coverage",
-        "uv run poe format",
-        "uv run poe test-live",
-        "uv run python scripts/coverage_check.py",
-        "uv run python scripts/repo_check.py",
-        "uv run python scripts/notebook_validate.py",
-        "uv run python scripts/live_smoke.py",
-    ):
-        if command not in tooling:
-            issues.append(f"docs/references/tooling.md is missing command: {command}")
-
-    quality_score_path = root / "docs" / "QUALITY_SCORE.md"
-    quality_score = (
-        quality_score_path.read_text(encoding="utf-8") if quality_score_path.exists() else ""
-    )
-    if quality_score and CANONICAL_FEEDBACK_ARTIFACT not in quality_score:
-        issues.append(
-            "docs/QUALITY_SCORE.md is missing canonical feedback artifact reference: "
-            f"{CANONICAL_FEEDBACK_ARTIFACT}"
-        )
 
     indexed_doc_dirs = (
         (
@@ -711,32 +419,26 @@ def collect_doc_issues(root: Path) -> list[str]:
             "generated artifact",
         ),
     )
-    for index_relative_path, config in INDEX_STATUS_MAP_CONFIG.items():
+    for index_relative_path, config in ROUTING_INDEX_CONFIG.items():
         index_path = root / index_relative_path
         if not index_path.exists():
             continue
 
         content = index_path.read_text(encoding="utf-8")
-        for heading in INDEX_STATUS_MAP_REQUIRED_HEADINGS:
-            if heading not in content:
-                issues.append(f"{index_relative_path} is missing required heading: {heading}")
+        entries, duplicates = parse_routing_index_entries(
+            content,
+            allowed_roles=cast(set[str], config["allowed_roles"]),
+        )
+        if not entries:
+            issues.append(f"{index_relative_path} is missing routing index table")
 
-        metadata = parse_bullet_metadata_section(markdown_section(content, "Metadata"))
-        if metadata.get("index_kind") != config["index_kind"]:
-            issues.append(f"{index_relative_path} must declare index_kind: {config['index_kind']}")
-
-        header = "| " + " | ".join(INDEX_STATUS_MAP_COLUMNS) + " |"
-        if header not in content:
-            issues.append(f"{index_relative_path} is missing table header: {header}")
-
-        entries, duplicates = parse_index_status_map_entries(content)
         for duplicate in duplicates:
             issues.append(f"{index_relative_path} has duplicate document row: {duplicate}")
 
         indexed_targets: set[str] = set()
         for entry in entries:
             target = entry["target"]
-            resolved_target = resolve_index_status_map_target(
+            resolved_target = resolve_routing_index_target(
                 root,
                 index_path=index_path,
                 target=target,
@@ -753,12 +455,12 @@ def collect_doc_issues(root: Path) -> list[str]:
                 continue
 
             indexed_targets.add(Path(resolved_target).name)
-            if entry["canonical"].lower() not in INDEX_STATUS_MAP_CANONICAL_VALUES:
+            if entry["role"] not in config["allowed_roles"]:
                 issues.append(
-                    f"{index_relative_path} has invalid Canonical field for document "
-                    f"{Path(target).name}: {entry['canonical']}"
+                    f"{index_relative_path} has invalid Role field for document "
+                    f"{Path(target).name}: {entry['role']}"
                 )
-            for field in INDEX_STATUS_MAP_REQUIRED_FIELDS:
+            for field in ROUTING_INDEX_REQUIRED_FIELDS:
                 if entry[field]:
                     continue
                 label = field.replace("_", " ").title()
@@ -767,21 +469,22 @@ def collect_doc_issues(root: Path) -> list[str]:
                     f"{Path(target).name}"
                 )
 
-        directory = root / config["directory"]
+        directory = root / cast(str, config["directory"])
         if directory.exists():
             for path in sorted(directory.glob("*.md")):
                 if path.name == "index.md":
                     continue
                 if path.name not in indexed_targets:
                     issues.append(
-                        f"{index_relative_path} is missing {config['label']}: {path.name}"
+                        f"{index_relative_path} is missing {cast(str, config['label'])}: "
+                        f"{path.name}"
                     )
 
     for directory_name, index_content, label in indexed_doc_dirs:
         directory = root / "docs" / directory_name
         if not directory.exists():
             continue
-        if f"docs/{directory_name}/index.md" in INDEX_STATUS_MAP_CONFIG:
+        if f"docs/{directory_name}/index.md" in ROUTING_INDEX_CONFIG:
             continue
         for path in sorted(directory.glob("*.md")):
             if path.name == "index.md":
@@ -818,13 +521,6 @@ def collect_doc_issues(root: Path) -> list[str]:
             continue
         for target in missing_markdown_link_targets(doc_path):
             issues.append(f"{doc_path.relative_to(root)} points to missing target: {target}")
-
-    plans_dir = root / "docs" / "plans"
-    if plans_dir.exists():
-        for path in sorted(plans_dir.glob("*.md")):
-            relative_path = path.relative_to(root).as_posix()
-            if relative_path not in plans_doc:
-                issues.append(f"docs/PLANS.md is missing historical plan entry: {relative_path}")
 
     tests_dir = root / "tests"
     if tests_dir.exists():
@@ -1051,246 +747,3 @@ def run_live_smoke() -> list[str]:
         results.append(f"{name}:{market_type}:{len(rows)}")
 
     return results
-
-
-def collect_quality_issues(root: Path, *, today: date | None = None) -> list[str]:
-    quality_score = root / "docs" / "QUALITY_SCORE.md"
-    if not quality_score.exists():
-        return ["Missing docs/QUALITY_SCORE.md"]
-
-    effective_today = today or date.today()
-    content = quality_score.read_text(encoding="utf-8")
-    issues: list[str] = []
-
-    for heading in QUALITY_CONTRACT_HEADINGS:
-        if heading not in content:
-            issues.append(f"Missing quality contract section: {heading}")
-
-    metadata = parse_quality_metadata(content)
-    for field in REQUIRED_QUALITY_METADATA_FIELDS:
-        if not metadata.get(field):
-            issues.append(f"Missing quality metadata field: {field}")
-
-    as_of = metadata.get("as_of")
-    freshness_window_days = parse_positive_int(metadata.get("freshness_window_days", ""))
-    if metadata.get("freshness_window_days") and freshness_window_days is None:
-        issues.append("Quality metadata field freshness_window_days must be a positive integer")
-    if as_of:
-        as_of_date = parse_iso_date(as_of)
-        if as_of_date is None:
-            issues.append("Quality metadata field as_of must use YYYY-MM-DD")
-        elif as_of_date > effective_today:
-            issues.append("Quality metadata field as_of cannot be in the future")
-        elif freshness_window_days is not None:
-            age_days = (effective_today - as_of_date).days
-            if age_days > freshness_window_days:
-                issues.append(
-                    "Quality metadata field as_of is stale for freshness_window_days: "
-                    f"{freshness_window_days}"
-                )
-
-    tracked_areas, duplicate_areas = parse_quality_area_table(content)
-    if "| Area | Score | Evidence | Notes |" not in content:
-        issues.append("Missing quality areas table header: | Area | Score | Evidence | Notes |")
-    for area in duplicate_areas:
-        issues.append(f"Duplicate quality area row: {area}")
-
-    for area in EXPECTED_QUALITY_AREAS:
-        if area not in tracked_areas:
-            issues.append(f"Missing quality area row: {area}")
-
-    for area, row in tracked_areas.items():
-        score = row.get("score", "")
-        if score not in ALLOWED_QUALITY_SCORES:
-            issues.append(f"Invalid quality score for {area}: {score}")
-        evidence = row.get("evidence", "").strip()
-        if not evidence:
-            issues.append(f"Missing evidence text for quality area: {area}")
-        else:
-            area_issues, _ = evaluate_quality_area_evidence(
-                root,
-                area=area,
-                score=score,
-                evidence=evidence,
-            )
-            issues.extend(area_issues)
-        if not row.get("notes", "").strip():
-            issues.append(f"Missing notes text for quality area: {area}")
-
-    return issues
-
-
-def collect_plan_lifecycle_issues(root: Path) -> list[str]:
-    issues: list[str] = []
-    exec_plans_root = root / "docs" / "exec-plans"
-    directories = {
-        "active": exec_plans_root / "active",
-        "completed": exec_plans_root / "completed",
-    }
-    indexed_paths: dict[str, dict[str, dict[str, str]]] = {}
-    indexed_names: dict[str, set[str]] = {}
-
-    for directory_status, directory in directories.items():
-        index_path = directory / "index.md"
-        relative_index_path = index_path.relative_to(root).as_posix()
-        if not index_path.exists():
-            issues.append(f"Missing execution-plan index: {relative_index_path}")
-            indexed_paths[directory_status] = {}
-            indexed_names[directory_status] = set()
-            continue
-
-        content = index_path.read_text(encoding="utf-8")
-        metadata = parse_bullet_metadata_section(markdown_section(content, "Metadata"))
-        if metadata.get("index_status") != directory_status:
-            issues.append(
-                f"Execution plan index {relative_index_path} must declare "
-                f"index_status: {directory_status}"
-            )
-        if "| Plan | Status | Note |" not in content:
-            issues.append(
-                f"Execution plan index {relative_index_path} is missing table header: "
-                "| Plan | Status | Note |"
-            )
-
-        entries, duplicates = parse_exec_plan_index_entries(content)
-        resolved_entries: dict[str, dict[str, str]] = {}
-        indexed_names[directory_status] = set()
-        for duplicate in duplicates:
-            issues.append(
-                f"Execution plan index {relative_index_path} has duplicate entry target: "
-                f"{duplicate}"
-            )
-
-        for entry in entries:
-            target = entry["target"]
-            resolved_target = resolve_exec_plan_index_target(
-                root,
-                index_path=index_path,
-                target=target,
-            )
-            if resolved_target is None:
-                issues.append(
-                    f"Execution plan index {relative_index_path} references out-of-scope "
-                    f"target: {target}"
-                )
-                continue
-
-            resolved_entries[resolved_target] = entry
-            indexed_names[directory_status].add(Path(resolved_target).name)
-            if entry["status"] != directory_status:
-                issues.append(
-                    f"Execution plan index {relative_index_path} must list {resolved_target} "
-                    f"with status {directory_status}, not {entry['status']}"
-                )
-            if not entry["note"]:
-                issues.append(
-                    f"Execution plan index {relative_index_path} is missing a note for "
-                    f"{resolved_target}"
-                )
-            if not (root / resolved_target).exists():
-                issues.append(
-                    f"Execution plan index {relative_index_path} references missing plan file: "
-                    f"{resolved_target}"
-                )
-
-        indexed_paths[directory_status] = resolved_entries
-
-    seen_names: dict[str, str] = {}
-    for directory_status, directory in directories.items():
-        if not directory.exists():
-            issues.append(
-                f"Missing execution-plan directory: {directory.relative_to(root).as_posix()}"
-            )
-            continue
-
-        for path in sorted(directory.glob("*.md")):
-            if path.name == "index.md":
-                continue
-            relative_path = path.relative_to(root).as_posix()
-            declared_name_owner = seen_names.get(path.name)
-            if declared_name_owner is not None:
-                issues.append(
-                    f"Execution plan filename appears in multiple lifecycle directories: "
-                    f"{path.name}"
-                )
-            else:
-                seen_names[path.name] = relative_path
-
-            content = path.read_text(encoding="utf-8")
-            metadata = parse_exec_plan_lifecycle_metadata(content)
-            status = metadata.get("status")
-            if not status:
-                issues.append(
-                    f"Execution plan {relative_path} is missing lifecycle metadata field: status"
-                )
-                continue
-            if status not in EXEC_PLAN_ALLOWED_STATUSES:
-                issues.append(f"Execution plan {relative_path} has invalid status: {status}")
-                continue
-            if status != directory_status:
-                issues.append(
-                    f"Execution plan {relative_path} is under docs/exec-plans/{directory_status}/ "
-                    f"but declares status {status}"
-                )
-
-            slice_statuses = parse_exec_plan_slice_statuses(content)
-            if (
-                status == "active"
-                and slice_statuses
-                and all(
-                    slice_status in EXEC_PLAN_COMPLETE_STATUSES for slice_status in slice_statuses
-                )
-                and not metadata.get("status_reason")
-            ):
-                issues.append(
-                    f"Execution plan {relative_path} marks every slice complete but remains "
-                    "active without status_reason"
-                )
-            if (
-                status == "completed"
-                and slice_statuses
-                and any(
-                    slice_status not in EXEC_PLAN_COMPLETE_STATUSES
-                    for slice_status in slice_statuses
-                )
-            ):
-                issues.append(
-                    f"Execution plan {relative_path} declares completed status but has "
-                    "non-complete slice states"
-                )
-
-            indexed_entry = indexed_paths.get(directory_status, {}).get(relative_path)
-            if indexed_entry is None:
-                issues.append(
-                    f"Execution plan index docs/exec-plans/{directory_status}/index.md is "
-                    f"missing plan entry: {relative_path}"
-                )
-            elif indexed_entry["status"] != status:
-                issues.append(
-                    f"Execution plan index docs/exec-plans/{directory_status}/index.md lists "
-                    f"{relative_path} with status {indexed_entry['status']}, but the plan file "
-                    f"declares {status}"
-                )
-
-            other_status = "completed" if directory_status == "active" else "active"
-            if path.name in indexed_names.get(other_status, set()):
-                issues.append(
-                    f"Execution plan {path.name} is indexed in both active and completed "
-                    "execution-plan indexes"
-                )
-
-    return sorted(set(issues))
-
-
-def quality_report(root: Path) -> str:
-    quality_score = quality_score_snapshot(root)
-    report = {
-        "doc_issues": collect_doc_issues(root),
-        "architecture_issues": collect_architecture_issues(root),
-        "quality_issues": collect_quality_issues(root),
-        "plan_lifecycle_issues": collect_plan_lifecycle_issues(root),
-        "quality_score": quality_score,
-    }
-    validation = cast(dict[str, object], quality_score["validation"])
-    validation["issue_count"] = len(report["quality_issues"])
-    return json.dumps(report, indent=2, sort_keys=True)
