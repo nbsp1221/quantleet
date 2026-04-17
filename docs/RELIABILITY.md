@@ -30,7 +30,7 @@ In particular:
 ## Safety Tiers
 
 - Tier A: `trading`, `execution`
-- Tier B: `data`, `research`
+- Tier B: `data`, `research`, `backtest`
 - Tier C: `ml`, notebooks, generated docs
 
 Tier A work requires stronger human gate and must not be treated as agent-autonomous completion.
@@ -62,7 +62,7 @@ The performance gate is explicit:
 
 - `uv run poe verify` remains the correctness lane
 - `uv run poe perf-check` is the canonical RSI performance-regression lane
-- `uv run poe verify-runtime` is the stronger explicit lane for runtime-sensitive research changes
+- `uv run poe verify-runtime` is the stronger explicit lane for runtime-sensitive backtest or research changes
 - the default integration lane keeps a canonical strategy pair:
   - `RSI 30/70 mean reversion`
   - `EMA crossover`
@@ -71,15 +71,19 @@ The performance gate is explicit:
 - the gate fails unless first-run runtime is `< 1.0s`
 - the gate also fails unless steady-state median runtime is `< 1.0s`
 
-Run `uv run poe verify-runtime` when a change touches the runtime-sensitive research path, especially:
+Run `uv run poe verify-runtime` when a change touches the runtime-sensitive
+backtest or research path, especially:
 
+- `src/quantcraft/backtest/engine.py`
+- `src/quantcraft/backtest/runtime.py`
+- `src/quantcraft/backtest/execution_model.py`
+- `src/quantcraft/backtest/order_activation.py`
+- `src/quantcraft/backtest/strategy_runtime.py`
 - `src/quantcraft/research/ta.py`
-- `src/quantcraft/research/adapters/execution_model.py`
+- `src/quantcraft/research/strategy.py`
 - `src/quantcraft/research/indicators/runtime/runtime.py`
 - `src/quantcraft/research/indicators/runtime/factory.py`
 - `src/quantcraft/research/indicators/pure/`
-- `src/quantcraft/research/application/backtest.py`
-- `src/quantcraft/research/application/order_activation.py`
 
 ## Coverage Guardrail
 

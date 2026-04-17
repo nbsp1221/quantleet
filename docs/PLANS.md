@@ -15,6 +15,9 @@ For current work:
   required by [`../AGENTS.md`](../AGENTS.md)
 - Durable architecture or contract drafts do not belong in `docs/plans/`; they
   belong in [`design-docs/`](design-docs/).
+- Older records in `docs/plans/` may still contain archived design or decision
+  material from before the current governance model. Treat those as audit
+  history, not as active architecture authority.
 - If a historical document conflicts with an active plan, trust `docs/plans/`
   plus the governing docs linked from `AGENTS.md`.
 

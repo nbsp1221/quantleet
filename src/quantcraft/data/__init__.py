@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from quantcraft.data.domain import BarSeries, HistoricalDataSource, TimeBar
+from quantcraft.data.bars import BarSeries, TimeBar
+from quantcraft.data.sources import HistoricalDataSource
 
 __all__ = [
     "BarSeries",

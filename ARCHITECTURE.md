@@ -1,111 +1,110 @@
 # Architecture
 
-`quantcraft` is a local-first quant library and framework that is expected to grow from market-data utilities into research, backtesting, paper trading, live trading, and quant-related ML tooling.
+`quantcraft` is a local-first quant library and framework that is expected to
+grow from market-data utilities into research, backtesting, paper trading, live
+trading, and quant-related ML tooling.
 
-## Domain Map
+## Current Truth
 
-Current top-level bounded contexts:
+The repository's approved long-lived direction is a capability-first v0
+architecture.
+
+That means:
+
+- the installable engine and library live under `src/quantcraft`
+- future product surfaces such as `apps/api` live outside the engine package
+- top-level package ownership is organized by capability and runtime context,
+  not by a repo-wide `domain / application / adapters` skeleton
+
+The current codebase now largely matches this package topology. These docs
+define the standing architecture that future package work must preserve and
+extend.
+
+## Top-Level Contexts
+
+The approved engine-package contexts are:
 
 - `data`
 - `trading`
 - `research`
+- `backtest`
 - `execution`
+- `integrations`
 
 Cross-cutting support remains intentionally narrow:
 
-- `shared`
+- `_shared`
 
-Future adjacent areas may be introduced later after the core four contexts stabilize:
+Adjacent future-only areas may be introduced later:
 
 - `ml`
 
-The repository remains a single Python package for now, but it should be organized so the core bounded contexts can later be extracted without changing the conceptual boundaries.
+## Product Surfaces
+
+The repository distinguishes between:
+
+- `src/quantcraft`: the installable engine and library package
+- `apps/*`: product surfaces that compose the engine package for deployment
+- `src/quantcraft/cli`: the packaged CLI surface, because it ships with the
+  library
+
+Do not treat product surfaces as owners of core business semantics.
+They compose the engine package; they do not redefine it.
 
 ## Safety Tiers
 
 - Tier A: `trading`, `execution`
-- Tier B: `data`, `research`
+- Tier B: `data`, `research`, `backtest`
 - Tier C: `ml`, notebooks, generated docs
 
-Tier A domains are high-scrutiny financial areas and require stronger human gate and stronger verification.
+`integrations` inherit the safety expectations of the context they serve.
+Execution-side integrations should be reviewed with Tier A scrutiny; data-side
+integrations should be reviewed with Tier B scrutiny unless they can create
+exposure or move funds.
 
-## Layer Model
+## Structural Principles
 
-Each implemented domain should eventually follow this internal layering model:
-
-- `domain`
-- `application`
-- `adapters`
-
-Shared support belongs in explicitly named cross-cutting areas only:
-
-- `shared`
+- organize top-level packages by capability and runtime context
+- keep internal package depth shallow by default
+- use local subpackages only when they materially improve legibility
+- do not require every context to expose `domain`, `application`, and
+  `adapters` subdirectories
+- use `api.py` only for bounded-context facades, not as a file-naming ritual
+- keep `_shared` tiny and mechanical
+- prefer asset-neutral names such as `instrument`, `venue`, `account`,
+  `position`, and `order`
 
 ## Dependency Rules
 
-- `research` may depend on `data` for normalized historical data contracts and ingestion paths.
-- `research` may depend on `trading`, but `trading` must not depend on `research`.
-- `execution` may depend on `trading`, but `trading` must not depend on `execution`.
-- `data` must stay focused on data acquisition and normalization, not trading state transitions.
-- Shared helpers belong in explicit shared modules, not random utility files.
-- `shared` must remain very small and must not become a sink for business concepts like orders, positions, or risk rules.
-- Temporary exceptions must be documented near the rule that permits them.
+- `trading` is the shared trading kernel
+- `trading` must not depend on `research`, `backtest`, `execution`,
+  `integrations`, `cli`, or `apps/*`
+- `data` owns normalized market and macro data contracts and must not absorb
+  strategy or trading-state semantics
+- `backtest` owns historical execution runtime concerns and may depend on
+  `data` and `trading`
+- `research` owns strategy authoring, indicators, analytics, and alpha-search
+  ergonomics; it may depend on `data`, `trading`, and the public `backtest`
+  surface
+- `execution` owns paper/live runtime control and may depend on `trading`,
+  normalized data contracts, and concrete integrations
+- `integrations` translate external systems into internal contracts; they do not
+  own core trading or research semantics
+- sibling contexts should prefer public facades such as `quantcraft.<context>.api`
+  over deep internal imports when those facades exist
 
-## Current State
+## Steady-State Guidance
 
-The current codebase is no longer only a market-data skeleton. It now includes:
+The approved long-lived authority remains the capability-first topology
+described here and in the linked design docs.
 
-- exchange-backed market-data utilities
-- an implemented Backtest MVP
-- an implemented `quantcraft.research` ergonomics surface on top of that backtest baseline
-
-The harness still matters because the long-lived architecture remains broader than the currently shipped feature set.
-
-The current approved top-level architecture is tracked in:
+Use the docs below when extending or policing that package structure:
 
 - [`docs/design-docs/quantcraft-architecture.md`](docs/design-docs/quantcraft-architecture.md)
-
-Related design and slice-level documents are indexed in:
-
+- [`docs/design-docs/package-topology-and-naming.md`](docs/design-docs/package-topology-and-naming.md)
 - [`docs/design-docs/index.md`](docs/design-docs/index.md)
 
-The current approved architecture fixes the following top-level decisions:
+Current implemented-scope behavior remains governed by the product specs:
 
-- `trading` is the shared trading kernel for backtest, paper trading, and live trading
-- `portfolio` and `risk` semantics belong with the `trading` kernel
-- each bounded context should follow `domain / application / adapters` internally
-- dependency direction remains:
-  - `research -> data`
-  - `research -> trading`
-  - `execution -> trading`
-  - never the reverse
-- `shared` remains intentionally small and must not absorb business concepts
-
-Active future trading-kernel planning and current slice-level contracts are tracked separately:
-
-- [`docs/design-docs/trading-kernel-contract-draft-ko.md`](docs/design-docs/trading-kernel-contract-draft-ko.md): future-only long-lived trading-kernel contract draft
-- [`docs/product-specs/backtest.md`](docs/product-specs/backtest.md): current backtest product-spec entry
-
-## Test Layout
-
-The repository uses a type-first test taxonomy:
-
-- `tests/unit`
-- `tests/integration`
-- `tests/structure`
-- `tests/smoke`
-
-Rules:
-
-- `tests/unit` and `tests/integration` mirror the source layout once a matching source package path exists
-- `tests/structure` owns repository, architecture, and docs checks
-- `tests/smoke/live` is explicit-only and excluded from the default `pytest` lane
-
-## Command Surface
-
-The repository keeps two explicit command layers:
-
-- repo-local harness scripts under `scripts/`
-- `tool.poe.tasks` for high-level local developer workflows such as `verify`, `lint`, and `format`
-
-Poe tasks must orchestrate the documented repo-local workflow rather than hide a second command contract inside the package.
+- [`docs/product-specs/backtest.md`](docs/product-specs/backtest.md)
+- [`docs/product-specs/research-ergonomics.md`](docs/product-specs/research-ergonomics.md)

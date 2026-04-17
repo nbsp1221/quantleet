@@ -37,7 +37,7 @@ executor = "uv"
 lint = { cmd = "ruff check .", help = "Run Ruff lint checks" }
 format = { cmd = "ruff format .", help = "Format the repository with Ruff" }
 "perf-check" = { cmd = "pytest tests/perf/test_rsi_backtest_benchmark.py -q -x --run-perf", help = "Run the canonical performance regression gate" }
-"verify-runtime" = { sequence = ["verify", "perf-check"], help = "Run the stronger explicit verification lane for runtime-sensitive research changes" }
+"verify-runtime" = { sequence = ["verify", "perf-check"], help = "Run the stronger explicit verification lane for runtime-sensitive backtest or research changes" }
 typecheck = { cmd = "mypy src", help = "Run mypy against the package source" }
 test = { cmd = "pytest -q", help = "Run the default test lane" }
 test-unit = { cmd = "pytest tests/unit -q", help = "Run unit tests" }

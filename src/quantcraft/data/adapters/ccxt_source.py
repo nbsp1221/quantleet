@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from quantcraft.data.adapters.exchange_backend import MarketType, _fetch_ohlcv_range
-from quantcraft.data.domain import BarSeries, HistoricalDataSource, TimeBar
+from quantcraft.data.bars import BarSeries, TimeBar
+from quantcraft.data.sources import HistoricalDataSource
+from quantcraft.integrations.venues.ccxt.market_data import MarketType, _fetch_ohlcv_range
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)

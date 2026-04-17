@@ -18,8 +18,8 @@ def test_research_ergonomics_quickstart_doc_covers_canonical_usage_path() -> Non
         encoding="utf-8"
     )
 
-    canonical_import = "from quantcraft.research import BacktestEngine, Strategy, ta, qc"
-    assert canonical_import in quickstart_doc
+    assert "from quantcraft.backtest import BacktestEngine" in quickstart_doc
+    assert "from quantcraft.research import Strategy, ta, qc" in quickstart_doc
     assert "from quantcraft.data import BarSeries, DataFrameDataSource, TimeBar" in quickstart_doc
     assert "quantity=1" in quickstart_doc
     assert "SMA crossover" in quickstart_doc
@@ -56,12 +56,9 @@ def test_research_ergonomics_quickstart_notebook_uses_canonical_import_path() ->
     notebook = json.loads(notebook_path.read_text(encoding="utf-8"))
     notebook_source = "\n".join("".join(cell.get("source", [])) for cell in notebook["cells"])
 
-    assert "from quantcraft.research import " in notebook_source
+    assert "from quantcraft.backtest import BacktestEngine" in notebook_source
+    assert "from quantcraft.research import Strategy, qc, ta" in notebook_source
     assert "from quantcraft.data import BarSeries, DataFrameDataSource, TimeBar" in notebook_source
-    assert "BacktestEngine" in notebook_source
-    assert "Strategy" in notebook_source
-    assert "ta" in notebook_source
-    assert "qc" in notebook_source
     assert "source = DataFrameDataSource(" in notebook_source
     assert "bars = source.load()" in notebook_source
     assert "BarSeries(" in notebook_source

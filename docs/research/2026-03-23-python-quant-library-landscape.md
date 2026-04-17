@@ -91,7 +91,10 @@ Current `quantcraft` scope is intentionally narrow.
 
 Important scope note:
 
-- the canonical current implemented-scope product entry is still [market-data.md](../product-specs/market-data.md)
+- current implemented-scope product authority is routed through
+  [the product-spec index](../product-specs/index.md)
+- [market-data.md](../product-specs/market-data.md) is one implemented-scope
+  entry, not the sole product authority
 - a partial in-repo backtest implementation now exists and is aligned to the approved [Backtest MVP](../product-specs/backtest-mvp.md) slice
 - this report compares both the current market-data footing and the newly implemented backtest slice, but it does not redefine the canonical product-scope map
 
@@ -198,63 +201,6 @@ These dossiers hold the deeper per-library architectural notes for this research
 | `Freqtrade` | [`libraries/freqtrade.md`](libraries/freqtrade.md) |
 | `Lumibot` | [`libraries/lumibot.md`](libraries/lumibot.md) |
 | `PyBroker` | [`libraries/pybroker.md`](libraries/pybroker.md) |
-
-## Library-By-Library Summary
-
-### backtesting.py
-
-- best viewed as the cleanest reference in this set for an approachable bar-native imperative strategy API
-- strongest immediate advantages over current `quantcraft` are first-run UX, plotting, summary statistics, and built-in optimization
-
-### Backtrader
-
-- broad legacy framework reference for multi-data, multi-timeframe, analyzer, and broker-integration surface area
-- still useful as a catalog of features users may expect, even though public maintenance signals appear weaker than newer projects
-
-### vectorbt
-
-- strongest reference here for vectorized research scale, parameter sweeps, and dataframe-native portfolio analysis
-- the clearest reminder that research throughput and execution realism are different product strengths
-
-### bt
-
-- elegant portfolio construction and rebalancing reference
-- important for allocation workflows, but not a primary kernel-semantics reference for the current `quantcraft` direction
-
-### PyBroker
-
-- practical benchmark for a broader research product that mixes multi-symbol workflows, ML hooks, and walk-forward analysis
-- more relevant as a breadth and usability benchmark than as a shared execution-kernel reference
-
-### NautilusTrader
-
-- strongest architectural reference for `quantcraft`'s intended shared-kernel direction across backtest, paper, and live
-- much heavier than current `quantcraft`, but still the clearest north-star for explicit time, venue, and order semantics
-
-### Zipline-Reloaded
-
-- useful historical and ecosystem-continuation reference for calendars, bundles, and research reproducibility
-- more relevant to portfolio research infrastructure than to `quantcraft`'s current tick/event-kernel ambition
-
-### QSTrader
-
-- simple event-driven historical reference that still helps frame the lower-complexity end of portfolio-oriented Python backtesting
-- useful baseline context, but no longer the frontier for current parity or operator expectations
-
-### Lumibot
-
-- strong Python-side reference for the message "use the same strategy code for backtests and live trading"
-- useful for broker-facing ergonomics and retail-style order breadth, while also showing how quickly parity products can expand operational scope
-
-### Freqtrade
-
-- strongest operator-workflow reference in this set for crypto exchange integrations, dry-run workflows, and anti-bias tooling
-- better used as a reference for operator tooling and exchange-specific documentation than as a direct kernel-semantics model
-
-### aat
-
-- still relevant as a smaller research-to-live reference
-- less important than `NautilusTrader` in this pass, but architecturally closer to `quantcraft` than pure research tools
 
 ## Comparison Matrix
 

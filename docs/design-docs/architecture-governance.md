@@ -22,22 +22,25 @@ The OpenAI harness pattern is not “mechanize everything immediately.” It is 
 
 ## Document Roles
 
-The repository uses four distinct document classes for this area:
+The repository uses these governing documents for this area:
 
 1. [quantcraft-architecture.md](quantcraft-architecture.md)
    - approved top-level architecture
-2. [trading-kernel-contract-draft-ko.md](trading-kernel-contract-draft-ko.md)
+2. [package-topology-and-naming.md](package-topology-and-naming.md)
+   - approved package topology, naming, and public-facade rules
+3. [trading-kernel-contract-draft-ko.md](trading-kernel-contract-draft-ko.md)
    - future-only long-lived trading-kernel contract draft
-3. [architecture-governance.md](architecture-governance.md)
+4. [architecture-governance.md](architecture-governance.md)
    - approved governance and promotion policy
-4. [../product-specs/backtest-mvp.md](../product-specs/backtest-mvp.md)
+5. [../product-specs/backtest-mvp.md](../product-specs/backtest-mvp.md)
    - canonical current implemented-scope backtest baseline
-5. [../product-specs/research-ergonomics.md](../product-specs/research-ergonomics.md)
+6. [../product-specs/research-ergonomics.md](../product-specs/research-ergonomics.md)
    - canonical current implemented-scope research usability surface
 
 This split prevents agents from conflating:
 
 - structural architecture
+- package topology and naming
 - trading semantics
 - harness policy
 - current implemented scope

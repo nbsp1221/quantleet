@@ -63,11 +63,13 @@ This slice does not include:
 ## Official Import Surface
 
 The official user-facing research ergonomics surface lives under `quantcraft.research`.
+The canonical backtest runtime surface lives under `quantcraft.backtest`.
 
 Recommended import:
 
 ```python
-from quantcraft.research import BacktestEngine, Strategy, ta, qc
+from quantcraft.backtest import BacktestEngine
+from quantcraft.research import Strategy, ta, qc
 ```
 
 This slice does not promote:
@@ -77,9 +79,9 @@ This slice does not promote:
 
 ### Backtest Entry Surface
 
-The preferred public execution entry for the current research surface is:
+The preferred public execution entry for the current research workflow is:
 
-- `BacktestEngine`
+- `quantcraft.backtest.BacktestEngine`
 
 Approved execution paths:
 
@@ -95,7 +97,7 @@ Current rules:
 - the engine does not expose public `bar_type`
 - the current historical backtest path fixes bar type internally to `time`
 
-`run_backtest(...)` is not part of the public `quantcraft.research` or `quantcraft.research.application` surface for this slice.
+`run_backtest(...)` is not part of the public surface for this slice.
 
 ### Initial Canonical User Journeys
 
@@ -108,7 +110,7 @@ They are reference workflows, not automatically all strict merge gates.
 
 - starting state: a fresh environment with the package installed
 - user intent: confirm the documented public imports work exactly as presented
-- success artifact: importing `BacktestEngine`, `Strategy`, `ta`, `qc`, `BarSeries`, `TimeBar`, and the documented data sources works cleanly
+- success artifact: importing `BacktestEngine`, `Strategy`, `ta`, `qc`, `BarSeries`, `TimeBar`, and the documented data sources from their documented capability paths works cleanly
 - superficially passing but still bad: the package installs, but the documented public import paths drift
 
 #### 2. DataFrame-Like Quickstart To First Backtest
@@ -535,8 +537,8 @@ The quickstart should walk through this flow:
 3. evaluate signals and place orders in `on_bar()`
 4. create a `BacktestEngine(...)`
 5. call `engine.run(...)`
-5. inspect the summary and result object
-6. inspect equity curve and trade log in the notebook
+6. inspect the summary and result object
+7. inspect equity curve and trade log in the notebook
 
 ## Success Criteria
 

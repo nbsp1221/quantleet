@@ -101,6 +101,8 @@ def test_current_docs_describe_summary_terms_and_engine_surface() -> None:
     assert "`DataFrameDataSource.load()` returns `BarSeries`" in data_ingestion_spec
     assert "`BarSeries.rows` is `tuple[TimeBar, ...]`" in data_ingestion_spec
     assert '`BarSeries.bar_type` is fixed to `"time"`' in data_ingestion_spec
+    assert "from quantcraft.backtest import BacktestEngine" in quickstart
+    assert "from quantcraft.research import Strategy, ta, qc" in quickstart
     assert (
         "from quantcraft.research import BacktestEngine, Strategy, ta, qc, run_backtest"
         not in quickstart

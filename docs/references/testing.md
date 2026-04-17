@@ -6,6 +6,7 @@ Use this reference when adding or moving tests in `quantcraft`.
 
 - `tests/unit`
 - `tests/integration`
+- `tests/perf`
 - `tests/structure`
 - `tests/smoke`
 
@@ -13,6 +14,7 @@ Use this reference when adding or moving tests in `quantcraft`.
 
 - Put isolated deterministic behavior in `tests/unit`
 - Put cross-module and command-surface verification in `tests/integration`
+- Put explicit-only performance regression checks in `tests/perf`
 - Put repository, docs, and architecture rules in `tests/structure`
 - Put sanity checks in `tests/smoke`
 
@@ -23,7 +25,9 @@ Mirror the source layout inside these areas once a matching source package path 
 - `tests/unit`
 - `tests/integration`
 
-The current codebase is still pre-domain in places, so transitional domain-intent names such as `market_data` are acceptable until the source tree is moved under the new bounded contexts.
+Mirror the final capability-first owner paths whenever those owner paths exist.
+Do not preserve or reintroduce transitional test names once the corresponding
+source shim or legacy owner path has been removed.
 
 Do not force repository-rule checks into a source mirror.
 
@@ -34,6 +38,12 @@ Do not force repository-rule checks into a source mirror.
 - live tests do not belong in the default `pytest` lane
 - use `uv run poe test-live` when you explicitly want the live lane
 - use `uv run poe test-live` or target `tests/smoke/live` explicitly when you want live coverage
+
+## Performance Policy
+
+- `tests/perf` is an explicit-only lane
+- perf checks do not belong in the default `pytest` lane
+- use `uv run poe perf-check` when you explicitly want the perf lane
 
 ## Naming
 

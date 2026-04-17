@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from quantcraft.research.application.backtest import BacktestSummary, ExposureSummary
+from quantcraft.backtest import BacktestSummary, ExposureSummary
 from tests.support_backtest import (
     canonical_macd_trade_log_digest,
     canonical_macd_trade_log_samples,

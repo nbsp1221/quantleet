@@ -1,5 +1,15 @@
 # Quantcraft 에이전트 개발 운영 가이드
 
+> 상태: advisory 운영 메모
+> 현재 권위 문서:
+> - `AGENTS.md`
+> - `ARCHITECTURE.md`
+> - `docs/design-docs/index.md`
+> - `docs/product-specs/index.md`
+>
+> 이 문서는 에이전트 개발 운영에 관한 개인용 해설 메모다.
+> 현재 저장소 규칙이나 아키텍처 truth를 직접 정의하지 않는다.
+
 ## 목적
 
 이 문서는 `quantcraft`를 앞으로 에이전트 중심으로 개발할 때, 어떤 원칙으로 기능 개발과 하네스 강화를 함께 진행할지 정리한 개인용 운영 문서다.

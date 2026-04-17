@@ -14,7 +14,7 @@ Provide typed market-data access and collection utilities for crypto and equity 
 
 The current implemented `data` surface now includes:
 
-- exchange-backed OHLCV utilities through the stable `Exchange` API
+- exchange-backed OHLCV utilities through the current `quantcraft.integrations.venues.ccxt` API
 - the historical ingestion surface documented in [data-ingestion.md](data-ingestion.md)
 
 ## Safety

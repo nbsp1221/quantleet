@@ -5,8 +5,9 @@ import hashlib
 import json
 from pathlib import Path
 
+from quantcraft.backtest import BacktestEngine
 from quantcraft.data import BarSeries, DataFrameDataSource
-from quantcraft.research import BacktestEngine, Strategy, qc, ta
+from quantcraft.research import Strategy, qc, ta
 from quantcraft.trading.domain.costs import CostConfig
 from quantcraft.trading.domain.events import FillEvent
 

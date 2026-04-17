@@ -4,7 +4,7 @@ import importlib
 
 import pytest
 
-import quantcraft.data.adapters.exchange_backend as exchange_backend
+import quantcraft.integrations.venues.ccxt.market_data as exchange_backend
 
 
 class FakeExchangeClient:

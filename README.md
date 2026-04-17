@@ -2,15 +2,22 @@
 
 `quantcraft` is a quant library and framework that will grow across market data, research tooling, backtesting, paper trading, live trading, and quant-related ML utilities.
 
+The long-lived repository direction is a capability-first engine package under
+`src/quantcraft`, with product surfaces such as an API server living outside the
+core package when they arrive.
+The current codebase follows that package topology, while some future-facing
+contexts remain intentionally minimal.
+
 The current implemented scope is intentionally small:
 
 - typed exchange access for OHLCV market data
-- spot and USD-M support through a stable `Exchange` API
+- spot and USD-M support through the current `quantcraft.integrations.venues.ccxt` exchange API
 - a first `quantcraft.data` ingestion surface with `CCXTDataSource`, `CSVDataSource`, `DataFrameDataSource`, `TimeBar`, and `BarSeries`
 - automatic historical pagination inside `CCXTDataSource.load()` for exchange-backed range assembly
 - `source.load()` materialization into `BarSeries` with `tuple[TimeBar, ...]` rows and `bar_type="time"`
 - a deterministic single-symbol Backtest MVP built on the shared trading kernel
-- a first `quantcraft.research` ergonomics surface with `Strategy`, `BacktestEngine`, `ta`, and `qc`
+- a first `quantcraft.research` ergonomics surface with `Strategy`, `ta`, and `qc`
+- a first `quantcraft.backtest` runtime surface with `BacktestEngine`
 - canonical backtest execution paths via `BacktestEngine.run(bars=..., strategy=...)` and `BacktestEngine.run(source=..., strategy=...)`
 - canonical quickstart and notebook assets for the current research workflow
 
@@ -25,7 +32,7 @@ They are not automatically equivalent to strict merge gates.
 
 - starting state: a fresh environment with the built package artifact or synced repository environment
 - user intent: confirm the package installs cleanly and exposes the documented public API
-- success artifact: importing `BacktestEngine`, `Strategy`, `ta`, `qc`, `BarSeries`, `TimeBar`, and the documented data sources works exactly as the docs imply
+- success artifact: importing `BacktestEngine`, `Strategy`, `ta`, `qc`, `BarSeries`, `TimeBar`, and the documented data sources from their documented capability paths works exactly as the docs imply
 - superficially passing but still bad: the package builds, but documented imports or import paths drift
 
 ### 2. DataFrame-Like Quickstart To First Backtest
@@ -136,13 +143,15 @@ The test suite is being organized by test type at the top level:
 - `tests/structure`
 - `tests/smoke`
 
-`unit` and `integration` mirror the source layout when a matching source package path exists. Transitional domain-intent names such as `market_data` are still acceptable where bounded-context package moves are not yet complete. `structure` owns repository-rule checks, and live/network-backed smoke validation stays out of the default test lane.
+`unit` and `integration` mirror the source layout when a matching source package
+path exists. `structure` owns repository-rule checks, and live/network-backed
+smoke validation stays out of the default test lane.
 
 Live tests are explicit-only and excluded from the default `pytest` run.
 
 Current examples:
 
-- `tests/unit/market_data/...`
+- `tests/unit/integrations/...`
 - `tests/integration/commands/...`
 - `tests/structure/architecture/...`
 - `tests/structure/docs/...`

@@ -72,7 +72,7 @@ from quantcraft.data import CCXTDataSource, CSVDataSource, DataFrameDataSource
 
 Acquisition and normalization belong to `data`.
 
-Strategy authoring and backtest orchestration remain in `research`.
+Strategy authoring remains in `research`.
 
 ## Public Contract
 
@@ -255,7 +255,8 @@ from datetime import UTC, datetime, timedelta
 
 from quantcraft.data import CCXTDataSource
 from quantcraft.trading.domain.costs import CostConfig
-from quantcraft.research import BacktestEngine, Strategy, ta, qc
+from quantcraft.backtest import BacktestEngine
+from quantcraft.research import Strategy, ta, qc
 
 
 class RsiStrategy(Strategy):

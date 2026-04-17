@@ -55,10 +55,11 @@ Until the evidence gate passes:
 - plans and trials must be structured artifacts
 - CE remains a candidate workflow model, not the active repo authority
 
-## Anthropic Harness Principles Applied Here
+## Harness Principles Applied Here
 
-This migration follows the harness-design principles from Anthropic's
-long-running-apps article:
+This migration follows the harness-design principles summarized in the
+repo-local harness reference set, especially
+[`../references/openai-harness-engineering.md`](../references/openai-harness-engineering.md):
 
 - separate planner, generator, and evaluator responsibilities
 - pass state through structured artifacts rather than implicit chat memory

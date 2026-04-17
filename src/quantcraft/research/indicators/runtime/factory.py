@@ -6,10 +6,10 @@ from typing import Any, Callable, TypeVar, cast
 
 import numpy as np
 
-from quantcraft.research.domain import SeriesView
 from quantcraft.research.indicators.runtime.base import IndicatorKernel, IndicatorState, SeriesLike
 from quantcraft.research.indicators.runtime.runtime import IndicatorRuntime
 from quantcraft.research.indicators.runtime.views import IndicatorSeriesView
+from quantcraft.research.series import SeriesView
 
 _KernelState = TypeVar("_KernelState", bound=IndicatorState)
 _ResultT = TypeVar("_ResultT")

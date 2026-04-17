@@ -142,7 +142,7 @@ def test_repo_check_surfaces_invalid_routing_role(tmp_path: Path) -> None:
     )
 
 
-def test_check_docs_normalizes_legacy_design_index_rows_to_allowed_roles(tmp_path: Path) -> None:
+def test_check_docs_rejects_legacy_design_index_status_map_schema(tmp_path: Path) -> None:
     write_minimal_repo_docs(tmp_path)
     design_index_path = tmp_path / "docs" / "design-docs" / "index.md"
     design_index_path.write_text(
@@ -172,7 +172,4 @@ def test_check_docs_normalizes_legacy_design_index_rows_to_allowed_roles(tmp_pat
 
     issues = check_docs.collect_issues(tmp_path)
 
-    assert (
-        "docs/design-docs/index.md has invalid Role field for document "
-        "trading-kernel-contract-draft-ko.md: Pointer"
-    ) not in issues
+    assert "docs/design-docs/index.md is missing routing index table" in issues

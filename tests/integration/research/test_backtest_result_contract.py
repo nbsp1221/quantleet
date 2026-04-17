@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from quantcraft.research.application.backtest import (
+from quantcraft.backtest import (
     BacktestResult,
     BacktestSummary,
     ExposureSummary,

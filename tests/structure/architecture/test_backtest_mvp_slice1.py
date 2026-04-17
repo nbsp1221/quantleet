@@ -24,17 +24,15 @@ def test_backtest_mvp_spec_marks_order_and_timer_events_as_deferred() -> None:
     assert event_contract["implemented"].isdisjoint({"OrderEvent", "TimerEvent"})
 
 
-def test_slice_1_package_skeletons_exist() -> None:
+def test_current_package_skeletons_exist() -> None:
     expected_paths = (
-        Path("src/quantcraft/data/domain/__init__.py"),
-        Path("src/quantcraft/data/application/__init__.py"),
+        Path("src/quantcraft/data/__init__.py"),
         Path("src/quantcraft/data/adapters/__init__.py"),
-        Path("src/quantcraft/research/domain/__init__.py"),
-        Path("src/quantcraft/research/application/__init__.py"),
-        Path("src/quantcraft/research/adapters/__init__.py"),
+        Path("src/quantcraft/research/__init__.py"),
+        Path("src/quantcraft/research/strategy.py"),
+        Path("src/quantcraft/backtest/__init__.py"),
+        Path("src/quantcraft/integrations/venues/ccxt/__init__.py"),
         Path("src/quantcraft/trading/domain/__init__.py"),
-        Path("src/quantcraft/trading/application/__init__.py"),
-        Path("src/quantcraft/trading/adapters/__init__.py"),
     )
 
     for relative_path in expected_paths:
@@ -53,7 +51,6 @@ def test_trading_to_research_dependency_is_rejected() -> None:
 
 def test_research_public_surface_exposes_slice_1_entrypoints() -> None:
     assert set(research_package.__all__) == {
-        "BacktestEngine",
         "Strategy",
         "ta",
         "qc",

@@ -9,17 +9,23 @@
 Related documents:
 
 - [../design-docs/quantcraft-architecture.md](../design-docs/quantcraft-architecture.md)
+- [../design-docs/backtest-execution-semantics.md](../design-docs/backtest-execution-semantics.md)
 - [../design-docs/trading-kernel-contract-draft-ko.md](../design-docs/trading-kernel-contract-draft-ko.md)
 - [../design-docs/architecture-governance.md](../design-docs/architecture-governance.md)
 
 This document is the canonical current implemented-scope contract for the shipped backtest MVP.
+
+Implementation status note:
+
+- the current code still contains an open conformance gap in parts of the limit-order backtest path
+- this document is normative for the intended backtest execution contract and should be used to drive that follow-up work
 
 ## Goal
 
 Build a deterministic single-symbol long-only backtest that:
 
 - accepts OHLCV as the external stored format
-- converts that data into a synthetic L2 tick stream
+- converts that data into a canonical backtest-only price path and synthetic executable events
 - runs on the same tick/event-driven trading kernel that future paper and live environments will use
 
 This MVP intentionally reduces feature scope without downgrading the core engine semantics.
@@ -28,16 +34,19 @@ This MVP intentionally reduces feature scope without downgrading the core engine
 
 ### Public Backtest Entry
 
-The current preferred user-facing backtest entry lives in the `research` surface:
+The current preferred user-facing backtest entry lives in the `backtest` surface:
 
-- `quantcraft.research.BacktestEngine`
+- `quantcraft.backtest.BacktestEngine`
 
 Approved current paths:
 
 - `BacktestEngine(...).run(bars=..., strategy=...)`
 - `BacktestEngine(...).run(source=..., strategy=...)`
 
-`run_backtest(...)` is not part of the public `quantcraft.research` surface in this slice.
+`run_backtest(...)` is not part of the public surface in this slice.
+
+Long-lived backtest runtime ownership is defined in the architecture docs, not
+by this current public entry location.
 
 ### Data And Input
 
@@ -54,8 +63,9 @@ Approved current paths:
 Responsibility split:
 
 - `data`: load, normalize, and provide `BarSeries`
-- `research`: orchestrate the backtest, convert `BarSeries` into synthetic events, and summarize results
-- `trading`: process events, interpret orders, match fills, and apply state transitions
+- `backtest`: own historical runtime orchestration, synthetic execution-path construction, and backtest summarization
+- `research`: expose the current user-facing strategy and backtest facade for this slice
+- `trading`: process executable events, interpret orders, match fills, and apply state transitions
 
 ### Strategy Surface
 
@@ -123,6 +133,8 @@ Derived accounting values such as closing PnL do not belong in `FillEvent`. They
 - the engine must be able to process array-based depth and finite liquidity in general
 - the first backtest input may use a simplified one-level book on each side
 - the first backtest input may use conceptually unbounded liquidity
+- the matching kernel consumes executable tick or book events only
+- the matching kernel must not fabricate bar-aware fills on its own
 - slippage is injected in ticks
 - fees are injected as a percentage rate
 - cost inputs come from configuration or market metadata, not hard-coded engine constants
@@ -201,55 +213,22 @@ More advanced fee and slippage model objects may be added later, but they are no
 
 This is the slice's lookahead-bias guardrail.
 
-### Market And Limit Semantics
+### Synthetic Execution Path And Fill Rules
 
-- `market` consumes opposite-side liquidity at the first executable price, with adverse slippage applied
-- `limit` may only fill at a price no worse than the limit price
-- under the simplified MVP liquidity model, a `limit` may appear as an at-limit fill in practice
-- in the current long-only MVP scope, a `sell` intent while flat is treated as an exit-only no-op rather than a short entry
+Detailed canonical path, gap handling, conservative limit behavior, and
+traversal rules are governed by
+[`../design-docs/backtest-execution-semantics.md`](../design-docs/backtest-execution-semantics.md).
 
-### Gap Semantics
+This MVP adds the following slice-specific constraints on top:
 
-Treat `prev_close -> open` as a distinct price-movement segment.
-
-Rules:
-
-- no fills at intermediate gap prices
-- `open` is the first executable price of the next bar
-- a `market` order may therefore fill at `open`
-- future trigger-style orders should reuse this same segment model
-
-## Synthetic Tick Generation
-
-The backtest path converts OHLCV into a synthetic L2 tick stream.
-
-Allowed:
-
-- lazily materializing or skipping synthetic path generation when no order needs evaluation
-
-Not allowed:
-
-- changing the path in an order-dependent way to make an order fill
-
-In short:
-
-- lazy generation is allowed
-- order-dependent path fabrication is forbidden
-
-## Intrabar Ambiguity
-
-OHLCV does not reveal the true intrabar path.
-
-The slice therefore uses a fixed conservative path rule:
-
-- bullish bar: `open -> low -> high -> close`
-- bearish bar: `open -> high -> low -> close`
-
-The rule must not change dynamically to favor order outcomes.
-
-If finer-grained data becomes available later, a more accurate model may replace this slice default.
-
-For same-bar child activation in future OTO-style flows, only the tail after the parent fill may be evaluated.
+- only `market` and `limit` orders are in scope
+- the strategy callback still runs after bar close, so newly emitted orders do
+  not apply retroactively to the bar that created them
+- in the current long-only slice, a `sell` intent while flat is treated as an exit-only no-op rather than as a short entry
+- if finer-grained data becomes available later, the current default path model
+  may be replaced by a more accurate one
+- for same-bar child activation in future OTO-style flows, only the tail after
+  the parent fill may be evaluated
 
 ## Reference UX Guidance
 

@@ -3,48 +3,110 @@
 ## Status
 
 - Status: `approved`
-- Scope: top-level bounded contexts, layer model, dependency directions, and structural invariants
+- Scope: top-level capability contexts, product-surface boundaries, dependency
+  directions, and structural invariants
 - Role: canonical design document for the repository's long-lived architecture
 
-This document defines the approved architectural baseline that agents are expected to follow.
+Related documents:
+
+- [package-topology-and-naming.md](package-topology-and-naming.md)
+- [architecture-governance.md](architecture-governance.md)
+- [../product-specs/backtest-mvp.md](../product-specs/backtest-mvp.md)
+- [../product-specs/research-ergonomics.md](../product-specs/research-ergonomics.md)
 
 ## Why This Document Exists
 
-`quantcraft` is not trying to freeze every future package detail up front. The goal is to lock in the boundaries and invariants that agents must not violate while the implementation grows.
+`quantcraft` is a long-lived, agent-first quant system.
 
-Two requirements drive the architecture:
+It is expected to support:
 
-1. Backtest, paper trading, and live trading must share as much trading semantics as possible.
-2. The repository must stay legible and enforceable for agent-first development.
+- library use
+- CLI use
+- future API and UI surfaces
+- research and alpha-search workflows
+- deterministic backtesting
+- paper and live execution
 
-The result is a bounded-context architecture with strict separation between domain logic, orchestration, and external adapters.
+The repository therefore needs a stable answer to:
 
-## Top-Level Bounded Contexts
+1. which top-level contexts own which responsibilities
+2. which contexts are runtimes versus user ergonomics layers
+3. how product surfaces relate to the engine package
+4. which dependency directions are non-negotiable
 
-The approved top-level bounded contexts are:
+This document fixes those answers.
+
+## Architectural Baseline
+
+The approved long-lived baseline is:
+
+- one installable engine package under `src/quantcraft`
+- capability-first top-level package ownership
+- one shared trading kernel
+- separate runtime contexts for `backtest` and `execution`
+- product surfaces outside the engine package when deployment concerns differ
+- agent-legible boundaries backed by future mechanical checks
+
+This is the architectural truth that current code and future package work must
+preserve.
+
+## Engine Package And Product Surfaces
+
+The repository distinguishes between two axes:
+
+### 1. Engine Package
+
+`src/quantcraft` contains the installable engine and library package.
+
+This is where the durable business semantics live.
+
+### 2. Product Surfaces
+
+`apps/*` contain deployed product surfaces that compose the engine package.
+
+Initial direction:
+
+- `apps/api`: approved product-surface direction
+- `apps/web`: possible future product surface when it actually exists
+
+`src/quantcraft/cli` remains part of the packaged engine because CLI is a
+distributed library surface, not a separately deployed product.
+
+## Top-Level Contexts
+
+The approved engine-package contexts are:
 
 1. `data`
 2. `trading`
 3. `research`
-4. `execution`
+4. `backtest`
+5. `execution`
+6. `integrations`
 
-Two adjacent areas remain intentionally separate:
+Cross-cutting support remains intentionally narrow:
 
-- `shared`: very small cross-cutting support only
-- `ml`: future adjacent area to be evaluated after the core four contexts stabilize
+- `_shared`
+
+Adjacent future-only areas may be introduced later:
+
+- `ml`
 
 ## Context Responsibilities
 
 ### `data`
 
-`data` owns acquisition, normalization, storage, caching, and delivery of market and macro data.
+`data` owns normalized data concepts and data workflows:
+
+- bars, ticks, books, and related normalized contracts
+- cataloging, replay, transforms, caching, and loading
+- macro or market data delivery in normalized form
 
 It must not own:
 
 - strategy logic
 - order generation
 - position or portfolio state transitions
-- fill processing
+- venue-specific protocol code
 
 ### `trading`
 
@@ -52,190 +114,168 @@ It must not own:
 
 It owns:
 
-- order, fill, position, balance, and portfolio domain models
-- the core semantics of `risk` and `portfolio`
+- orders, fills, positions, balances, and portfolios
 - state transitions
 - fill application rules
-- PnL rules
-- cost and price-application interfaces
+- PnL and cost semantics
+- core risk semantics that should remain consistent across environments
 
 It must not own:
 
-- exchange API calls
-- websocket session management
-- database persistence wiring
-- CLI or notebook runtime wiring
+- backtest-only path fabrication
+- live venue sessions
+- exchange or broker client wiring
+- notebook, API, or CLI composition
 
 ### `research`
 
-`research` owns strategy authoring, backtest orchestration, analysis, reporting, and experiments.
+`research` owns strategy authoring and research ergonomics:
 
-It must not invent a second trading semantics layer. It must use the `trading` kernel.
+- strategy APIs
+- indicators
+- analytics and alpha-search helpers
+- optimization or experiment-facing tooling
+
+It must not invent a second trading semantics layer.
+
+It may compose `backtest`, but it does not own the historical execution runtime.
+
+### `backtest`
+
+`backtest` owns historical execution runtime concerns:
+
+- backtest engine orchestration
+- historical event-source construction
+- synthetic execution-path construction
+- backtest reporting and backtest-only fill-model concerns
+
+It must use the shared `trading` kernel.
+
+It must not become a second strategy ergonomics surface.
 
 ### `execution`
 
 `execution` owns paper and live runtime control:
 
-- venue sessions
-- order submission
-- live event loops
-- execution-response handling
+- order routing
+- broker or venue runtime control
+- paper-trading supervision
+- live session supervision
 
-It must not invent a second trading semantics layer. It must use the `trading` kernel.
+It must use the shared `trading` kernel.
 
-## Layer Model
+### `integrations`
 
-Bounded contexts and layers are different axes.
+`integrations` owns external system translation:
 
-Each implemented context should follow this internal structure:
+- venue adapters
+- broker adapters
+- data-vendor adapters
+- raw HTTP, websocket, auth, and mapping code
 
-- `domain`
-- `application`
-- `adapters`
+It translates external protocols into internal contracts.
+It does not own core trading, research, or backtest semantics.
 
-Illustrative layout:
+### `_shared`
 
-```text
-src/quantcraft/
-  data/
-    domain/
-    application/
-    adapters/
-  trading/
-    domain/
-    application/
-    adapters/
-  research/
-    domain/
-    application/
-    adapters/
-  execution/
-    domain/
-    application/
-    adapters/
-  shared/
-```
+`_shared` is internal-only and must stay tiny.
 
-### `domain`
+It exists for mechanical cross-cutting support, not business meaning.
 
-Owns pure business logic:
+## Structural Principles
 
-- entities
-- value objects
-- policies
-- state transitions
+### 1. Capability-First Topology
 
-Must not depend on:
+Top-level package names should answer "what responsibility lives here?" rather
+than "which architectural layer is this?".
 
-- exchange APIs
-- databases
-- file I/O
-- websocket sessions
+That is why the architecture uses contexts such as:
 
-### `application`
+- `trading`
+- `backtest`
+- `execution`
+- `integrations`
 
-Owns orchestration:
+rather than a repo-wide `domain / application / adapters` directory tree.
 
-- use cases
-- flow control
-- port calls
-- multi-object coordination
+### 2. Shallow By Default
 
-Examples:
+Package depth should remain shallow unless deeper grouping clearly improves
+navigation.
 
-- run a backtest once
-- evaluate a strategy and emit order intent
-- coordinate a data collection pipeline
+Local layering is allowed when useful, but it is not a global naming mandate.
 
-### `adapters`
+### 3. One Trading Meaning
 
-Own external integration:
+Backtest, paper, and live should share one trading meaning as much as possible.
 
-- exchanges
-- files
-- databases
-- caches
-- runtime wiring
-- CLI and notebook entrypoints
+Environment-specific differences belong in:
 
-## Core Architectural Principles
+- event sources
+- runtime orchestration
+- integrations
 
-### 1. `trading` is the shared trading kernel
+not in duplicated trading kernels.
 
-The following must be shared across environments as much as possible:
+### 4. Product Surfaces Compose The Engine
 
-- order semantics
-- fill semantics
-- position semantics
-- portfolio semantics
-- state transitions
-- core risk rules
-- interpretation from order intent to trading state changes
+APIs, CLIs, and future UIs should compose the engine package.
+They must not quietly become a second home for core business logic.
 
-Environment-specific differences belong in adapters and event sources, not in duplicated trading logic.
+### 5. Agent Legibility Matters
 
-### 2. Avoid optimistic split implementations
+The repository is optimized for long-lived human and agent navigation.
 
-Do not create separate optimistic kernels such as:
+That means:
 
-- a backtest-only order state machine
-- a live-only position engine
-- a paper-only fill application layer
-
-Those splits undermine the requirement that backtest, paper, and live should share one trading meaning as much as possible.
-
-### 3. `shared` must stay small
-
-`shared` is not a dumping ground.
-
-Allowed examples:
-
-- basic time types
-- narrow identifiers
-- thin shared exceptions
-- generic helpers with almost no business meaning
-
-Not allowed in `shared`:
-
-- orders
-- positions
-- fills
-- risk rules
-- backtest result models
+- explicit context ownership
+- few sink folders
+- short entry docs that point to deeper authority
+- future mechanical checks for declared boundaries
 
 ## Dependency Rules
 
 The approved dependency directions are:
 
+- `backtest -> data`
+- `backtest -> trading`
 - `research -> data`
 - `research -> trading`
+- `research -> backtest` through public backtest surfaces
 - `execution -> trading`
-- never the reverse
+- `execution -> data` only for normalized contracts when needed
+- `execution -> integrations`
+- `data -> integrations` only for provider-facing translation or loading seams
+
+Never allowed:
+
+- `trading -> research`
+- `trading -> backtest`
+- `trading -> execution`
+- `trading -> integrations`
+- `backtest -> execution`
+- deep cross-context imports that bypass an owned public surface without an
+  explicit exception
 
 Additional constraints:
 
-- `data` stays focused on data acquisition and normalization
-- `research -> data` is allowed narrowly for normalized historical data contracts and ingestion paths; it is not a general license for `research` to absorb `data` internals
-- `shared` must not absorb business concepts
-- temporary exceptions must be documented where the exception is introduced
+- `integrations` should not absorb core business concepts
+- sibling integrations should remain independent unless an explicit shared
+  helper is extracted
+- `_shared` must not absorb orders, fills, positions, backtest reports, or risk
+  rules
 
-## Current Repository State
+## Steady-State Guidance
 
-The current codebase now includes:
+The approved capability-first structure is the standing architectural authority
+for the repository.
 
-- exchange-backed market-data utilities
-- an implemented Backtest MVP
-- an implemented first `research` ergonomics surface on top of that backtest baseline
+Current local layering choices such as `trading/domain` are intentional,
+context-local structure, not a return to a repo-wide layer-first skeleton.
 
-That does not change the architectural baseline above. It means the long-lived architecture remains ahead of the final package shape even though the first current-scope `research` and `trading` surfaces are now implemented.
+When behavior contracts and architecture concerns differ:
 
-## Relationship To Other Documents
-
-This document defines the approved top-level architecture only.
-
-It does not replace:
-
-- [trading-kernel-contract-draft-ko.md](trading-kernel-contract-draft-ko.md): long-lived trading-kernel contract draft
-- [../product-specs/backtest-mvp.md](../product-specs/backtest-mvp.md): canonical current implemented-scope backtest baseline
-- [../product-specs/research-ergonomics.md](../product-specs/research-ergonomics.md): canonical current implemented-scope research usability surface
-- [architecture-governance.md](architecture-governance.md): approved harness and promotion policy
+- product specs define the shipped behavior
+- this document defines package ownership and dependency direction
+- implementation plans should record temporary exceptions explicitly instead of
+  silently widening a context boundary

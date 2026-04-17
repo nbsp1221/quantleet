@@ -10,13 +10,13 @@ def _parse_module(relative_path: str) -> ast.AST:
 
 
 def test_backtest_loop_imports_execution_model_directly() -> None:
-    tree = _parse_module("src/quantcraft/research/application/backtest.py")
+    tree = _parse_module("src/quantcraft/backtest/runtime.py")
 
     execution_model_imports = [
         node
         for node in ast.walk(tree)
         if isinstance(node, ast.ImportFrom)
-        and node.module == "quantcraft.research.adapters.execution_model"
+        and node.module == "quantcraft.backtest.execution_model"
     ]
 
     imported_names = {
@@ -26,8 +26,23 @@ def test_backtest_loop_imports_execution_model_directly() -> None:
     assert "ConservativeOHLCVExecutionModel" in imported_names
 
 
+def test_backtest_loop_uses_backtest_owned_strategy_driver() -> None:
+    tree = _parse_module("src/quantcraft/backtest/runtime.py")
+
+    runtime_imports = [
+        node
+        for node in ast.walk(tree)
+        if isinstance(node, ast.ImportFrom)
+        and node.module == "quantcraft.backtest.strategy_runtime"
+    ]
+
+    imported_names = {alias.name for node in runtime_imports for alias in node.names}
+
+    assert "_StrategyDriver" in imported_names
+
+
 def test_backtest_loop_does_not_revert_to_unnamed_synthetic_event_helper() -> None:
-    tree = _parse_module("src/quantcraft/research/application/backtest.py")
+    tree = _parse_module("src/quantcraft/backtest/runtime.py")
 
     synthetic_helper_imports = [
         node
@@ -50,7 +65,7 @@ def test_execution_model_wrapper_module_is_not_reintroduced() -> None:
 
 
 def test_research_backtest_routes_fill_state_transitions_through_trading_kernel() -> None:
-    tree = _parse_module("src/quantcraft/research/application/backtest.py")
+    tree = _parse_module("src/quantcraft/backtest/runtime.py")
 
     state_imports = [
         node
@@ -71,6 +86,17 @@ def test_research_backtest_routes_fill_state_transitions_through_trading_kernel(
     assert {"TradingState", "apply_fill"} <= imported_names
     assert "apply_fill" not in local_function_names
     assert "apply_fill" in called_names
+
+
+def test_removed_research_backtest_compatibility_modules() -> None:
+    removed_paths = (
+        ROOT / "src/quantcraft/research/application",
+        ROOT / "src/quantcraft/research/adapters",
+        ROOT / "src/quantcraft/research/adapters/execution_model.py",
+    )
+
+    for path in removed_paths:
+        assert not path.exists(), f"legacy path should be removed: {path}"
 
 
 def test_execution_package_does_not_define_a_second_position_engine() -> None:

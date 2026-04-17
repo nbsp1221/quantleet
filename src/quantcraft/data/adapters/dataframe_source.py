@@ -5,7 +5,8 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from typing import Protocol, cast
 
-from quantcraft.data.domain import BarSeries, HistoricalDataSource, TimeBar
+from quantcraft.data.bars import BarSeries, TimeBar
+from quantcraft.data.sources import HistoricalDataSource
 
 
 class _RecordsFrame(Protocol):

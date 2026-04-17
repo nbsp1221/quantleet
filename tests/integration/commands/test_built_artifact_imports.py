@@ -29,14 +29,17 @@ def test_built_wheel_exposes_documented_public_imports() -> None:
         import importlib
 
         import quantcraft
-        from quantcraft import Exchange, MarketType, TimeBar
 
         module_path = quantcraft.__file__ or ""
         assert "site-packages" in module_path, module_path
         assert module_path.endswith("__init__.py"), module_path
-        assert MarketType.SPOT == "spot"
-        assert TimeBar is not None
-        assert Exchange is not None
+        for name in ("Exchange", "MarketType", "TimeBar", "BacktestEngine"):
+            try:
+                getattr(quantcraft, name)
+            except AttributeError:
+                pass
+            else:
+                raise AssertionError(f"quantcraft should not export {name}")
 
         data_module = importlib.import_module("quantcraft.data")
         assert getattr(data_module, "TimeBar", None) is not None
@@ -44,16 +47,62 @@ def test_built_wheel_exposes_documented_public_imports() -> None:
         assert getattr(data_module, "CCXTDataSource", None) is not None
         assert getattr(data_module, "CSVDataSource", None) is not None
         assert getattr(data_module, "DataFrameDataSource", None) is not None
-        assert TimeBar is getattr(data_module, "TimeBar")
 
         research_module = importlib.import_module("quantcraft.research")
-        application_module = importlib.import_module("quantcraft.research.application")
-        assert getattr(research_module, "BacktestEngine", None) is not None
+        backtest_module = importlib.import_module("quantcraft.backtest")
+        execution_module = importlib.import_module("quantcraft.execution")
+        integrations_module = importlib.import_module("quantcraft.integrations")
+        ccxt_module = importlib.import_module("quantcraft.integrations.venues.ccxt")
         assert getattr(research_module, "Strategy", None) is not None
         assert getattr(research_module, "ta", None) is not None
         assert getattr(research_module, "qc", None) is not None
+        assert not hasattr(research_module, "BacktestEngine")
         assert not hasattr(research_module, "run_backtest")
-        assert not hasattr(application_module, "run_backtest")
+        assert getattr(backtest_module, "BacktestEngine", None) is not None
+        assert getattr(backtest_module, "BacktestResult", None) is not None
+        assert getattr(backtest_module, "BacktestSummary", None) is not None
+        assert getattr(backtest_module, "ExposureSummary", None) is not None
+        assert getattr(ccxt_module, "Exchange", None) is not None
+        assert getattr(ccxt_module, "MarketType", None) is not None
+        for name in (
+            "CCXTBackend",
+            "TimeBar",
+            "_DEFAULT_PAGINATION_LIMIT",
+            "_fetch_ohlcv_range",
+            "_make_ccxt_exchange",
+            "_validate_symbol_contract",
+            "ccxt",
+        ):
+            assert not hasattr(ccxt_module, name), name
+        assert getattr(execution_module, "__all__", None) == []
+        assert getattr(integrations_module, "__all__", None) == []
+
+        for module_name in (
+            "quantcraft.exchange",
+            "quantcraft.data.adapters.exchange_backend",
+            "quantcraft.data.domain",
+            "quantcraft.data.domain.bars",
+            "quantcraft.data.domain.sources",
+            "quantcraft.research.domain",
+            "quantcraft.research.domain.series",
+            "quantcraft.research.application",
+            "quantcraft.research.application.backtest",
+            "quantcraft.research.application.engine",
+            "quantcraft.research.application.order_activation",
+            "quantcraft.research.application.strategy",
+            "quantcraft.research.application._runtime",
+            "quantcraft.research.adapters",
+            "quantcraft.research.adapters.execution_model",
+            "quantcraft.data.application",
+            "quantcraft.trading.application",
+            "quantcraft.trading.adapters",
+        ):
+            try:
+                importlib.import_module(module_name)
+            except ModuleNotFoundError:
+                pass
+            else:
+                raise AssertionError(f"{module_name} should not be importable")
         """
     )
 

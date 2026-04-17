@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from quantcraft.research import ta
-from quantcraft.research.domain import SeriesView
+from quantcraft.research.series import SeriesView
 from tests.support import ROOT
 
 

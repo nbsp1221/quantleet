@@ -1,0 +1,155 @@
+# Active Plan
+
+- Date: `2026-04-16`
+- Task: `Exhaustive audit and simplification of all non-historical repository docs`
+- Status: `complete`
+- Risk class: `Tier B`
+- Requestor: `user`
+- Owner: `Codex`
+
+## Planner Contract
+
+- Goal:
+  - audit all non-historical docs in the repository, not just the recently changed architecture docs
+  - identify and fix readability, structure, protocol-fit, and consistency issues
+  - use read-only subagent fan-out and re-review loops until the doc set reaches approved state
+- Governing docs:
+  - `AGENTS.md`
+  - `README.md`
+  - `ARCHITECTURE.md`
+  - `docs/DESIGN.md`
+  - `docs/PLANS.md`
+  - `docs/RELIABILITY.md`
+  - `docs/SECURITY.md`
+  - `docs/design-docs/**`
+  - `docs/product-specs/**`
+  - `docs/references/**`
+  - `docs/research/**`
+  - `docs/generated/**`
+  - `agent-development-guide-ko.md`
+  - `Python 아키텍처 구현 질문.md`
+  - `docs/references/openai-harness-engineering.md`
+- Why these are governing:
+  - together they form the non-historical repository knowledge base that agents and humans can actually read during work; this slice must verify that the whole active doc surface is readable, consistent, and aligned with the harness protocol
+- In-repo scope:
+  - audit and simplify all non-historical docs in these groups:
+    - root docs
+    - governance and design docs
+    - product specs
+    - references and generated docs
+    - research docs and library surveys
+    - active workflow-plan docs that still help route current work, including:
+      - `docs/plans/TEMPLATE.md`
+      - `docs/plans/trials/README.md`
+      - `docs/plans/trials/TEMPLATE.md`
+      - `docs/plans/2026-04-13-ce-workflow-migration-plan.md`
+      - active current-session plan artifacts
+  - run multi-round read-only review fan-out
+  - apply narrow doc-only fixes until no material findings remain
+- Out-of-repo scope:
+  - historical plan archives under `docs/plans/` beyond the active workflow-plan surface above
+  - `docs/exec-plans/**`
+  - cache, venv, and third-party package docs
+  - code changes
+  - architecture or product decisions beyond the currently approved direction
+- Tier A progression requested: `no`
+- Approval record, if required:
+  - not required for this documentation-only audit slice
+- Verification commands:
+  - `uv run poe repo-check`
+- Success criteria:
+  - all non-historical docs have been reviewed at least once
+  - no unresolved material findings remain for readability, unnecessary duplication, harness-protocol fit, or cross-document consistency
+  - `AGENTS.md` remains a concise map and the deeper docs remain the system of record
+  - repo/document checks pass after the final simplification pass
+- Out of scope:
+  - historical plan cleanup
+  - source-code conformance to the docs
+  - implementation planning
+
+## Evaluator Acceptance Contract
+
+- Evaluator owner: `Codex`
+- Evaluator-owned done contract for this slice:
+  - done means every non-historical doc group has been reviewed with evidence-backed fan-out, all required fixes have been applied, at least one re-review pass finds no remaining blocking or medium-severity issues, and repo/document verification passes
+- Acceptance artifact location:
+  - `docs/plans/2026-04-16-full-doc-audit-nonhistorical.md`
+- How the generator and evaluator agreed on done before execution:
+  - this plan fixes the audit corpus, excluded historical corpus, review criteria, and required re-review loop before edits begin
+- Checks the evaluator will use:
+  - corpus inventory review
+  - subagent review fan-out with evidence
+  - parent synthesis and fix loop
+  - re-review signoff
+  - `uv run poe repo-check`
+- Auto-fail conditions:
+  - any active doc group is skipped
+  - reviewer output is accepted without evidence
+  - only one review pass is performed
+  - material contradictions remain unresolved
+  - verification is skipped or failing
+
+## Generator Work Log
+
+- Planned slice order:
+  - inventory the full non-historical doc corpus
+  - split the corpus into independent review bundles
+  - run first read-only review fan-out across bundles and one cross-doc consistency lens
+  - synthesize and fix required issues
+  - run re-review fan-out
+  - repeat if material findings remain
+  - run final repo/document verification
+- Notes:
+  - write ownership stays with the parent agent only
+  - review agents stay read-only and must return evidence
+- Blockers or scope changes:
+  - the first pass surfaced that excluding all of `docs/plans/**` made the task narrower than “all non-historical docs”; the corpus was expanded to include the active workflow-plan surface:
+    - `docs/plans/TEMPLATE.md`
+    - `docs/plans/trials/README.md`
+    - `docs/plans/trials/TEMPLATE.md`
+    - `docs/plans/2026-04-13-ce-workflow-migration-plan.md`
+    - the current-session active plan artifacts
+
+## Evaluator Review
+
+- Findings:
+  - first fan-out synthesis across the full non-historical corpus:
+    - required fix: `AGENTS.md` still behaved too much like a mini-manual instead of a short map
+    - required fix: `docs/product-specs/backtest-mvp.md` duplicated execution semantics already centralized in `docs/design-docs/backtest-execution-semantics.md`
+    - required fix: transitional backtest-ownership caveats were repeated across multiple product specs
+    - required fix: `Python 아키텍처 구현 질문.md` and `agent-development-guide-ko.md` needed clearer advisory/archive status so they would not behave like a second authority surface
+    - required fix: `docs/PLANS.md` did not match the current reality that `docs/plans/` still contains archived design/decision artifacts from older governance phases
+    - required fix: `docs/research/2026-03-23-python-quant-library-landscape.md` had a stale scope note that pointed to `market-data.md` as if it were the sole current product authority
+    - required fix: `docs/references/openai-harness-engineering.md` needed a repo-local note clarifying that the copied article's example tree is illustrative, not repo authority
+    - required fix: `docs/references/testing.md` needed explicit `tests/perf` lane guidance
+    - required fix: `docs/references/research-ergonomics-quickstart.md` and `docs/product-specs/research-ergonomics.md` contained small duplicate or numbering issues
+    - required fix: `docs/design-docs/package-topology-and-naming.md` repeated too much of the architecture doc's context-ownership story
+    - required fix: `docs/plans/2026-04-13-ce-workflow-migration-plan.md` had a provenance mismatch in its harness-principles attribution
+  - simplification outcomes:
+    - `AGENTS.md` was trimmed to a shorter routing-first contract while preserving the repo-local command surface required by `repo-check`
+    - `package-topology-and-naming.md` now focuses on naming, facades, `_shared`, and `integrations` rather than restating full context ownership
+    - `backtest-mvp.md` now points to the governing execution-semantics design doc instead of carrying a second full copy of the same behavioral contract
+    - repeated ownership caveats were reduced
+    - `agent-development-guide-ko.md` is now clearly marked as advisory
+    - `Python 아키텍처 구현 질문.md` is now clearly marked as an advisory transcript archive with canonical replacement links
+    - `PLANS.md` now explains how archived design/decision records can still exist under `docs/plans/` without becoming active authority
+    - the research landscape report now routes current implemented-scope authority through the product-spec index
+    - the harness reference now clearly distinguishes external examples from repo-local truth
+    - testing and quickstart reference drift was corrected
+  - final review state:
+    - reviewer A (`Godel`): `Approved: no material findings.`
+    - reviewer B (`Leibniz`): `Approved: no material findings.`
+    - reviewer C (`Boole`): `Approved: no material findings.`
+    - reviewer D (`Kuhn`): `Approved: no material findings.`
+    - reviewer E (`Bacon`): `Approved: no material findings.`
+- Verification evidence:
+  - corpus inventory:
+    - full non-historical markdown/text inventory captured before review
+    - active workflow-plan docs explicitly added after the first protocol-fit finding
+  - fan-out evidence:
+    - first review fan-out returned evidence-backed findings across root/governance docs, architecture/product docs, references/research docs, and full-corpus consistency/protocol lenses
+    - second and final fan-out passes returned `Approved: no material findings.` from all five reviewers
+  - mechanical verification:
+    - `uv run poe repo-check` -> `repository checks passed`
+- Final disposition:
+  - `accepted`

@@ -23,29 +23,27 @@ PLACEHOLDER_TOKENS = ("Add your description here",)
 SUPPORTED_TEST_DIRS = ("unit", "integration", "structure", "smoke")
 
 TIER_A = {"trading", "execution"}
-TIER_B = {"data", "research"}
+TIER_B = {"data", "research", "backtest"}
 TIER_C = {"ml"}
-SHARED_DOMAINS = {"shared"}
-KNOWN_DOMAINS = TIER_A | TIER_B | TIER_C | SHARED_DOMAINS
+INTEGRATION_DOMAINS = {"integrations"}
+SHARED_DOMAINS = {"_shared"}
+KNOWN_DOMAINS = TIER_A | TIER_B | TIER_C | INTEGRATION_DOMAINS | SHARED_DOMAINS
 ALLOWED_CROSS_DOMAIN_DEPENDENCIES = {
+    ("backtest", "data"),
+    ("backtest", "trading"),
+    ("data", "integrations"),
+    ("execution", "data"),
+    ("execution", "integrations"),
     ("research", "data"),
     ("research", "trading"),
+    ("research", "backtest"),
     ("execution", "trading"),
+    ("integrations", "data"),
+    ("integrations", "trading"),
 }
-ALLOWED_ROOT_MODULE_DEPENDENCIES = {
-    ("quantcraft", "quantcraft.exchange"),
-    ("quantcraft._repo_tools", "quantcraft.exchange"),
-}
+ALLOWED_ROOT_MODULE_DEPENDENCIES: set[tuple[str, str]] = set()
 
 ROUTING_INDEX_COLUMNS = ("Task Area", "Document", "Role", "Scope", "Read When")
-LEGACY_INDEX_STATUS_MAP_COLUMNS = (
-    "Document",
-    "Status",
-    "Canonical",
-    "Applicability",
-    "Read When",
-    "Notes",
-)
 ROUTING_INDEX_REQUIRED_FIELDS = ("task_area", "role", "scope", "read_when")
 ROUTING_INDEX_CONFIG = {
     "docs/design-docs/index.md": {
@@ -195,56 +193,6 @@ def find_markdown_table_lines(content: str, header_columns: tuple[str, ...]) -> 
     return []
 
 
-def parse_index_status_map_entries(content: str) -> tuple[list[dict[str, str]], list[str]]:
-    table_lines = find_markdown_table_lines(content, LEGACY_INDEX_STATUS_MAP_COLUMNS)
-    if len(table_lines) < 2:
-        documents_section = markdown_section(content, "Documents")
-        if documents_section is None:
-            return [], []
-        table_lines = [
-            line.strip() for line in documents_section.splitlines() if line.strip().startswith("|")
-        ]
-        if len(table_lines) < 2:
-            return [], []
-        header = parse_markdown_row(table_lines[0])
-        if tuple(header) != LEGACY_INDEX_STATUS_MAP_COLUMNS:
-            return [], []
-
-    entries: list[dict[str, str]] = []
-    duplicates: list[str] = []
-    seen_targets: set[str] = set()
-    for line in table_lines[2:]:
-        cells = parse_markdown_row(line)
-        if len(cells) != len(LEGACY_INDEX_STATUS_MAP_COLUMNS):
-            continue
-        target_cell, status, canonical, applicability, read_when, notes = cells
-        match = re.search(r"\(([^)#]+\.md)\)", target_cell)
-        if match is None:
-            stripped = target_cell.strip().strip("`")
-            if stripped.endswith(".md"):
-                target = stripped
-            else:
-                continue
-        else:
-            target = match.group(1).strip()
-        if target in seen_targets:
-            duplicates.append(target)
-            continue
-        seen_targets.add(target)
-        entries.append(
-            {
-                "target": target,
-                "status": status.strip(),
-                "canonical": canonical.strip(),
-                "applicability": applicability.strip(),
-                "read_when": read_when.strip(),
-                "notes": notes.strip(),
-            }
-        )
-
-    return entries, duplicates
-
-
 def parse_routing_index_entries(
     content: str,
     *,
@@ -285,43 +233,7 @@ def parse_routing_index_entries(
             )
         return entries, duplicates
 
-    legacy_entries, duplicates = parse_index_status_map_entries(content)
-    normalized_entries: list[dict[str, str]] = []
-    for entry in legacy_entries:
-        role = normalize_legacy_routing_role(entry, allowed_roles=allowed_roles)
-
-        normalized_entries.append(
-            {
-                "task_area": entry["notes"] or Path(entry["target"]).stem.replace("-", " "),
-                "target": entry["target"],
-                "role": role,
-                "scope": entry["applicability"],
-                "read_when": entry["read_when"],
-                "schema": "legacy_status_map",
-            }
-        )
-
-    return normalized_entries, duplicates
-
-
-def normalize_legacy_routing_role(
-    entry: dict[str, str],
-    *,
-    allowed_roles: set[str] | None = None,
-) -> str:
-    status = entry["status"].strip().lower()
-    canonical = entry["canonical"].strip().lower()
-    if canonical == "yes":
-        return "Governing"
-    if status == "draft":
-        return "Draft"
-    if status == "future":
-        if allowed_roles is None or "Future-only" in allowed_roles:
-            return "Future-only"
-        return "Draft"
-    if allowed_roles is None or "Pointer" in allowed_roles:
-        return "Pointer"
-    return "Draft"
+    return [], []
 
 def resolve_routing_index_target(root: Path, *, index_path: Path, target: str) -> str | None:
     relative_base = index_path.parent.relative_to(root)
@@ -726,7 +638,7 @@ def collect_architecture_issues(root: Path) -> list[str]:
 
 
 def run_live_smoke() -> list[str]:
-    from quantcraft.exchange import Exchange, MarketType
+    from quantcraft.integrations.venues.ccxt import Exchange, MarketType
 
     cases = [
         ("binance", MarketType.SPOT, "BTC/USDT"),

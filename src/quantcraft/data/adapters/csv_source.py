@@ -5,7 +5,8 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from quantcraft.data.adapters.dataframe_source import DataFrameDataSource
-from quantcraft.data.domain import BarSeries, HistoricalDataSource
+from quantcraft.data.bars import BarSeries
+from quantcraft.data.sources import HistoricalDataSource
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
