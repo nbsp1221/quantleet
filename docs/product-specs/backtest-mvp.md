@@ -17,8 +17,8 @@ This document is the canonical current implemented-scope contract for the shippe
 
 Implementation status note:
 
-- the current code still contains an open conformance gap in parts of the limit-order backtest path
-- this document is normative for the intended backtest execution contract and should be used to drive that follow-up work
+- the current code now implements the conservative limit-order execution contract defined in [`../design-docs/backtest-execution-semantics.md`](../design-docs/backtest-execution-semantics.md) for intrabar touched limits, gap-crossed resting limits, and marketable bar-open limits
+- this document remains normative for the shipped backtest execution contract, and future work should treat remaining fidelity or performance questions as follow-up enhancements rather than as the previously open limit-order conformance gap
 
 ## Goal
 

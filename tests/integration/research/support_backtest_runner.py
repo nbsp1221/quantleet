@@ -58,6 +58,54 @@ class NeverFilledLimitStrategy(Strategy):
             )
 
 
+class GapCrossedBuyLimitStrategy(Strategy):
+    def init(self) -> None:
+        self._placed = False
+
+    def on_bar(self, bar) -> None:
+        if not self._placed:
+            self._placed = True
+            self.buy(
+                symbol=bar.symbol,
+                quantity=1.0,
+                order_type="limit",
+                limit_price=100.0,
+                tag="gap-crossed-entry",
+            )
+
+
+class MarketableBuyLimitStrategy(Strategy):
+    def init(self) -> None:
+        self._placed = False
+
+    def on_bar(self, bar) -> None:
+        if not self._placed:
+            self._placed = True
+            self.buy(
+                symbol=bar.symbol,
+                quantity=1.0,
+                order_type="limit",
+                limit_price=130.0,
+                tag="marketable-limit-entry",
+            )
+
+
+class IntrabarTouchedBuyLimitStrategy(Strategy):
+    def init(self) -> None:
+        self._placed = False
+
+    def on_bar(self, bar) -> None:
+        if not self._placed:
+            self._placed = True
+            self.buy(
+                symbol=bar.symbol,
+                quantity=1.0,
+                order_type="limit",
+                limit_price=109.0,
+                tag="intrabar-touch-entry",
+            )
+
+
 class OlderLimitThenNewerMarketExitStrategy(Strategy):
     def init(self) -> None:
         self._seen_bars = 0

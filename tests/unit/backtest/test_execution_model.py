@@ -8,7 +8,12 @@ import pytest
 
 from quantcraft.backtest.execution_model import ConservativeOHLCVExecutionModel
 from quantcraft.data import BarSeries, TimeBar
+from quantcraft.trading.domain.costs import CostConfig
 from quantcraft.trading.domain.events import BarEvent, TickEvent
+from quantcraft.trading.domain.intents import OrderIntent
+from quantcraft.trading.domain.matching import match_order_intent
+
+_ZERO_COSTS = CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0)
 
 
 def _make_bar_series(
@@ -172,6 +177,114 @@ def test_synthetic_ticks_use_unbounded_book_depth_representation() -> None:
     assert all(math.isinf(tick.bids[0][1]) for tick in ticks)
     assert all(math.isinf(tick.asks[0][1]) for tick in ticks)
     assert all(tick.last_size is None for tick in ticks)
+
+
+def test_rising_segment_sell_limit_fills_at_limit_price() -> None:
+    bar = TimeBar(
+        timestamp=120,
+        open=100.0,
+        high=120.0,
+        low=95.0,
+        close=118.0,
+        volume=10.0,
+    )
+    intent = OrderIntent(
+        symbol="BTC/USDT",
+        side="sell",
+        quantity=1.0,
+        order_type="limit",
+        limit_price=110.0,
+    )
+
+    ticks = tuple(
+        ConservativeOHLCVExecutionModel().tick_events_for_bar(
+            symbol="BTC/USDT",
+            previous_close=100.0,
+            bar=bar,
+            active_intents=(intent,),
+        )
+    )
+
+    fill = next(
+        match_order_intent(intent, tick, _ZERO_COSTS)
+        for tick in ticks
+        if match_order_intent(intent, tick, _ZERO_COSTS) is not None
+    )
+
+    assert fill.price == 110.0
+    assert fill.timestamp == 120
+
+
+def test_gap_crossed_buy_limit_fills_at_open() -> None:
+    bar = TimeBar(
+        timestamp=120,
+        open=95.0,
+        high=101.0,
+        low=90.0,
+        close=99.0,
+        volume=10.0,
+    )
+    intent = OrderIntent(
+        symbol="BTC/USDT",
+        side="buy",
+        quantity=1.0,
+        order_type="limit",
+        limit_price=100.0,
+    )
+
+    ticks = tuple(
+        ConservativeOHLCVExecutionModel().tick_events_for_bar(
+            symbol="BTC/USDT",
+            previous_close=104.0,
+            bar=bar,
+            active_intents=(intent,),
+        )
+    )
+
+    fill = next(
+        match_order_intent(intent, tick, _ZERO_COSTS)
+        for tick in ticks
+        if match_order_intent(intent, tick, _ZERO_COSTS) is not None
+    )
+
+    assert fill.price == 95.0
+    assert fill.timestamp == 120
+
+
+def test_marketable_buy_limit_fills_at_first_executable_open() -> None:
+    bar = TimeBar(
+        timestamp=120,
+        open=121.0,
+        high=125.0,
+        low=119.0,
+        close=124.0,
+        volume=10.0,
+    )
+    intent = OrderIntent(
+        symbol="BTC/USDT",
+        side="buy",
+        quantity=1.0,
+        order_type="limit",
+        limit_price=130.0,
+    )
+
+    ticks = tuple(
+        ConservativeOHLCVExecutionModel().tick_events_for_bar(
+            symbol="BTC/USDT",
+            previous_close=120.0,
+            bar=bar,
+            active_intents=(intent,),
+        )
+    )
+
+    fill = next(
+        match_order_intent(intent, tick, _ZERO_COSTS)
+        for tick in ticks
+        if match_order_intent(intent, tick, _ZERO_COSTS) is not None
+    )
+
+    assert fill.price == 121.0
+    assert fill.timestamp == 120
 
 
 def test_conversion_from_checked_in_fixture_is_deterministic() -> None:

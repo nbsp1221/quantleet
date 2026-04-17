@@ -36,32 +36,32 @@ def test_backtest_runner_produces_deterministic_trade_log_and_summary() -> None:
                 symbol="BTC/USDT",
                 side="sell",
                 quantity=1.0,
-                price=115.0,
+                price=114.0,
                 timestamp=180,
-                fee=0.115,
+                fee=0.114,
             ),
         ),
-        equity_curve=(1000.0, 997.889, 1003.774),
+        equity_curve=(1000.0, 997.889, 1002.775),
         final_state=TradingState(
-            cash=1003.774,
+            cash=1002.775,
             position_quantity=0.0,
             average_entry_price=0.0,
-            realized_pnl=4.0,
+            realized_pnl=3.0,
             unrealized_pnl=0.0,
-            equity=1003.774,
+            equity=1002.775,
         ),
         summary=BacktestSummary(
             total_trades=1,
             total_fills=2,
-            total_fees=0.226,
-            final_balance=1003.774,
-            final_equity=1003.774,
-            total_return=0.003774,
+            total_fees=0.225,
+            final_balance=1002.775,
+            final_equity=1002.775,
+            total_return=0.002775,
             max_drawdown=0.002111,
-            realized_pnl=4.0,
+            realized_pnl=3.0,
             unrealized_pnl=0.0,
             win_rate=1.0,
-            average_win=3.774,
+            average_win=2.775,
             average_loss=0.0,
             profit_factor=float("inf"),
             exposure=ExposureSummary(
@@ -74,7 +74,7 @@ def test_backtest_runner_produces_deterministic_trade_log_and_summary() -> None:
     assert result.trade_log
     assert result.final_state.position_quantity == 0.0
     assert result.summary.trade_count == 1
-    assert result.summary.ending_equity == 1003.774
+    assert result.summary.ending_equity == 1002.775
 
 
 def test_backtest_runner_exposes_expanded_research_result_surface() -> None:
@@ -84,15 +84,15 @@ def test_backtest_runner_exposes_expanded_research_result_surface() -> None:
     )
 
     assert result.execution_model_name == "conservative_ohlcv"
-    assert result.equity_curve == (1000.0, 997.889, 1003.774)
-    assert result.summary.final_balance == 1003.774
-    assert result.summary.final_equity == 1003.774
-    assert result.summary.total_return == 0.003774
+    assert result.equity_curve == (1000.0, 997.889, 1002.775)
+    assert result.summary.final_balance == 1002.775
+    assert result.summary.final_equity == 1002.775
+    assert result.summary.total_return == 0.002775
     assert result.summary.max_drawdown == 0.002111
     assert result.summary.total_trades == 1
     assert result.summary.total_fills == 2
     assert result.summary.win_rate == 1.0
-    assert result.summary.average_win == 3.774
+    assert result.summary.average_win == 2.775
     assert result.summary.average_loss == 0.0
     assert result.summary.profit_factor == float("inf")
     assert result.summary.exposure.bars_in_position == 1
@@ -106,12 +106,12 @@ def test_backtest_runner_trade_statistics_are_net_of_fees() -> None:
         strategy=DeterministicEntryExitStrategy(),
     )
 
-    assert result.summary.realized_pnl == 4.0
-    assert result.summary.total_fees == 0.226
+    assert result.summary.realized_pnl == 3.0
+    assert result.summary.total_fees == 0.225
     assert result.summary.total_trades == 1
     assert result.summary.total_fills == 2
     assert result.summary.win_rate == 1.0
-    assert result.summary.average_win == 3.774
+    assert result.summary.average_win == 2.775
     assert result.summary.average_loss == 0.0
     assert result.summary.profit_factor == float("inf")
 

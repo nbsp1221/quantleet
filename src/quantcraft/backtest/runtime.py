@@ -9,7 +9,7 @@ from quantcraft.backtest.results import BacktestResult, BacktestSummary, Exposur
 from quantcraft.backtest.strategy_runtime import StrategyLike, _StrategyDriver
 from quantcraft.data import BarSeries
 from quantcraft.trading.domain.costs import CostConfig
-from quantcraft.trading.domain.events import BarEvent, FillEvent, TickEvent
+from quantcraft.trading.domain.events import BarEvent, FillEvent
 from quantcraft.trading.domain.intents import OrderIntent
 from quantcraft.trading.domain.matching import match_order_intent
 from quantcraft.trading.domain.state import TradingState, apply_fill
@@ -35,10 +35,22 @@ def _run_backtest(
     total_bars = 0
     latest_mark_price: float | None = None
 
-    events = execution_model.events_from_bars(bars=bars)
+    previous_close: float | None = None
+    previous_timestamp: int | None = None
 
-    for event in events:
-        if isinstance(event, TickEvent):
+    for bar in bars.rows:
+        if previous_timestamp is not None and previous_timestamp >= bar.timestamp:
+            raise ValueError("out-of-order time bars")
+
+        order_state = runtime.order_state()
+        tick_events = execution_model.tick_events_for_bar(
+            symbol=bars.symbol,
+            previous_close=previous_close,
+            bar=bar,
+            active_intents=order_state.active + order_state.pending,
+        )
+
+        for event in tick_events:
             latest_mark_price = event.last
             if activation_policy.begin_tick(event.timestamp):
                 runtime.activate_pending_order_intents()
@@ -78,18 +90,30 @@ def _run_backtest(
                         open_entry_fee_pool = 0.0
                 trade_log.append(fill)
             runtime.replace_active_order_intents(tuple(remaining_intents))
-            continue
 
-        if isinstance(event, BarEvent):
-            runtime.handle_bar(event, state=state)
-            total_bars += 1
-            if latest_mark_price is not None:
-                marked_state = _mark_state_to_market(state, mark_price=latest_mark_price)
-            else:
-                marked_state = state
-            equity_curve.append(marked_state.equity)
-            if marked_state.position_quantity > 0.0:
-                bars_in_position += 1
+        bar_event = BarEvent(
+            bar_type=bars.bar_type,
+            bar_spec=bars.timeframe,
+            symbol=bars.symbol,
+            timestamp=bar.timestamp,
+            open=bar.open,
+            high=bar.high,
+            low=bar.low,
+            close=bar.close,
+            volume=bar.volume,
+            is_closed=True,
+        )
+        runtime.handle_bar(bar_event, state=state)
+        total_bars += 1
+        if latest_mark_price is not None:
+            marked_state = _mark_state_to_market(state, mark_price=latest_mark_price)
+        else:
+            marked_state = state
+        equity_curve.append(marked_state.equity)
+        if marked_state.position_quantity > 0.0:
+            bars_in_position += 1
+        previous_close = bar.close
+        previous_timestamp = bar.timestamp
 
     if latest_mark_price is not None:
         state = _mark_state_to_market(state, mark_price=latest_mark_price)
