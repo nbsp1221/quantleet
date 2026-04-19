@@ -2,7 +2,7 @@
 
 - Date: `2026-04-19`
 - Task: `Design the trading kernel canonical model v1`
-- Status: `active`
+- Status: `blocked`
 - Risk class: `Tier A`
 - Requestor: `user`
 - Owner: `Codex`
@@ -90,7 +90,9 @@
 - Notes:
   - This is a design-session workflow, not an implementation slice.
 - Blockers or scope changes:
-  - None yet.
+  - Scope narrowed on `2026-04-19` to the smaller and currently decisive
+    `Order` domain slice. Follow-on work continues under
+    `docs/plans/2026-04-19-order-domain-spec-design-plan.md`.
 
 ## Evaluator Review
 
@@ -99,4 +101,5 @@
 - Verification evidence:
   - Pending.
 - Final disposition:
-  - Pending.
+  - Superseded by the narrower active plan at
+    `docs/plans/2026-04-19-order-domain-spec-design-plan.md`.

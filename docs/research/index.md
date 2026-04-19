@@ -13,6 +13,7 @@ Use this directory for time-scoped competitive research, ecosystem scans, and co
 | --- | --- | --- | --- | --- | --- |
 | [`2026-03-23-python-quant-library-landscape.md`](2026-03-23-python-quant-library-landscape.md) | current | no | competitive research overview and roadmap framing | Before prioritizing post-MVP backtest, paper-trading, or UX/DX expansion. | Overview report for the Python quant/backtesting ecosystem as of 2026-03-23. Includes comparison matrix, strategic interpretation, and links to priority library dossiers. |
 | [`2026-04-03-rsi-performance-analysis.md`](2026-04-03-rsi-performance-analysis.md) | current | no | baseline root-cause and implementation-pattern analysis for the completed indicator-runtime optimization batch | Before revisiting future `research` indicator-runtime work or comparing the completed fix against the original bottlenecks. | Advisory baseline analysis of the original perf gate failure, local profile evidence, and comparator implementation patterns that informed the completed fix. |
+| [`2026-04-19-order-domain-architecture-comparison.md`](2026-04-19-order-domain-architecture-comparison.md) | current | no | order-domain boundary evidence and cross-library comparison | Before changing the `OrderIntent`/runtime `Order` seam, planning stop-order support, or drafting the first runtime Order implementation slice. | Advisory evidence note for the Order-domain split across research, design, and implementation planning. |
 
 ## Library Dossiers
 
