@@ -6,7 +6,7 @@ from typing import Protocol
 
 from quantcraft.data import BarSeries, TimeBar
 from quantcraft.trading.domain.events import BarEvent, TickEvent
-from quantcraft.trading.domain.intents import OrderIntent
+from quantcraft.trading.domain.orders import Order
 
 _UNBOUNDED_LEVEL_SIZE = math.inf
 
@@ -24,7 +24,7 @@ class BacktestExecutionModel(Protocol):
         symbol: str,
         previous_close: float | None,
         bar: TimeBar,
-        active_intents: tuple[OrderIntent, ...] = (),
+        active_orders: tuple[Order, ...] = (),
     ) -> tuple[TickEvent, ...]: ...
 
     def events_from_bars(self, *, bars: BarSeries) -> tuple[SyntheticEvent, ...]: ...
@@ -48,7 +48,7 @@ class ConservativeOHLCVExecutionModel:
         symbol: str,
         previous_close: float | None,
         bar: TimeBar,
-        active_intents: tuple[OrderIntent, ...] = (),
+        active_orders: tuple[Order, ...] = (),
     ) -> tuple[TickEvent, ...]:
         prices: list[float] = [bar.open]
         del previous_close
@@ -60,7 +60,7 @@ class ConservativeOHLCVExecutionModel:
                     symbol=symbol,
                     start=start,
                     end=end,
-                    active_intents=active_intents,
+                    active_orders=active_orders,
                 )
             )
             if end != prices[-1]:
@@ -105,7 +105,7 @@ class ConservativeOHLCVExecutionModel:
         symbol: str,
         start: float,
         end: float,
-        active_intents: tuple[OrderIntent, ...],
+        active_orders: tuple[Order, ...],
     ) -> tuple[float, ...]:
         if start == end:
             return ()
@@ -114,29 +114,30 @@ class ConservativeOHLCVExecutionModel:
         low = min(start, end)
         high = max(start, end)
 
-        for intent in active_intents:
+        for order in active_orders:
             if (
-                intent.symbol != symbol
-                or intent.order_type != "limit"
-                or intent.limit_price is None
+                order.symbol != symbol
+                or order.order_type != "limit"
+                or order.limit_price is None
+                or not order.is_open
             ):
                 continue
-            if self._is_marketable_at_price(intent=intent, price=start):
+            if self._is_marketable_at_price(order=order, price=start):
                 continue
-            if not low <= intent.limit_price <= high:
+            if not low <= order.limit_price <= high:
                 continue
-            crossed_prices.append(intent.limit_price)
+            crossed_prices.append(order.limit_price)
 
         ordered_prices = sorted(set(crossed_prices), reverse=start > end)
         return tuple(price for price in ordered_prices if price != start)
 
     @staticmethod
-    def _is_marketable_at_price(*, intent: OrderIntent, price: float) -> bool:
-        if intent.limit_price is None:
+    def _is_marketable_at_price(*, order: Order, price: float) -> bool:
+        if order.limit_price is None:
             return False
-        if intent.side == "buy":
-            return price <= intent.limit_price
-        return price >= intent.limit_price
+        if order.side == "buy":
+            return price <= order.limit_price
+        return price >= order.limit_price
 
     @staticmethod
     def _tick_event(*, symbol: str, timestamp: int, price: float) -> TickEvent:

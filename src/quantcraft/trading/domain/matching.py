@@ -4,47 +4,45 @@ import math
 
 from quantcraft.trading.domain.costs import CostConfig
 from quantcraft.trading.domain.events import BookLevel, FillEvent, TickEvent
-from quantcraft.trading.domain.intents import OrderIntent
+from quantcraft.trading.domain.orders import Order
 
 
-def match_order_intent(
-    intent: OrderIntent,
+def match_order(
+    order: Order,
     tick: TickEvent,
     costs: CostConfig,
 ) -> FillEvent | None:
-    if intent.symbol != tick.symbol:
-        raise ValueError("symbol mismatch between intent and tick")
-    if intent.quantity <= 0.0:
-        raise ValueError("match_order_intent requires a positive quantity")
+    if order.symbol != tick.symbol:
+        raise ValueError("symbol mismatch between order and tick")
+    if order.remaining_quantity <= 0.0:
+        raise ValueError("match_order requires a positive remaining quantity")
 
-    levels = tick.asks if intent.side == "buy" else tick.bids
+    levels = tick.asks if order.side == "buy" else tick.bids
     matched = _match_notional(
         levels=levels,
-        quantity=intent.quantity,
-        limit_price=intent.limit_price,
-        side=intent.side,
+        quantity=order.remaining_quantity,
+        limit_price=order.limit_price,
+        side=order.side,
     )
     if matched is None:
         return None
 
-    base_price = matched / intent.quantity
-    if intent.order_type == "market":
+    base_price = matched / order.remaining_quantity
+    if order.order_type == "market":
         slippage = costs.tick_size * costs.slippage_ticks
-        fill_price = base_price + slippage if intent.side == "buy" else base_price - slippage
+        fill_price = base_price + slippage if order.side == "buy" else base_price - slippage
     else:
         fill_price = base_price
 
-    fee = round(fill_price * intent.quantity * costs.fee_rate, 12)
+    fee = round(fill_price * order.remaining_quantity * costs.fee_rate, 12)
     return FillEvent(
-        symbol=intent.symbol,
-        side=intent.side,
-        quantity=intent.quantity,
+        symbol=order.symbol,
+        side=order.side,
+        quantity=order.remaining_quantity,
         price=round(fill_price, 12),
         timestamp=tick.timestamp,
         fee=fee,
     )
-
-
 def _match_notional(
     *,
     levels: tuple[BookLevel, ...],
@@ -79,3 +77,4 @@ def _price_is_within_limit(*, side: str, price: float, limit_price: float) -> bo
     if side == "buy":
         return price <= limit_price
     return price >= limit_price
+__all__ = ["match_order"]

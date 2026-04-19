@@ -4,14 +4,13 @@ from quantcraft.backtest.execution_model import (
     BacktestExecutionModel,
     ConservativeOHLCVExecutionModel,
 )
-from quantcraft.backtest.order_activation import OrderActivationPolicy
 from quantcraft.backtest.results import BacktestResult, BacktestSummary, ExposureSummary
 from quantcraft.backtest.strategy_runtime import StrategyLike, _StrategyDriver
 from quantcraft.data import BarSeries
 from quantcraft.trading.domain.costs import CostConfig
 from quantcraft.trading.domain.events import BarEvent, FillEvent
-from quantcraft.trading.domain.intents import OrderIntent
-from quantcraft.trading.domain.matching import match_order_intent
+from quantcraft.trading.domain.matching import match_order
+from quantcraft.trading.domain.orders import Order
 from quantcraft.trading.domain.state import TradingState, apply_fill
 
 
@@ -24,7 +23,6 @@ def _run_backtest(
 ) -> BacktestResult:
     runtime = _StrategyDriver(strategy)
     runtime.initialize(bars=bars)
-    activation_policy = OrderActivationPolicy()
     execution_model: BacktestExecutionModel = ConservativeOHLCVExecutionModel()
     state = TradingState(cash=initial_cash, equity=initial_cash)
     trade_log: list[FillEvent] = []
@@ -42,27 +40,24 @@ def _run_backtest(
         if previous_timestamp is not None and previous_timestamp >= bar.timestamp:
             raise ValueError("out-of-order time bars")
 
-        order_state = runtime.order_state()
+        runtime.activate_pending_order_intents()
         tick_events = execution_model.tick_events_for_bar(
             symbol=bars.symbol,
             previous_close=previous_close,
             bar=bar,
-            active_intents=order_state.active + order_state.pending,
+            active_orders=runtime.order_state().active,
         )
 
         for event in tick_events:
             latest_mark_price = event.last
-            if activation_policy.begin_tick(event.timestamp):
-                runtime.activate_pending_order_intents()
-
-            remaining_intents: list[OrderIntent] = []
-            for intent in runtime.order_state().active:
-                if _is_flat_exit_intent(intent=intent, state=state):
+            remaining_orders: list[Order] = []
+            for order in runtime.order_state().active:
+                if _is_flat_exit_order(order=order, state=state):
                     continue
 
-                fill = match_order_intent(intent, event, costs)
+                fill = match_order(order, event, costs)
                 if fill is None:
-                    remaining_intents.append(intent)
+                    remaining_orders.append(order)
                     continue
 
                 previous_state = state
@@ -89,7 +84,11 @@ def _run_backtest(
                     if state.position_quantity == 0.0:
                         open_entry_fee_pool = 0.0
                 trade_log.append(fill)
-            runtime.replace_active_order_intents(tuple(remaining_intents))
+
+                order = order.apply_fill(fill)
+                if order.is_open:
+                    remaining_orders.append(order)
+            runtime.replace_active_orders(tuple(remaining_orders))
 
         bar_event = BarEvent(
             bar_type=bars.bar_type,
@@ -222,8 +221,8 @@ def _allocated_entry_fee(
     return round(allocated, 12)
 
 
-def _is_flat_exit_intent(*, intent: OrderIntent, state: TradingState) -> bool:
-    return intent.side == "sell" and state.position_quantity <= 0.0
+def _is_flat_exit_order(*, order: Order, state: TradingState) -> bool:
+    return order.side == "sell" and state.position_quantity <= 0.0
 
 
 def _net_closed_trade_pnl(

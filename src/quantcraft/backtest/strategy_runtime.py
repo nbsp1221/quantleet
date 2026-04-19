@@ -6,12 +6,13 @@ from typing import Any, Protocol, cast
 from quantcraft.data import BarSeries, TimeBar
 from quantcraft.trading.domain.events import BarEvent
 from quantcraft.trading.domain.intents import OrderIntent
+from quantcraft.trading.domain.orders import Order
 from quantcraft.trading.domain.state import TradingState
 
 
 @dataclass(frozen=True, slots=True)
 class _StrategyOrderState:
-    active: tuple[OrderIntent, ...]
+    active: tuple[Order, ...]
     pending: tuple[OrderIntent, ...]
 
 
@@ -20,7 +21,6 @@ class _PositionLike(Protocol):
 
 
 class StrategyLike(Protocol):
-    _active_order_intents: tuple[OrderIntent, ...]
     _pending_order_intents: list[OrderIntent]
     data: Any
     position: _PositionLike
@@ -37,11 +37,15 @@ class _StrategyDriver:
 
     def __init__(self, strategy: StrategyLike) -> None:
         self._strategy = strategy
+        self._active_orders: tuple[Order, ...] = ()
+        self._next_order_id = 1
         self._preloaded_rows: tuple[TimeBar, ...] | None = None
         self._visible_bars = 0
 
     def initialize(self, *, bars: BarSeries | None = None) -> None:
         self._strategy._reset_runtime_state()
+        self._active_orders = ()
+        self._next_order_id = 1
         self._preloaded_rows = None
         self._visible_bars = 0
         if bars is not None:
@@ -57,20 +61,22 @@ class _StrategyDriver:
         self._strategy._handle_bar(bar)
 
     def activate_pending_order_intents(self) -> _StrategyOrderState:
-        self._strategy._active_order_intents = self._strategy._active_order_intents + tuple(
-            self._strategy._pending_order_intents
+        activated = tuple(
+            self._create_order(intent)
+            for intent in self._strategy._pending_order_intents
         )
+        self._active_orders = self._active_orders + activated
         self._strategy._pending_order_intents.clear()
         return self.order_state()
 
     def order_state(self) -> _StrategyOrderState:
         return _StrategyOrderState(
-            active=self._strategy._active_order_intents,
+            active=self._active_orders,
             pending=tuple(self._strategy._pending_order_intents),
         )
 
-    def replace_active_order_intents(self, intents: tuple[OrderIntent, ...]) -> None:
-        self._strategy._active_order_intents = intents
+    def replace_active_orders(self, orders: tuple[Order, ...]) -> None:
+        self._active_orders = orders
 
     def _append_bar(self, bar: BarEvent) -> None:
         if self._preloaded_rows is not None:
@@ -119,6 +125,11 @@ class _StrategyDriver:
     @staticmethod
     def _preloaded_series(series_factory: Any, values: tuple[float, ...]) -> object:
         return series_factory(values, visible_length=0)
+
+    def _create_order(self, intent: OrderIntent) -> Order:
+        order = Order.from_intent(order_id=self._next_order_id, intent=intent)
+        self._next_order_id += 1
+        return order
 
 
 __all__ = ["StrategyLike", "_StrategyDriver", "_StrategyOrderState"]
