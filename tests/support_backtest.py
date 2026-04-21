@@ -36,9 +36,9 @@ class CanonicalRsi3070Strategy(Strategy):
         if qc.is_na(self.rsi[0]):
             return
         if (not self.position.is_open) and self.rsi[0] < 30:
-            self.buy(symbol=bar.symbol, quantity=1.0)
+            self.buy(quantity=1.0)
         elif self.position.is_open and self.rsi[0] > 70:
-            self.sell(symbol=bar.symbol, quantity=1.0)
+            self.sell(quantity=1.0)
 
 
 class CanonicalEmaCrossStrategy(Strategy):
@@ -48,9 +48,9 @@ class CanonicalEmaCrossStrategy(Strategy):
 
     def on_bar(self, bar) -> None:
         if qc.crossover(self.fast, self.slow):
-            self.buy(symbol=bar.symbol, quantity=1.0)
+            self.buy(quantity=1.0)
         elif qc.crossunder(self.fast, self.slow):
-            self.sell(symbol=bar.symbol, quantity=1.0)
+            self.sell(quantity=1.0)
 
 
 class CanonicalMacdCrossStrategy(Strategy):
@@ -59,9 +59,9 @@ class CanonicalMacdCrossStrategy(Strategy):
 
     def on_bar(self, bar) -> None:
         if qc.crossover(self.macd.macd, self.macd.signal):
-            self.buy(symbol=bar.symbol, quantity=1.0)
+            self.buy(quantity=1.0)
         elif qc.crossunder(self.macd.macd, self.macd.signal):
-            self.sell(symbol=bar.symbol, quantity=1.0)
+            self.sell(quantity=1.0)
 
 
 class CanonicalLimitEntryStrategy(Strategy):
@@ -75,13 +75,12 @@ class CanonicalLimitEntryStrategy(Strategy):
         if self.position.is_open:
             self._entry_pending = False
             if self.data.close[0] < self.ema[0]:
-                self.sell(symbol=bar.symbol, quantity=1.0)
+                self.sell(quantity=1.0)
             return
         if self._entry_pending:
             return
         if self.ema[0] > self.ema[1] and self.data.close[0] > self.ema[0] * 1.01:
             self.buy(
-                symbol=bar.symbol,
                 quantity=1.0,
                 order_type="limit",
                 limit_price=float(self.ema[0]),
@@ -100,7 +99,6 @@ class CanonicalLimitExitStrategy(Strategy):
         if self.position.is_open:
             if not self._exit_pending:
                 self.sell(
-                    symbol=bar.symbol,
                     quantity=1.0,
                     order_type="limit",
                     limit_price=float(self.position.average_entry_price * 1.02),
@@ -109,7 +107,7 @@ class CanonicalLimitExitStrategy(Strategy):
             return
         self._exit_pending = False
         if self.rsi[0] < 30:
-            self.buy(symbol=bar.symbol, quantity=1.0)
+            self.buy(quantity=1.0)
 
 
 class CanonicalLimitMixedStrategy(Strategy):
@@ -125,7 +123,6 @@ class CanonicalLimitMixedStrategy(Strategy):
             self._entry_pending = False
             if not self._exit_pending:
                 self.sell(
-                    symbol=bar.symbol,
                     quantity=1.0,
                     order_type="limit",
                     limit_price=float(self.bands.middle[0]),
@@ -137,7 +134,6 @@ class CanonicalLimitMixedStrategy(Strategy):
             return
         if self.data.close[0] < self.bands.lower[0]:
             self.buy(
-                symbol=bar.symbol,
                 quantity=1.0,
                 order_type="limit",
                 limit_price=float(self.bands.lower[0]),

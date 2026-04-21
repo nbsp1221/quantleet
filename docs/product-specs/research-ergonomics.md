@@ -166,7 +166,11 @@ Approved public surface:
 
 Current order semantics for this slice:
 
-- `buy()` and `sell()` currently require an explicit `symbol=...` argument
+- `buy()` and `sell()` accept explicit `symbol=...` everywhere they are allowed
+- in the current single-symbol `on_bar()` workflow, `buy()` and `sell()` may
+  omit `symbol`; the helper infers the active `bar.symbol`
+- in the current shipped single-symbol backtest, any explicit `symbol=...`
+  should match the active series symbol
 - `buy()` means long entry or long increase
 - `sell()` means long exit in the current long-only MVP scope, not short entry
 - `sell()` while flat is treated as a no-op in the current long-only backtest path
@@ -225,10 +229,13 @@ class SmaCross(Strategy):
 
     def on_bar(self, bar):
         if qc.crossover(self.fast, self.slow):
-            self.buy(symbol=bar.symbol, quantity=1)
+            self.buy(quantity=1)
         elif qc.crossunder(self.fast, self.slow):
-            self.sell(symbol=bar.symbol, quantity=1)
+            self.sell(quantity=1)
 ```
+
+Explicit `symbol=...` remains supported for compatibility. In the current
+single-symbol backtest path, it should still match the active series symbol.
 
 Indicator bindings created in `init()` are not frozen snapshots. They are causal read-only views whose latest value updates with the current backtest time.
 

@@ -74,7 +74,11 @@ def test_current_docs_describe_summary_terms_and_engine_surface() -> None:
     assert "`self.position.is_open`" in research_spec
     assert "`self.position.quantity`" in research_spec
     assert "`self.position.average_entry_price`" in research_spec
+    assert "may\n  omit `symbol`" in research_spec or "may omit `symbol`" in research_spec
+    assert "should match the active series symbol" in research_spec
     assert "self.position.is_open" in quickstart
+    assert "may omit `symbol`" in quickstart
+    assert "should still match the active series" in quickstart
     assert "`BacktestEngine`" in research_spec
     assert "`BacktestEngine(...).run(bars=..., strategy=...)`" in research_spec
     assert "`BacktestEngine(...).run(source=..., strategy=...)`" in research_spec
@@ -101,6 +105,8 @@ def test_current_docs_describe_summary_terms_and_engine_surface() -> None:
     assert "`DataFrameDataSource.load()` returns `BarSeries`" in data_ingestion_spec
     assert "`BarSeries.rows` is `tuple[TimeBar, ...]`" in data_ingestion_spec
     assert '`BarSeries.bar_type` is fixed to `"time"`' in data_ingestion_spec
+    assert "self.buy(quantity=1, tag=\"rsi-entry\")" in data_ingestion_spec
+    assert "self.sell(quantity=1, tag=\"rsi-exit\")" in data_ingestion_spec
     assert "from quantcraft.backtest import BacktestEngine" in quickstart
     assert "from quantcraft.research import Strategy, ta, qc" in quickstart
     assert (

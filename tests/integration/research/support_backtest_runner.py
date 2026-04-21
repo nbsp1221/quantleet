@@ -17,10 +17,9 @@ class DeterministicEntryExitStrategy(Strategy):
     def on_bar(self, bar) -> None:
         self._seen_bars += 1
         if self._seen_bars == 1:
-            self.buy(symbol=bar.symbol, quantity=1.0, tag="entry")
+            self.buy(quantity=1.0, tag="entry")
         elif self._seen_bars == 2:
             self.sell(
-                symbol=bar.symbol,
                 quantity=1.0,
                 order_type="limit",
                 limit_price=114.0,
@@ -35,7 +34,21 @@ class BuyAndHoldStrategy(Strategy):
     def on_bar(self, bar) -> None:
         if not self._entered:
             self._entered = True
-            self.buy(symbol=bar.symbol, quantity=1.0, tag="entry")
+            self.buy(quantity=1.0, tag="entry")
+
+
+class BuyThenImplicitSellStrategy(Strategy):
+    def init(self) -> None:
+        self._entered = False
+        self._exited = False
+
+    def on_bar(self, bar) -> None:
+        if not self._entered:
+            self._entered = True
+            self.buy(quantity=1.0, tag="entry")
+        elif self.position.is_open and not self._exited:
+            self._exited = True
+            self.sell(quantity=1.0, tag="exit")
 
 
 class NeverFilledLimitStrategy(Strategy):
@@ -50,7 +63,6 @@ class NeverFilledLimitStrategy(Strategy):
         if not self._placed:
             self._placed = True
             self.buy(
-                symbol=bar.symbol,
                 quantity=1.0,
                 order_type="limit",
                 limit_price=96.0,
@@ -66,7 +78,6 @@ class GapCrossedBuyLimitStrategy(Strategy):
         if not self._placed:
             self._placed = True
             self.buy(
-                symbol=bar.symbol,
                 quantity=1.0,
                 order_type="limit",
                 limit_price=100.0,
@@ -82,7 +93,6 @@ class MarketableBuyLimitStrategy(Strategy):
         if not self._placed:
             self._placed = True
             self.buy(
-                symbol=bar.symbol,
                 quantity=1.0,
                 order_type="limit",
                 limit_price=130.0,
@@ -98,7 +108,6 @@ class IntrabarTouchedBuyLimitStrategy(Strategy):
         if not self._placed:
             self._placed = True
             self.buy(
-                symbol=bar.symbol,
                 quantity=1.0,
                 order_type="limit",
                 limit_price=109.0,
@@ -113,17 +122,16 @@ class OlderLimitThenNewerMarketExitStrategy(Strategy):
     def on_bar(self, bar) -> None:
         self._seen_bars += 1
         if self._seen_bars == 1:
-            self.buy(symbol=bar.symbol, quantity=2.0, tag="entry")
+            self.buy(quantity=2.0, tag="entry")
         elif self._seen_bars == 2:
             self.sell(
-                symbol=bar.symbol,
                 quantity=1.0,
                 order_type="limit",
                 limit_price=115.0,
                 tag="older-limit-exit",
             )
         elif self._seen_bars == 3:
-            self.sell(symbol=bar.symbol, quantity=1.0, tag="newer-market-exit")
+            self.sell(quantity=1.0, tag="newer-market-exit")
 
 
 class RepeatedExitSignalsStrategy(Strategy):
@@ -133,16 +141,16 @@ class RepeatedExitSignalsStrategy(Strategy):
     def on_bar(self, bar) -> None:
         self._seen_bars += 1
         if self._seen_bars == 1:
-            self.sell(symbol=bar.symbol, quantity=1.0, tag="flat-exit-ignored")
+            self.sell(quantity=1.0, tag="flat-exit-ignored")
         elif self._seen_bars == 2:
-            self.buy(symbol=bar.symbol, quantity=1.0, tag="entry")
+            self.buy(quantity=1.0, tag="entry")
         elif self._seen_bars in (3, 4):
-            self.sell(symbol=bar.symbol, quantity=1.0, tag="exit")
+            self.sell(quantity=1.0, tag="exit")
 
 
 class SellWhileFlatStrategy(Strategy):
     def on_bar(self, bar) -> None:
-        self.sell(symbol=bar.symbol, quantity=1.0, tag="flat-exit-ignored")
+        self.sell(quantity=1.0, tag="flat-exit-ignored")
 
 
 class PositionViewProbeStrategy(Strategy):
@@ -164,22 +172,22 @@ class PositionViewProbeStrategy(Strategy):
             )
         )
         if self._seen_bars == 1:
-            self.buy(symbol=bar.symbol, quantity=2.0, tag="entry")
+            self.buy(quantity=2.0, tag="entry")
         elif self._seen_bars == 2:
-            self.buy(symbol=bar.symbol, quantity=1.0, tag="increase")
+            self.buy(quantity=1.0, tag="increase")
         elif self._seen_bars == 3:
-            self.sell(symbol=bar.symbol, quantity=1.0, tag="partial-exit")
+            self.sell(quantity=1.0, tag="partial-exit")
         elif self._seen_bars == 4:
-            self.sell(symbol=bar.symbol, quantity=2.0, tag="full-exit")
+            self.sell(quantity=2.0, tag="full-exit")
 
 
 class ReusedStrategyInstanceProbe(Strategy):
     def on_bar(self, bar) -> None:
         observed_bars = len(self.data.close)
         if observed_bars == 1:
-            self.buy(symbol=bar.symbol, quantity=1.0, tag="entry")
+            self.buy(quantity=1.0, tag="entry")
         elif observed_bars == 2 and self.position.is_open:
-            self.sell(symbol=bar.symbol, quantity=1.0, tag="exit")
+            self.sell(quantity=1.0, tag="exit")
 
 
 class FakeExchangeClient:

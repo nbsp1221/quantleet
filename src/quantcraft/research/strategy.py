@@ -42,6 +42,7 @@ class Strategy(ABC):
         self._active_order_intents: tuple[OrderIntent, ...] = ()
         self._pending_order_intents: list[OrderIntent] = []
         self._handling_bar = False
+        self._active_bar_symbol: str | None = None
         self.data = OHLCVDataView(
             open=SeriesView(()),
             high=SeriesView(()),
@@ -62,6 +63,7 @@ class Strategy(ABC):
         if not bar.is_closed:
             raise ValueError("Strategy.handle_bar requires a closed bar")
         self._handling_bar = True
+        self._active_bar_symbol = bar.symbol
         try:
             self.on_bar(bar)
         except Exception:
@@ -69,11 +71,12 @@ class Strategy(ABC):
             raise
         finally:
             self._handling_bar = False
+            self._active_bar_symbol = None
 
     def buy(
         self,
         *,
-        symbol: str,
+        symbol: str | None = None,
         quantity: float,
         order_type: OrderType = "market",
         limit_price: float | None = None,
@@ -82,7 +85,7 @@ class Strategy(ABC):
         self._assert_order_intake_allowed()
         self._pending_order_intents.append(
             OrderIntent(
-                symbol=symbol,
+                symbol=self._resolve_order_symbol(symbol),
                 side="buy",
                 quantity=quantity,
                 order_type=order_type,
@@ -94,7 +97,7 @@ class Strategy(ABC):
     def sell(
         self,
         *,
-        symbol: str,
+        symbol: str | None = None,
         quantity: float,
         order_type: OrderType = "market",
         limit_price: float | None = None,
@@ -103,7 +106,7 @@ class Strategy(ABC):
         self._assert_order_intake_allowed()
         self._pending_order_intents.append(
             OrderIntent(
-                symbol=symbol,
+                symbol=self._resolve_order_symbol(symbol),
                 side="sell",
                 quantity=quantity,
                 order_type=order_type,
@@ -115,6 +118,14 @@ class Strategy(ABC):
     def _assert_order_intake_allowed(self) -> None:
         if not self._handling_bar:
             raise ValueError("Order intake methods may only be used during on_bar")
+
+    def _resolve_order_symbol(self, symbol: str | None) -> str:
+        if symbol is not None:
+            return symbol
+        active_bar_symbol = self._active_bar_symbol
+        if active_bar_symbol is None:
+            raise RuntimeError("active bar symbol is missing during on_bar order intake")
+        return active_bar_symbol
 
 
 __all__ = ["Strategy"]

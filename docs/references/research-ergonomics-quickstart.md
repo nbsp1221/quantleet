@@ -11,6 +11,11 @@ from quantcraft.research import Strategy, ta, qc
 
 The public research API for this slice is the `quantcraft.research` import above. The lower-layer imports below are current supporting setup types used to construct backtest inputs; they are not part of the research public surface.
 
+In the current single-symbol `on_bar()` workflow, common `buy()` and `sell()`
+calls may omit `symbol`. Explicit `symbol=...` remains supported, but in the
+current single-symbol backtest path it should still match the active series
+symbol.
+
 ## Canonical User Journeys
 
 The current quickstart and examples are anchored to four initial canonical user journeys.
@@ -101,9 +106,9 @@ class SmaCrossStrategy(Strategy):
 
     def on_bar(self, bar) -> None:
         if qc.crossover(self.fast, self.slow):
-            self.buy(symbol=bar.symbol, quantity=1)
+            self.buy(quantity=1)
         elif qc.crossunder(self.fast, self.slow):
-            self.sell(symbol=bar.symbol, quantity=1)
+            self.sell(quantity=1)
 
 
 engine = BacktestEngine(
@@ -143,9 +148,9 @@ class Rsi3070Strategy(Strategy):
 
     def on_bar(self, bar) -> None:
         if (not self.position.is_open) and not qc.is_na(self.rsi[0]) and self.rsi[0] < 30:
-            self.buy(symbol=bar.symbol, quantity=1)
+            self.buy(quantity=1)
         elif self.position.is_open and not qc.is_na(self.rsi[0]) and self.rsi[0] > 70:
-            self.sell(symbol=bar.symbol, quantity=1)
+            self.sell(quantity=1)
 ```
 
 In the current long-only backtest path, repeated `sell()` calls while flat are treated as exit-only no-ops, not short entries.

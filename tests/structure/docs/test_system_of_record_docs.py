@@ -102,7 +102,10 @@ def test_current_order_and_kernel_doc_routing_prefers_english_canonical_paths() 
     ) in research_index
     assert "2026-04-20-order-runtime-model-comparison-ko.md" not in research_index
     assert "../design-docs/trading-kernel-contract-draft.md" in backtest_mvp
-    assert "[trading-kernel-contract-draft.md](trading-kernel-contract-draft.md)" in architecture_governance
+    assert (
+        "[trading-kernel-contract-draft.md]"
+        "(trading-kernel-contract-draft.md)"
+    ) in architecture_governance
 
 
 def test_legacy_ko_doc_paths_are_removed() -> None:

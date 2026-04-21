@@ -23,13 +23,44 @@ class BuyOnFirstBarStrategy(Strategy):
     def on_bar(self, bar: BarEvent) -> None:
         self.seen_bars.append(bar.timestamp)
         if len(self.seen_bars) == 1:
-            self.buy(symbol=bar.symbol, quantity=1.0, tag="entry")
+            self.buy(quantity=1.0, tag="entry")
+
+
+class ExplicitSymbolBuyOnFirstBarStrategy(Strategy):
+    def on_bar(self, bar: BarEvent) -> None:
+        self.buy(symbol="ETH/USDT", quantity=1.0, tag="entry")
+
+
+class ImplicitSymbolBuyOnFirstBarStrategy(Strategy):
+    def __init__(self) -> None:
+        super().__init__()
+        self.seen_bars: list[int] = []
+
+    def on_bar(self, bar: BarEvent) -> None:
+        self.seen_bars.append(bar.timestamp)
+        if len(self.seen_bars) == 1:
+            self.buy(quantity=1.0, tag="entry")
+
+
+class ImplicitSymbolSellOnFirstBarStrategy(Strategy):
+    def on_bar(self, bar: BarEvent) -> None:
+        self.sell(quantity=2.0, order_type="limit", limit_price=bar.high, tag="take-profit")
+
+
+class ExplicitSymbolSellOnFirstBarStrategy(Strategy):
+    def on_bar(self, bar: BarEvent) -> None:
+        self.sell(
+            symbol="ETH/USDT",
+            quantity=2.0,
+            order_type="limit",
+            limit_price=bar.high,
+            tag="take-profit",
+        )
 
 
 class LimitSellOnFirstBarStrategy(Strategy):
     def on_bar(self, bar: BarEvent) -> None:
         self.sell(
-            symbol=bar.symbol,
             quantity=2.0,
             order_type="limit",
             limit_price=bar.high,
@@ -39,13 +70,13 @@ class LimitSellOnFirstBarStrategy(Strategy):
 
 class RaisesAfterBuyStrategy(Strategy):
     def on_bar(self, bar: BarEvent) -> None:
-        self.buy(symbol=bar.symbol, quantity=1.0, tag="entry")
+        self.buy(quantity=1.0, tag="entry")
         raise RuntimeError("boom")
 
 
 class OrdersFromInitStrategy(Strategy):
     def init(self) -> None:
-        self.buy(symbol="BTC/USDT", quantity=1.0)
+        self.buy(quantity=1.0)
 
     def on_bar(self, bar: BarEvent) -> None:
         return None
@@ -131,6 +162,136 @@ def test_order_intake_methods_are_restricted_to_bar_handling_callback() -> None:
 
     with pytest.raises(ValueError, match="only be used during on_bar"):
         strategy.sell(symbol="BTC/USDT", quantity=1.0)
+
+
+def test_implicit_buy_uses_active_bar_symbol() -> None:
+    strategy = ImplicitSymbolBuyOnFirstBarStrategy()
+    runtime = _runtime(strategy)
+
+    first_bar = BarEvent(
+        bar_type="time",
+        bar_spec="1m",
+        symbol="BTC/USDT",
+        timestamp=60,
+        open=100.0,
+        high=105.0,
+        low=95.0,
+        close=104.0,
+        volume=10.0,
+        is_closed=True,
+    )
+    runtime.handle_bar(first_bar)
+
+    assert runtime.order_state().pending == (
+        OrderIntent(
+            symbol="BTC/USDT",
+            side="buy",
+            quantity=1.0,
+            order_type="market",
+            tag="entry",
+        ),
+    )
+
+
+def test_explicit_symbol_buy_is_preserved_before_runtime_matching() -> None:
+    strategy = ExplicitSymbolBuyOnFirstBarStrategy()
+    runtime = _runtime(strategy)
+
+    runtime.handle_bar(
+        BarEvent(
+            bar_type="time",
+            bar_spec="1m",
+            symbol="BTC/USDT",
+            timestamp=60,
+            open=100.0,
+            high=105.0,
+            low=95.0,
+            close=104.0,
+            volume=10.0,
+            is_closed=True,
+        )
+    )
+
+    assert runtime.order_state().pending == (
+        OrderIntent(
+            symbol="ETH/USDT",
+            side="buy",
+            quantity=1.0,
+            order_type="market",
+            tag="entry",
+        ),
+    )
+
+
+def test_implicit_sell_uses_active_bar_symbol() -> None:
+    strategy = ImplicitSymbolSellOnFirstBarStrategy()
+    runtime = _runtime(strategy)
+
+    first_bar = BarEvent(
+        bar_type="time",
+        bar_spec="1m",
+        symbol="BTC/USDT",
+        timestamp=60,
+        open=100.0,
+        high=105.0,
+        low=95.0,
+        close=104.0,
+        volume=10.0,
+        is_closed=True,
+    )
+    runtime.handle_bar(first_bar)
+
+    assert runtime.order_state().pending == (
+        OrderIntent(
+            symbol="BTC/USDT",
+            side="sell",
+            quantity=2.0,
+            order_type="limit",
+            limit_price=105.0,
+            tag="take-profit",
+        ),
+    )
+
+
+def test_explicit_symbol_sell_is_preserved_before_runtime_matching() -> None:
+    strategy = ExplicitSymbolSellOnFirstBarStrategy()
+    runtime = _runtime(strategy)
+
+    runtime.handle_bar(
+        BarEvent(
+            bar_type="time",
+            bar_spec="1m",
+            symbol="BTC/USDT",
+            timestamp=60,
+            open=100.0,
+            high=105.0,
+            low=95.0,
+            close=104.0,
+            volume=10.0,
+            is_closed=True,
+        )
+    )
+
+    assert runtime.order_state().pending == (
+        OrderIntent(
+            symbol="ETH/USDT",
+            side="sell",
+            quantity=2.0,
+            order_type="limit",
+            limit_price=105.0,
+            tag="take-profit",
+        ),
+    )
+
+
+def test_implicit_symbol_ordering_outside_active_bar_context_keeps_on_bar_guard() -> None:
+    strategy = ImplicitSymbolBuyOnFirstBarStrategy()
+
+    with pytest.raises(ValueError, match="only be used during on_bar"):
+        strategy.buy(quantity=1.0)
+
+    with pytest.raises(ValueError, match="only be used during on_bar"):
+        strategy.sell(quantity=1.0)
 
 
 def test_init_cannot_create_orders() -> None:
@@ -300,7 +461,7 @@ def test_failed_on_bar_does_not_leak_staged_intents_to_the_next_bar() -> None:
 def test_sell_is_the_current_long_exit_surface() -> None:
     class SellWhileFlatInLongOnlyScopeStrategy(Strategy):
         def on_bar(self, bar: BarEvent) -> None:
-            self.sell(symbol=bar.symbol, quantity=1.0, tag="flat-exit")
+            self.sell(quantity=1.0, tag="flat-exit")
 
     result = BacktestEngine(
         initial_cash=1_000.0,

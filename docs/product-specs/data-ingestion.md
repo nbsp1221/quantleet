@@ -268,9 +268,9 @@ class RsiStrategy(Strategy):
             return
 
         if self.rsi[0] < 30:
-            self.buy(symbol=bar.symbol, quantity=1, tag="rsi-entry")
+            self.buy(quantity=1, tag="rsi-entry")
         elif self.rsi[0] > 70:
-            self.sell(symbol=bar.symbol, quantity=1, tag="rsi-exit")
+            self.sell(quantity=1, tag="rsi-exit")
 
 
 end = datetime.now(UTC)

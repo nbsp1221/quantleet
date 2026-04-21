@@ -42,12 +42,16 @@ def test_research_ergonomics_quickstart_doc_covers_canonical_usage_path() -> Non
     assert "strict merge gates" in quickstart_doc
     assert "self.position.is_open" in quickstart_doc
     assert "not self.position.is_open" in quickstart_doc
+    assert "may omit `symbol`" in quickstart_doc
+    assert "Explicit `symbol=...` remains supported" in quickstart_doc
     assert "source.load() returns `BarSeries`" in quickstart_doc
     assert "source = DataFrameDataSource(" in quickstart_doc
     assert "bars = BarSeries(" in quickstart_doc
     assert "engine.run(" in quickstart_doc
     assert "source=source" in quickstart_doc
     assert "bars=bars" in quickstart_doc
+    assert "self.buy(quantity=1)" in quickstart_doc
+    assert "self.sell(quantity=1)" in quickstart_doc
     assert "run_backtest" not in quickstart_doc
 
 
@@ -67,6 +71,8 @@ def test_research_ergonomics_quickstart_notebook_uses_canonical_import_path() ->
     assert "source=source" in notebook_source
     assert "bars=bars" in notebook_source
     assert "quantity=1" in notebook_source
+    assert "self.buy(quantity=1)" in notebook_source
+    assert "self.sell(quantity=1)" in notebook_source
     assert "SmaCrossStrategy" in notebook_source
     assert "Rsi3070Strategy" in notebook_source
     assert "self.position.is_open" in notebook_source

@@ -6,6 +6,7 @@ from quantcraft.data import TimeBar
 from quantcraft.trading.domain.state import TradingState
 from tests.integration.research.support_backtest_runner import (
     BuyAndHoldStrategy,
+    BuyThenImplicitSellStrategy,
     DeterministicEntryExitStrategy,
     GapCrossedBuyLimitStrategy,
     IntrabarTouchedBuyLimitStrategy,
@@ -44,6 +45,32 @@ def test_backtest_runner_activates_bar_orders_on_the_next_bar() -> None:
     assert result.summary.ending_equity == 1002.889
     assert result.summary.unrealized_pnl == 3.0
     assert result.equity_curve == (1000.0, 997.889, 1002.889)
+
+
+def test_backtest_runner_supports_symbol_free_entry_within_single_symbol_on_bar() -> None:
+    result = run_engine_backtest(
+        bars=fixture_bar_series(),
+        strategy=BuyAndHoldStrategy(),
+    )
+
+    assert tuple(fill.timestamp for fill in result.trade_log) == (120,)
+    assert tuple(fill.symbol for fill in result.trade_log) == ("BTC/USDT",)
+    assert result.trade_log[0].price == 111.0
+    assert result.final_state.position_quantity == 1.0
+
+
+def test_backtest_runner_supports_symbol_free_exit_within_single_symbol_on_bar() -> None:
+    result = run_engine_backtest(
+        bars=fixture_bar_series(),
+        strategy=BuyThenImplicitSellStrategy(),
+    )
+
+    assert tuple((fill.side, fill.symbol, fill.timestamp) for fill in result.trade_log) == (
+        ("buy", "BTC/USDT", 120),
+        ("sell", "BTC/USDT", 180),
+    )
+    assert result.final_state.position_quantity == 0.0
+    assert result.summary.total_trades == 1
 
 
 def test_unfilled_limit_order_carries_without_creating_trade_log_entries() -> None:
