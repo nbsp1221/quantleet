@@ -104,6 +104,8 @@ def _resolve_quantity_request(
 
     if request.side == "sell":
         return ResolvedOrderSizing(quantity=quantity, sell_quantity_reservation=quantity)
+    if request.order_type == "stop_market":
+        return ResolvedOrderSizing(quantity=quantity)
 
     anchor_price = _buy_anchor_price(
         request=request,
@@ -229,6 +231,8 @@ def _active_buy_cash_reservation(
     for order in active_orders:
         if not order.is_open or order.side != "buy":
             continue
+        if order.order_type == "stop_market" and not order.is_triggered:
+            continue
         anchor = _order_buy_anchor_price(
             order=order,
             market_buy_price=market_buy_price,
@@ -262,6 +266,8 @@ def _buy_anchor_price(
     market_buy_price: float,
     costs: CostConfig,
 ) -> float:
+    if request.order_type == "stop_market":
+        raise ValueError("stop_market is unsupported in ordinary buy anchor pricing")
     if request.order_type == "limit":
         if request.limit_price is None:
             raise ValueError("limit buy requests require a limit_price")
@@ -276,6 +282,8 @@ def _order_buy_anchor_price(
     market_buy_price: float,
     costs: CostConfig,
 ) -> float:
+    if order.order_type == "stop_market":
+        raise ValueError("stop_market is unsupported in ordinary buy anchor pricing")
     if order.order_type == "limit":
         if order.limit_price is None:
             raise ValueError("limit buy orders require a limit_price")

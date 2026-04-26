@@ -41,6 +41,16 @@ class PercentBuyOnFirstBarStrategy(Strategy):
         self.buy(qty_percent=80.0, tag="percent-entry")
 
 
+class StopMarketAboveCloseBuyStrategy(Strategy):
+    def on_bar(self, bar: BarEvent) -> None:
+        self.buy(quantity=1.0, order_type="stop_market", stop_price=120.0, tag="stop-entry")
+
+
+class StopMarketBelowCloseBuyStrategy(Strategy):
+    def on_bar(self, bar: BarEvent) -> None:
+        self.buy(quantity=1.0, order_type="stop_market", stop_price=90.0, tag="stop-entry")
+
+
 class ImplicitSymbolBuyOnFirstBarStrategy(Strategy):
     def __init__(self) -> None:
         super().__init__()
@@ -155,6 +165,7 @@ def test_strategy_surface_is_self_based_and_on_bar_is_the_first_hook() -> None:
         "qty_percent",
         "order_type",
         "limit_price",
+        "stop_price",
         "tag",
     )
     assert tuple(sell_signature.parameters) == (
@@ -164,6 +175,7 @@ def test_strategy_surface_is_self_based_and_on_bar_is_the_first_hook() -> None:
         "qty_percent",
         "order_type",
         "limit_price",
+        "stop_price",
         "tag",
     )
     assert buy_signature.parameters["quantity"].default is None
@@ -640,6 +652,134 @@ def test_limit_orders_require_limit_price_at_intake() -> None:
     for strategy in (MissingLimitPriceQuantityStrategy(), MissingLimitPricePercentStrategy()):
         with pytest.raises(ValueError, match="limit orders require a limit_price"):
             _runtime(strategy).handle_bar(first_bar)
+
+
+def test_stop_market_above_close_is_normalized_with_crosses_above() -> None:
+    runtime = _runtime(StopMarketAboveCloseBuyStrategy())
+
+    runtime.handle_bar(
+        BarEvent(
+            bar_type="time",
+            bar_spec="1m",
+            symbol="BTC/USDT",
+            timestamp=60,
+            open=100.0,
+            high=105.0,
+            low=95.0,
+            close=104.0,
+            volume=10.0,
+            is_closed=True,
+        )
+    )
+
+    assert runtime.order_state().pending == (
+        PendingOrderRequest(
+            symbol="BTC/USDT",
+            side="buy",
+            quantity=1.0,
+            order_type="stop_market",
+            stop_price=120.0,
+            trigger_condition="crosses_above",
+            tag="stop-entry",
+        ),
+    )
+
+
+def test_stop_market_below_close_is_normalized_with_crosses_below() -> None:
+    runtime = _runtime(StopMarketBelowCloseBuyStrategy())
+
+    runtime.handle_bar(
+        BarEvent(
+            bar_type="time",
+            bar_spec="1m",
+            symbol="BTC/USDT",
+            timestamp=60,
+            open=100.0,
+            high=105.0,
+            low=95.0,
+            close=104.0,
+            volume=10.0,
+            is_closed=True,
+        )
+    )
+
+    assert runtime.order_state().pending == (
+        PendingOrderRequest(
+            symbol="BTC/USDT",
+            side="buy",
+            quantity=1.0,
+            order_type="stop_market",
+            stop_price=90.0,
+            trigger_condition="crosses_below",
+            tag="stop-entry",
+        ),
+    )
+
+
+def test_stop_market_rejects_missing_stop_price() -> None:
+    class MissingStopPriceStrategy(Strategy):
+        def on_bar(self, bar: BarEvent) -> None:
+            self.buy(quantity=1.0, order_type="stop_market")
+
+    with pytest.raises(ValueError, match="stop_market orders require a stop_price"):
+        _runtime(MissingStopPriceStrategy()).handle_bar(
+            BarEvent(
+                bar_type="time",
+                bar_spec="1m",
+                symbol="BTC/USDT",
+                timestamp=60,
+                open=100.0,
+                high=105.0,
+                low=95.0,
+                close=104.0,
+                volume=10.0,
+                is_closed=True,
+            )
+        )
+
+
+def test_stop_market_rejects_qty_percent_in_the_first_slice() -> None:
+    class StopPercentStrategy(Strategy):
+        def on_bar(self, bar: BarEvent) -> None:
+            self.buy(qty_percent=50.0, order_type="stop_market", stop_price=120.0)
+
+    with pytest.raises(ValueError, match="qty_percent is not supported for stop_market"):
+        _runtime(StopPercentStrategy()).handle_bar(
+            BarEvent(
+                bar_type="time",
+                bar_spec="1m",
+                symbol="BTC/USDT",
+                timestamp=60,
+                open=100.0,
+                high=105.0,
+                low=95.0,
+                close=104.0,
+                volume=10.0,
+                is_closed=True,
+            )
+        )
+
+
+def test_stop_market_rejects_stop_price_equal_to_active_close() -> None:
+    class EqualStopPriceStrategy(Strategy):
+        def on_bar(self, bar: BarEvent) -> None:
+            self.buy(quantity=1.0, order_type="stop_market", stop_price=104.0)
+
+    with pytest.raises(ValueError, match="stop_price equal to the active bar close"):
+        _runtime(EqualStopPriceStrategy()).handle_bar(
+            BarEvent(
+                bar_type="time",
+                bar_spec="1m",
+                symbol="BTC/USDT",
+                timestamp=60,
+                open=100.0,
+                high=105.0,
+                low=95.0,
+                close=104.0,
+                volume=10.0,
+                is_closed=True,
+            )
+        )
 
 
 def test_failed_on_bar_does_not_leak_staged_intents_to_the_next_bar() -> None:

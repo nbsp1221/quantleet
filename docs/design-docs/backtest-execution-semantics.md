@@ -55,6 +55,8 @@ Rules:
 - `open` is the first executable price of the new bar
 - if a resting order is crossed by the gap, `open` is the first price the
   matching engine may see
+- if a dormant stop trigger is crossed by the gap, `open` is also the first
+  executable price and trigger point the matching engine may see
 
 ### 2. Intrabar Segment
 
@@ -145,6 +147,7 @@ Typical decisive events include:
 - `open`
 - canonical path turning points
 - the first executable crossing of a resting limit
+- the first executable crossing of a dormant stop trigger
 - the first executable point after a gap
 
 The decisive-event stream is a compression of the canonical path, not a new
@@ -161,4 +164,6 @@ In particular, any implementation work should preserve all of the following:
 - no bar-aware special cases in `trading`
 - deterministic, order-independent canonical path construction
 - conservative resting-limit handling
+- same-point stop trigger/fill behavior when a decisive executable point both
+  triggers a stop and serves as the first marketable point
 - performance optimizations that do not alter outcomes

@@ -297,6 +297,146 @@ def test_marketable_buy_limit_fills_at_first_executable_open() -> None:
     assert fill.timestamp == 120
 
 
+def test_rising_segment_emits_crosses_above_stop_tick() -> None:
+    bar = TimeBar(
+        timestamp=120,
+        open=100.0,
+        high=120.0,
+        low=95.0,
+        close=118.0,
+        volume=10.0,
+    )
+    order = Order.from_intent(
+        order_id=2,
+        intent=OrderIntent(
+            symbol="BTC/USDT",
+            side="buy",
+            quantity=1.0,
+            order_type="stop_market",
+            trigger_price=110.0,
+            trigger_condition="crosses_above",
+            trigger_type="last",
+        ),
+    )
+
+    ticks = ConservativeOHLCVExecutionModel().tick_events_for_bar(
+        symbol="BTC/USDT",
+        previous_close=100.0,
+        bar=bar,
+        active_orders=(order,),
+    )
+
+    assert tuple(tick.last for tick in ticks) == (100.0, 95.0, 110.0, 120.0, 118.0)
+
+
+def test_falling_segment_emits_crosses_below_stop_tick() -> None:
+    bar = TimeBar(
+        timestamp=120,
+        open=100.0,
+        high=102.0,
+        low=80.0,
+        close=85.0,
+        volume=10.0,
+    )
+    order = Order.from_intent(
+        order_id=3,
+        intent=OrderIntent(
+            symbol="BTC/USDT",
+            side="buy",
+            quantity=1.0,
+            order_type="stop_market",
+            trigger_price=90.0,
+            trigger_condition="crosses_below",
+            trigger_type="last",
+        ),
+    )
+
+    ticks = ConservativeOHLCVExecutionModel().tick_events_for_bar(
+        symbol="BTC/USDT",
+        previous_close=100.0,
+        bar=bar,
+        active_orders=(order,),
+    )
+
+    assert tuple(tick.last for tick in ticks) == (100.0, 102.0, 90.0, 80.0, 85.0)
+
+
+def test_gap_open_stop_trigger_does_not_invent_intermediate_gap_tick() -> None:
+    bar = TimeBar(
+        timestamp=120,
+        open=120.0,
+        high=121.0,
+        low=118.0,
+        close=119.0,
+        volume=10.0,
+    )
+    order = Order.from_intent(
+        order_id=4,
+        intent=OrderIntent(
+            symbol="BTC/USDT",
+            side="buy",
+            quantity=1.0,
+            order_type="stop_market",
+            trigger_price=110.0,
+            trigger_condition="crosses_above",
+            trigger_type="last",
+        ),
+    )
+
+    ticks = ConservativeOHLCVExecutionModel().tick_events_for_bar(
+        symbol="BTC/USDT",
+        previous_close=100.0,
+        bar=bar,
+        active_orders=(order,),
+    )
+
+    assert tuple(tick.last for tick in ticks) == (120.0, 121.0, 118.0, 119.0)
+
+
+def test_same_segment_multiple_stop_crossings_emit_all_decisive_prices_in_order() -> None:
+    bar = TimeBar(
+        timestamp=120,
+        open=100.0,
+        high=120.0,
+        low=95.0,
+        close=118.0,
+        volume=10.0,
+    )
+    first = Order.from_intent(
+        order_id=5,
+        intent=OrderIntent(
+            symbol="BTC/USDT",
+            side="buy",
+            quantity=1.0,
+            order_type="stop_market",
+            trigger_price=105.0,
+            trigger_condition="crosses_above",
+            trigger_type="last",
+        ),
+    )
+    second = Order.from_intent(
+        order_id=6,
+        intent=OrderIntent(
+            symbol="BTC/USDT",
+            side="buy",
+            quantity=1.0,
+            order_type="stop_market",
+            trigger_price=110.0,
+            trigger_condition="crosses_above",
+            trigger_type="last",
+        ),
+    )
+
+    ticks = ConservativeOHLCVExecutionModel().tick_events_for_bar(
+        symbol="BTC/USDT",
+        previous_close=100.0,
+        bar=bar,
+        active_orders=(first, second),
+    )
+
+    assert tuple(tick.last for tick in ticks) == (100.0, 95.0, 105.0, 110.0, 120.0, 118.0)
+
+
 def test_conversion_from_checked_in_fixture_is_deterministic() -> None:
     fixture_path = Path(__file__).with_name("fixtures") / "ohlcv_fixture.json"
     payload = json.loads(fixture_path.read_text())

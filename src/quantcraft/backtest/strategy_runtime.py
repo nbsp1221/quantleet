@@ -91,14 +91,13 @@ class _StrategyDriver:
             quantity = sizing.quantity
             if quantity is None:
                 continue
-            intent = OrderIntent(
-                symbol=request.symbol,
-                side=request.side,
-                quantity=quantity,
-                order_type=request.order_type,
-                limit_price=request.limit_price,
-                tag=request.tag,
-            )
+            if (
+                request.order_type == "stop_market"
+                and request.side == "sell"
+                and state.position_quantity <= 0.0
+            ):
+                continue
+            intent = request.to_order_intent(quantity=quantity)
             next_active_orders.append(self._create_order(intent))
             reservations = reservations.reserve(sizing)
         self._active_orders = tuple(next_active_orders)

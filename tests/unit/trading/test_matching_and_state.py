@@ -7,7 +7,7 @@ import pytest
 from quantcraft.trading.domain.costs import CostConfig
 from quantcraft.trading.domain.events import FillEvent, TickEvent
 from quantcraft.trading.domain.intents import OrderIntent
-from quantcraft.trading.domain.matching import match_order
+from quantcraft.trading.domain.matching import is_order_triggered, match_order
 from quantcraft.trading.domain.orders import Order
 from quantcraft.trading.domain.state import TradingState, apply_fill
 
@@ -98,6 +98,217 @@ def test_limit_order_returns_none_when_book_cannot_fill_within_limit() -> None:
     )
 
     assert fill is None
+
+
+def test_dormant_stop_market_returns_no_fill_until_triggered() -> None:
+    fill = match_order(
+        Order.from_intent(
+            order_id=11,
+            intent=OrderIntent(
+                symbol="BTC/USDT",
+                side="buy",
+                quantity=1.0,
+                order_type="stop_market",
+                trigger_price=110.0,
+                trigger_condition="crosses_above",
+                trigger_type="last",
+            ),
+        ),
+        TickEvent(
+            timestamp=60,
+            symbol="BTC/USDT",
+            bids=((99.0, math.inf),),
+            asks=((101.0, math.inf),),
+            last=100.0,
+        ),
+        CostConfig(tick_size=0.5, slippage_ticks=2.0, fee_rate=0.001),
+    )
+
+    assert fill is None
+
+
+def test_crosses_above_triggers_on_equality_and_gap_through() -> None:
+    order = Order.from_intent(
+        order_id=12,
+        intent=OrderIntent(
+            symbol="BTC/USDT",
+            side="buy",
+            quantity=1.0,
+            order_type="stop_market",
+            trigger_price=110.0,
+            trigger_condition="crosses_above",
+            trigger_type="last",
+        ),
+    )
+
+    assert is_order_triggered(
+        order,
+        TickEvent(
+            timestamp=60,
+            symbol="BTC/USDT",
+            bids=((110.0, math.inf),),
+            asks=((110.0, math.inf),),
+            last=110.0,
+        ),
+    )
+    assert is_order_triggered(
+        order,
+        TickEvent(
+            timestamp=120,
+            symbol="BTC/USDT",
+            bids=((120.0, math.inf),),
+            asks=((120.0, math.inf),),
+            last=120.0,
+        ),
+    )
+
+
+def test_crosses_below_triggers_on_equality_and_gap_through() -> None:
+    order = Order.from_intent(
+        order_id=13,
+        intent=OrderIntent(
+            symbol="BTC/USDT",
+            side="sell",
+            quantity=1.0,
+            order_type="stop_market",
+            trigger_price=95.0,
+            trigger_condition="crosses_below",
+            trigger_type="last",
+        ),
+    )
+
+    assert is_order_triggered(
+        order,
+        TickEvent(
+            timestamp=60,
+            symbol="BTC/USDT",
+            bids=((95.0, math.inf),),
+            asks=((95.0, math.inf),),
+            last=95.0,
+        ),
+    )
+
+
+def test_is_order_triggered_returns_false_for_non_stop_and_already_triggered_orders() -> None:
+    ordinary = Order.from_intent(
+        order_id=16,
+        intent=OrderIntent(
+            symbol="BTC/USDT",
+            side="buy",
+            quantity=1.0,
+            order_type="market",
+        ),
+    )
+    stop = Order.from_intent(
+        order_id=17,
+        intent=OrderIntent(
+            symbol="BTC/USDT",
+            side="buy",
+            quantity=1.0,
+            order_type="stop_market",
+            trigger_price=110.0,
+            trigger_condition="crosses_above",
+            trigger_type="last",
+        ),
+    ).trigger(timestamp=60)
+    tick = TickEvent(
+        timestamp=120,
+        symbol="BTC/USDT",
+        bids=((120.0, math.inf),),
+        asks=((120.0, math.inf),),
+        last=120.0,
+    )
+
+    assert is_order_triggered(ordinary, tick) is False
+    assert is_order_triggered(stop, tick) is False
+
+
+def test_is_order_triggered_rejects_symbol_mismatch_and_invalid_trigger_shape() -> None:
+    order = Order.from_intent(
+        order_id=18,
+        intent=OrderIntent(
+            symbol="BTC/USDT",
+            side="buy",
+            quantity=1.0,
+            order_type="stop_market",
+            trigger_price=110.0,
+            trigger_condition="crosses_above",
+            trigger_type="last",
+        ),
+    )
+
+    with pytest.raises(ValueError, match="symbol mismatch"):
+        is_order_triggered(
+            order,
+            TickEvent(
+                timestamp=60,
+                symbol="ETH/USDT",
+                bids=((110.0, math.inf),),
+                asks=((110.0, math.inf),),
+                last=110.0,
+            ),
+        )
+
+    object.__setattr__(order, "trigger_type", "mark")
+    with pytest.raises(ValueError, match="unsupported trigger_type"):
+        is_order_triggered(
+            order,
+            TickEvent(
+                timestamp=120,
+                symbol="BTC/USDT",
+                bids=((120.0, math.inf),),
+                asks=((120.0, math.inf),),
+                last=120.0,
+            ),
+        )
+
+    object.__setattr__(order, "trigger_type", "last")
+    object.__setattr__(order, "trigger_condition", None)
+    with pytest.raises(ValueError, match="trigger facts must be present"):
+        is_order_triggered(
+            order,
+            TickEvent(
+                timestamp=180,
+                symbol="BTC/USDT",
+                bids=((120.0, math.inf),),
+                asks=((120.0, math.inf),),
+                last=120.0,
+            ),
+        )
+
+
+def test_triggered_stop_market_reuses_market_fill_semantics() -> None:
+    tick = TickEvent(
+        timestamp=60,
+        symbol="BTC/USDT",
+        bids=((99.0, math.inf),),
+        asks=((101.0, math.inf),),
+        last=110.0,
+    )
+    costs = CostConfig(tick_size=0.5, slippage_ticks=2.0, fee_rate=0.001)
+    ordinary_market = Order.from_intent(
+        order_id=14,
+        intent=OrderIntent(
+            symbol="BTC/USDT",
+            side="buy",
+            quantity=2.0,
+            order_type="market",
+        ),
+    )
+    stop_market = Order.from_intent(
+        order_id=15,
+        intent=OrderIntent(
+            symbol="BTC/USDT",
+            side="buy",
+            quantity=2.0,
+            order_type="stop_market",
+            trigger_price=110.0,
+            trigger_condition="crosses_above",
+            trigger_type="last",
+        ),
+    ).trigger(timestamp=60)
+
+    assert match_order(stop_market, tick, costs) == match_order(ordinary_market, tick, costs)
 
 
 def test_market_sell_applies_adverse_slippage_to_best_bid() -> None:

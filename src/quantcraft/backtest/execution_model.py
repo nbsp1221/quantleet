@@ -115,18 +115,25 @@ class ConservativeOHLCVExecutionModel:
         high = max(start, end)
 
         for order in active_orders:
-            if (
-                order.symbol != symbol
-                or order.order_type != "limit"
-                or order.limit_price is None
-                or not order.is_open
-            ):
+            if order.symbol != symbol or not order.is_open:
                 continue
-            if self._is_marketable_at_price(order=order, price=start):
+            if order.order_type == "limit":
+                if order.limit_price is None:
+                    continue
+                if self._is_marketable_at_price(order=order, price=start):
+                    continue
+                if not low <= order.limit_price <= high:
+                    continue
+                crossed_prices.append(order.limit_price)
                 continue
-            if not low <= order.limit_price <= high:
-                continue
-            crossed_prices.append(order.limit_price)
+            if order.order_type == "stop_market":
+                if order.is_triggered or order.trigger_price is None:
+                    continue
+                if order.is_triggered_by_price(price=start):
+                    continue
+                if not low <= order.trigger_price <= high:
+                    continue
+                crossed_prices.append(order.trigger_price)
 
         ordered_prices = sorted(set(crossed_prices), reverse=start > end)
         return tuple(price for price in ordered_prices if price != start)

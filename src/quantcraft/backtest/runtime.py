@@ -9,7 +9,7 @@ from quantcraft.backtest.strategy_runtime import StrategyLike, _StrategyDriver
 from quantcraft.data import BarSeries
 from quantcraft.trading.domain.costs import CostConfig
 from quantcraft.trading.domain.events import BarEvent, FillEvent
-from quantcraft.trading.domain.matching import match_order
+from quantcraft.trading.domain.matching import is_order_triggered, match_order
 from quantcraft.trading.domain.orders import Order
 from quantcraft.trading.domain.state import TradingState, apply_fill
 
@@ -54,8 +54,38 @@ def _run_backtest(
 
         for event in tick_events:
             latest_mark_price = event.last
+            active_orders = runtime.order_state().active
             remaining_orders: list[Order] = []
-            for order in runtime.order_state().active:
+            newly_triggered_orders: list[Order] = []
+
+            for order in active_orders:
+                if _is_flat_exit_order(order=order, state=state):
+                    continue
+                if not order.is_executable:
+                    if is_order_triggered(order, event):
+                        newly_triggered_orders.append(order.trigger(timestamp=event.timestamp))
+                    else:
+                        remaining_orders.append(order)
+                    continue
+
+                fill = match_order(order, event, costs)
+                if fill is None:
+                    remaining_orders.append(order)
+                    continue
+
+                state, open_entry_fee_pool, order = _apply_runtime_fill(
+                    state=state,
+                    order=order,
+                    fill=fill,
+                    mark_price=event.last,
+                    open_entry_fee_pool=open_entry_fee_pool,
+                    closing_trade_pnls=closing_trade_pnls,
+                    trade_log=trade_log,
+                )
+                if order.is_open:
+                    remaining_orders.append(order)
+
+            for order in newly_triggered_orders:
                 if _is_flat_exit_order(order=order, state=state):
                     continue
 
@@ -64,34 +94,18 @@ def _run_backtest(
                     remaining_orders.append(order)
                     continue
 
-                previous_state = state
-                allocated_entry_fee = 0.0
-                if fill.side == "sell":
-                    allocated_entry_fee = _allocated_entry_fee(
-                        open_entry_fee_pool=open_entry_fee_pool,
-                        fill=fill,
-                        state=previous_state,
-                    )
-
-                state = apply_fill(state, fill, mark_price=event.last)
-                if fill.side == "buy":
-                    open_entry_fee_pool = round(open_entry_fee_pool + fill.fee, 12)
-                if fill.side == "sell":
-                    closing_trade_pnls.append(
-                        _net_closed_trade_pnl(
-                            state=previous_state,
-                            fill=fill,
-                            allocated_entry_fee=allocated_entry_fee,
-                        )
-                    )
-                    open_entry_fee_pool = round(open_entry_fee_pool - allocated_entry_fee, 12)
-                    if state.position_quantity == 0.0:
-                        open_entry_fee_pool = 0.0
-                trade_log.append(fill)
-
-                order = order.apply_fill(fill)
+                state, open_entry_fee_pool, order = _apply_runtime_fill(
+                    state=state,
+                    order=order,
+                    fill=fill,
+                    mark_price=event.last,
+                    open_entry_fee_pool=open_entry_fee_pool,
+                    closing_trade_pnls=closing_trade_pnls,
+                    trade_log=trade_log,
+                )
                 if order.is_open:
                     remaining_orders.append(order)
+
             runtime.replace_active_orders(tuple(remaining_orders))
 
         bar_event = BarEvent(
@@ -238,6 +252,43 @@ def _net_closed_trade_pnl(
     gross = (fill.price - state.average_entry_price) * fill.quantity
     net = gross - allocated_entry_fee - fill.fee
     return round(net, 12)
+
+
+def _apply_runtime_fill(
+    *,
+    state: TradingState,
+    order: Order,
+    fill: FillEvent,
+    mark_price: float,
+    open_entry_fee_pool: float,
+    closing_trade_pnls: list[float],
+    trade_log: list[FillEvent],
+) -> tuple[TradingState, float, Order]:
+    previous_state = state
+    allocated_entry_fee = 0.0
+    if fill.side == "sell":
+        allocated_entry_fee = _allocated_entry_fee(
+            open_entry_fee_pool=open_entry_fee_pool,
+            fill=fill,
+            state=previous_state,
+        )
+
+    state = apply_fill(state, fill, mark_price=mark_price)
+    if fill.side == "buy":
+        open_entry_fee_pool = round(open_entry_fee_pool + fill.fee, 12)
+    if fill.side == "sell":
+        closing_trade_pnls.append(
+            _net_closed_trade_pnl(
+                state=previous_state,
+                fill=fill,
+                allocated_entry_fee=allocated_entry_fee,
+            )
+        )
+        open_entry_fee_pool = round(open_entry_fee_pool - allocated_entry_fee, 12)
+        if state.position_quantity == 0.0:
+            open_entry_fee_pool = 0.0
+    trade_log.append(fill)
+    return state, open_entry_fee_pool, order.apply_fill(fill)
 
 
 __all__ = ["_run_backtest"]

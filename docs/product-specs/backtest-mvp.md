@@ -72,8 +72,8 @@ Responsibility split:
 
 - user-facing strategy API is `self`-based
 - first public hook is `on_bar` only
-- strategy output is a pending order request that resolves into a
-  quantity-only `OrderIntent` at runtime activation
+- strategy output is a pending order request that resolves into a runtime
+  `OrderIntent` at activation
 
 MVP pending strategy-request minimum fields:
 
@@ -83,6 +83,7 @@ MVP pending strategy-request minimum fields:
   - `quantity`
   - `qty_percent`
 - `order_type`
+- `stop_price?`
 - `limit_price?`
 - `tag?`
 
@@ -92,6 +93,9 @@ Runtime `OrderIntent` minimum fields:
 - `side`
 - `quantity`
 - `order_type`
+- `trigger_price?`
+- `trigger_condition?`
+- `trigger_type?`
 - `limit_price?`
 - `tag?`
 
@@ -136,7 +140,7 @@ Derived accounting values such as closing PnL do not belong in `FillEvent`. They
 
 ### Orders And Position Scope
 
-- order types: `market`, `limit`
+- order types: `market`, `limit`, `stop_market`
 - position scope: `long + flat`
 - leverage: `1x`
 - semantics: effectively spot-like for this slice
@@ -172,7 +176,7 @@ This MVP does not include:
 - multi-timeframe support
 - shorting
 - leverage or margin
-- stop, stop-limit, trailing, or bracket orders
+- stop-limit, trailing, or bracket orders
 - cancel, modify, or replace flows
 - user-visible partial-fill scenarios
 - paper-trading runtime
@@ -234,9 +238,13 @@ traversal rules are governed by
 
 This MVP adds the following slice-specific constraints on top:
 
-- only `market` and `limit` orders are in scope
+- `market`, `limit`, and `stop_market` orders are in scope
 - the strategy callback still runs after bar close, so newly emitted orders do
   not apply retroactively to the bar that created them
+- `stop_market` orders activate on the next bar like other requests, remain
+  dormant until their trigger condition is met on a causal synthetic
+  executable point, and then fill through the ordinary market path on that
+  same point
 - in the current long-only slice, a `sell` intent while flat is treated as an exit-only no-op rather than as a short entry
 - if finer-grained data becomes available later, the current default path model
   may be replaced by a more accurate one
@@ -259,8 +267,8 @@ The slice is acceptable only if it satisfies all of the following:
 1. it runs from checked-in OHLCV input for a single symbol
 2. the engine remains tick/L2-driven internally
 3. strategy code can emit pending order requests from a `self`-based `on_bar`
-   hook, and runtime activation resolves them into quantity-only `OrderIntent`
-4. `market` and `limit` orders both work
+   hook, and runtime activation resolves them into runtime `OrderIntent`
+4. `market`, `limit`, and `stop_market` orders work within the current slice
 5. long-only, `1x`, spot-like semantics remain consistent
 6. costs are externally injected
 7. orders never fill retroactively into the bar that produced them

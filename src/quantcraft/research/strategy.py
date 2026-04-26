@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 
 from quantcraft.research.series import OHLCVDataView, SeriesView
 from quantcraft.trading.domain.events import BarEvent
-from quantcraft.trading.domain.intents import OrderType
+from quantcraft.trading.domain.intents import OrderSide, OrderType, TriggerCondition
 from quantcraft.trading.domain.state import TradingState
 from quantcraft.trading.order_requests import PendingOrderRequest
 
@@ -43,6 +43,7 @@ class Strategy(ABC):
         self._pending_order_requests: list[PendingOrderRequest] = []
         self._handling_bar = False
         self._active_bar_symbol: str | None = None
+        self._active_bar_close: float | None = None
         self.data = OHLCVDataView(
             open=SeriesView(()),
             high=SeriesView(()),
@@ -64,6 +65,7 @@ class Strategy(ABC):
             raise ValueError("Strategy.handle_bar requires a closed bar")
         self._handling_bar = True
         self._active_bar_symbol = bar.symbol
+        self._active_bar_close = bar.close
         try:
             self.on_bar(bar)
         except Exception:
@@ -72,6 +74,7 @@ class Strategy(ABC):
         finally:
             self._handling_bar = False
             self._active_bar_symbol = None
+            self._active_bar_close = None
 
     def buy(
         self,
@@ -81,19 +84,18 @@ class Strategy(ABC):
         qty_percent: float | None = None,
         order_type: OrderType = "market",
         limit_price: float | None = None,
+        stop_price: float | None = None,
         tag: str | None = None,
     ) -> None:
-        self._assert_order_intake_allowed()
-        self._pending_order_requests.append(
-            PendingOrderRequest(
-                symbol=self._resolve_order_symbol(symbol),
-                side="buy",
-                quantity=quantity,
-                qty_percent=qty_percent,
-                order_type=order_type,
-                limit_price=limit_price,
-                tag=tag,
-            )
+        self._submit_order_request(
+            side="buy",
+            symbol=symbol,
+            quantity=quantity,
+            qty_percent=qty_percent,
+            order_type=order_type,
+            limit_price=limit_price,
+            stop_price=stop_price,
+            tag=tag,
         )
 
     def sell(
@@ -104,24 +106,54 @@ class Strategy(ABC):
         qty_percent: float | None = None,
         order_type: OrderType = "market",
         limit_price: float | None = None,
+        stop_price: float | None = None,
         tag: str | None = None,
     ) -> None:
-        self._assert_order_intake_allowed()
-        self._pending_order_requests.append(
-            PendingOrderRequest(
-                symbol=self._resolve_order_symbol(symbol),
-                side="sell",
-                quantity=quantity,
-                qty_percent=qty_percent,
-                order_type=order_type,
-                limit_price=limit_price,
-                tag=tag,
-            )
+        self._submit_order_request(
+            side="sell",
+            symbol=symbol,
+            quantity=quantity,
+            qty_percent=qty_percent,
+            order_type=order_type,
+            limit_price=limit_price,
+            stop_price=stop_price,
+            tag=tag,
         )
 
     def _assert_order_intake_allowed(self) -> None:
         if not self._handling_bar:
             raise ValueError("Order intake methods may only be used during on_bar")
+
+    def _submit_order_request(
+        self,
+        *,
+        side: OrderSide,
+        symbol: str | None,
+        quantity: float | None,
+        qty_percent: float | None,
+        order_type: OrderType,
+        limit_price: float | None,
+        stop_price: float | None,
+        tag: str | None,
+    ) -> None:
+        self._assert_order_intake_allowed()
+        self._pending_order_requests.append(
+            PendingOrderRequest(
+                symbol=self._resolve_order_symbol(symbol),
+                side=side,
+                quantity=quantity,
+                qty_percent=qty_percent,
+                order_type=order_type,
+                limit_price=limit_price,
+                stop_price=stop_price,
+                trigger_condition=self._infer_trigger_condition(
+                    order_type=order_type,
+                    qty_percent=qty_percent,
+                    stop_price=stop_price,
+                ),
+                tag=tag,
+            )
+        )
 
     def _resolve_order_symbol(self, symbol: str | None) -> str:
         active_bar_symbol = self._active_bar_symbol
@@ -135,6 +167,32 @@ class Strategy(ABC):
         if active_bar_symbol is None:
             raise RuntimeError("active bar symbol is missing during on_bar order intake")
         return active_bar_symbol
+
+    def _infer_trigger_condition(
+        self,
+        *,
+        order_type: OrderType,
+        qty_percent: float | None,
+        stop_price: float | None,
+    ) -> TriggerCondition | None:
+        if order_type != "stop_market":
+            if stop_price is not None:
+                raise ValueError("stop_price is only valid for stop_market orders")
+            return None
+
+        if qty_percent is not None:
+            raise ValueError("qty_percent is not supported for stop_market")
+        if stop_price is None:
+            raise ValueError("stop_market orders require a stop_price")
+
+        active_bar_close = self._active_bar_close
+        if active_bar_close is None:
+            raise RuntimeError("active bar close is missing during on_bar order intake")
+        if stop_price == active_bar_close:
+            raise ValueError("stop_price equal to the active bar close is ambiguous")
+        if stop_price > active_bar_close:
+            return "crosses_above"
+        return "crosses_below"
 
 
 __all__ = ["Strategy"]

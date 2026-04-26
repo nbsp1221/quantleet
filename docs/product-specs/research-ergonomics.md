@@ -171,6 +171,7 @@ Current order semantics for this slice:
 - `buy()` and `sell()` accept exactly one sizing mode:
   - `quantity=...`
   - `qty_percent=...`
+- `buy()` and `sell()` accept `stop_price=...` when `order_type="stop_market"`
 - in the current single-symbol `on_bar()` workflow, `buy()` and `sell()` may
   omit `symbol`; the helper infers the active `bar.symbol`
 - in the current shipped single-symbol backtest, any explicit `symbol=...`
@@ -180,6 +181,11 @@ Current order semantics for this slice:
 - `sell()` while flat is treated as a no-op in the current long-only backtest path
 - `qty_percent` uses current executable sizing resources for the requested
   direction rather than portfolio-target semantics
+- for `stop_market`, the strategy surface infers runtime `trigger_condition`
+  from the active closed-bar `close`; users do not supply `trigger_condition`
+  directly
+- `qty_percent + stop_market` is not part of the current shipped slice and is
+  rejected during strategy request normalization
 
 Examples and quickstarts must explain that `sell()` is an exit operation in the current scope.
 

@@ -19,6 +19,9 @@ def test_order_intent_matches_backtest_mvp_minimum_contract() -> None:
         "side",
         "quantity",
         "order_type",
+        "trigger_price",
+        "trigger_condition",
+        "trigger_type",
         "limit_price",
         "tag",
     )
@@ -26,7 +29,7 @@ def test_order_intent_matches_backtest_mvp_minimum_contract() -> None:
     assert_dataclass_includes_fields(
         order_intent_fields,
         required=("symbol", "side", "quantity", "order_type"),
-        optional_none=("limit_price", "tag"),
+        optional_none=("trigger_price", "trigger_condition", "trigger_type", "limit_price", "tag"),
     )
 
     hints = get_type_hints(OrderIntent)
@@ -41,8 +44,20 @@ def test_order_intent_matches_backtest_mvp_minimum_contract() -> None:
                 get_origin_and_args(annotation) == (Literal, ("buy", "sell"))
             ),
             "order_type": lambda annotation: (
-                get_origin_and_args(annotation) == (Literal, ("market", "limit"))
+                get_origin_and_args(annotation) == (
+                    Literal,
+                    ("market", "limit", "stop_market"),
+                )
             ),
+            "trigger_price": lambda annotation: set(get_args(annotation)) == {float, type(None)},
+            "trigger_condition": lambda annotation: set(get_args(annotation)) == {
+                Literal["crosses_above", "crosses_below"],
+                type(None),
+            },
+            "trigger_type": lambda annotation: set(get_args(annotation)) == {
+                Literal["last"],
+                type(None),
+            },
             "limit_price": lambda annotation: set(get_args(annotation)) == {float, type(None)},
             "tag": lambda annotation: set(get_args(annotation)) == {str, type(None)},
         },
@@ -59,6 +74,8 @@ def test_pending_order_request_supports_exactly_one_sizing_mode() -> None:
         "quantity",
         "qty_percent",
         "order_type",
+        "stop_price",
+        "trigger_condition",
         "limit_price",
         "tag",
     )
@@ -68,12 +85,24 @@ def test_pending_order_request_supports_exactly_one_sizing_mode() -> None:
     assert set(get_args(hints["quantity"])) == {float, type(None)}
     assert set(get_args(hints["qty_percent"])) == {float, type(None)}
     assert get_origin_and_args(hints["side"]) == (Literal, ("buy", "sell"))
-    assert get_origin_and_args(hints["order_type"]) == (Literal, ("market", "limit"))
+    assert get_origin_and_args(hints["order_type"]) == (
+        Literal,
+        ("market", "limit", "stop_market"),
+    )
     assert set(get_args(hints["limit_price"])) == {float, type(None)}
+    assert set(get_args(hints["stop_price"])) == {float, type(None)}
+    trigger_condition_args = set(get_args(hints["trigger_condition"]))
+    assert type(None) in trigger_condition_args
+    trigger_condition_args.remove(type(None))
+    assert len(trigger_condition_args) == 1
+    assert get_origin_and_args(trigger_condition_args.pop()) == (
+        Literal,
+        ("crosses_above", "crosses_below"),
+    )
     assert set(get_args(hints["tag"])) == {str, type(None)}
 
 
-def test_runtime_order_remains_quantity_only() -> None:
+def test_runtime_order_exposes_trigger_aware_runtime_fields() -> None:
     order_fields = fields(Order)
 
     assert tuple(field.name for field in order_fields) == (
@@ -82,6 +111,10 @@ def test_runtime_order_remains_quantity_only() -> None:
         "side",
         "quantity",
         "order_type",
+        "trigger_price",
+        "trigger_condition",
+        "trigger_type",
+        "triggered_at",
         "limit_price",
         "tag",
         "filled_quantity",

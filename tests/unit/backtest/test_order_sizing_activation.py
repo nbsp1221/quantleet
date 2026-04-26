@@ -154,3 +154,33 @@ def test_flat_sell_qty_percent_resolves_to_no_new_order() -> None:
     )
 
     assert runtime.order_state().active == ()
+
+
+def test_dormant_stop_market_buy_does_not_reduce_ordinary_percent_buy_budget() -> None:
+    runtime = _runtime(PercentBuyStrategy())
+    runtime.initialize(bars=_bars())
+    runtime.handle_bar(_bar_event(60), state=TradingState(cash=100.0, equity=100.0))
+    runtime.replace_active_orders(
+        (
+            Order.from_intent(
+                order_id=1,
+                intent=OrderIntent(
+                    symbol="BTC/USDT",
+                    side="buy",
+                    quantity=1.0,
+                    order_type="stop_market",
+                    trigger_price=20.0,
+                    trigger_condition="crosses_above",
+                    trigger_type="last",
+                ),
+            ),
+        )
+    )
+
+    runtime.activate_pending_order_requests(
+        bar=_bars().rows[1],
+        state=TradingState(cash=100.0, equity=100.0),
+        costs=CostConfig(tick_size=0.1, slippage_ticks=0.0, fee_rate=0.0),
+    )
+
+    assert tuple(order.quantity for order in runtime.order_state().active) == (1.0, 5.0)

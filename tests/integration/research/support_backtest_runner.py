@@ -115,6 +115,189 @@ class IntrabarTouchedBuyLimitStrategy(Strategy):
             )
 
 
+class StopMarketGapAboveBuyStrategy(Strategy):
+    def init(self) -> None:
+        self._placed = False
+
+    def on_bar(self, bar) -> None:
+        if not self._placed:
+            self._placed = True
+            self.buy(
+                quantity=1.0,
+                order_type="stop_market",
+                stop_price=110.0,
+                tag="gap-above-stop-entry",
+            )
+
+
+class StopMarketGapBelowBuyStrategy(Strategy):
+    def init(self) -> None:
+        self._placed = False
+
+    def on_bar(self, bar) -> None:
+        if not self._placed:
+            self._placed = True
+            self.buy(
+                quantity=1.0,
+                order_type="stop_market",
+                stop_price=90.0,
+                tag="gap-below-stop-entry",
+            )
+
+
+class StopMarketIntrabarAboveBuyStrategy(Strategy):
+    def init(self) -> None:
+        self._placed = False
+
+    def on_bar(self, bar) -> None:
+        if not self._placed:
+            self._placed = True
+            self.buy(
+                quantity=1.0,
+                order_type="stop_market",
+                stop_price=110.0,
+                tag="intrabar-above-stop-entry",
+            )
+
+
+class StopMarketIntrabarBelowBuyStrategy(Strategy):
+    def init(self) -> None:
+        self._placed = False
+
+    def on_bar(self, bar) -> None:
+        if not self._placed:
+            self._placed = True
+            self.buy(
+                quantity=1.0,
+                order_type="stop_market",
+                stop_price=90.0,
+                tag="intrabar-below-stop-entry",
+            )
+
+
+class StopMarketGapAboveSellStrategy(Strategy):
+    def init(self) -> None:
+        self._seen_bars = 0
+
+    def on_bar(self, bar) -> None:
+        self._seen_bars += 1
+        if self._seen_bars == 1:
+            self.buy(quantity=1.0, tag="entry")
+        elif self._seen_bars == 2 and self.position.is_open:
+            self.sell(
+                quantity=1.0,
+                order_type="stop_market",
+                stop_price=115.0,
+                tag="gap-above-stop-exit",
+            )
+
+
+class StopMarketGapBelowSellStrategy(Strategy):
+    def init(self) -> None:
+        self._seen_bars = 0
+
+    def on_bar(self, bar) -> None:
+        self._seen_bars += 1
+        if self._seen_bars == 1:
+            self.buy(quantity=1.0, tag="entry")
+        elif self._seen_bars == 2 and self.position.is_open:
+            self.sell(
+                quantity=1.0,
+                order_type="stop_market",
+                stop_price=95.0,
+                tag="gap-below-stop-exit",
+            )
+
+
+class StopMarketIntrabarAboveSellStrategy(Strategy):
+    def init(self) -> None:
+        self._seen_bars = 0
+
+    def on_bar(self, bar) -> None:
+        self._seen_bars += 1
+        if self._seen_bars == 1:
+            self.buy(quantity=1.0, tag="entry")
+        elif self._seen_bars == 2 and self.position.is_open:
+            self.sell(
+                quantity=1.0,
+                order_type="stop_market",
+                stop_price=115.0,
+                tag="intrabar-above-stop-exit",
+            )
+
+
+class StopMarketIntrabarBelowSellStrategy(Strategy):
+    def init(self) -> None:
+        self._seen_bars = 0
+
+    def on_bar(self, bar) -> None:
+        self._seen_bars += 1
+        if self._seen_bars == 1:
+            self.buy(quantity=1.0, tag="entry")
+        elif self._seen_bars == 2 and self.position.is_open:
+            self.sell(
+                quantity=1.0,
+                order_type="stop_market",
+                stop_price=95.0,
+                tag="intrabar-below-stop-exit",
+            )
+
+
+class StopMarketSellWhileFlatStrategy(Strategy):
+    def on_bar(self, bar) -> None:
+        self.sell(
+            quantity=1.0,
+            order_type="stop_market",
+            stop_price=95.0,
+            tag="flat-stop-exit-ignored",
+        )
+
+
+class MultipleStopMarketEntriesStrategy(Strategy):
+    def init(self) -> None:
+        self._placed = False
+
+    def on_bar(self, bar) -> None:
+        if not self._placed:
+            self._placed = True
+            self.buy(
+                quantity=1.0,
+                order_type="stop_market",
+                stop_price=105.0,
+                tag="older-stop-entry",
+            )
+            self.buy(
+                quantity=1.0,
+                order_type="stop_market",
+                stop_price=110.0,
+                tag="newer-stop-entry",
+            )
+
+
+class OlderLimitThenTriggeredStopExitStrategy(Strategy):
+    def init(self) -> None:
+        self._seen_bars = 0
+
+    def on_bar(self, bar) -> None:
+        self._seen_bars += 1
+        if self._seen_bars == 1:
+            self.buy(quantity=2.0, tag="entry")
+        elif self._seen_bars == 2:
+            self.sell(
+                quantity=1.0,
+                order_type="limit",
+                limit_price=115.0,
+                tag="older-limit-exit",
+            )
+        elif self._seen_bars == 3 and self.position.is_open:
+            self.sell(
+                quantity=1.0,
+                order_type="stop_market",
+                stop_price=115.0,
+                tag="newer-stop-exit",
+            )
+
+
 class OlderLimitThenNewerMarketExitStrategy(Strategy):
     def init(self) -> None:
         self._seen_bars = 0

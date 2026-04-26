@@ -18,9 +18,11 @@ Related documents:
 Status note:
 
 - the current shipped strategy surface supports both `quantity` and
-  `qty_percent`
-- runtime `OrderIntent` remains quantity-only
-- runtime `Order` remains quantity-based
+  `qty_percent`, plus `stop_price` for `stop_market`
+- runtime `OrderIntent` resolves sizing into concrete quantity and may also
+  carry trigger facts for shipped `stop_market`
+- runtime `Order` remains quantity-based and may also carry trigger facts for
+  shipped `stop_market`
 - this document is now part of the current product authority for shipped
   behavior alongside [backtest-mvp.md](backtest-mvp.md) and
   [research-ergonomics.md](research-ergonomics.md)
@@ -58,14 +60,17 @@ portfolio-construction layer.
 Current shipped truth:
 
 - `Strategy.buy()` and `Strategy.sell()` accept either `quantity` or
-  `qty_percent`, plus `order_type`, `limit_price`, and `tag`
+  `qty_percent`, plus `order_type`, `limit_price`, `stop_price`, and `tag`
 - pending strategy requests are modeled outside `trading.domain`
-- `OrderIntent` remains quantity-only
-- runtime `Order` remains quantity-based
+- `OrderIntent` resolves sizing into quantity and may also carry shipped
+  stop-trigger facts
+- runtime `Order` remains quantity-based and may also carry shipped
+  stop-trigger facts
 - current shipped scope remains:
   - single symbol
   - long-only
-  - `market` and `limit`
+  - `market`, `limit`, and `stop_market`
+  - `qty_percent + stop_market` remains out of scope
   - no margin or leverage modeling
   - no portfolio-target APIs
 
@@ -395,6 +400,12 @@ It does **not** automatically widen support to:
 
 Future order-type expansion should inherit this sizing primitive only after the
 runtime order and stop-family slices are defined.
+
+Current shipped stop-family rule:
+
+- `stop_market` requests support `quantity`
+- `qty_percent + stop_market` remains explicitly out of scope and is rejected
+  during strategy request normalization
 
 ## Strategy Examples
 

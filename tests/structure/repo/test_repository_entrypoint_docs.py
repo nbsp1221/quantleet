@@ -76,9 +76,12 @@ def test_current_docs_describe_summary_terms_and_engine_surface() -> None:
     assert "`qty_percent`" in research_spec
     assert "a `sell` intent while flat is treated as an exit-only no-op" in backtest_spec
     assert "pending order request" in backtest_spec
-    assert "quantity-only `OrderIntent`" in backtest_spec
+    assert (
+        "runtime\n  `OrderIntent` at activation" in backtest_spec
+        or "runtime `OrderIntent`" in backtest_spec
+    )
     assert "- Status: `implemented`" in order_sizing_spec
-    assert "runtime `OrderIntent` remains quantity-only" in order_sizing_spec
+    assert "carry trigger facts for shipped `stop_market`" in order_sizing_spec
     assert "runtime `Order` remains quantity-based" in order_sizing_spec
     assert "repeated `sell()` calls while flat are treated as exit-only no-ops" in quickstart
     assert "`self.position`" in research_spec

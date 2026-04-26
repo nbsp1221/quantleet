@@ -7,6 +7,18 @@ from quantcraft.trading.domain.events import BookLevel, FillEvent, TickEvent
 from quantcraft.trading.domain.orders import Order
 
 
+def is_order_triggered(order: Order, tick: TickEvent) -> bool:
+    if order.symbol != tick.symbol:
+        raise ValueError("symbol mismatch between order and tick")
+    if order.order_type != "stop_market":
+        return False
+    if order.is_triggered:
+        return False
+    if order.trigger_type != "last":
+        raise ValueError("unsupported trigger_type for first-slice stop matching")
+    return order.is_triggered_by_price(price=tick.last)
+
+
 def match_order(
     order: Order,
     tick: TickEvent,
@@ -16,6 +28,8 @@ def match_order(
         raise ValueError("symbol mismatch between order and tick")
     if order.remaining_quantity <= 0.0:
         raise ValueError("match_order requires a positive remaining quantity")
+    if not order.is_executable:
+        return None
 
     levels = tick.asks if order.side == "buy" else tick.bids
     matched = _match_notional(
@@ -28,7 +42,7 @@ def match_order(
         return None
 
     base_price = matched / order.remaining_quantity
-    if order.order_type == "market":
+    if order.executable_order_type == "market":
         slippage = costs.tick_size * costs.slippage_ticks
         fill_price = base_price + slippage if order.side == "buy" else base_price - slippage
     else:
@@ -81,4 +95,4 @@ def _price_is_within_limit(*, side: str, price: float, limit_price: float) -> bo
     return price >= limit_price
 
 
-__all__ = ["match_order"]
+__all__ = ["is_order_triggered", "match_order"]
