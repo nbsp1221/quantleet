@@ -127,7 +127,6 @@ All official sources must return the same self-describing historical dataset:
 
 Current dataset rules:
 
-- `source.load()` returns `BarSeries`
 - source.load() returns `BarSeries`
 - `CCXTDataSource.load()` returns `BarSeries`
 - `CSVDataSource.load()` returns `BarSeries`
@@ -159,7 +158,7 @@ The public naming follows the provider boundary rather than a venue-specific or 
 
 It should use explicit constructor arguments rather than a separate public request object.
 
-Illustrative direction:
+Example:
 
 ```python
 source = CCXTDataSource(
@@ -275,14 +274,16 @@ class RsiStrategy(Strategy):
 
 end = datetime.now(UTC)
 start = end - timedelta(days=365)
+start_ms = int(start.timestamp() * 1000)
+end_ms = int(end.timestamp() * 1000)
 
 bars = CCXTDataSource(
     exchange="binance",
     market="usdm",
     symbol="BTC/USDT:USDT",
     timeframe="1h",
-    start=start,
-    end=end,
+    start=start_ms,
+    end=end_ms,
 ).load()
 
 engine = BacktestEngine(
@@ -299,8 +300,6 @@ result = engine.run(
     strategy=RsiStrategy(),
 )
 ```
-
-This example is a target API illustration for the next slice, not the current implemented quickstart.
 
 ## Success Criteria
 

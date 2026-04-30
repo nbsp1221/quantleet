@@ -87,13 +87,12 @@ costs = CostConfig(tick_size=1.0, slippage_ticks=1.0, fee_rate=0.001)
 
 Current ingestion rule:
 
-- `source.load()` returns `BarSeries`
 - source.load() returns `BarSeries`
 
 Indicator semantics note:
 
 - indicator warmup and `NaN` behavior follow `TA-Lib` semantics
-- early bars may therefore remain `na` longer than the previous handwritten implementation did
+- early bars may remain `na` until the indicator has enough visible history
 - prefer `qc.is_na(...)` checks before using fresh indicator values in early history
 
 ## Primary Example: SMA crossover

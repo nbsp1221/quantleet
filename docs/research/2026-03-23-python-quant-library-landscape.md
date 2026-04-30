@@ -95,20 +95,22 @@ Important scope note:
   [the product-spec index](../product-specs/index.md)
 - [market-data.md](../product-specs/market-data.md) is one implemented-scope
   entry, not the sole product authority
-- a partial in-repo backtest implementation now exists and is aligned to the approved [Backtest MVP](../product-specs/backtest-mvp.md) slice
+- an implemented in-repo backtest baseline exists and is aligned to the approved [Backtest MVP](../product-specs/backtest-mvp.md) slice
+- the first public beta target has now been promoted into [Research Ergonomics](../product-specs/research-ergonomics.md)
 - this report compares both the current market-data footing and the newly implemented backtest slice, but it does not redefine the canonical product-scope map
 
 Canonical references:
 
 - [ARCHITECTURE.md](../../ARCHITECTURE.md)
 - [Backtest MVP](../product-specs/backtest-mvp.md)
-- [backtest.py](../../src/quantcraft/research/application/backtest.py)
-- [strategy.py](../../src/quantcraft/research/application/strategy.py)
-- [execution_model.py](../../src/quantcraft/research/adapters/execution_model.py)
+- [Research Ergonomics](../product-specs/research-ergonomics.md)
+- [BacktestEngine](../../src/quantcraft/backtest/engine.py)
+- [strategy.py](../../src/quantcraft/research/strategy.py)
+- [execution_model.py](../../src/quantcraft/backtest/execution_model.py)
 - [matching.py](../../src/quantcraft/trading/domain/matching.py)
 - [state.py](../../src/quantcraft/trading/domain/state.py)
 
-In-repo today, `quantcraft` includes a partial backtest implementation that provides:
+In-repo today, `quantcraft` includes an implemented backtest baseline that provides:
 
 - deterministic single-symbol backtesting
 - OHLCV external input format
@@ -117,7 +119,10 @@ In-repo today, `quantcraft` includes a partial backtest implementation that prov
 - explicit conservative intrabar path rules
 - tick/event-driven internal kernel with a bar-facing strategy surface
 - `self`-based `on_bar` strategy API
-- `market` and `limit` orders
+- `market`, `limit`, `stop_market`, and `stop_limit` orders
+- explicit `quantity` and `qty_percent` sizing
+- conservative resource reservation for accepted active and dormant orders
+- a baseline indicator/helper surface under `quantcraft.research`
 - long-only, `1x`, spot-like state transitions
 - injected slippage and fee configuration
 - trade log, PnL, and ending equity summary
@@ -129,14 +134,14 @@ Current hard limitations:
 - single timeframe only
 - no shorting
 - no leverage or margin
-- no stop / stop-limit / trailing / bracket orders
+- no trailing / bracket orders
 - no cancel / modify / replace lifecycle
 - no user-visible partial fills
 - no paper-trading runtime
 - no live-trading runtime
 - no portfolio rebalancing layer
 - no optimizer / walk-forward / parameter sweep system
-- no built-in indicator library or charting layer
+- no first-class plotting or charting layer
 
 ## Ecosystem Clusters
 
@@ -206,7 +211,7 @@ These dossiers hold the deeper per-library architectural notes for this research
 
 | Library | Core Style | Backtest | Paper/Live Story | Order Realism | Research UX | Current Breadth vs quantcraft |
 | --- | --- | --- | --- | --- | --- | --- |
-| quantcraft | tick/event kernel with bar-facing API | partial in-repo MVP slice | not yet | moderate in MVP, stronger long-term direction than current breadth | low to moderate | baseline |
+| quantcraft | tick/event kernel with bar-facing API | implemented single-symbol baseline | not yet | moderate in current slice, stronger long-term direction than current breadth | low to moderate | baseline |
 | backtesting.py | bar-native imperative | yes | no | moderate | high | much broader today |
 | Backtrader | hybrid event/bar | yes | yes | moderate to high | moderate | much broader today |
 | vectorbt | vectorized/dataframe-first | yes | limited | low to moderate | very high | much broader today |
@@ -259,14 +264,14 @@ Compared to the ecosystem, the biggest current gaps are straightforward.
 - no multi-symbol support
 - no multi-timeframe support
 - no shorting or leverage
-- no stop / stop-limit / trailing / bracket orders
+- no trailing / bracket orders
 - no cancel / modify lifecycle
 - no portfolio layer
 - no paper/live runtime
 
 ### Research workflow gaps
 
-- no built-in indicators
+- limited built-in indicator surface compared with mature research libraries
 - no optimizer / hyperparameter sweep layer
 - no walk-forward tooling
 - no rich statistics or charting package
@@ -274,10 +279,11 @@ Compared to the ecosystem, the biggest current gaps are straightforward.
 
 ### Usability gaps
 
-- strategy ergonomics are still minimal
+- strategy ergonomics are usable but not yet competitive with polished
+  single-asset tools
 - no “batteries included” examples comparable to mature libraries
 - no polished visualization or reporting workflow
-- no broad data adapter story yet
+- no broad data adapter story beyond the current ingestion baseline
 
 ### Ecosystem gaps
 
@@ -322,26 +328,30 @@ The intended differentiation is:
 That suggests a clear product posture:
 
 - stay narrow on breadth for now
+- make the first beta competitive for single-symbol strategy backtesting before
+  widening runtime scope
 - deepen the bar-facing UX on top of the tick/event kernel
 - make execution explainability a visible product feature
-- prove paper-trading parity early
+- prove paper-trading parity after the beta backtesting loop is credible
 
 ## Recommended Next Priorities
 
-These priorities are research recommendations only. They should be promoted into a canonical product spec or execution plan before they drive implementation work.
+These priorities are research recommendations only. The first-beta direction
+has been promoted into [Research Ergonomics](../product-specs/research-ergonomics.md);
+that spec governs product work.
 
 ### Must
 
-- improve strategy ergonomics on top of the existing kernel
-- add basic indicator helpers and common research conveniences
-- add execution explainability artifacts such as synthetic-path traces, fill provenance, and cost breakdowns
-- build the thinnest credible paper-trading runtime on the same kernel
+- make the single-symbol first-run flow competitive for general Python quant users
+- improve summaries, plotting, trade/equity inspection, and notebook-oriented reporting
+- add constrained parameter exploration for common strategy tuning
+- keep execution assumptions and fill causality visible in user-facing docs
 
 ### Should
 
-- improve summaries, plots, and notebook-oriented reporting
-- add multi-symbol support only after paper/runtime semantics are credible
-- add constrained optimization and walk-forward tooling after the paper/runtime story is established
+- add execution explainability artifacts such as synthetic-path traces, fill provenance, and cost breakdowns
+- build the thinnest credible paper-trading runtime on the same kernel after the beta backtesting loop is credible
+- add multi-symbol support only after the single-symbol UX and runtime semantics are stable
 
 ### Not now
 

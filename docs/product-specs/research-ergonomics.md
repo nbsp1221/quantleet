@@ -13,14 +13,20 @@ Related documents:
 - [backtest-mvp.md](backtest-mvp.md)
 - [order-sizing.md](order-sizing.md)
 - [../research/2026-03-23-python-quant-library-landscape.md](../research/2026-03-23-python-quant-library-landscape.md)
+- [../research/libraries/backtesting-py.md](../research/libraries/backtesting-py.md)
 
-This document defines the canonical current implemented-scope contract for the shipped `research ergonomics` surface that sits on top of the backtest MVP.
+This document defines the canonical current implemented-scope contract for the
+shipped `research ergonomics` surface that sits on top of the backtest MVP. It
+also records the first public beta target; beta-target language is direction,
+not a claim that the current implementation already satisfies it.
 
 ## Goal
 
 Build a usable research surface on top of the current backtest kernel so that:
 
 - a user can write a first strategy and run a backtest within 5 to 10 minutes
+- the first public beta is credible for general Python quant users who want to
+  backtest one strategy on one tradeable asset
 - future agent work extends one coherent strategy, series, indicator, and result surface
 - research usability improves without forking or weakening the existing `trading` semantics
 
@@ -36,6 +42,12 @@ Build a usable research surface on top of the current backtest kernel so that:
 
 This slice focuses on making the current kernel legible and reusable rather than adding more execution complexity.
 
+For the first beta, `backtesting.py` is the near-term UX comparator. The target
+is not to copy its internals or abandon the shared-kernel direction; it is to
+make the single-symbol "test my strategy" workflow comparably useful for a
+general Python quant user. `NautilusTrader` remains a longer-term architectural
+reference for paper/live parity, not the beta feature checklist.
+
 ## Included Scope
 
 ### Research Usability Surface
@@ -48,9 +60,9 @@ This slice focuses on making the current kernel legible and reusable rather than
 - official examples
 - a canonical quickstart document and notebook
 
-### Explicitly Out Of Scope
+### Not Implemented In The Current Slice
 
-This slice does not include:
+The current implemented slice does not include:
 
 - plotting
 - parameter sweeps
@@ -58,8 +70,12 @@ This slice does not include:
 - dedicated anti-bias diagnostics tooling
 - paper trading
 - live trading
-- a plotting subsystem
 - guaranteed fallback behavior when `TA-Lib` is unavailable
+
+These items are not all equally deferred. For the first beta, basic plotting,
+clearer result reporting, parameter exploration, and richer examples are
+product gaps to close before broad public positioning. Paper trading and live
+trading stay outside the first beta.
 
 ## Official Import Surface
 
@@ -503,6 +519,11 @@ This slice does not attempt a large analytics surface such as:
 - optimizer-specific result objects
 - walk-forward-specific result objects
 
+For the first beta, result inspection must become a product workflow rather
+than only a dataclass contract: readable stats, analysis-friendly trade/equity
+access, and one basic price/fill/equity plot are required before broad beta
+positioning.
+
 ## Examples And Quickstart
 
 ### Shipped Canonical Example Set
@@ -513,6 +534,11 @@ The shipped canonical example strategy set for this slice is:
 2. `RSI 30/70 mean reversion`
 
 Other implemented indicators, including `bb` and `macd`, remain part of the supported API surface, but they are not part of the current canonical example set.
+
+For the first beta, add examples only where they close first-run confusion:
+one stop-family example and one `qty_percent` example are enough. Do not add
+examples that imply unsupported multi-symbol, shorting, leverage, paper, or live
+scope.
 
 ### Example Placement
 
@@ -563,9 +589,13 @@ The quickstart should walk through this flow:
 6. inspect the summary and result object
 7. inspect equity curve and trade log in the notebook
 
+For the first beta, the quickstart should also show the shortest supported path
+from common user-owned tabular data to a readable result. It should avoid
+forcing users to understand the full architecture before their first backtest.
+
 ## Success Criteria
 
-This slice is successful only if all of the following are true:
+The current implemented slice is successful only if all of the following are true:
 
 1. `Strategy` ergonomics are implemented
    - abstract base class
@@ -604,6 +634,12 @@ This slice is successful only if all of the following are true:
    - lookahead-safe usage
    - warmup / `na` behavior
    - executable canonical quickstart flow
+
+Before broad beta positioning, the docs and product surface must also support a
+fresh install path, at least two first-class data paths, readable result
+inspection, a basic plot, constrained parameter exploration, and explicit
+unsupported-scope notes for multi-symbol, shorting, leverage, paper, and live
+trading.
 
 ## Harness Constraints
 

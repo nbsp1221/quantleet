@@ -1,6 +1,11 @@
 # quantcraft
 
-`quantcraft` is a quant library and framework that will grow across market data, research tooling, backtesting, paper trading, live trading, and quant-related ML utilities.
+`quantcraft` is a quant library and framework for market data, research tooling, backtesting, paper trading, live trading, and quant-related ML utilities.
+
+The first public beta target is a polished single-symbol Python backtesting
+experience for users who want to test a strategy on historical OHLCV data.
+`backtesting.py` is the near-term UX comparator; paper trading, live trading,
+multi-symbol portfolios, shorting, and leverage remain later roadmap work.
 
 The long-lived repository direction is a capability-first engine package under
 `src/quantcraft`, with product surfaces such as an API server living outside the
@@ -20,9 +25,16 @@ The current implemented scope is intentionally small:
 - explicit strategy-side order sizing through `buy()/sell(quantity=...)` and
   `buy()/sell(qty_percent=...)`, with shipped `qty_percent` support in the
   current single-symbol research/backtest workflow
+- shipped `market`, `limit`, `stop_market`, and `stop_limit` order behavior in
+  the current single-symbol research/backtest workflow
+- conservative resource reservation for active and dormant stop-family orders
 - a first `quantcraft.backtest` runtime surface with `BacktestEngine`
 - canonical backtest execution paths via `BacktestEngine.run(bars=..., strategy=...)` and `BacktestEngine.run(source=..., strategy=...)`
 - canonical quickstart and notebook assets for the current research workflow
+
+The current implemented scope is not yet the first beta target. The beta still
+needs stronger reporting, plotting, parameter exploration, examples, and
+installation documentation.
 
 ## Initial Canonical User Journeys
 

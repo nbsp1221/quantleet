@@ -46,12 +46,11 @@ Current intent is still quantity-only:
 - `limit_price?`
 - `tag?`
 
-Current shipped product scope is still:
+Current shipped product scope includes:
 
 - single symbol
 - long-only
-- `market` / `limit`
-- no stop-family orders
+- `market`, `limit`, `stop_market`, and `stop_limit`
 - no cancel/replace
 - no public partial-fill workflow
 

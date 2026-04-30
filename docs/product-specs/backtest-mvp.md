@@ -16,10 +16,8 @@ Related documents:
 
 This document is the canonical current implemented-scope contract for the shipped backtest MVP.
 
-Implementation status note:
-
-- the current code now implements the conservative limit-order execution contract defined in [`../design-docs/backtest-execution-semantics.md`](../design-docs/backtest-execution-semantics.md) for intrabar touched limits, gap-crossed resting limits, and marketable bar-open limits
-- this document remains normative for the shipped backtest execution contract, and future work should treat remaining fidelity or performance questions as follow-up enhancements rather than as the previously open limit-order conformance gap
+Conservative limit-order execution is implemented and governed by
+[`../design-docs/backtest-execution-semantics.md`](../design-docs/backtest-execution-semantics.md).
 
 ## Goal
 
@@ -177,7 +175,7 @@ This MVP does not include:
 - multi-timeframe support
 - shorting
 - leverage or margin
-- stop-limit, trailing, or bracket orders
+- trailing or bracket orders
 - cancel, modify, or replace flows
 - user-visible partial-fill scenarios
 - paper-trading runtime
@@ -282,7 +280,7 @@ The slice is acceptable only if it satisfies all of the following:
 These topics do not block this MVP:
 
 1. whether the in-memory representation of unbounded liquidity should be formally frozen as `inf`
-2. how future stop and trigger orders should generalize gap handling and same-bar causality
+2. how future trigger variants, trailing orders, and bracket orders should generalize gap handling and same-bar causality
 
 These should be promoted only if they begin to create repeated ambiguity or correctness risk.
 

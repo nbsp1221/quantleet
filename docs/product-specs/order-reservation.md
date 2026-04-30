@@ -23,11 +23,6 @@ Related documents:
 This document defines the product contract for the conservative reservation
 policy slice now implemented in the current research/backtest workflow.
 
-For work in this reservation-policy scope, this document supersedes
-earlier defer notes in [order-sizing.md](order-sizing.md) and
-[stop-limit.md](stop-limit.md) about whether dormant stop-family orders should
-reserve resources.
-
 ## Goal
 
 Make strategy-authored order sizing predictable by ensuring that every accepted
