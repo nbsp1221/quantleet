@@ -1,10 +1,14 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import TYPE_CHECKING
 
 from quantcraft.backtest.reporting import BacktestReport
 from quantcraft.trading.domain.events import FillEvent, OrderRejectedEvent
 from quantcraft.trading.domain.state import TradingState
+
+if TYPE_CHECKING:
+    from matplotlib.figure import Figure
 
 
 @dataclass(frozen=True, slots=True)
@@ -40,6 +44,15 @@ class BacktestSummary:
         return self.final_equity
 
 
+@dataclass(frozen=True, slots=True, kw_only=True)
+class _BacktestRunSnapshot:
+    symbol: str
+    timeframe: str
+    bar_type: str
+    timestamps: tuple[int, ...]
+    closes: tuple[float, ...]
+
+
 @dataclass(frozen=True, slots=True)
 class BacktestResult:
     trade_log: tuple[FillEvent, ...]
@@ -52,7 +65,14 @@ class BacktestResult:
         repr=False,
     )
     order_events: tuple[OrderRejectedEvent, ...] = ()
+    drawdown_curve: tuple[float, ...] = field(default=(), kw_only=True)
     _report: BacktestReport | None = field(
+        default=None,
+        compare=False,
+        repr=False,
+        kw_only=True,
+    )
+    _run_snapshot: _BacktestRunSnapshot | None = field(
         default=None,
         compare=False,
         repr=False,
@@ -64,6 +84,11 @@ class BacktestResult:
         if self._report is None:
             raise ValueError("report is only available for engine-produced BacktestResult values")
         return self._report
+
+    def plot(self) -> "Figure":
+        from quantcraft.backtest.plotting import plot_backtest_result
+
+        return plot_backtest_result(self)
 
 
 __all__ = ["BacktestResult", "BacktestSummary", "ExposureSummary"]

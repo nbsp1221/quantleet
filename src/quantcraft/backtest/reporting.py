@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from statistics import mean, median, stdev
 from typing import Any
 
+from quantcraft.backtest.analytics import drawdown_for_equity, max_drawdown_from_curve
 from quantcraft.data import BarSeries
 from quantcraft.trading.domain.costs import CostConfig
 from quantcraft.trading.domain.events import FillEvent, OrderRejectedEvent
@@ -274,7 +275,7 @@ class _ReportBuilder:
     ) -> None:
         peak = state.equity if self._equity_peak is None else max(self._equity_peak, state.equity)
         self._equity_peak = peak
-        drawdown = 0.0 if peak <= 0.0 else round((peak - state.equity) / peak, 12)
+        drawdown = drawdown_for_equity(running_peak=peak, equity=state.equity)
         self._equity.append(
             EquityPoint(
                 bar_index=bar_index,
@@ -326,6 +327,8 @@ class _ReportBuilder:
             12,
         )
 
+        drawdown_curve = tuple(point.drawdown for point in self._equity)
+
         return BacktestReport(
             run=RunManifest(
                 symbol=bars.symbol,
@@ -370,7 +373,7 @@ class _ReportBuilder:
                 unrealized_pnl=final_state.unrealized_pnl,
             ),
             risk=RiskMetrics(
-                max_drawdown=_max_drawdown(tuple(point.drawdown for point in self._equity)),
+                max_drawdown=max_drawdown_from_curve(drawdown_curve),
                 longest_drawdown_bar_count=_longest_drawdown_bar_count(self._equity),
                 volatility=_annualized_volatility(
                     returns=returns,
@@ -620,10 +623,6 @@ def _buy_and_hold_return(bars: BarSeries) -> float | None:
     if first_close <= 0.0:
         return None
     return round((bars.rows[-1].close - first_close) / first_close, 12)
-
-
-def _max_drawdown(drawdowns: tuple[float, ...]) -> float:
-    return max(drawdowns) if drawdowns else 0.0
 
 
 def _longest_drawdown_bar_count(equity: list[EquityPoint]) -> int:

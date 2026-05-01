@@ -4,10 +4,21 @@ import os
 import subprocess
 import sys
 import textwrap
+from email.parser import Parser
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from zipfile import ZipFile
 
 from tests.support import ROOT
+
+
+def _wheel_requires(wheel_path: Path) -> tuple[str, ...]:
+    with ZipFile(wheel_path) as wheel:
+        metadata_name = next(
+            name for name in wheel.namelist() if name.endswith(".dist-info/METADATA")
+        )
+        metadata = Parser().parsestr(wheel.read(metadata_name).decode("utf-8"))
+    return tuple(metadata.get_all("Requires-Dist") or ())
 
 
 def test_built_wheel_exposes_documented_public_imports() -> None:
@@ -24,6 +35,7 @@ def test_built_wheel_exposes_documented_public_imports() -> None:
     assert wheels, "expected uv build to produce a quantcraft wheel"
 
     wheel_path = wheels[-1]
+    assert any(requirement.startswith("matplotlib") for requirement in _wheel_requires(wheel_path))
     script = textwrap.dedent(
         """
         import importlib

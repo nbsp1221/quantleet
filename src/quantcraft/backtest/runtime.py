@@ -1,11 +1,17 @@
 from __future__ import annotations
 
+from quantcraft.backtest.analytics import drawdown_curve_for_equity, max_drawdown_from_curve
 from quantcraft.backtest.execution_model import (
     BacktestExecutionModel,
     ConservativeOHLCVExecutionModel,
 )
 from quantcraft.backtest.reporting import _ReportBuilder
-from quantcraft.backtest.results import BacktestResult, BacktestSummary, ExposureSummary
+from quantcraft.backtest.results import (
+    BacktestResult,
+    BacktestSummary,
+    ExposureSummary,
+    _BacktestRunSnapshot,
+)
 from quantcraft.backtest.strategy_runtime import StrategyLike, _StrategyDriver
 from quantcraft.data import BarSeries
 from quantcraft.trading.domain.costs import CostConfig
@@ -222,9 +228,10 @@ def _run_backtest(
     if latest_mark_price is not None:
         state = _mark_state_to_market(state, mark_price=latest_mark_price)
 
+    equity_curve_tuple = tuple(equity_curve)
+    drawdown_curve = drawdown_curve_for_equity(equity_curve_tuple)
     total_fees = round(sum(fill.fee for fill in trade_log), 12)
     total_return = round((state.equity - initial_cash) / initial_cash, 12)
-    max_drawdown = _max_drawdown(tuple(equity_curve))
     average_win, average_loss, win_rate, profit_factor = _trade_statistics(
         tuple(closing_trade_pnls)
     )
@@ -235,7 +242,7 @@ def _run_backtest(
         final_balance=state.cash,
         final_equity=state.equity,
         total_return=total_return,
-        max_drawdown=max_drawdown,
+        max_drawdown=max_drawdown_from_curve(drawdown_curve),
         realized_pnl=state.realized_pnl,
         unrealized_pnl=state.unrealized_pnl,
         win_rate=win_rate,
@@ -262,12 +269,24 @@ def _run_backtest(
     )
     return BacktestResult(
         trade_log=tuple(trade_log),
-        equity_curve=tuple(equity_curve),
+        equity_curve=equity_curve_tuple,
         final_state=state,
         summary=summary,
         order_events=order_events_tuple,
         execution_model_name=execution_model.name,
+        drawdown_curve=drawdown_curve,
         _report=report,
+        _run_snapshot=_snapshot_from_bars(bars),
+    )
+
+
+def _snapshot_from_bars(bars: BarSeries) -> _BacktestRunSnapshot:
+    return _BacktestRunSnapshot(
+        symbol=bars.symbol,
+        timeframe=bars.timeframe,
+        bar_type=bars.bar_type,
+        timestamps=tuple(row.timestamp for row in bars.rows),
+        closes=tuple(row.close for row in bars.rows),
     )
 
 
@@ -382,19 +401,6 @@ def _mark_state_to_market(state: TradingState, *, mark_price: float) -> TradingS
         unrealized_pnl=unrealized_pnl,
         equity=equity,
     )
-
-
-def _max_drawdown(equity_curve: tuple[float, ...]) -> float:
-    if not equity_curve:
-        return 0.0
-    peak = equity_curve[0]
-    max_drawdown = 0.0
-    for equity in equity_curve:
-        peak = max(peak, equity)
-        if peak == 0.0:
-            continue
-        max_drawdown = max(max_drawdown, (peak - equity) / peak)
-    return round(max_drawdown, 12)
 
 
 def _trade_statistics(closing_trade_pnls: tuple[float, ...]) -> tuple[float, float, float, float]:

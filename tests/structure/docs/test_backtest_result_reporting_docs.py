@@ -19,7 +19,7 @@ def test_product_docs_promote_result_report_as_primary_inspection_path() -> None
     assert "mark_to_market" in product_spec
 
 
-def test_quickstart_docs_show_result_report_and_preserve_legacy_surfaces() -> None:
+def test_quickstart_docs_show_result_report_plot_and_preserve_legacy_surfaces() -> None:
     quickstart = (ROOT / "docs" / "references" / "research-ergonomics-quickstart.md").read_text(
         encoding="utf-8"
     )
@@ -28,8 +28,10 @@ def test_quickstart_docs_show_result_report_and_preserve_legacy_surfaces() -> No
     assert "label=\"sma-cross\"" in quickstart
     assert "result.trade_log" in quickstart
     assert "result.equity_curve" in quickstart
+    assert "result.drawdown_curve" in quickstart
     assert "result.summary" in quickstart
-    assert "primary first-beta inspection path is `result.report`" in quickstart
+    assert "For visual inspection, `result.plot()`" in quickstart
+    assert "For structured inspection, `result.report`" in quickstart
 
 
 def test_quickstart_notebook_mentions_result_report() -> None:

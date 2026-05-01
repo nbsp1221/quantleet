@@ -57,6 +57,7 @@ from quantcraft.backtest import BacktestEngine
 from quantcraft.research import Strategy, ta, qc
 from quantcraft.data import BarSeries, DataFrameDataSource, TimeBar
 from quantcraft.trading.domain.costs import CostConfig
+import matplotlib.pyplot as plt
 
 source = DataFrameDataSource(
     frame=[
@@ -121,6 +122,10 @@ result = engine.run(
     label="sma-cross",
 )
 
+fig = result.plot()
+plt.show()
+fig.savefig("sma-cross.png")
+
 materialized_result = engine.run(
     bars=bars,
     strategy=SmaCrossStrategy(),
@@ -132,12 +137,16 @@ Inspect:
 - `result.report`
 - `result.trade_log`
 - `result.equity_curve`
+- `result.drawdown_curve`
 - `result.summary`
 
-The primary first-beta inspection path is `result.report`. It contains grouped
-human-readable output and structured fields for returns, risk, trades, costs,
-exposure, execution assumptions, equity rows, fills, closed trades, and order
-rejections.
+For visual inspection, `result.plot()` returns a Matplotlib figure with price,
+fills, equity, and drawdown panels. It uses the data captured by the original
+backtest run, so users do not pass bars or a source back into plotting.
+
+For structured inspection, `result.report` contains grouped human-readable
+output and structured fields for returns, risk, trades, costs, exposure,
+execution assumptions, equity rows, fills, closed trades, and order rejections.
 
 Current summary semantics:
 
@@ -169,8 +178,9 @@ The supporting notebook demonstrates the same flow in executable form:
 - evaluate signals and place orders in `on_bar()`
 - create `BacktestEngine(...)`
 - call `engine.run(source=..., strategy=...)` or `engine.run(bars=..., strategy=...)`
-- inspect summary and equity curve
+- inspect summary, equity curve, drawdown curve, and `result.plot()`
 
 See:
 
 - [`../../notebooks/research-ergonomics-quickstart.ipynb`](../../notebooks/research-ergonomics-quickstart.ipynb)
+- [`../../notebooks/backtest-plotting-real-data-example.ipynb`](../../notebooks/backtest-plotting-real-data-example.ipynb)

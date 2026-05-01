@@ -11,6 +11,7 @@ Related documents:
 - [../design-docs/quantcraft-architecture.md](../design-docs/quantcraft-architecture.md)
 - [../design-docs/architecture-governance.md](../design-docs/architecture-governance.md)
 - [backtest-mvp.md](backtest-mvp.md)
+- [backtest-plotting.md](backtest-plotting.md)
 - [order-sizing.md](order-sizing.md)
 - [../research/2026-03-23-python-quant-library-landscape.md](../research/2026-03-23-python-quant-library-landscape.md)
 - [../research/libraries/backtesting-py.md](../research/libraries/backtesting-py.md)
@@ -541,7 +542,8 @@ This slice does not attempt a larger analytics surface such as:
 For the first beta, result inspection must become a product workflow rather
 than only a dataclass contract: readable stats, analysis-friendly trade/equity
 access, and one basic price/fill/equity plot are required before broad beta
-positioning.
+positioning. The plotting contract is governed by
+[backtest-plotting.md](backtest-plotting.md).
 
 ## Examples And Quickstart
 

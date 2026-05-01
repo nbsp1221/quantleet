@@ -1639,6 +1639,7 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "ccxt" },
+    { name = "matplotlib" },
     { name = "ta-lib" },
 ]
 
@@ -1646,7 +1647,6 @@ dependencies = [
 dev = [
     { name = "coverage" },
     { name = "ipykernel" },
-    { name = "matplotlib" },
     { name = "mypy" },
     { name = "nbclient" },
     { name = "nbformat" },
@@ -1659,6 +1659,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "ccxt", specifier = ">=4.5.43" },
+    { name = "matplotlib", specifier = ">=3.10.8" },
     { name = "ta-lib", specifier = ">=0.6.8" },
 ]
 
@@ -1666,7 +1667,6 @@ requires-dist = [
 dev = [
     { name = "coverage", specifier = ">=7.11.0" },
     { name = "ipykernel", specifier = ">=7.2.0" },
-    { name = "matplotlib", specifier = ">=3.10.8" },
     { name = "mypy", specifier = ">=1.19.1" },
     { name = "nbclient", specifier = ">=0.10.4" },
     { name = "nbformat", specifier = ">=5.10.4" },

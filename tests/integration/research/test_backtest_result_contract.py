@@ -45,6 +45,7 @@ def test_backtest_runner_produces_deterministic_trade_log_and_summary() -> None:
             ),
         ),
         equity_curve=(1000.0, 997.889, 1002.775),
+        drawdown_curve=(0.0, 0.002111, 0.0),
         final_state=TradingState(
             cash=1002.775,
             position_quantity=0.0,
@@ -89,6 +90,7 @@ def test_backtest_runner_exposes_expanded_research_result_surface() -> None:
     assert result.execution_model_name == "conservative_ohlcv"
     assert result.order_events == ()
     assert result.equity_curve == (1000.0, 997.889, 1002.775)
+    assert result.drawdown_curve == (0.0, 0.002111, 0.0)
     assert result.summary.final_balance == 1002.775
     assert result.summary.final_equity == 1002.775
     assert result.summary.total_return == 0.002775

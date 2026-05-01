@@ -9,6 +9,7 @@ authors = [
 requires-python = ">=3.13"
 dependencies = [
     "ccxt>=4.5.43",
+    "matplotlib>=3.10.8",
     "ta-lib>=0.6.8",
 ]
 
@@ -16,7 +17,6 @@ dependencies = [
 dev = [
     "coverage>=7.11.0",
     "ipykernel>=7.2.0",
-    "matplotlib>=3.10.8",
     "mypy>=1.19.1",
     "nbclient>=0.10.4",
     "nbformat>=5.10.4",
@@ -36,7 +36,7 @@ executor = "uv"
 [tool.poe.tasks]
 lint = { cmd = "ruff check .", help = "Run Ruff lint checks" }
 format = { cmd = "ruff format .", help = "Format the repository with Ruff" }
-"perf-check" = { cmd = "pytest tests/perf/test_rsi_backtest_benchmark.py -q -x --run-perf", help = "Run the canonical performance regression gate" }
+"perf-check" = { cmd = "pytest tests/perf -q -x --run-perf", help = "Run the canonical performance regression gate" }
 "verify-runtime" = { sequence = ["verify", "perf-check"], help = "Run the stronger explicit verification lane for runtime-sensitive backtest or research changes" }
 typecheck = { cmd = "mypy src", help = "Run mypy against the package source" }
 test = { cmd = "pytest -q", help = "Run the default test lane" }
