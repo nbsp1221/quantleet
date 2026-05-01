@@ -277,6 +277,31 @@ def test_public_research_strategy_surface_exports_strategy() -> None:
     assert PublicStrategy is Strategy
 
 
+def test_strategy_metadata_hooks_default_to_empty_explicit_metadata() -> None:
+    strategy = BuyOnFirstBarStrategy()
+
+    assert strategy.display_name is None
+    assert strategy.parameters() == {}
+
+
+def test_strategy_metadata_hooks_can_be_overridden() -> None:
+    class ParameterizedStrategy(Strategy):
+        @property
+        def display_name(self) -> str | None:
+            return "Parameterized"
+
+        def parameters(self) -> dict[str, object]:
+            return {"fast": 10, "slow": 20}
+
+        def on_bar(self, bar: BarEvent) -> None:
+            return None
+
+    strategy = ParameterizedStrategy()
+
+    assert strategy.display_name == "Parameterized"
+    assert strategy.parameters() == {"fast": 10, "slow": 20}
+
+
 def test_strategy_is_an_abstract_base_class() -> None:
     assert issubclass(Strategy, ABC)
     assert inspect.isabstract(Strategy)

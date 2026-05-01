@@ -61,6 +61,13 @@ class Strategy(ABC):
     def init(self) -> None:
         pass
 
+    @property
+    def display_name(self) -> str | None:
+        return None
+
+    def parameters(self) -> dict[str, object]:
+        return {}
+
     @abstractmethod
     def on_bar(self, bar: BarEvent) -> None:
         raise NotImplementedError

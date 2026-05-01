@@ -4,8 +4,10 @@ import pytest
 
 from quantcraft.backtest import BacktestSummary, ExposureSummary
 from tests.support_backtest import (
+    assert_canonical_report,
     canonical_ema_trade_log_digest,
     canonical_ema_trade_log_samples,
+    canonical_report_expectation,
     load_canonical_ema_bars,
     run_canonical_ema_backtest,
 )
@@ -112,3 +114,4 @@ def test_canonical_ema_backtest_matches_public_result_contract() -> None:
     assert canonical_ema_trade_log_digest(result.trade_log) == (
         "d582b256fb7fb64c64f7584c1b2e20fb69ca794b50f50c5a00786961b90965c5"
     )
+    assert_canonical_report("ema_cross", result.report, canonical_report_expectation("ema_cross"))

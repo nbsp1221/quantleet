@@ -26,7 +26,10 @@ class BacktestEngine:
         strategy: StrategyLike,
         bars: BarSeries | None = None,
         source: HistoricalDataSource | None = None,
+        label: str | None = None,
     ) -> BacktestResult:
+        if label is not None and (not isinstance(label, str) or not label):
+            raise ValueError("label must be a non-empty string or None")
         if (bars is None) == (source is None):
             raise ValueError("provide exactly one of bars or source")
 
@@ -36,6 +39,7 @@ class BacktestEngine:
                 strategy=strategy,
                 initial_cash=self.initial_cash,
                 costs=self.costs,
+                label=label,
             )
 
         if source is None:
@@ -46,12 +50,15 @@ class BacktestEngine:
             strategy=strategy,
             initial_cash=self.initial_cash,
             costs=self.costs,
+            label=label,
         )
 
 
 def _validated_bars(bars: object) -> BarSeries:
     if not isinstance(bars, BarSeries):
         raise ValueError("bars must be a BarSeries instance")
+    if not bars.rows:
+        raise ValueError("bars must contain at least one TimeBar")
     return bars
 
 

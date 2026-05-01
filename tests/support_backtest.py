@@ -3,11 +3,16 @@ from __future__ import annotations
 import csv
 import hashlib
 import json
+from dataclasses import asdict, dataclass, fields, is_dataclass
 from datetime import UTC, datetime
-from math import isnan
+from functools import cache
+from math import isinf, isnan
 from pathlib import Path
+from typing import Any
 
-from quantcraft.backtest import BacktestEngine
+import pytest
+
+from quantcraft.backtest import BacktestEngine, BacktestReport
 from quantcraft.data import BarSeries, DataFrameDataSource, TimeBar
 from quantcraft.research import Strategy, qc, ta
 from quantcraft.trading.domain.costs import CostConfig
@@ -19,6 +24,9 @@ CANONICAL_BACKTEST_FIXTURE_PATH = (
     / "backtest"
     / "binance_usdm_btcusdtusdt_1h_2025.csv"
 )
+CANONICAL_REPORT_SNAPSHOT_PATH = (
+    Path(__file__).resolve().parent / "fixtures" / "backtest" / "canonical_report_snapshots.json"
+)
 CANONICAL_BACKTEST_EXPECTED_COLUMNS = (
     "timestamp",
     "open",
@@ -28,6 +36,84 @@ CANONICAL_BACKTEST_EXPECTED_COLUMNS = (
     "volume",
 )
 CANONICAL_BACKTEST_EXPECTED_ROWS = 8_760
+CANONICAL_REPORT_TOP_LEVEL_FIELDS = {
+    "run",
+    "execution",
+    "returns",
+    "risk",
+    "trades",
+    "costs",
+    "exposure",
+    "equity",
+    "fills",
+    "closed_trades",
+    "order_rejections",
+}
+
+
+@dataclass(frozen=True)
+class CanonicalReportSequenceExpectation:
+    count: int
+    first: tuple[dict[str, object], ...]
+    last: tuple[dict[str, object], ...]
+    digest: str
+
+
+@dataclass(frozen=True)
+class CanonicalReportExpectation:
+    run: dict[str, object]
+    execution: dict[str, object]
+    returns: dict[str, object]
+    risk: dict[str, object]
+    trades: dict[str, object]
+    costs: dict[str, object]
+    exposure: dict[str, object]
+    equity: CanonicalReportSequenceExpectation
+    fills: CanonicalReportSequenceExpectation
+    closed_trades: CanonicalReportSequenceExpectation
+    order_rejection_count: int
+
+
+def canonical_report_expectation(name: str) -> CanonicalReportExpectation:
+    return _load_canonical_report_expectations()[name]
+
+
+@cache
+def _load_canonical_report_expectations() -> dict[str, CanonicalReportExpectation]:
+    payload = json.loads(CANONICAL_REPORT_SNAPSHOT_PATH.read_text(encoding="utf-8"))
+    return {
+        name: CanonicalReportExpectation(
+            run=_normalize_loaded_snapshot_value(data["run"]),
+            execution=_normalize_loaded_snapshot_value(data["execution"]),
+            returns=_normalize_loaded_snapshot_value(data["returns"]),
+            risk=_normalize_loaded_snapshot_value(data["risk"]),
+            trades=_normalize_loaded_snapshot_value(data["trades"]),
+            costs=_normalize_loaded_snapshot_value(data["costs"]),
+            exposure=_normalize_loaded_snapshot_value(data["exposure"]),
+            equity=_sequence_expectation(data["equity"]),
+            fills=_sequence_expectation(data["fills"]),
+            closed_trades=_sequence_expectation(data["closed_trades"]),
+            order_rejection_count=data["order_rejection_count"],
+        )
+        for name, data in payload.items()
+    }
+
+
+def _sequence_expectation(data: dict[str, object]) -> CanonicalReportSequenceExpectation:
+    return CanonicalReportSequenceExpectation(
+        count=int(data["count"]),
+        first=_normalize_loaded_snapshot_value(data["first"]),
+        last=_normalize_loaded_snapshot_value(data["last"]),
+        digest=str(data["digest"]),
+    )
+
+
+def _normalize_loaded_snapshot_value(value: Any) -> Any:
+    if isinstance(value, dict):
+        return {str(key): _normalize_loaded_snapshot_value(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return tuple(_normalize_loaded_snapshot_value(item) for item in value)
+    return value
 
 
 class CanonicalRsi3070Strategy(Strategy):
@@ -400,6 +486,138 @@ def canonical_trade_log_digest(trade_log: tuple[FillEvent, ...]) -> str:
         separators=(",", ":"),
     ).encode("utf-8")
     return hashlib.sha256(payload).hexdigest()
+
+
+def assert_canonical_report(
+    scenario: str,
+    report: BacktestReport,
+    expectation: CanonicalReportExpectation,
+) -> None:
+    actual_fields = {field.name for field in fields(report)}
+    assert actual_fields == CANONICAL_REPORT_TOP_LEVEL_FIELDS, (
+        f"{scenario}.BacktestReport top-level contract changed: "
+        f"missing_actual_fields={sorted(CANONICAL_REPORT_TOP_LEVEL_FIELDS - actual_fields)}, "
+        f"unexpected_actual_fields={sorted(actual_fields - CANONICAL_REPORT_TOP_LEVEL_FIELDS)}"
+    )
+    _assert_report_group(f"{scenario}.run", report.run, expectation.run)
+    _assert_report_group(f"{scenario}.execution", report.execution, expectation.execution)
+    _assert_report_group(f"{scenario}.returns", report.returns, expectation.returns)
+    _assert_report_group(f"{scenario}.risk", report.risk, expectation.risk)
+    _assert_report_group(f"{scenario}.trades", report.trades, expectation.trades)
+    _assert_report_group(f"{scenario}.costs", report.costs, expectation.costs)
+    _assert_report_group(f"{scenario}.exposure", report.exposure, expectation.exposure)
+    _assert_report_sequence(
+        name=f"{scenario}.equity",
+        rows=report.equity,
+        expectation=expectation.equity,
+    )
+    _assert_report_sequence(
+        name=f"{scenario}.fills",
+        rows=report.fills,
+        expectation=expectation.fills,
+    )
+    _assert_report_sequence(
+        name=f"{scenario}.closed_trades",
+        rows=report.closed_trades,
+        expectation=expectation.closed_trades,
+    )
+    assert len(report.order_rejections) == expectation.order_rejection_count, (
+        f"{scenario}.order_rejections row count changed: "
+        f"expected={expectation.order_rejection_count}, actual={len(report.order_rejections)}"
+    )
+
+
+def _assert_report_group(name: str, actual: object, expected: dict[str, object]) -> None:
+    actual_values = _normalize_report_row(actual)
+    if not is_dataclass(actual):
+        raise AssertionError(f"{name} must be a report dataclass")
+    actual_fields = {field.name for field in fields(actual)}
+    expected_fields = set(expected)
+    assert actual_fields == expected_fields, (
+        f"{name} field contract changed: "
+        f"missing_actual_fields={sorted(expected_fields - actual_fields)}, "
+        f"unexpected_actual_fields={sorted(actual_fields - expected_fields)}"
+    )
+    for key, expected_value in expected.items():
+        _assert_report_value(f"{name}.{key}", actual_values[key], expected_value)
+
+
+def _assert_report_sequence(
+    *,
+    name: str,
+    rows: tuple[object, ...],
+    expectation: CanonicalReportSequenceExpectation,
+) -> None:
+    first = tuple(_normalize_report_row(row) for row in rows[:3])
+    last = tuple(_normalize_report_row(row) for row in rows[-3:])
+    digest = _report_rows_digest(rows)
+    assert len(rows) == expectation.count, (
+        f"{name} row count changed: expected={expectation.count}, actual={len(rows)}"
+    )
+    assert first == expectation.first, f"{name} first rows changed"
+    assert last == expectation.last, f"{name} last rows changed"
+    assert digest == expectation.digest, (
+        f"{name} digest changed: expected={expectation.digest}, actual={digest}, "
+        f"first_rows_match={first == expectation.first}, last_rows_match={last == expectation.last}"
+    )
+
+
+def _assert_report_value(path: str, actual: object, expected: object) -> None:
+    if isinstance(expected, dict):
+        assert isinstance(actual, dict), f"{path} expected a mapping"
+        assert set(actual) == set(expected), f"{path} mapping keys changed"
+        for key, value in expected.items():
+            _assert_report_value(f"{path}.{key}", actual[key], value)
+        return
+    if isinstance(expected, tuple):
+        assert isinstance(actual, tuple), f"{path} expected a tuple"
+        assert len(actual) == len(expected), f"{path} tuple length changed"
+        for index, value in enumerate(expected):
+            _assert_report_value(f"{path}[{index}]", actual[index], value)
+        return
+    if isinstance(expected, float):
+        assert isinstance(actual, float | int), f"{path} expected a numeric value"
+        if isinf(expected):
+            assert isinf(float(actual)) and (actual > 0.0) == (expected > 0.0), path
+            return
+        assert actual == pytest.approx(expected), path
+        return
+    assert actual == expected, path
+
+
+def _report_rows_digest(rows: tuple[object, ...]) -> str:
+    payload = json.dumps(
+        [_normalize_report_row(row) for row in rows],
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
+def _normalize_report_row(row: object) -> dict[str, object]:
+    if is_dataclass(row):
+        value = asdict(row)
+    elif isinstance(row, dict):
+        value = row
+    else:
+        raise TypeError(f"expected dataclass or dict row, got {type(row).__name__}")
+    return {str(key): _normalize_report_value(item) for key, item in value.items()}
+
+
+def _normalize_report_value(value: Any) -> object:
+    if is_dataclass(value):
+        return _normalize_report_row(value)
+    if isinstance(value, dict):
+        return {str(key): _normalize_report_value(item) for key, item in value.items()}
+    if isinstance(value, (tuple, list)):
+        return tuple(_normalize_report_value(item) for item in value)
+    if isinstance(value, float):
+        if isinf(value):
+            return "inf" if value > 0.0 else "-inf"
+        if isnan(value):
+            return "nan"
+        return round(value, 12)
+    return value
 
 
 def canonical_rsi_trade_log_samples(

@@ -4,8 +4,10 @@ import pytest
 
 from quantcraft.backtest import BacktestSummary, ExposureSummary
 from tests.support_backtest import (
+    assert_canonical_report,
     canonical_macd_trade_log_digest,
     canonical_macd_trade_log_samples,
+    canonical_report_expectation,
     load_canonical_macd_bars,
     run_canonical_macd_backtest,
 )
@@ -112,3 +114,4 @@ def test_canonical_macd_backtest_matches_public_regression_contract() -> None:
     assert canonical_macd_trade_log_digest(result.trade_log) == (
         "bc91de2ef8edfb0992d557ac5339c6f17111d892e43ee94c7079064257b89b12"
     )
+    assert_canonical_report("macd_cross", result.report, canonical_report_expectation("macd_cross"))

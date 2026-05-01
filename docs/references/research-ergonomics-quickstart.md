@@ -118,6 +118,7 @@ engine = BacktestEngine(
 result = engine.run(
     source=source,
     strategy=SmaCrossStrategy(),
+    label="sma-cross",
 )
 
 materialized_result = engine.run(
@@ -128,9 +129,15 @@ materialized_result = engine.run(
 
 Inspect:
 
+- `result.report`
 - `result.trade_log`
 - `result.equity_curve`
 - `result.summary`
+
+The primary first-beta inspection path is `result.report`. It contains grouped
+human-readable output and structured fields for returns, risk, trades, costs,
+exposure, execution assumptions, equity rows, fills, closed trades, and order
+rejections.
 
 Current summary semantics:
 

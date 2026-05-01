@@ -4,6 +4,7 @@ from quantcraft.backtest.execution_model import (
     BacktestExecutionModel,
     ConservativeOHLCVExecutionModel,
 )
+from quantcraft.backtest.reporting import _ReportBuilder
 from quantcraft.backtest.results import BacktestResult, BacktestSummary, ExposureSummary
 from quantcraft.backtest.strategy_runtime import StrategyLike, _StrategyDriver
 from quantcraft.data import BarSeries
@@ -20,10 +21,12 @@ def _run_backtest(
     strategy: StrategyLike,
     initial_cash: float,
     costs: CostConfig,
+    label: str | None,
 ) -> BacktestResult:
     runtime = _StrategyDriver(strategy)
     runtime.initialize(bars=bars)
     execution_model: BacktestExecutionModel = ConservativeOHLCVExecutionModel()
+    report_builder = _ReportBuilder()
     state = TradingState(cash=initial_cash, equity=initial_cash)
     trade_log: list[FillEvent] = []
     order_events: list[OrderRejectedEvent] = []
@@ -32,15 +35,17 @@ def _run_backtest(
     closing_trade_pnls: list[float] = []
     open_entry_fee_pool = 0.0
     bars_in_position = 0
+    report_bars_in_position = 0
     total_bars = 0
     latest_mark_price: float | None = None
 
     previous_close: float | None = None
     previous_timestamp: int | None = None
 
-    for bar in bars.rows:
+    for bar_index, bar in enumerate(bars.rows):
         if previous_timestamp is not None and previous_timestamp >= bar.timestamp:
             raise ValueError("out-of-order time bars")
+        bar_had_position = state.position_quantity > 0.0
 
         runtime.activate_pending_order_requests(
             bar=bar,
@@ -92,6 +97,8 @@ def _run_backtest(
                     buy_reservations.pop(order.id, None)
                     continue
 
+                state_before = state
+                original_order = order
                 state, open_entry_fee_pool, order = _apply_runtime_fill(
                     state=state,
                     order=order,
@@ -100,6 +107,18 @@ def _run_backtest(
                     open_entry_fee_pool=open_entry_fee_pool,
                     closing_trade_pnls=closing_trade_pnls,
                     trade_log=trade_log,
+                )
+                bar_had_position = (
+                    bar_had_position
+                    or state_before.position_quantity > 0.0
+                    or state.position_quantity > 0.0
+                )
+                report_builder.record_fill(
+                    order=original_order,
+                    fill=fill,
+                    state_before=state_before,
+                    state_after=state,
+                    bar_index=bar_index,
                 )
                 _update_buy_reservation_after_fill(
                     reservations=buy_reservations,
@@ -132,6 +151,8 @@ def _run_backtest(
                     buy_reservations.pop(order.id, None)
                     continue
 
+                state_before = state
+                original_order = order
                 state, open_entry_fee_pool, order = _apply_runtime_fill(
                     state=state,
                     order=order,
@@ -140,6 +161,18 @@ def _run_backtest(
                     open_entry_fee_pool=open_entry_fee_pool,
                     closing_trade_pnls=closing_trade_pnls,
                     trade_log=trade_log,
+                )
+                bar_had_position = (
+                    bar_had_position
+                    or state_before.position_quantity > 0.0
+                    or state.position_quantity > 0.0
+                )
+                report_builder.record_fill(
+                    order=original_order,
+                    fill=fill,
+                    state_before=state_before,
+                    state_after=state,
+                    bar_index=bar_index,
                 )
                 _update_buy_reservation_after_fill(
                     reservations=buy_reservations,
@@ -173,8 +206,16 @@ def _run_backtest(
         else:
             marked_state = state
         equity_curve.append(marked_state.equity)
+        report_builder.record_equity(
+            bar_index=bar_index,
+            timestamp=bar.timestamp,
+            mark_price=latest_mark_price if latest_mark_price is not None else bar.close,
+            state=marked_state,
+        )
         if marked_state.position_quantity > 0.0:
             bars_in_position += 1
+        if bar_had_position:
+            report_bars_in_position += 1
         previous_close = bar.close
         previous_timestamp = bar.timestamp
 
@@ -207,13 +248,26 @@ def _run_backtest(
             exposure_ratio=(bars_in_position / total_bars) if total_bars else 0.0,
         ),
     )
+    order_events_tuple = tuple(order_events)
+    report = report_builder.build(
+        bars=bars,
+        initial_cash=initial_cash,
+        costs=costs,
+        execution_model_name=execution_model.name,
+        strategy=strategy,
+        run_label=label,
+        final_state=state,
+        order_rejections=order_events_tuple,
+        bars_in_position=report_bars_in_position,
+    )
     return BacktestResult(
         trade_log=tuple(trade_log),
         equity_curve=tuple(equity_curve),
         final_state=state,
         summary=summary,
-        order_events=tuple(order_events),
+        order_events=order_events_tuple,
         execution_model_name=execution_model.name,
+        _report=report,
     )
 
 

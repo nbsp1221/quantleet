@@ -1,0 +1,1004 @@
+{
+  "ema_cross": {
+    "closed_trades": {
+      "count": 188,
+      "digest": "2899f00f2e5dc4e5f3640acfe442eaa35df0fce2fabfd5477a85fa9d96a78431",
+      "first": [
+        {
+          "allocated_entry_fee": 38.6842,
+          "duration_bars": 47,
+          "entry_bar_index": 60,
+          "entry_price": 96710.5,
+          "entry_tag": null,
+          "entry_tags": [],
+          "entry_timestamp": 1735905600000,
+          "exit_bar_index": 106,
+          "exit_fee": 39.04792,
+          "exit_price": 97619.79999999999,
+          "exit_tag": null,
+          "exit_timestamp": 1736071200000,
+          "gross_pnl": 909.299999999988,
+          "net_pnl": 831.567879999988,
+          "net_return": 0.008595089322,
+          "quantity": 1.0,
+          "total_fees": 77.73212
+        },
+        {
+          "allocated_entry_fee": 39.29796,
+          "duration_bars": 43,
+          "entry_bar_index": 117,
+          "entry_price": 98244.90000000001,
+          "entry_tag": null,
+          "entry_tags": [],
+          "entry_timestamp": 1736110800000,
+          "exit_bar_index": 159,
+          "exit_fee": 39.97808,
+          "exit_price": 99945.2,
+          "exit_tag": null,
+          "exit_timestamp": 1736262000000,
+          "gross_pnl": 1700.299999999988,
+          "net_pnl": 1621.023959999988,
+          "net_return": 0.01649323079,
+          "quantity": 1.0,
+          "total_fees": 79.27604
+        },
+        {
+          "allocated_entry_fee": 37.68308,
+          "duration_bars": 26,
+          "entry_bar_index": 223,
+          "entry_price": 94207.70000000001,
+          "entry_tag": null,
+          "entry_tags": [],
+          "entry_timestamp": 1736492400000,
+          "exit_bar_index": 248,
+          "exit_fee": 37.68404,
+          "exit_price": 94210.09999999999,
+          "exit_tag": null,
+          "exit_timestamp": 1736582400000,
+          "gross_pnl": 2.39999999998,
+          "net_pnl": -72.96712000002,
+          "net_return": -0.000774224876,
+          "quantity": 1.0,
+          "total_fees": 75.36712
+        }
+      ],
+      "last": [
+        {
+          "allocated_entry_fee": 35.13184,
+          "duration_bars": 21,
+          "entry_bar_index": 8664,
+          "entry_price": 87829.6,
+          "entry_tag": null,
+          "entry_tags": [],
+          "entry_timestamp": 1766880000000,
+          "exit_bar_index": 8684,
+          "exit_fee": 34.99544,
+          "exit_price": 87488.59999999999,
+          "exit_tag": null,
+          "exit_timestamp": 1766952000000,
+          "gross_pnl": -341.000000000015,
+          "net_pnl": -411.127280000015,
+          "net_return": -0.004679093322,
+          "quantity": 1.0,
+          "total_fees": 70.12728
+        },
+        {
+          "allocated_entry_fee": 35.1682,
+          "duration_bars": 14,
+          "entry_bar_index": 8688,
+          "entry_price": 87920.5,
+          "entry_tag": null,
+          "entry_tags": [],
+          "entry_timestamp": 1766966400000,
+          "exit_bar_index": 8701,
+          "exit_fee": 34.93752,
+          "exit_price": 87343.79999999999,
+          "exit_tag": null,
+          "exit_timestamp": 1767013200000,
+          "gross_pnl": -576.700000000012,
+          "net_pnl": -646.805720000012,
+          "net_return": -0.007353769612,
+          "quantity": 1.0,
+          "total_fees": 70.10572
+        },
+        {
+          "allocated_entry_fee": 35.16576,
+          "duration_bars": 31,
+          "entry_bar_index": 8723,
+          "entry_price": 87914.40000000001,
+          "entry_tag": null,
+          "entry_tags": [],
+          "entry_timestamp": 1767092400000,
+          "exit_bar_index": 8753,
+          "exit_fee": 35.05032,
+          "exit_price": 87625.79999999999,
+          "exit_tag": null,
+          "exit_timestamp": 1767200400000,
+          "gross_pnl": -288.60000000002,
+          "net_pnl": -358.81608000002,
+          "net_return": -0.004079793651,
+          "quantity": 1.0,
+          "total_fees": 70.21608
+        }
+      ]
+    },
+    "costs": {
+      "closed_trade_fees": 15277.53524,
+      "fees_as_initial_cash": 0.01527753524,
+      "fees_to_gross_pnl_ratio": 0.062468736018,
+      "gross_realized_pnl": -6468.900000002081,
+      "net_realized_pnl": -21746.435240002094,
+      "total_fees": 15277.53524
+    },
+    "equity": {
+      "count": 8760,
+      "digest": "6b97c04bdddf136be5b47b61001f2dbbc9798fedc4c4c369dfe1a8ef41ce57dc",
+      "first": [
+        {
+          "bar_index": 0,
+          "cash": 1000000.0,
+          "drawdown": 0.0,
+          "equity": 1000000.0,
+          "mark_price": 94363.6,
+          "position_quantity": 0.0,
+          "timestamp": 1735689600000
+        },
+        {
+          "bar_index": 1,
+          "cash": 1000000.0,
+          "drawdown": 0.0,
+          "equity": 1000000.0,
+          "mark_price": 93588.0,
+          "position_quantity": 0.0,
+          "timestamp": 1735693200000
+        },
+        {
+          "bar_index": 2,
+          "cash": 1000000.0,
+          "drawdown": 0.0,
+          "equity": 1000000.0,
+          "mark_price": 94064.4,
+          "position_quantity": 0.0,
+          "timestamp": 1735696800000
+        }
+      ],
+      "last": [
+        {
+          "bar_index": 8757,
+          "cash": 978253.5647599992,
+          "drawdown": 0.03543430962,
+          "equity": 978253.5647599992,
+          "mark_price": 87764.0,
+          "position_quantity": 0.0,
+          "timestamp": 1767214800000
+        },
+        {
+          "bar_index": 8758,
+          "cash": 978253.5647599992,
+          "drawdown": 0.03543430962,
+          "equity": 978253.5647599992,
+          "mark_price": 87695.7,
+          "position_quantity": 0.0,
+          "timestamp": 1767218400000
+        },
+        {
+          "bar_index": 8759,
+          "cash": 978253.5647599992,
+          "drawdown": 0.03543430962,
+          "equity": 978253.5647599992,
+          "mark_price": 87608.2,
+          "position_quantity": 0.0,
+          "timestamp": 1767222000000
+        }
+      ]
+    },
+    "execution": {
+      "annual_risk_free_rate": 0.0,
+      "execution_model_name": "conservative_ohlcv",
+      "fee_rate": 0.0004,
+      "fill_price_basis": "conservative_ohlcv",
+      "open_position_finalization": "mark_to_market",
+      "order_activation_timing": "next_bar",
+      "order_rejection_count": 1,
+      "periods_per_year": 8765.82,
+      "slippage_ticks": 1.0,
+      "tick_size": 0.1
+    },
+    "exposure": {
+      "bars_in_position": 4659,
+      "ending_state": "flat",
+      "exposure_ratio": 0.531849315068,
+      "final_average_entry_price": null,
+      "final_position_quantity": 0.0,
+      "total_bars": 8760
+    },
+    "fills": {
+      "count": 376,
+      "digest": "9883f5760c95b1606d973ed6dedcf4426b04f165257e86ddff78c7c74dfa09b5",
+      "first": [
+        {
+          "fee": 38.6842,
+          "order_id": 1,
+          "order_type": "market",
+          "price": 96710.5,
+          "quantity": 1.0,
+          "side": "buy",
+          "symbol": "BTC/USDT:USDT",
+          "tag": null,
+          "timestamp": 1735905600000
+        },
+        {
+          "fee": 39.04792,
+          "order_id": 2,
+          "order_type": "market",
+          "price": 97619.79999999999,
+          "quantity": 1.0,
+          "side": "sell",
+          "symbol": "BTC/USDT:USDT",
+          "tag": null,
+          "timestamp": 1736071200000
+        },
+        {
+          "fee": 39.29796,
+          "order_id": 3,
+          "order_type": "market",
+          "price": 98244.90000000001,
+          "quantity": 1.0,
+          "side": "buy",
+          "symbol": "BTC/USDT:USDT",
+          "tag": null,
+          "timestamp": 1736110800000
+        }
+      ],
+      "last": [
+        {
+          "fee": 34.93752,
+          "order_id": 374,
+          "order_type": "market",
+          "price": 87343.79999999999,
+          "quantity": 1.0,
+          "side": "sell",
+          "symbol": "BTC/USDT:USDT",
+          "tag": null,
+          "timestamp": 1767013200000
+        },
+        {
+          "fee": 35.16576,
+          "order_id": 375,
+          "order_type": "market",
+          "price": 87914.40000000001,
+          "quantity": 1.0,
+          "side": "buy",
+          "symbol": "BTC/USDT:USDT",
+          "tag": null,
+          "timestamp": 1767092400000
+        },
+        {
+          "fee": 35.05032,
+          "order_id": 376,
+          "order_type": "market",
+          "price": 87625.79999999999,
+          "quantity": 1.0,
+          "side": "sell",
+          "symbol": "BTC/USDT:USDT",
+          "tag": null,
+          "timestamp": 1767200400000
+        }
+      ]
+    },
+    "order_rejection_count": 1,
+    "returns": {
+      "active_return": 0.049842609688,
+      "annualized_return": -0.021760724862,
+      "buy_and_hold_return": -0.071589044928,
+      "equity_peak": 1014190.7124799995,
+      "final_cash": 978253.5647599992,
+      "final_equity": 978253.5647599992,
+      "gross_realized_pnl": -6468.900000002081,
+      "net_realized_pnl": -21746.435240002094,
+      "total_return": -0.02174643524,
+      "unrealized_pnl": 0.0
+    },
+    "risk": {
+      "annual_risk_free_rate": 0.0,
+      "longest_drawdown_bar_count": 4136,
+      "max_drawdown": 0.03543430962,
+      "periods_per_year": 8765.82,
+      "sharpe_ratio": -0.732850424528,
+      "volatility": 0.029430187847
+    },
+    "run": {
+      "bar_count": 8760,
+      "end_timestamp": 1767222000000,
+      "execution_model_name": "conservative_ohlcv",
+      "initial_cash": 1000000.0,
+      "run_label": null,
+      "start_timestamp": 1735689600000,
+      "strategy_class_name": "CanonicalEmaCrossStrategy",
+      "strategy_display_name": null,
+      "strategy_parameters": {},
+      "symbol": "BTC/USDT:USDT",
+      "timeframe": "1h"
+    },
+    "trades": {
+      "average_loss": 1024.652095338357,
+      "average_trade_return": -0.00127941751,
+      "average_win": 2082.405335272716,
+      "best_trade": 0.092556159321,
+      "closed_trade_count": 188,
+      "expectancy_return": -0.001083195455,
+      "fill_count": 376,
+      "profit_factor": 0.840426782297,
+      "win_rate": 0.292553191489,
+      "worst_trade": -0.04862242415
+    }
+  },
+  "macd_cross": {
+    "closed_trades": {
+      "count": 333,
+      "digest": "2bb03d0557764ba0adbd8ec1534d03d644cbff6e5d677fa66d9a68f3cdba6705",
+      "first": [
+        {
+          "allocated_entry_fee": 39.129,
+          "duration_bars": 12,
+          "entry_bar_index": 65,
+          "entry_price": 97822.5,
+          "entry_tag": null,
+          "entry_tags": [],
+          "entry_timestamp": 1735923600000,
+          "exit_bar_index": 76,
+          "exit_fee": 39.25968,
+          "exit_price": 98149.2,
+          "exit_tag": null,
+          "exit_timestamp": 1735963200000,
+          "gross_pnl": 326.699999999997,
+          "net_pnl": 248.311319999997,
+          "net_return": 0.002537371619,
+          "quantity": 1.0,
+          "total_fees": 78.38868
+        },
+        {
+          "allocated_entry_fee": 39.431,
+          "duration_bars": 6,
+          "entry_bar_index": 93,
+          "entry_price": 98577.5,
+          "entry_tag": null,
+          "entry_tags": [],
+          "entry_timestamp": 1736024400000,
+          "exit_bar_index": 98,
+          "exit_fee": 39.2346,
+          "exit_price": 98086.5,
+          "exit_tag": null,
+          "exit_timestamp": 1736042400000,
+          "gross_pnl": -491.0,
+          "net_pnl": -569.6656,
+          "net_return": -0.005776549668,
+          "quantity": 1.0,
+          "total_fees": 78.6656
+        },
+        {
+          "allocated_entry_fee": 39.29796,
+          "duration_bars": 17,
+          "entry_bar_index": 117,
+          "entry_price": 98244.90000000001,
+          "entry_tag": null,
+          "entry_tags": [],
+          "entry_timestamp": 1736110800000,
+          "exit_bar_index": 133,
+          "exit_fee": 39.64784,
+          "exit_price": 99119.59999999999,
+          "exit_tag": null,
+          "exit_timestamp": 1736168400000,
+          "gross_pnl": 874.699999999983,
+          "net_pnl": 795.754199999983,
+          "net_return": 0.008096461247,
+          "quantity": 1.0,
+          "total_fees": 78.9458
+        }
+      ],
+      "last": [
+        {
+          "allocated_entry_fee": 35.1682,
+          "duration_bars": 12,
+          "entry_bar_index": 8688,
+          "entry_price": 87920.5,
+          "entry_tag": null,
+          "entry_tags": [],
+          "entry_timestamp": 1766966400000,
+          "exit_bar_index": 8699,
+          "exit_fee": 35.09884,
+          "exit_price": 87747.09999999999,
+          "exit_tag": null,
+          "exit_timestamp": 1767006000000,
+          "gross_pnl": -173.400000000009,
+          "net_pnl": -243.667040000009,
+          "net_return": -0.002770339251,
+          "quantity": 1.0,
+          "total_fees": 70.26704
+        },
+        {
+          "allocated_entry_fee": 34.96176,
+          "duration_bars": 23,
+          "entry_bar_index": 8719,
+          "entry_price": 87404.40000000001,
+          "entry_tag": null,
+          "entry_tags": [],
+          "entry_timestamp": 1767078000000,
+          "exit_bar_index": 8741,
+          "exit_fee": 35.31484,
+          "exit_price": 88287.09999999999,
+          "exit_tag": null,
+          "exit_timestamp": 1767157200000,
+          "gross_pnl": 882.699999999983,
+          "net_pnl": 812.423399999983,
+          "net_return": 0.009291277791,
+          "quantity": 1.0,
+          "total_fees": 70.2766
+        },
+        {
+          "allocated_entry_fee": 35.52188,
+          "duration_bars": 5,
+          "entry_bar_index": 8747,
+          "entry_price": 88804.70000000001,
+          "entry_tag": null,
+          "entry_tags": [],
+          "entry_timestamp": 1767178800000,
+          "exit_bar_index": 8751,
+          "exit_fee": 35.37732,
+          "exit_price": 88443.29999999999,
+          "exit_tag": null,
+          "exit_timestamp": 1767193200000,
+          "gross_pnl": -361.400000000023,
+          "net_pnl": -432.299200000023,
+          "net_return": -0.00486603017,
+          "quantity": 1.0,
+          "total_fees": 70.8992
+        }
+      ]
+    },
+    "costs": {
+      "closed_trade_fees": 27110.48432,
+      "fees_as_initial_cash": 0.02711048432,
+      "fees_to_gross_pnl_ratio": 0.074059128014,
+      "gross_realized_pnl": -1156.200000003876,
+      "net_realized_pnl": -28266.684320003893,
+      "total_fees": 27110.48432
+    },
+    "equity": {
+      "count": 8760,
+      "digest": "27d9371df0b16c34a5df7d4a4b53819586adf971562d1e9c7470410b965b2455",
+      "first": [
+        {
+          "bar_index": 0,
+          "cash": 1000000.0,
+          "drawdown": 0.0,
+          "equity": 1000000.0,
+          "mark_price": 94363.6,
+          "position_quantity": 0.0,
+          "timestamp": 1735689600000
+        },
+        {
+          "bar_index": 1,
+          "cash": 1000000.0,
+          "drawdown": 0.0,
+          "equity": 1000000.0,
+          "mark_price": 93588.0,
+          "position_quantity": 0.0,
+          "timestamp": 1735693200000
+        },
+        {
+          "bar_index": 2,
+          "cash": 1000000.0,
+          "drawdown": 0.0,
+          "equity": 1000000.0,
+          "mark_price": 94064.4,
+          "position_quantity": 0.0,
+          "timestamp": 1735696800000
+        }
+      ],
+      "last": [
+        {
+          "bar_index": 8757,
+          "cash": 971733.3156799956,
+          "drawdown": 0.036151577386,
+          "equity": 971733.3156799956,
+          "mark_price": 87764.0,
+          "position_quantity": 0.0,
+          "timestamp": 1767214800000
+        },
+        {
+          "bar_index": 8758,
+          "cash": 971733.3156799956,
+          "drawdown": 0.036151577386,
+          "equity": 971733.3156799956,
+          "mark_price": 87695.7,
+          "position_quantity": 0.0,
+          "timestamp": 1767218400000
+        },
+        {
+          "bar_index": 8759,
+          "cash": 971733.3156799956,
+          "drawdown": 0.036151577386,
+          "equity": 971733.3156799956,
+          "mark_price": 87608.2,
+          "position_quantity": 0.0,
+          "timestamp": 1767222000000
+        }
+      ]
+    },
+    "execution": {
+      "annual_risk_free_rate": 0.0,
+      "execution_model_name": "conservative_ohlcv",
+      "fee_rate": 0.0004,
+      "fill_price_basis": "conservative_ohlcv",
+      "open_position_finalization": "mark_to_market",
+      "order_activation_timing": "next_bar",
+      "order_rejection_count": 1,
+      "periods_per_year": 8765.82,
+      "slippage_ticks": 1.0,
+      "tick_size": 0.1
+    },
+    "exposure": {
+      "bars_in_position": 4659,
+      "ending_state": "flat",
+      "exposure_ratio": 0.531849315068,
+      "final_average_entry_price": null,
+      "final_position_quantity": 0.0,
+      "total_bars": 8760
+    },
+    "fills": {
+      "count": 666,
+      "digest": "0b892bb601ba15f8b27b6fc9bfe4ced1b765516872464558dcf892a14c3f1575",
+      "first": [
+        {
+          "fee": 39.129,
+          "order_id": 1,
+          "order_type": "market",
+          "price": 97822.5,
+          "quantity": 1.0,
+          "side": "buy",
+          "symbol": "BTC/USDT:USDT",
+          "tag": null,
+          "timestamp": 1735923600000
+        },
+        {
+          "fee": 39.25968,
+          "order_id": 2,
+          "order_type": "market",
+          "price": 98149.2,
+          "quantity": 1.0,
+          "side": "sell",
+          "symbol": "BTC/USDT:USDT",
+          "tag": null,
+          "timestamp": 1735963200000
+        },
+        {
+          "fee": 39.431,
+          "order_id": 3,
+          "order_type": "market",
+          "price": 98577.5,
+          "quantity": 1.0,
+          "side": "buy",
+          "symbol": "BTC/USDT:USDT",
+          "tag": null,
+          "timestamp": 1736024400000
+        }
+      ],
+      "last": [
+        {
+          "fee": 35.31484,
+          "order_id": 664,
+          "order_type": "market",
+          "price": 88287.09999999999,
+          "quantity": 1.0,
+          "side": "sell",
+          "symbol": "BTC/USDT:USDT",
+          "tag": null,
+          "timestamp": 1767157200000
+        },
+        {
+          "fee": 35.52188,
+          "order_id": 665,
+          "order_type": "market",
+          "price": 88804.70000000001,
+          "quantity": 1.0,
+          "side": "buy",
+          "symbol": "BTC/USDT:USDT",
+          "tag": null,
+          "timestamp": 1767178800000
+        },
+        {
+          "fee": 35.37732,
+          "order_id": 666,
+          "order_type": "market",
+          "price": 88443.29999999999,
+          "quantity": 1.0,
+          "side": "sell",
+          "symbol": "BTC/USDT:USDT",
+          "tag": null,
+          "timestamp": 1767193200000
+        }
+      ]
+    },
+    "order_rejection_count": 1,
+    "returns": {
+      "active_return": 0.043322360608,
+      "annualized_return": -0.028285196104,
+      "buy_and_hold_return": -0.071589044928,
+      "equity_peak": 1008180.6359599977,
+      "final_cash": 971733.3156799956,
+      "final_equity": 971733.3156799956,
+      "gross_realized_pnl": -1156.200000003876,
+      "net_realized_pnl": -28266.684320003893,
+      "total_return": -0.02826668432,
+      "unrealized_pnl": 0.0
+    },
+    "risk": {
+      "annual_risk_free_rate": 0.0,
+      "longest_drawdown_bar_count": 4002,
+      "max_drawdown": 0.043460392272,
+      "periods_per_year": 8765.82,
+      "sharpe_ratio": -0.94657466252,
+      "volatility": 0.029841974565
+    },
+    "run": {
+      "bar_count": 8760,
+      "end_timestamp": 1767222000000,
+      "execution_model_name": "conservative_ohlcv",
+      "initial_cash": 1000000.0,
+      "run_label": null,
+      "start_timestamp": 1735689600000,
+      "strategy_class_name": "CanonicalMacdCrossStrategy",
+      "strategy_display_name": null,
+      "strategy_parameters": {},
+      "symbol": "BTC/USDT:USDT",
+      "timeframe": "1h"
+    },
+    "trades": {
+      "average_loss": 922.139968807351,
+      "average_trade_return": -0.000667658666,
+      "average_win": 1502.259381565206,
+      "best_trade": 0.090385692376,
+      "closed_trade_count": 333,
+      "expectancy_return": -0.000537245636,
+      "fill_count": 666,
+      "profit_factor": 0.859388277347,
+      "win_rate": 0.345345345345,
+      "worst_trade": -0.043610048696
+    }
+  },
+  "rsi_30_70": {
+    "closed_trades": {
+      "count": 34,
+      "digest": "be2f14f3536a1c8ad0199c7c358f9ce422bb0352540f62dc008f9ef16b29f58b",
+      "first": [
+        {
+          "allocated_entry_fee": 39.1662,
+          "duration_bars": 163,
+          "entry_bar_index": 160,
+          "entry_price": 97915.5,
+          "entry_tag": null,
+          "entry_tags": [],
+          "entry_timestamp": 1736265600000,
+          "exit_bar_index": 322,
+          "exit_fee": 38.85192,
+          "exit_price": 97129.79999999999,
+          "exit_tag": null,
+          "exit_timestamp": 1736848800000,
+          "gross_pnl": -785.700000000012,
+          "net_pnl": -863.718120000012,
+          "net_return": -0.008817529103,
+          "quantity": 1.0,
+          "total_fees": 78.01812
+        },
+        {
+          "allocated_entry_fee": 39.90784,
+          "duration_bars": 237,
+          "entry_bar_index": 457,
+          "entry_price": 99769.6,
+          "entry_tag": null,
+          "entry_tags": [],
+          "entry_timestamp": 1737334800000,
+          "exit_bar_index": 693,
+          "exit_fee": 41.66212,
+          "exit_price": 104155.29999999999,
+          "exit_tag": null,
+          "exit_timestamp": 1738184400000,
+          "gross_pnl": 4385.699999999983,
+          "net_pnl": 4304.130039999984,
+          "net_return": 0.043123447186,
+          "quantity": 1.0,
+          "total_fees": 81.56996
+        },
+        {
+          "allocated_entry_fee": 40.65904,
+          "duration_bars": 72,
+          "entry_bar_index": 741,
+          "entry_price": 101647.6,
+          "entry_tag": null,
+          "entry_tags": [],
+          "entry_timestamp": 1738357200000,
+          "exit_bar_index": 812,
+          "exit_fee": 40.73272,
+          "exit_price": 101831.79999999999,
+          "exit_tag": null,
+          "exit_timestamp": 1738612800000,
+          "gross_pnl": 184.199999999983,
+          "net_pnl": 102.808239999983,
+          "net_return": 0.001011013867,
+          "quantity": 1.0,
+          "total_fees": 81.39176
+        }
+      ],
+      "last": [
+        {
+          "allocated_entry_fee": 36.0138,
+          "duration_bars": 20,
+          "entry_bar_index": 8259,
+          "entry_price": 90034.5,
+          "entry_tag": null,
+          "entry_tags": [],
+          "entry_timestamp": 1765422000000,
+          "exit_bar_index": 8278,
+          "exit_fee": 37.1294,
+          "exit_price": 92823.5,
+          "exit_tag": null,
+          "exit_timestamp": 1765490400000,
+          "gross_pnl": 2789.0,
+          "net_pnl": 2715.8568,
+          "net_return": 0.030152562536,
+          "quantity": 1.0,
+          "total_fees": 73.1432
+        },
+        {
+          "allocated_entry_fee": 35.72336,
+          "duration_bars": 76,
+          "entry_bar_index": 8340,
+          "entry_price": 89308.40000000001,
+          "entry_tag": null,
+          "entry_tags": [],
+          "entry_timestamp": 1765713600000,
+          "exit_bar_index": 8415,
+          "exit_fee": 35.85356,
+          "exit_price": 89633.9,
+          "exit_tag": null,
+          "exit_timestamp": 1765983600000,
+          "gross_pnl": 325.499999999985,
+          "net_pnl": 253.923079999985,
+          "net_return": 0.00284207926,
+          "quantity": 1.0,
+          "total_fees": 71.57692
+        },
+        {
+          "allocated_entry_fee": 34.73492,
+          "duration_bars": 131,
+          "entry_bar_index": 8559,
+          "entry_price": 86837.3,
+          "entry_tag": null,
+          "entry_tags": [],
+          "entry_timestamp": 1766502000000,
+          "exit_bar_index": 8689,
+          "exit_fee": 35.30484,
+          "exit_price": 88262.09999999999,
+          "exit_tag": null,
+          "exit_timestamp": 1766970000000,
+          "gross_pnl": 1424.799999999988,
+          "net_pnl": 1354.760239999988,
+          "net_return": 0.015594894735,
+          "quantity": 1.0,
+          "total_fees": 70.03976
+        }
+      ]
+    },
+    "costs": {
+      "closed_trade_fees": 2712.97336,
+      "fees_as_initial_cash": 0.00271297336,
+      "fees_to_gross_pnl_ratio": 0.026300122535,
+      "gross_realized_pnl": 10342.799999999595,
+      "net_realized_pnl": 7629.826639999597,
+      "total_fees": 2712.97336
+    },
+    "equity": {
+      "count": 8760,
+      "digest": "01b62c3cefe8db4e16a316094e3bbd34e1495e992ccd821007823859f7eab79b",
+      "first": [
+        {
+          "bar_index": 0,
+          "cash": 1000000.0,
+          "drawdown": 0.0,
+          "equity": 1000000.0,
+          "mark_price": 94363.6,
+          "position_quantity": 0.0,
+          "timestamp": 1735689600000
+        },
+        {
+          "bar_index": 1,
+          "cash": 1000000.0,
+          "drawdown": 0.0,
+          "equity": 1000000.0,
+          "mark_price": 93588.0,
+          "position_quantity": 0.0,
+          "timestamp": 1735693200000
+        },
+        {
+          "bar_index": 2,
+          "cash": 1000000.0,
+          "drawdown": 0.0,
+          "equity": 1000000.0,
+          "mark_price": 94064.4,
+          "position_quantity": 0.0,
+          "timestamp": 1735696800000
+        }
+      ],
+      "last": [
+        {
+          "bar_index": 8757,
+          "cash": 1007629.8266399998,
+          "drawdown": 0.026474102308,
+          "equity": 1007629.8266399998,
+          "mark_price": 87764.0,
+          "position_quantity": 0.0,
+          "timestamp": 1767214800000
+        },
+        {
+          "bar_index": 8758,
+          "cash": 1007629.8266399998,
+          "drawdown": 0.026474102308,
+          "equity": 1007629.8266399998,
+          "mark_price": 87695.7,
+          "position_quantity": 0.0,
+          "timestamp": 1767218400000
+        },
+        {
+          "bar_index": 8759,
+          "cash": 1007629.8266399998,
+          "drawdown": 0.026474102308,
+          "equity": 1007629.8266399998,
+          "mark_price": 87608.2,
+          "position_quantity": 0.0,
+          "timestamp": 1767222000000
+        }
+      ]
+    },
+    "execution": {
+      "annual_risk_free_rate": 0.0,
+      "execution_model_name": "conservative_ohlcv",
+      "fee_rate": 0.0004,
+      "fill_price_basis": "conservative_ohlcv",
+      "open_position_finalization": "mark_to_market",
+      "order_activation_timing": "next_bar",
+      "order_rejection_count": 0,
+      "periods_per_year": 8765.82,
+      "slippage_ticks": 1.0,
+      "tick_size": 0.1
+    },
+    "exposure": {
+      "bars_in_position": 4538,
+      "ending_state": "flat",
+      "exposure_ratio": 0.51803652968,
+      "final_average_entry_price": null,
+      "final_position_quantity": 0.0,
+      "total_bars": 8760
+    },
+    "fills": {
+      "count": 68,
+      "digest": "ddd8b0d7ce2344b239408a22317b294c7428e075f5299cd2495db8d7c968f48f",
+      "first": [
+        {
+          "fee": 39.1662,
+          "order_id": 1,
+          "order_type": "market",
+          "price": 97915.5,
+          "quantity": 1.0,
+          "side": "buy",
+          "symbol": "BTC/USDT:USDT",
+          "tag": null,
+          "timestamp": 1736265600000
+        },
+        {
+          "fee": 38.85192,
+          "order_id": 2,
+          "order_type": "market",
+          "price": 97129.79999999999,
+          "quantity": 1.0,
+          "side": "sell",
+          "symbol": "BTC/USDT:USDT",
+          "tag": null,
+          "timestamp": 1736848800000
+        },
+        {
+          "fee": 39.90784,
+          "order_id": 3,
+          "order_type": "market",
+          "price": 99769.6,
+          "quantity": 1.0,
+          "side": "buy",
+          "symbol": "BTC/USDT:USDT",
+          "tag": null,
+          "timestamp": 1737334800000
+        }
+      ],
+      "last": [
+        {
+          "fee": 35.85356,
+          "order_id": 66,
+          "order_type": "market",
+          "price": 89633.9,
+          "quantity": 1.0,
+          "side": "sell",
+          "symbol": "BTC/USDT:USDT",
+          "tag": null,
+          "timestamp": 1765983600000
+        },
+        {
+          "fee": 34.73492,
+          "order_id": 67,
+          "order_type": "market",
+          "price": 86837.3,
+          "quantity": 1.0,
+          "side": "buy",
+          "symbol": "BTC/USDT:USDT",
+          "tag": null,
+          "timestamp": 1766502000000
+        },
+        {
+          "fee": 35.30484,
+          "order_id": 68,
+          "order_type": "market",
+          "price": 88262.09999999999,
+          "quantity": 1.0,
+          "side": "sell",
+          "symbol": "BTC/USDT:USDT",
+          "tag": null,
+          "timestamp": 1766970000000
+        }
+      ]
+    },
+    "order_rejection_count": 0,
+    "returns": {
+      "active_return": 0.079218871568,
+      "annualized_return": 0.007634915074,
+      "buy_and_hold_return": -0.071589044928,
+      "equity_peak": 1035031.3525599998,
+      "final_cash": 1007629.8266399998,
+      "final_equity": 1007629.8266399998,
+      "gross_realized_pnl": 10342.799999999595,
+      "net_realized_pnl": 7629.826639999597,
+      "total_return": 0.00762982664,
+      "unrealized_pnl": 0.0
+    },
+    "risk": {
+      "annual_risk_free_rate": 0.0,
+      "longest_drawdown_bar_count": 4002,
+      "max_drawdown": 0.040586338429,
+      "periods_per_year": 8765.82,
+      "sharpe_ratio": 0.25033510438,
+      "volatility": 0.032491022925
+    },
+    "run": {
+      "bar_count": 8760,
+      "end_timestamp": 1767222000000,
+      "execution_model_name": "conservative_ohlcv",
+      "initial_cash": 1000000.0,
+      "run_label": null,
+      "start_timestamp": 1735689600000,
+      "strategy_class_name": "CanonicalRsi3070Strategy",
+      "strategy_display_name": null,
+      "strategy_parameters": {},
+      "symbol": "BTC/USDT:USDT",
+      "timeframe": "1h"
+    },
+    "trades": {
+      "average_loss": 3948.929056666677,
+      "average_trade_return": 0.003575993941,
+      "average_win": 2500.771605454533,
+      "best_trade": 0.105620752648,
+      "closed_trade_count": 34,
+      "expectancy_return": 0.004496613674,
+      "fill_count": 68,
+      "profit_factor": 1.161010460695,
+      "win_rate": 0.647058823529,
+      "worst_trade": -0.144788693957
+    }
+  }
+}

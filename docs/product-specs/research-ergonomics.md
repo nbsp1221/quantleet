@@ -486,10 +486,18 @@ Rules:
 
 ## Result Surface
 
-This slice upgrades the result surface to a medium baseline.
+This slice upgrades the result surface to a medium baseline. The first-beta
+inspection path is `result.report`; legacy `result.summary`, `result.trade_log`,
+and `result.equity_curve` remain available for compatibility and low-level
+inspection.
 
 Required result content:
 
+- direct `result.report` access from engine-produced `BacktestResult` values
+- grouped human-readable report text
+- typed structured report sections for run identity, execution assumptions,
+  returns, risk, trades, costs, exposure, equity rows, fills, closed trades, and
+  order rejections
 - trade log
 - equity curve
 - final balance
@@ -510,9 +518,20 @@ Current summary semantics for the implemented slice:
 - `total_fills` means the raw fill count from `trade_log`
 - `win_rate`, `average_win`, `average_loss`, and `profit_factor` are based on net closed-trade PnL after fees
 
-This slice does not attempt a large analytics surface such as:
+Current beta report semantics:
 
-- Sharpe
+- `BacktestEngine.run(..., label=...)` may attach a user-visible run label
+- `Strategy.display_name` and `Strategy.parameters()` are the explicit metadata
+  hooks for report identity
+- execution assumptions use stable structured identifiers:
+  `next_bar`, `conservative_ohlcv`, and `mark_to_market`
+- undefined report metrics use `None` structurally and `n/a` in human-readable
+  text
+- report exposure counts bars where a positive position existed at any point
+  during the bar
+
+This slice does not attempt a larger analytics surface such as:
+
 - Sortino
 - Calmar
 - rolling performance statistics
@@ -586,8 +605,9 @@ The quickstart should walk through this flow:
 3. evaluate signals and place orders in `on_bar()`
 4. create a `BacktestEngine(...)`
 5. call `engine.run(...)`
-6. inspect the summary and result object
-7. inspect equity curve and trade log in the notebook
+6. inspect `result.report`
+7. inspect legacy summary, equity curve, and trade log in the notebook when
+   lower-level details are needed
 
 For the first beta, the quickstart should also show the shortest supported path
 from common user-owned tabular data to a readable result. It should avoid

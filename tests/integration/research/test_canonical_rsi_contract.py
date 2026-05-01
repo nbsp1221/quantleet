@@ -4,6 +4,8 @@ import pytest
 
 from quantcraft.backtest import BacktestSummary, ExposureSummary
 from tests.support_backtest import (
+    assert_canonical_report,
+    canonical_report_expectation,
     canonical_rsi_trade_log_digest,
     canonical_rsi_trade_log_samples,
     load_canonical_rsi_bars,
@@ -113,3 +115,4 @@ def test_canonical_rsi_backtest_matches_public_result_contract() -> None:
     assert canonical_rsi_trade_log_digest(result.trade_log) == (
         "b95fcc3832f1ac9850fc8ab4e9fabd01bc2465f118597d9ea8f7ed2a8e3ae9c1"
     )
+    assert_canonical_report("rsi_30_70", result.report, canonical_report_expectation("rsi_30_70"))

@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import pytest
+
 from quantcraft.backtest import (
+    BacktestReport,
     BacktestResult,
     BacktestSummary,
     ExposureSummary,
@@ -99,6 +102,13 @@ def test_backtest_runner_exposes_expanded_research_result_surface() -> None:
     assert result.summary.exposure.bars_in_position == 1
     assert result.summary.exposure.total_bars == 3
     assert result.summary.exposure.exposure_ratio == 1 / 3
+    assert isinstance(result.report, BacktestReport)
+    assert result.report.run.symbol == "BTC/USDT"
+    assert result.report.run.timeframe == "1m"
+    assert result.report.run.bar_count == 3
+    assert result.report.execution.order_activation_timing == "next_bar"
+    assert result.report.execution.fill_price_basis == "conservative_ohlcv"
+    assert result.report.execution.open_position_finalization == "mark_to_market"
 
 
 def test_backtest_result_preserves_legacy_positional_execution_model_name() -> None:
@@ -131,6 +141,8 @@ def test_backtest_result_preserves_legacy_positional_execution_model_name() -> N
 
     assert result.execution_model_name == "custom_model"
     assert result.order_events == ()
+    with pytest.raises(ValueError, match="engine-produced"):
+        _ = result.report
 
 
 def test_backtest_runner_trade_statistics_are_net_of_fees() -> None:

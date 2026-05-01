@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+from quantcraft.backtest.reporting import BacktestReport
 from quantcraft.trading.domain.events import FillEvent, OrderRejectedEvent
 from quantcraft.trading.domain.state import TradingState
 
@@ -51,6 +52,18 @@ class BacktestResult:
         repr=False,
     )
     order_events: tuple[OrderRejectedEvent, ...] = ()
+    _report: BacktestReport | None = field(
+        default=None,
+        compare=False,
+        repr=False,
+        kw_only=True,
+    )
+
+    @property
+    def report(self) -> BacktestReport:
+        if self._report is None:
+            raise ValueError("report is only available for engine-produced BacktestResult values")
+        return self._report
 
 
 __all__ = ["BacktestResult", "BacktestSummary", "ExposureSummary"]
