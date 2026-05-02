@@ -6,7 +6,7 @@ This quickstart is the canonical first-run path for the current implemented `Res
 
 ```python
 from quantcraft.backtest import BacktestEngine
-from quantcraft.research import Strategy, ta, qc
+from quantcraft.research import ParameterStudy, Strategy, ta, qc
 ```
 
 The public research API for this slice is the `quantcraft.research` import above. The lower-layer imports below are current supporting setup types used to construct backtest inputs; they are not part of the research public surface.
@@ -26,7 +26,9 @@ They are not automatically all strict merge gates.
 
 - starting state: a fresh environment with the package installed
 - user intent: verify that the documented public imports actually work
-- success artifact: importing `BacktestEngine`, `Strategy`, `ta`, `qc`, `BarSeries`, `TimeBar`, and the documented data sources from their documented capability paths works without hidden setup
+- success artifact: importing `BacktestEngine`, `Strategy`, `ParameterStudy`,
+  `ta`, `qc`, `BarSeries`, `TimeBar`, and the documented data sources from their
+  documented capability paths works without hidden setup
 - superficially passing but still bad: the package installs, but the documented imports or import paths drift
 
 ### Journey 2: DataFrame-Like Quickstart To First Backtest
@@ -54,7 +56,7 @@ They are not automatically all strict merge gates.
 
 ```python
 from quantcraft.backtest import BacktestEngine
-from quantcraft.research import Strategy, ta, qc
+from quantcraft.research import ParameterStudy, Strategy, ta, qc
 from quantcraft.data import BarSeries, DataFrameDataSource, TimeBar
 from quantcraft.trading.domain.costs import CostConfig
 import matplotlib.pyplot as plt

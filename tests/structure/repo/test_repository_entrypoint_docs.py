@@ -122,7 +122,7 @@ def test_current_docs_describe_summary_terms_and_engine_surface() -> None:
     assert 'self.buy(quantity=1, tag="rsi-entry")' in data_ingestion_spec
     assert 'self.sell(quantity=1, tag="rsi-exit")' in data_ingestion_spec
     assert "from quantcraft.backtest import BacktestEngine" in quickstart
-    assert "from quantcraft.research import Strategy, ta, qc" in quickstart
+    assert "from quantcraft.research import ParameterStudy, Strategy, ta, qc" in quickstart
     assert (
         "from quantcraft.research import BacktestEngine, Strategy, ta, qc, run_backtest"
         not in quickstart

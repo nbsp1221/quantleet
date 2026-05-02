@@ -21,10 +21,13 @@ def test_root_package_exports_no_legacy_public_symbols() -> None:
             getattr(quantcraft, name)
 
 
-def test_research_public_import_surface_is_strategy_only() -> None:
+def test_research_public_import_surface_exposes_strategy_and_parameter_study() -> None:
     research_module = importlib.import_module("quantcraft.research")
 
     assert getattr(research_module, "Strategy", None) is not None
+    assert getattr(research_module, "ParameterStudy", None) is not None
+    assert getattr(research_module, "GridSearchResult", None) is not None
+    assert getattr(research_module, "GridSearchRow", None) is not None
     assert getattr(research_module, "ta", None) is not None
     assert getattr(research_module, "qc", None) is not None
     assert not hasattr(research_module, "run_backtest")
@@ -54,6 +57,7 @@ def test_capability_public_surfaces_import_cleanly() -> None:
     assert getattr(backtest_module, "BacktestSummary", None) is not None
     assert getattr(backtest_module, "ExposureSummary", None) is not None
     assert getattr(research_module, "Strategy", None) is not None
+    assert getattr(research_module, "ParameterStudy", None) is not None
     assert getattr(ccxt_module, "Exchange", None) is not None
     assert getattr(ccxt_module, "MarketType", None) is not None
     for name in (

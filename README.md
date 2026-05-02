@@ -21,7 +21,8 @@ The current implemented scope is intentionally small:
 - automatic historical pagination inside `CCXTDataSource.load()` for exchange-backed range assembly
 - `source.load()` materialization into `BarSeries` with `tuple[TimeBar, ...]` rows and `bar_type="time"`
 - a deterministic single-symbol Backtest MVP built on the shared trading kernel
-- a first `quantcraft.research` ergonomics surface with `Strategy`, `ta`, and `qc`
+- a first `quantcraft.research` ergonomics surface with `Strategy`, `ta`, `qc`,
+  and `ParameterStudy`
 - explicit strategy-side order sizing through `buy()/sell(quantity=...)` and
   `buy()/sell(qty_percent=...)`, with shipped `qty_percent` support in the
   current single-symbol research/backtest workflow
@@ -34,11 +35,13 @@ The current implemented scope is intentionally small:
   results
 - a first `result.plot()` workflow for price, fills, equity, and drawdown
   inspection
+- constrained first-beta parameter exploration through
+  `ParameterStudy(...).grid_search(...)`
 - canonical quickstart and notebook assets for the current research workflow
 
-The current implemented scope is not yet the first beta target. The beta still
-needs constrained parameter exploration, richer examples, fresh install
-guidance, and release metadata/documentation cleanup.
+The current implemented scope is close to the first beta target. The beta still
+needs richer examples, fresh install guidance, and release metadata/documentation
+cleanup.
 
 ## Initial Canonical User Journeys
 
@@ -51,7 +54,9 @@ They are not automatically equivalent to strict merge gates.
 
 - starting state: a fresh environment with the built package artifact or synced repository environment
 - user intent: confirm the package installs cleanly and exposes the documented public API
-- success artifact: importing `BacktestEngine`, `Strategy`, `ta`, `qc`, `BarSeries`, `TimeBar`, and the documented data sources from their documented capability paths works exactly as the docs imply
+- success artifact: importing `BacktestEngine`, `Strategy`, `ParameterStudy`,
+  `ta`, `qc`, `BarSeries`, `TimeBar`, and the documented data sources from
+  their documented capability paths works exactly as the docs imply
 - superficially passing but still bad: the package builds, but documented imports or import paths drift
 
 ### 2. DataFrame-Like Quickstart To First Backtest

@@ -66,6 +66,9 @@ def test_built_wheel_exposes_documented_public_imports() -> None:
         integrations_module = importlib.import_module("quantcraft.integrations")
         ccxt_module = importlib.import_module("quantcraft.integrations.venues.ccxt")
         assert getattr(research_module, "Strategy", None) is not None
+        assert getattr(research_module, "ParameterStudy", None) is not None
+        assert getattr(research_module, "GridSearchResult", None) is not None
+        assert getattr(research_module, "GridSearchRow", None) is not None
         assert getattr(research_module, "ta", None) is not None
         assert getattr(research_module, "qc", None) is not None
         assert not hasattr(research_module, "BacktestEngine")
