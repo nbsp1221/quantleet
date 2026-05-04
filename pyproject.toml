@@ -1,17 +1,34 @@
 [project]
 name = "quantcraft"
-version = "0.1.0"
-description = "Quant research and trading infrastructure toolkit"
+version = "0.1.0b1"
+description = "Single-symbol Python backtesting and quant research tooling"
 readme = "README.md"
 authors = [
     { name = "nbsp1221", email = "nbsp1221@gmail.com" }
 ]
 requires-python = ">=3.13"
+license = "MIT"
+keywords = ["quant", "backtesting", "research", "trading", "finance"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Financial and Insurance Industry",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.13",
+    "Typing :: Typed",
+]
 dependencies = [
     "ccxt>=4.5.43",
     "matplotlib>=3.10.8",
     "ta-lib>=0.6.8",
 ]
+
+[project.urls]
+Homepage = "https://github.com/nbsp1221/quantcraft"
+Repository = "https://github.com/nbsp1221/quantcraft"
+Issues = "https://github.com/nbsp1221/quantcraft/issues"
+Changelog = "https://github.com/nbsp1221/quantcraft/blob/dev/CHANGELOG.md"
 
 [dependency-groups]
 dev = [

@@ -74,6 +74,7 @@ def test_built_wheel_exposes_documented_public_imports() -> None:
         assert not hasattr(research_module, "BacktestEngine")
         assert not hasattr(research_module, "run_backtest")
         assert getattr(backtest_module, "BacktestEngine", None) is not None
+        assert getattr(backtest_module, "CostConfig", None) is not None
         assert getattr(backtest_module, "BacktestResult", None) is not None
         assert getattr(backtest_module, "BacktestSummary", None) is not None
         assert getattr(backtest_module, "ExposureSummary", None) is not None

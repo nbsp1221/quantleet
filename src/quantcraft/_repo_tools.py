@@ -9,6 +9,10 @@ from typing import cast
 
 REQUIRED_DOCS = (
     "README.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "CHANGELOG.md",
+    ".github/PULL_REQUEST_TEMPLATE.md",
     "AGENTS.md",
     "ARCHITECTURE.md",
     "docs/DESIGN.md",
@@ -19,6 +23,39 @@ REQUIRED_DOCS = (
     "docs/product-specs/index.md",
 )
 
+REQUIRED_PUBLIC_DOCS = (
+    "docs/site/index.md",
+    "docs/site/installation.md",
+    "docs/site/quickstart.md",
+    "docs/site/examples.md",
+    "docs/site/getting-started/index.md",
+    "docs/site/guides/backtesting.md",
+    "docs/site/guides/strategy-authoring.md",
+    "docs/site/guides/data-sources.md",
+    "docs/site/guides/orders-and-sizing.md",
+    "docs/site/guides/parameter-exploration.md",
+    "docs/site/concepts/beta-scope.md",
+    "docs/site/reference/public-api.md",
+)
+FORBIDDEN_PUBLIC_DOC_LINKS = (
+    "AGENTS.md",
+    "docs/plans",
+    "docs/product-specs",
+    "docs/design-docs",
+    "docs/research",
+    "../plans",
+    "../product-specs",
+    "../design-docs",
+    "../research",
+)
+FINANCIAL_DISCLAIMER_MARKERS = (
+    "not financial advice",
+    "do not guarantee future performance",
+    "data quality",
+    "assumptions",
+    "execution risk",
+    "trading decisions",
+)
 PLACEHOLDER_TOKENS = ("Add your description here",)
 SUPPORTED_TEST_DIRS = ("unit", "integration", "structure", "smoke")
 
@@ -264,10 +301,39 @@ def collect_doc_issues(root: Path) -> list[str]:
 
     readme_path = root / "README.md"
     readme = readme_path.read_text(encoding="utf-8") if readme_path.exists() else ""
-    if "## Setup" not in readme:
-        issues.append("README.md is missing the setup section")
+    if "## Setup" not in readme and "## Installation" not in readme:
+        issues.append("README.md is missing the setup or installation section")
     if "uv run poe" not in readme:
         issues.append("README.md is missing uv run poe guidance")
+    for marker in FINANCIAL_DISCLAIMER_MARKERS:
+        if marker not in readme.lower():
+            issues.append(f"README.md is missing financial disclaimer marker: {marker}")
+
+    for relative_path in REQUIRED_PUBLIC_DOCS:
+        path = root / relative_path
+        if not path.exists():
+            issues.append(f"Missing public documentation page: {relative_path}")
+            continue
+
+        content = path.read_text(encoding="utf-8")
+        if not content.strip():
+            issues.append(f"Public documentation page is empty: {relative_path}")
+            continue
+
+        for forbidden in FORBIDDEN_PUBLIC_DOC_LINKS:
+            if forbidden in content:
+                issues.append(
+                    f"{relative_path} exposes internal workflow document reference: {forbidden}"
+                )
+
+    for relative_path in ("docs/site/index.md", "docs/site/quickstart.md"):
+        path = root / relative_path
+        content = path.read_text(encoding="utf-8").lower() if path.exists() else ""
+        for marker in FINANCIAL_DISCLAIMER_MARKERS:
+            if marker not in content:
+                issues.append(
+                    f"{relative_path} is missing financial disclaimer marker: {marker}"
+                )
 
     plans_doc_path = root / "docs/PLANS.md"
     plans_doc = plans_doc_path.read_text(encoding="utf-8") if plans_doc_path.exists() else ""

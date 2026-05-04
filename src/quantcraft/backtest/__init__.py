@@ -15,6 +15,7 @@ from quantcraft.backtest.reporting import (
     TradeMetrics,
 )
 from quantcraft.backtest.results import BacktestResult, BacktestSummary, ExposureSummary
+from quantcraft.trading.domain.costs import CostConfig
 
 __all__ = [
     "BacktestEngine",
@@ -22,6 +23,7 @@ __all__ = [
     "BacktestResult",
     "BacktestSummary",
     "ClosedTrade",
+    "CostConfig",
     "CostMetrics",
     "EquityPoint",
     "ExecutionAssumptions",

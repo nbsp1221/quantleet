@@ -28,11 +28,36 @@ REQUIRED_POE_TASKS = [
 def write_minimal_repo_docs(tmp_path) -> None:
     (tmp_path / "README.md").write_text(
         (
-            "# quantcraft\n\n## Setup\n\n"
+            "# quantcraft\n\n## Installation\n\n"
             "uv run poe verify\n"
             "uv run poe perf-check\n"
             "uv run poe verify-runtime\n"
+            "QuantCraft is research and software tooling, not financial advice. "
+            "Backtest results do not guarantee future performance. "
+            "Users are responsible for data quality, assumptions, execution risk, "
+            "and trading decisions.\n"
         ),
+        encoding="utf-8",
+    )
+    (tmp_path / "CONTRIBUTING.md").write_text(
+        "uv sync\nuv run poe verify\nuv run poe repo-check\ndocs/site\nAI-assisted\nhuman\n",
+        encoding="utf-8",
+    )
+    (tmp_path / "SECURITY.md").write_text(
+        (
+            "Tier A domains are trading and execution.\n"
+            "vulnerability secrets financial public issue 0.1.0b1\n"
+        ),
+        encoding="utf-8",
+    )
+    (tmp_path / "CHANGELOG.md").write_text(
+        "# Changelog\n\n## Unreleased\n\n## 0.1.0b1\n",
+        encoding="utf-8",
+    )
+    github_dir = tmp_path / ".github"
+    github_dir.mkdir()
+    (github_dir / "PULL_REQUEST_TEMPLATE.md").write_text(
+        "Summary\nChange type\nDocs impact\nVerification\nChangelog\nAI-assisted\nhuman\n",
         encoding="utf-8",
     )
     (tmp_path / "AGENTS.md").write_text(
@@ -63,6 +88,32 @@ def write_minimal_repo_docs(tmp_path) -> None:
 
     docs_dir = tmp_path / "docs"
     docs_dir.mkdir()
+    site_dir = docs_dir / "site"
+    (site_dir / "getting-started").mkdir(parents=True)
+    (site_dir / "guides").mkdir()
+    (site_dir / "concepts").mkdir()
+    (site_dir / "reference").mkdir()
+    public_doc_text = (
+        "QuantCraft is research and software tooling, not financial advice. "
+        "Backtest results do not guarantee future performance. "
+        "Users are responsible for data quality, assumptions, execution risk, "
+        "and trading decisions.\n"
+    )
+    for relative_path in [
+        "index.md",
+        "installation.md",
+        "quickstart.md",
+        "examples.md",
+        "getting-started/index.md",
+        "guides/backtesting.md",
+        "guides/strategy-authoring.md",
+        "guides/data-sources.md",
+        "guides/orders-and-sizing.md",
+        "guides/parameter-exploration.md",
+        "concepts/beta-scope.md",
+        "reference/public-api.md",
+    ]:
+        (site_dir / relative_path).write_text(public_doc_text, encoding="utf-8")
     (docs_dir / "DESIGN.md").write_text(
         (
             "# Design Pointers\n\n"

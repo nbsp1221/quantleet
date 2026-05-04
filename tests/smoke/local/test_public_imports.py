@@ -42,6 +42,7 @@ def test_capability_public_surfaces_import_cleanly() -> None:
     ccxt_module = importlib.import_module("quantcraft.integrations.venues.ccxt")
 
     assert getattr(backtest_module, "BacktestEngine", None) is not None
+    assert getattr(backtest_module, "CostConfig", None) is not None
     assert getattr(backtest_module, "BacktestReport", None) is not None
     assert getattr(backtest_module, "RunManifest", None) is not None
     assert getattr(backtest_module, "ExecutionAssumptions", None) is not None

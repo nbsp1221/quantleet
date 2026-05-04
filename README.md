@@ -1,186 +1,161 @@
-# quantcraft
+# QuantCraft
 
-`quantcraft` is a quant library and framework for market data, research tooling, backtesting, paper trading, live trading, and quant-related ML utilities.
+QuantCraft is a Python backtesting and quant research toolkit focused on a
+polished first-beta single-symbol historical backtesting workflow.
 
-The first public beta target is a polished single-symbol Python backtesting
-experience for users who want to test a strategy on historical OHLCV data.
-`backtesting.py` is the near-term UX comparator; paper trading, live trading,
-multi-symbol portfolios, shorting, and leverage remain later roadmap work.
+The first public beta target is `0.1.0b1`. It is built for users who want to
+load OHLCV history, author a compact strategy, run a deterministic backtest,
+inspect `result.report`, visualize `result.plot()`, and compare a small finite
+parameter grid without learning the internal repository workflow first.
 
-The long-lived repository direction is a capability-first engine package under
-`src/quantcraft`, with product surfaces such as an API server living outside the
-core package when they arrive.
-The current codebase follows that package topology, while some future-facing
-contexts remain intentionally minimal.
+## Beta Scope
 
-The current implemented scope is intentionally small:
+Current first-beta scope:
 
-- typed exchange access for OHLCV market data
-- spot and USD-M support through the current `quantcraft.integrations.venues.ccxt` exchange API
-- a first `quantcraft.data` ingestion surface with `CCXTDataSource`, `CSVDataSource`, `DataFrameDataSource`, `TimeBar`, and `BarSeries`
-- automatic historical pagination inside `CCXTDataSource.load()` for exchange-backed range assembly
-- `source.load()` materialization into `BarSeries` with `tuple[TimeBar, ...]` rows and `bar_type="time"`
-- a deterministic single-symbol Backtest MVP built on the shared trading kernel
-- a first `quantcraft.research` ergonomics surface with `Strategy`, `ta`, `qc`,
-  and `ParameterStudy`
-- explicit strategy-side order sizing through `buy()/sell(quantity=...)` and
-  `buy()/sell(qty_percent=...)`, with shipped `qty_percent` support in the
-  current single-symbol research/backtest workflow
-- shipped `market`, `limit`, `stop_market`, and `stop_limit` order behavior in
-  the current single-symbol research/backtest workflow
-- conservative resource reservation for active and dormant stop-family orders
-- a first `quantcraft.backtest` runtime surface with `BacktestEngine`
-- canonical backtest execution paths via `BacktestEngine.run(bars=..., strategy=...)` and `BacktestEngine.run(source=..., strategy=...)`
-- a typed `result.report` inspection surface for engine-produced backtest
-  results
-- a first `result.plot()` workflow for price, fills, equity, and drawdown
-  inspection
-- constrained first-beta parameter exploration through
-  `ParameterStudy(...).grid_search(...)`
-- canonical quickstart and notebook assets for the current research workflow
+- single-symbol, single-timeframe historical OHLCV backtesting
+- long-or-flat strategy workflows
+- `DataFrameDataSource`, `CSVDataSource`, `CCXTDataSource`, `TimeBar`, and
+  `BarSeries`
+- `Strategy`, `ta`, `qc`, and `ParameterStudy`
+- `BacktestEngine.run(source=..., strategy=...)`
+- `BacktestEngine.run(bars=..., strategy=...)`
+- market, limit, stop-market, and stop-limit orders
+- fixed quantity and `qty_percent` sizing
+- conservative reservation, fills, positions, reporting, plotting, and finite
+  grid parameter exploration
 
-The current implemented scope is close to the first beta target. The beta still
-needs richer examples, fresh install guidance, and release metadata/documentation
-cleanup.
+Unsupported in the first public beta:
 
-## Initial Canonical User Journeys
+- live trading
+- paper trading
+- shorting
+- leverage or margin
+- multi-symbol portfolios
+- multi-timeframe strategies
+- trading recommendations or optimizer claims
 
-These journeys are the first frozen library-consumption paths for both human users and AI agents.
-
-They exist to anchor docs, examples, reviews, and later automation to real use of the public library surface.
-They are not automatically equivalent to strict merge gates.
-
-### 1. Clean Install To Public Imports
-
-- starting state: a fresh environment with the built package artifact or synced repository environment
-- user intent: confirm the package installs cleanly and exposes the documented public API
-- success artifact: importing `BacktestEngine`, `Strategy`, `ParameterStudy`,
-  `ta`, `qc`, `BarSeries`, `TimeBar`, and the documented data sources from
-  their documented capability paths works exactly as the docs imply
-- superficially passing but still bad: the package builds, but documented imports or import paths drift
-
-### 2. DataFrame-Like Quickstart To First Backtest
-
-- starting state: the canonical `DataFrameDataSource` quickstart path
-- user intent: reach a first successful backtest with minimal setup
-- success artifact: the documented quickstart flow runs and produces a `BacktestResult`
-- superficially passing but still bad: the example only works with hidden setup or undocumented assumptions
-
-### 3. Materialized `BarSeries` To `engine.run(bars=...)`
-
-- starting state: user-created `TimeBar` and `BarSeries` values
-- user intent: run the engine from explicit materialized historical bars
-- success artifact: `BacktestEngine.run(bars=..., strategy=...)` works with the documented canonical types
-- superficially passing but still bad: the path only works because code or docs silently rely on lower-layer internals
-
-### 4. Exchange-Backed Historical Research Flow
-
-- starting state: the documented `CCXTDataSource` historical path
-- user intent: load historical bars and run a real research workflow through `engine.run(source=...)`
-- success artifact: the documented exchange-backed flow remains coherent and reproducible enough for humans and agents to follow
-- superficially passing but still bad: the path stays "documented" but becomes too hidden, flaky, or environment-dependent to serve as a trustworthy reference workflow
-
-## Setup
+## Installation
 
 Requirements:
 
 - Python 3.13
-- `uv`
+- `uv` for local contributor setup
 
-Install and verify locally:
+Package-user installation for the first beta will use the published package
+once `0.1.0b1` is released:
+
+```bash
+uv add quantcraft==0.1.0b1
+```
+
+From a local checkout today:
 
 ```bash
 uv sync
 uv run poe verify
 ```
 
-Direct commands remain available:
+Useful targeted checks:
 
 ```bash
-uv run pytest -q
-uv run ruff check .
-uv run mypy src
-uv run python scripts/coverage_check.py
-uv build
-uv run python scripts/repo_check.py
-uv run python scripts/notebook_validate.py
-uv run python scripts/live_smoke.py
+uv run poe repo-check
+uv run pytest tests/smoke/local -q
 ```
 
-## Current Verification Surface
+Live tests are excluded from the default verification lane and must be run
+explicitly when needed.
 
-The repository currently relies on:
+## Quickstart
 
-- unit tests
-- integration tests
-- explicit performance regression checks
-- structure and repo-rule checks
-- static analysis
-- packaging checks
-- notebook validation
+```python
+from quantcraft.backtest import BacktestEngine, CostConfig
+from quantcraft.data import DataFrameDataSource
+from quantcraft.research import Strategy, qc, ta
 
-The default integration surface keeps a deliberately small canonical strategy pair:
 
-- `RSI 30/70 mean reversion`
-- `EMA crossover`
+class SmaCrossStrategy(Strategy):
+    def init(self) -> None:
+        self.fast = ta.sma(self.data.close, length=2)
+        self.slow = ta.sma(self.data.close, length=3)
 
-This keeps the default lane representative without turning it into a slow “many strategies” suite.
-Additional deterministic strategy regression contracts can stay in the normal integration suite
-as long as they remain cheap and legible.
-Current checked-in examples include BTC-fixture-backed `%` sizing regressions
-for shipped market, limit-entry, and limit-exit behavior.
+    def on_bar(self, bar) -> None:
+        if qc.is_na(self.fast[0]) or qc.is_na(self.slow[0]):
+            return
+        if qc.crossover(self.fast, self.slow):
+            self.buy(quantity=1.0, tag="sma-entry")
+        elif self.position.is_open and qc.crossunder(self.fast, self.slow):
+            self.sell(quantity=1.0, tag="sma-exit")
 
-For day-to-day development, use the Poe task layer:
 
-- `uv run poe lint`
-- `uv run poe format`
-- `uv run poe perf-check`
-- `uv run poe typecheck`
-- `uv run poe test`
-- `uv run poe test-unit`
-- `uv run poe test-integration`
-- `uv run poe test-structure`
-- `uv run poe test-smoke`
-- `uv run poe test-live`
-- `uv run poe coverage`
-- `uv run poe build`
-- `uv run poe repo-check`
-- `uv run poe notebook-validate`
-- `uv run poe live-smoke`
-- `uv run poe verify`
-- `uv run poe verify-runtime`
+source = DataFrameDataSource(
+    frame=[
+        {"timestamp": "1970-01-01T00:01:00+00:00", "open": 10.0, "high": 12.0, "low": 8.0, "close": 10.0, "volume": 1.0},
+        {"timestamp": "1970-01-01T00:02:00+00:00", "open": 9.0, "high": 11.0, "low": 7.0, "close": 9.0, "volume": 1.0},
+        {"timestamp": "1970-01-01T00:03:00+00:00", "open": 8.0, "high": 10.0, "low": 6.0, "close": 8.0, "volume": 1.0},
+        {"timestamp": "1970-01-01T00:04:00+00:00", "open": 11.0, "high": 13.0, "low": 9.0, "close": 11.0, "volume": 1.0},
+        {"timestamp": "1970-01-01T00:05:00+00:00", "open": 12.0, "high": 14.0, "low": 10.0, "close": 12.0, "volume": 1.0},
+    ],
+    symbol="BTC/USDT",
+    timeframe="1m",
+)
 
-For runtime-sensitive changes, also run the explicit performance lane:
+engine = BacktestEngine(
+    initial_cash=1_000.0,
+    costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
+)
 
-- `uv run poe perf-check`
-- `uv run poe verify-runtime`
+result = engine.run(source=source, strategy=SmaCrossStrategy(), label="sma-cross")
 
-Agent-first repository harnessing keeps documentation, architecture rules, and local verification as first-class repository features.
+print(result.report)
+figure = result.plot()
+```
 
-The harness is repo-local DX infrastructure. It lives in `scripts/` and is orchestrated by Poe; it is not modeled as an installed package CLI.
+`result.report` provides structured run, return, risk, trade, cost, exposure,
+fill, and closed-trade information. `result.plot()` returns a Matplotlib figure
+with price, fills, equity, and drawdown panels.
 
-## Test Taxonomy
+## Examples
 
-The test suite is being organized by test type at the top level:
+The first public beta has exactly three canonical examples:
 
-- `tests/unit`
-- `tests/integration`
-- `tests/perf`
-- `tests/structure`
-- `tests/smoke`
+- SMA crossover quickstart
+- Orders and sizing
+- Parameter exploration
 
-`unit` and `integration` mirror the source layout when a matching source package
-path exists. `structure` owns repository-rule checks, and live/network-backed
-smoke validation stays out of the default test lane.
+See [docs/site/examples.md](docs/site/examples.md).
 
-Live tests are explicit-only and excluded from the default `pytest` run.
+## Documentation
 
-Current examples:
+Public user documentation lives under [docs/site](docs/site/index.md). Start
+with:
 
-- `tests/unit/integrations/...`
-- `tests/integration/commands/...`
-- `tests/structure/architecture/...`
-- `tests/structure/docs/...`
-- `tests/structure/repo/...`
-- `tests/smoke/local/...`
-- `tests/smoke/live/...`
+- [Installation](docs/site/installation.md)
+- [Quickstart](docs/site/quickstart.md)
+- [Examples](docs/site/examples.md)
+- [Beta scope](docs/site/concepts/beta-scope.md)
+- [Public API reference](docs/site/reference/public-api.md)
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for local setup, verification, docs
+expectations, pull request guidance, and AI-assisted contribution ownership
+requirements.
+
+## Security
+
+See [SECURITY.md](SECURITY.md) for vulnerability reporting, secrets handling,
+and financial safety boundaries.
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for release notes.
+
+## Financial Disclaimer
+
+QuantCraft is research and software tooling, not financial advice. Backtest
+results do not guarantee future performance. You are responsible for data quality,
+assumptions, execution risk, and trading decisions.
+
+## License
+
+QuantCraft is licensed under the MIT license.

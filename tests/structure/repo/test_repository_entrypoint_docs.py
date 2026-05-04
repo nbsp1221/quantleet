@@ -8,46 +8,106 @@ def test_repository_entrypoint_docs_exist_and_are_not_empty() -> None:
         assert path.read_text(encoding="utf-8").strip(), f"{relative_path} is empty"
 
 
-def test_readme_has_project_description_and_setup_section() -> None:
+def test_release_facing_repository_docs_exist_and_are_not_empty() -> None:
+    for relative_path in [
+        "CONTRIBUTING.md",
+        "SECURITY.md",
+        "CHANGELOG.md",
+        ".github/PULL_REQUEST_TEMPLATE.md",
+    ]:
+        path = ROOT / relative_path
+        assert path.exists(), f"missing {relative_path}"
+        assert path.read_text(encoding="utf-8").strip(), f"{relative_path} is empty"
+
+
+def test_release_facing_repository_docs_cover_public_beta_workflow() -> None:
+    contributing = (ROOT / "CONTRIBUTING.md").read_text(encoding="utf-8")
+    security = (ROOT / "SECURITY.md").read_text(encoding="utf-8")
+    changelog = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+    pr_template = (ROOT / ".github/PULL_REQUEST_TEMPLATE.md").read_text(encoding="utf-8")
+
+    for marker in [
+        "uv sync",
+        "uv run poe verify",
+        "uv run poe repo-check",
+        "docs/site",
+        "AI-assisted",
+        "human",
+    ]:
+        assert marker in contributing
+
+    for marker in [
+        "vulnerability",
+        "secrets",
+        "financial",
+        "public issue",
+        "0.1.0b1",
+    ]:
+        assert marker.lower() in security.lower()
+
+    assert "## Unreleased" in changelog
+    assert "## 0.1.0b1" in changelog
+
+    for marker in [
+        "Summary",
+        "Change type",
+        "Docs impact",
+        "Verification",
+        "Changelog",
+        "AI-assisted",
+        "human",
+    ]:
+        assert marker in pr_template
+
+
+def test_readme_has_project_description_and_installation_section() -> None:
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
 
     assert "quantcraft" in readme.lower()
-    assert "## setup" in readme.lower()
+    assert "## installation" in readme.lower()
 
 
-def test_readme_current_scope_mentions_implemented_backtest_research_and_data_surfaces() -> None:
+def test_readme_presents_public_beta_docs_surface() -> None:
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
-    setup_start = readme.index("## Setup")
-    pre_setup_section = readme[:setup_start]
 
-    assert "Backtest MVP" in pre_setup_section
-    assert "`quantcraft.research`" in pre_setup_section
-    assert "`quantcraft.data`" in pre_setup_section
-    for marker in ["`CCXTDataSource`", "`CSVDataSource`", "`DataFrameDataSource`"]:
-        assert marker in pre_setup_section
-    for marker in ["`TimeBar`", "`BarSeries`"]:
-        assert marker in pre_setup_section
-    for marker in ["`Strategy`", "`BacktestEngine`", "`ta`", "`qc`"]:
-        assert marker in pre_setup_section
-    assert "`qty_percent`" in pre_setup_section
-    assert "`run_backtest`" not in pre_setup_section
-    assert "`BacktestEngine.run(bars=..., strategy=...)`" in pre_setup_section
-    assert "`BacktestEngine.run(source=..., strategy=...)`" in pre_setup_section
-    assert "automatic historical pagination" in pre_setup_section
-    assert "## Initial Canonical User Journeys" in readme
-    for journey_marker in [
-        "Clean Install To Public Imports",
-        "DataFrame-Like Quickstart To First Backtest",
-        "Materialized `BarSeries`",
-        "Exchange-Backed Historical Research Flow",
+    for marker in [
+        "single-symbol",
+        "Python 3.13",
+        "from quantcraft.backtest import BacktestEngine, CostConfig",
+        "from quantcraft.data import DataFrameDataSource",
+        "from quantcraft.research import Strategy, qc, ta",
+        "result.report",
+        "result.plot()",
+        "SMA crossover quickstart",
+        "Orders and sizing",
+        "Parameter exploration",
+        "docs/site",
+        "CONTRIBUTING.md",
+        "SECURITY.md",
+        "CHANGELOG.md",
+        "MIT",
     ]:
-        assert journey_marker in readme
-    assert "strict merge gates" in readme
-    assert "canonical strategy" in readme.lower()
-    assert "RSI 30/70 mean reversion" in readme
-    assert "EMA crossover" in readme
-    assert "BTC-fixture-backed `%` sizing regressions" in readme
-    assert "test-integration-extended" not in readme
+        assert marker in readme
+
+    for disclaimer_marker in [
+        "not financial advice",
+        "do not guarantee future performance",
+        "data quality",
+        "execution risk",
+        "trading decisions",
+    ]:
+        assert disclaimer_marker in readme.lower()
+
+    for forbidden in [
+        "docs/plans",
+        "docs/product-specs",
+        "docs/design-docs",
+        "docs/research",
+        "from quantcraft import BacktestEngine",
+        "from quantcraft.trading.domain.costs import CostConfig",
+        "TimeInForce",
+    ]:
+        assert forbidden not in readme
 
 
 def test_current_docs_describe_summary_terms_and_engine_surface() -> None:

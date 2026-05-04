@@ -1,14 +1,12 @@
 from __future__ import annotations
 
-from quantcraft.backtest import BacktestEngine
+from quantcraft.backtest import BacktestEngine, CostConfig
 from quantcraft.data import DataFrameDataSource
 from quantcraft.research import Strategy
-from quantcraft.trading.domain.costs import CostConfig
-from quantcraft.trading.domain.events import BarEvent
 
 
 class QuickstartStrategy(Strategy):
-    def on_bar(self, bar: BarEvent) -> None:
+    def on_bar(self, bar) -> None:
         if len(self.data.close) == 1:
             self.buy(quantity=1.0, tag="entry")
         elif self.position.is_open:
