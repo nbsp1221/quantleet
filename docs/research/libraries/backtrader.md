@@ -18,7 +18,7 @@ Related research docs:
 
 ## Purpose
 
-Capture the most relevant lessons from `Backtrader` for `quantcraft`, especially around breadth, multi-data workflows, and the trade-offs of a large classic framework surface.
+Capture the most relevant lessons from `Backtrader` for `quantleet`, especially around breadth, multi-data workflows, and the trade-offs of a large classic framework surface.
 
 ## Project Snapshot
 
@@ -29,7 +29,7 @@ Capture the most relevant lessons from `Backtrader` for `quantcraft`, especially
 
 ## Core Architecture
 
-`Backtrader` uses a framework-style architecture centered on `Cerebro`, which wires together strategies, data feeds, broker simulation, analyzers, indicators, and optional live integrations. It is broader than `quantcraft` in almost every user-facing dimension, but it also carries the weight of an older and more sprawling abstraction stack.
+`Backtrader` uses a framework-style architecture centered on `Cerebro`, which wires together strategies, data feeds, broker simulation, analyzers, indicators, and optional live integrations. It is broader than `quantleet` in almost every user-facing dimension, but it also carries the weight of an older and more sprawling abstraction stack.
 
 ## Strategy API Shape
 
@@ -48,7 +48,7 @@ The framework supports multiple data feeds, resampling, replay, and multi-timefr
 
 ## Order And Fill Model
 
-The project appears to support a broad classic order and broker model, with analyzers and broker abstractions layered around it. That is useful as a reference for order-surface coverage, but the docs surfaced in this pass are less explicit than `quantcraft`'s current docs about causal intrabar defaults or gap handling.
+The project appears to support a broad classic order and broker model, with analyzers and broker abstractions layered around it. That is useful as a reference for order-surface coverage, but the docs surfaced in this pass are less explicit than `quantleet`'s current docs about causal intrabar defaults or gap handling.
 
 ## Backtest vs Live Story
 
@@ -71,8 +71,8 @@ The project appears to support a broad classic order and broker model, with anal
 ## Weaknesses
 
 - maintenance freshness appears weaker than newer leaders in the space
-- framework complexity is high relative to current `quantcraft`
-- causal execution semantics are less foregrounded than in `quantcraft`'s current documentation
+- framework complexity is high relative to current `quantleet`
+- causal execution semantics are less foregrounded than in `quantleet`'s current documentation
 
 ## What Quantcraft Should Learn
 

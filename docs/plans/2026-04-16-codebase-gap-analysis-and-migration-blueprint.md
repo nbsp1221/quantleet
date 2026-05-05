@@ -10,7 +10,7 @@
 ## Planner Contract
 
 - Goal:
-  - produce a concrete, repo-wide analysis of how the current `src/quantcraft`
+  - produce a concrete, repo-wide analysis of how the current `src/quantleet`
     structure differs from the approved package topology and dependency
     direction
   - capture the gap as a migration blueprint that can guide later code-moving
@@ -21,7 +21,7 @@
   - [`README.md`](../../README.md)
   - [`ARCHITECTURE.md`](../../ARCHITECTURE.md)
   - [`docs/design-docs/index.md`](../design-docs/index.md)
-  - [`docs/design-docs/quantcraft-architecture.md`](../design-docs/quantcraft-architecture.md)
+  - [`docs/design-docs/quantleet-architecture.md`](../design-docs/quantleet-architecture.md)
   - [`docs/design-docs/package-topology-and-naming.md`](../design-docs/package-topology-and-naming.md)
   - [`docs/RELIABILITY.md`](../RELIABILITY.md)
   - [`docs/SECURITY.md`](../SECURITY.md)
@@ -29,7 +29,7 @@
   - they define the approved capability-first target, dependency rules,
     product-surface boundaries, verification expectations, and safety tiering
 - In-repo scope:
-  - analyze `src/quantcraft`, `tests`, and structure-check coverage relevant to
+  - analyze `src/quantleet`, `tests`, and structure-check coverage relevant to
     package ownership and migration sequencing
   - write analysis and migration-blueprint documentation under `docs/plans/`
 - Out-of-repo scope:

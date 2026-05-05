@@ -8,7 +8,7 @@
 - Canonical: `no`
 - Purpose:
   gather support and rebuttal evidence for the next two hard seams in
-  `quantcraft.trading`:
+  `quantleet.trading`:
   runtime `Order` lifecycle/FSM and sizing-intent design
 
 ## Why This Document Exists
@@ -34,16 +34,16 @@ next public contract must expose these features immediately.
 
 This note used:
 
-- current `quantcraft` code and docs
+- current `quantleet` code and docs
 - official public docs for comparator libraries
 - local source review of comparator libraries already present on the machine
 
 To keep the repository durable, citations below prefer public docs and
 repository-local files over machine-local `/tmp/...` paths.
 
-## Current `quantcraft` Truth
+## Current `quantleet` Truth
 
-Today, `quantcraft` still has a very small order model:
+Today, `quantleet` still has a very small order model:
 
 - `OrderIntent` carries only:
   - `symbol`
@@ -62,9 +62,9 @@ Today, `quantcraft` still has a very small order model:
 
 Local evidence:
 
-- [`../../src/quantcraft/trading/domain/intents.py`](../../src/quantcraft/trading/domain/intents.py)
-- [`../../src/quantcraft/trading/domain/orders.py`](../../src/quantcraft/trading/domain/orders.py)
-- [`../../src/quantcraft/trading/domain/matching.py`](../../src/quantcraft/trading/domain/matching.py)
+- [`../../src/quantleet/trading/domain/intents.py`](../../src/quantleet/trading/domain/intents.py)
+- [`../../src/quantleet/trading/domain/orders.py`](../../src/quantleet/trading/domain/orders.py)
+- [`../../src/quantleet/trading/domain/matching.py`](../../src/quantleet/trading/domain/matching.py)
 - [`../product-specs/backtest-mvp.md`](../product-specs/backtest-mvp.md)
 - [`../product-specs/research-ergonomics.md`](../product-specs/research-ergonomics.md)
 - [`../design-docs/order-runtime-model-design.md`](../design-docs/order-runtime-model-design.md)
@@ -82,7 +82,7 @@ like,” but:
 NautilusTrader, LEAN, and backtrader all keep the strategy-facing request or
 authoring surface lighter than the runtime order machinery.
 
-This supports the existing `quantcraft` seam and strengthens the case for
+This supports the existing `quantleet` seam and strengthens the case for
 putting lifecycle depth onto runtime `Order`, not back onto `OrderIntent`.
 
 Sources:
@@ -128,7 +128,7 @@ Sources:
 
 ### Common Pattern 3: Full venue-style taxonomies exist for live complexity, not for free
 
-Nautilus and LEAN both support more lifecycle states than `quantcraft` should
+Nautilus and LEAN both support more lifecycle states than `quantleet` should
 copy immediately:
 
 - `submitted`
@@ -145,7 +145,7 @@ Those states make sense because those engines already carry:
 - richer partial-fill and event streams
 
 This is evidence against immediately freezing a large status enum inside
-`quantcraft`.
+`quantleet`.
 
 Sources:
 
@@ -161,7 +161,7 @@ Sources:
 The evidence converges on:
 
 - runtime `Order` should gain more lifecycle depth than it has now
-- but `quantcraft` should not jump to a full venue-style OMS taxonomy
+- but `quantleet` should not jump to a full venue-style OMS taxonomy
 - stop triggering should be represented explicitly
 - the smallest correct answer is a kernel-local lifecycle plus stop-trigger
   facts
@@ -227,7 +227,7 @@ This is strong evidence that:
 
 > portfolio-target sizing is a different layer from order-intent sizing
 
-and should not be folded into the next `quantcraft` order slice.
+and should not be folded into the next `quantleet` order slice.
 
 Sources:
 
@@ -283,7 +283,7 @@ That leaves a narrow preferred direction:
 The strongest objections found were:
 
 1. A rich lifecycle enum now would be fake precision because current shipped
-   `quantcraft` does not yet have:
+   `quantleet` does not yet have:
    - stop-family orders
    - cancel/replace
    - paper/live execution events

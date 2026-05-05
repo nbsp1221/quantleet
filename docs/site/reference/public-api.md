@@ -4,29 +4,29 @@ This curated reference lists the first-beta imports users should prefer.
 
 ## Data
 
-- `quantcraft.data.TimeBar`
-- `quantcraft.data.BarSeries`
-- `quantcraft.data.DataFrameDataSource`
-- `quantcraft.data.CSVDataSource`
-- `quantcraft.data.CCXTDataSource`
+- `quantleet.data.TimeBar`
+- `quantleet.data.BarSeries`
+- `quantleet.data.DataFrameDataSource`
+- `quantleet.data.CSVDataSource`
+- `quantleet.data.CCXTDataSource`
 
 ## Backtesting
 
-- `quantcraft.backtest.BacktestEngine`
-- `quantcraft.backtest.CostConfig`
-- `quantcraft.backtest.BacktestResult`
+- `quantleet.backtest.BacktestEngine`
+- `quantleet.backtest.CostConfig`
+- `quantleet.backtest.BacktestResult`
 - `BacktestResult.report`
 - `BacktestResult.plot()`
 
 ## Research
 
-- `quantcraft.research.Strategy`
+- `quantleet.research.Strategy`
 - `Strategy.buy(...)`
 - `Strategy.sell(...)`
-- `quantcraft.research.ParameterStudy`
+- `quantleet.research.ParameterStudy`
 - `ParameterStudy.grid_search(...)`
-- `quantcraft.research.ta`
-- `quantcraft.research.qc`
+- `quantleet.research.ta`
+- `quantleet.research.qc`
 
 Lower-level trading-domain objects are supporting implementation contracts, not
 the primary first-beta import surface for user documentation.

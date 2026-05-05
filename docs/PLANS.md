@@ -1,6 +1,6 @@
 # Plan Pointers
 
-This document is a lightweight location guide for plans in `quantcraft`. It is
+This document is a lightweight location guide for plans in `quantleet`. It is
 not a lifecycle tracker.
 
 - New active plans live in [`plans/`](plans/).

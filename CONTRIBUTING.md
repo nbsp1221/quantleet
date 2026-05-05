@@ -1,6 +1,6 @@
 # Contributing
 
-QuantCraft is in its first public beta documentation phase. The current product
+Quantleet is in its first public beta documentation phase. The current product
 scope is single-symbol historical backtesting and quant research tooling.
 
 ## Setup

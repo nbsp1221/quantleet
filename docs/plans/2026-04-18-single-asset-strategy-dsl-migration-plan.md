@@ -4,9 +4,9 @@
 
 **Goal:** Add a compatibility-preserving single-asset-first strategy authoring path so current `Strategy` users can omit `symbol` in common `buy()` / `sell()` calls during `on_bar()` while the internal engine keeps explicit symbol-bearing intents.
 
-**Architecture:** Keep the current shipped `quantcraft.research.Strategy` as the public base class and preserve explicit `symbol=...` support. Implement symbol inference only inside the active single-asset bar callback, so the public authoring UX gets simpler without changing the shared runtime contract or introducing multi-asset/runtime architecture work early.
+**Architecture:** Keep the current shipped `quantleet.research.Strategy` as the public base class and preserve explicit `symbol=...` support. Implement symbol inference only inside the active single-asset bar callback, so the public authoring UX gets simpler without changing the shared runtime contract or introducing multi-asset/runtime architecture work early.
 
-**Tech Stack:** Python 3.13, strict mypy, pytest, repo-local structure/doc tests, Ruff, existing `quantcraft.research` + `quantcraft.backtest` runtime
+**Tech Stack:** Python 3.13, strict mypy, pytest, repo-local structure/doc tests, Ruff, existing `quantleet.research` + `quantleet.backtest` runtime
 
 ---
 
@@ -219,7 +219,7 @@ git commit -m "test: freeze additive single-asset strategy helper contract"
 ### Task 2: Implement Symbol Inference Without Breaking Explicit Symbol Support
 
 **Files:**
-- Modify: `src/quantcraft/research/strategy.py`
+- Modify: `src/quantleet/research/strategy.py`
 
 **Step 1: Implement minimal runtime-state support**
 
@@ -301,7 +301,7 @@ Expected:
 Run:
 
 ```bash
-uv run ruff check src/quantcraft/research/strategy.py tests/unit/research/test_strategy_surface.py tests/integration/research/test_backtest_execution_semantics.py tests/integration/research/support_backtest_runner.py
+uv run ruff check src/quantleet/research/strategy.py tests/unit/research/test_strategy_surface.py tests/integration/research/test_backtest_execution_semantics.py tests/integration/research/support_backtest_runner.py
 uv run mypy src
 ```
 
@@ -313,7 +313,7 @@ Expected:
 **Step 5: Commit**
 
 ```bash
-git add src/quantcraft/research/strategy.py tests/unit/research/test_strategy_surface.py tests/integration/research/test_backtest_execution_semantics.py tests/integration/research/support_backtest_runner.py
+git add src/quantleet/research/strategy.py tests/unit/research/test_strategy_surface.py tests/integration/research/test_backtest_execution_semantics.py tests/integration/research/support_backtest_runner.py
 git commit -m "feat: allow implicit symbol in single-asset strategy helpers"
 ```
 
@@ -459,7 +459,7 @@ Confirm all of the following before closing:
 **Step 5: Commit**
 
 ```bash
-git add src/quantcraft/research/strategy.py tests docs notebooks
+git add src/quantleet/research/strategy.py tests docs notebooks
 git commit -m "feat: ship additive single-asset strategy helper migration"
 ```
 
@@ -473,13 +473,13 @@ git commit -m "feat: ship additive single-asset strategy helper migration"
     otherwise the repository will immediately drift between shipped behavior and
     stated contract.
   - `verify-runtime` is the right final gate because this slice touches
-    `src/quantcraft/research/strategy.py`, which the reliability docs already
+    `src/quantleet/research/strategy.py`, which the reliability docs already
     classify as runtime-sensitive.
 - Verification evidence:
   - Planning source inspection:
-    - `src/quantcraft/research/strategy.py`
-    - `src/quantcraft/research/__init__.py`
-    - `src/quantcraft/backtest/strategy_runtime.py`
+    - `src/quantleet/research/strategy.py`
+    - `src/quantleet/research/__init__.py`
+    - `src/quantleet/backtest/strategy_runtime.py`
     - `tests/unit/research/test_strategy_surface.py`
     - `tests/integration/research/test_backtest_execution_semantics.py`
     - `tests/integration/research/support_backtest_runner.py`

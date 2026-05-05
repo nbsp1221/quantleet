@@ -1,6 +1,6 @@
 # Repo Entry Contract
 
-`AGENTS.md` is the repo entry contract for agent work in `quantcraft`.
+`AGENTS.md` is the repo entry contract for agent work in `quantleet`.
 
 This file is the map, not the encyclopedia.
 The deeper docs under `docs/` are the system of record for architecture,

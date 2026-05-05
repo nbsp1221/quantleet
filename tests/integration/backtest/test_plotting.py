@@ -11,11 +11,11 @@ matplotlib.use("Agg")
 from matplotlib import pyplot as plt
 from matplotlib.figure import Figure
 
-from quantcraft.backtest import BacktestEngine
-from quantcraft.data import BarSeries, DataFrameDataSource, HistoricalDataSource, TimeBar
-from quantcraft.research import Strategy
-from quantcraft.trading.domain.costs import CostConfig
-from quantcraft.trading.domain.events import BarEvent
+from quantleet.backtest import BacktestEngine
+from quantleet.data import BarSeries, DataFrameDataSource, HistoricalDataSource, TimeBar
+from quantleet.research import Strategy
+from quantleet.trading.domain.costs import CostConfig
+from quantleet.trading.domain.events import BarEvent
 
 
 @pytest.fixture(autouse=True)

@@ -34,10 +34,10 @@
     semantics, and the current shipped behavior this cleanup must preserve.
 - In-repo scope:
   - Only local simplification in the stop-market slice under:
-    - `src/quantcraft/research/strategy.py`
-    - `src/quantcraft/trading/domain/orders.py`
-    - `src/quantcraft/trading/domain/matching.py`
-    - `src/quantcraft/backtest/execution_model.py`
+    - `src/quantleet/research/strategy.py`
+    - `src/quantleet/trading/domain/orders.py`
+    - `src/quantleet/trading/domain/matching.py`
+    - `src/quantleet/backtest/execution_model.py`
   - Update this active plan with findings and fresh verification evidence.
 - Out-of-repo scope:
   - no non-repo changes

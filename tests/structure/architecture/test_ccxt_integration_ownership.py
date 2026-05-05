@@ -12,9 +12,9 @@ def _parse_module(relative_path: str) -> ast.AST:
 
 def test_ccxt_integration_owner_files_exist() -> None:
     expected_paths = (
-        Path("src/quantcraft/integrations/venues/__init__.py"),
-        Path("src/quantcraft/integrations/venues/ccxt/__init__.py"),
-        Path("src/quantcraft/integrations/venues/ccxt/market_data.py"),
+        Path("src/quantleet/integrations/venues/__init__.py"),
+        Path("src/quantleet/integrations/venues/ccxt/__init__.py"),
+        Path("src/quantleet/integrations/venues/ccxt/market_data.py"),
     )
 
     for relative_path in expected_paths:
@@ -24,7 +24,7 @@ def test_ccxt_integration_owner_files_exist() -> None:
 
 
 def test_ccxt_market_data_owner_contains_exchange_behavior() -> None:
-    tree = _parse_module("src/quantcraft/integrations/venues/ccxt/market_data.py")
+    tree = _parse_module("src/quantleet/integrations/venues/ccxt/market_data.py")
 
     defined_names = {
         node.name
@@ -44,12 +44,12 @@ def test_ccxt_market_data_owner_contains_exchange_behavior() -> None:
 
 
 def test_removed_exchange_compatibility_shims_stay_absent() -> None:
-    assert not (ROOT / "src/quantcraft/data/adapters/exchange_backend.py").exists()
-    assert not (ROOT / "src/quantcraft/exchange.py").exists()
+    assert not (ROOT / "src/quantleet/data/adapters/exchange_backend.py").exists()
+    assert not (ROOT / "src/quantleet/exchange.py").exists()
 
 
 def test_ccxt_data_source_imports_canonical_integrations_owner() -> None:
-    tree = _parse_module("src/quantcraft/data/adapters/ccxt_source.py")
+    tree = _parse_module("src/quantleet/data/adapters/ccxt_source.py")
 
     imported_modules = {
         node.module
@@ -59,5 +59,5 @@ def test_ccxt_data_source_imports_canonical_integrations_owner() -> None:
         and node.module != "__future__"
     }
 
-    assert "quantcraft.integrations.venues.ccxt.market_data" in imported_modules
-    assert "quantcraft.data.adapters.exchange_backend" not in imported_modules
+    assert "quantleet.integrations.venues.ccxt.market_data" in imported_modules
+    assert "quantleet.data.adapters.exchange_backend" not in imported_modules

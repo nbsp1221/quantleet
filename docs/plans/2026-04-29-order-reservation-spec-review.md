@@ -109,7 +109,7 @@
   - Architecture review confirmed the main boundary is sound, then requested
     clearer test-lane wording so `trading` tests never receive raw
     `qty_percent` requests and reservation shrink remains outside
-    `quantcraft.trading.domain.Order`.
+    `quantleet.trading.domain.Order`.
   - Testing-strategy review requested ordinary market-slippage and limit-fee
     cases, and clarified that lifecycle release is deferred rather than an MVP
     hook.

@@ -4,9 +4,9 @@
 
 **Goal:** Add a user-facing `BacktestEngine`, a canonical `TimeBar` single-bar type, and a self-describing `BarSeries` dataset contract so execution runs on explicit materialized data rather than hidden source metadata assumptions.
 
-**Architecture:** Keep the current backtest kernel and result model intact, add a thin orchestration layer as `BacktestEngine`, add `TimeBar` and `BarSeries` at the `quantcraft.data` boundary, and remove the public `run_backtest(...)` free-function entry during this slice so there is one canonical execution surface. This slice supports `time` bars only. Do not introduce a public generic engine base, and do not move mutable kernel state out of the existing backtest path.
+**Architecture:** Keep the current backtest kernel and result model intact, add a thin orchestration layer as `BacktestEngine`, add `TimeBar` and `BarSeries` at the `quantleet.data` boundary, and remove the public `run_backtest(...)` free-function entry during this slice so there is one canonical execution surface. This slice supports `time` bars only. Do not introduce a public generic engine base, and do not move mutable kernel state out of the existing backtest path.
 
-**Tech Stack:** Python 3.13, dataclasses, pytest, mypy, ruff, repo-local harness scripts, current `quantcraft.data` and `quantcraft.research` surfaces
+**Tech Stack:** Python 3.13, dataclasses, pytest, mypy, ruff, repo-local harness scripts, current `quantleet.data` and `quantleet.research` surfaces
 
 ---
 
@@ -21,11 +21,11 @@
 
 Add tests that assert:
 
-- `BacktestEngine` is publicly importable from `quantcraft.research`
-- `TimeBar` and `BarSeries` are publicly importable from `quantcraft.data`
+- `BacktestEngine` is publicly importable from `quantleet.research`
+- `TimeBar` and `BarSeries` are publicly importable from `quantleet.data`
 - `BacktestEngine(...).run(bars=..., strategy=...)` returns the current `BacktestResult`
 - `BacktestEngine(...).run(source=..., strategy=...)` is part of the approved contract
-- `run_backtest(...)` is no longer part of the public `quantcraft.research` entry surface
+- `run_backtest(...)` is no longer part of the public `quantleet.research` entry surface
 
 **Step 2: Run the targeted tests to verify they fail**
 
@@ -46,9 +46,9 @@ Do not pin exact internal helper names or private module structure.
 ### Task 2: Add `TimeBar` and the `BarSeries` dataset contract
 
 **Files:**
-- Modify: `src/quantcraft/data/domain/__init__.py`
-- Create or modify: `src/quantcraft/data/domain/bars.py`
-- Modify: `src/quantcraft/data/domain/sources.py`
+- Modify: `src/quantleet/data/domain/__init__.py`
+- Create or modify: `src/quantleet/data/domain/bars.py`
+- Modify: `src/quantleet/data/domain/sources.py`
 - Modify: `tests/unit/data/domain/test_bars.py`
 
 **Step 1: Add the dataset type**
@@ -104,9 +104,9 @@ Expected:
 ### Task 3: Update shipped data sources to materialize the dataset
 
 **Files:**
-- Modify: `src/quantcraft/data/adapters/ccxt_source.py`
-- Modify: `src/quantcraft/data/adapters/csv_source.py`
-- Modify: `src/quantcraft/data/adapters/dataframe_source.py`
+- Modify: `src/quantleet/data/adapters/ccxt_source.py`
+- Modify: `src/quantleet/data/adapters/csv_source.py`
+- Modify: `src/quantleet/data/adapters/dataframe_source.py`
 - Modify: `tests/unit/data/adapters/test_dataframe_source.py`
 - Modify: any directly related source-adapter tests as needed
 
@@ -142,10 +142,10 @@ Expected:
 ### Task 4: Add the minimal `BacktestEngine` public surface
 
 **Files:**
-- Modify: `src/quantcraft/research/__init__.py`
-- Create or modify: `src/quantcraft/research/application/engine.py`
-- Modify: `src/quantcraft/research/application/__init__.py`
-- Modify: `src/quantcraft/research/application/backtest.py`
+- Modify: `src/quantleet/research/__init__.py`
+- Create or modify: `src/quantleet/research/application/engine.py`
+- Modify: `src/quantleet/research/application/__init__.py`
+- Modify: `src/quantleet/research/application/backtest.py`
 - Modify: `tests/integration/research/test_backtest_runner.py`
 
 **Step 1: Add the engine type**
@@ -178,7 +178,7 @@ Internally route through the current backtest path rather than duplicating the k
 
 Remove the public free-function entry so users and future agents have one canonical execution path.
 
-If an internal helper remains inside `backtest.py`, keep it private and inaccessible from `quantcraft.research`.
+If an internal helper remains inside `backtest.py`, keep it private and inaccessible from `quantleet.research`.
 
 **Step 5: Run targeted tests**
 
@@ -195,7 +195,7 @@ Expected:
 ### Task 5: Remove hidden source-metadata assumptions
 
 **Files:**
-- Modify: `src/quantcraft/research/application/engine.py`
+- Modify: `src/quantleet/research/application/engine.py`
 - Modify: `tests/integration/research/test_backtest_runner.py`
 
 **Step 1: Add failing tests for the approved metadata rule**
@@ -273,9 +273,9 @@ Expected:
 ### Task 7: Simplify if the new entry layer adds avoidable complexity
 
 **Files:**
-- Modify only if needed: `src/quantcraft/research/application/engine.py`
-- Modify only if needed: `src/quantcraft/research/application/backtest.py`
-- Modify only if needed: `src/quantcraft/data/domain/bars.py`
+- Modify only if needed: `src/quantleet/research/application/engine.py`
+- Modify only if needed: `src/quantleet/research/application/backtest.py`
+- Modify only if needed: `src/quantleet/data/domain/bars.py`
 
 **Step 1: Do a narrow simplification pass**
 

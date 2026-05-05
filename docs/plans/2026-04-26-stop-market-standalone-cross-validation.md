@@ -10,7 +10,7 @@
 ## Planner Contract
 
 - Goal:
-  - update the `/tmp/quantcraft-stop-xval` cross-validation harness to use the
+  - update the `/tmp/quantleet-stop-xval` cross-validation harness to use the
     corrected standalone stop-market strategy candidates
   - run the experiment across multiple libraries where the strategy semantics
     can be credibly expressed
@@ -40,8 +40,8 @@
 - In-repo scope:
   - add and complete this active plan
 - Out-of-repo scope:
-  - modify `/tmp/quantcraft-stop-xval` harness scripts
-  - optionally modify `/tmp/quantcraft-stop-xval-nautilus` runner scripts if
+  - modify `/tmp/quantleet-stop-xval` harness scripts
+  - optionally modify `/tmp/quantleet-stop-xval-nautilus` runner scripts if
     Nautilus is included in the comparison
   - run local comparator experiments and write `/tmp` result artifacts
 - Tier A progression requested: `yes`
@@ -60,7 +60,7 @@
     - Audit reference:
       this active plan and the corrected strategy candidate plan
 - Verification commands:
-  - `cd /tmp/quantcraft-stop-xval && uv run python run_standalone_stop_validation.py`
+  - `cd /tmp/quantleet-stop-xval && uv run python run_standalone_stop_validation.py`
   - `uv run poe repo-check`
 - Success criteria:
   - experiment uses the corrected standalone strategy set:
@@ -72,7 +72,7 @@
   - final report lists executed comparator engines and explains any mismatch
     causes
 - Out of scope:
-  - changing shipped `quantcraft` runtime code
+  - changing shipped `quantleet` runtime code
   - implementing attached orders, OTO, OCO, bracket, `stop_limit`, or shorting
 
 ## Evaluator Acceptance Contract
@@ -83,7 +83,7 @@
     strategies were run and any comparator limitations are disclosed
 - Acceptance artifact location:
   - this active plan
-  - `/tmp/quantcraft-stop-xval/results/standalone_stop_validation.json`
+  - `/tmp/quantleet-stop-xval/results/standalone_stop_validation.json`
 - How the generator and evaluator agreed on done before execution:
   - done means the experiment no longer relies on protective stop-loss orders
     attached after entry and the resulting mismatches, if any, are attributable
@@ -109,9 +109,9 @@
   - comparator engines that cannot credibly express the corrected strategies
     will be triaged rather than silently included
   - implemented a fresh runner at
-    `/tmp/quantcraft-stop-xval/run_standalone_stop_validation.py`
+    `/tmp/quantleet-stop-xval/run_standalone_stop_validation.py`
   - executed comparator engines:
-    - `quantcraft`
+    - `quantleet`
     - `backtesting.py`
     - `backtrader`
   - `vectorbt` was not promoted into this runner because its public workflow is
@@ -129,31 +129,31 @@
 - Findings:
   - No material mismatch found in the executed comparator set.
   - All three corrected standalone strategies produced exact result parity
-    across `quantcraft`, `backtesting.py`, and `backtrader`.
+    across `quantleet`, `backtesting.py`, and `backtrader`.
   - Strategy results:
     - `opening_range_breakout`:
       - final equity: `993564.1400000004`
       - closed trades: `36`
-      - first divergences vs `quantcraft`: none
+      - first divergences vs `quantleet`: none
     - `donchian_breakout`:
-      - final equity: `1004179.49` for `quantcraft` / `backtrader`;
+      - final equity: `1004179.49` for `quantleet` / `backtrader`;
         `1004179.4900000001` for `backtesting.py`
       - closed trades: `11`
-      - first divergences vs `quantcraft`: none
+      - first divergences vs `quantleet`: none
     - `inside_bar_breakout`:
-      - final equity: `1002255.8300000002` for `quantcraft` / `backtrader`;
+      - final equity: `1002255.8300000002` for `quantleet` / `backtrader`;
         `1002255.8300000001` for `backtesting.py`
       - closed trades: `37`
-      - first divergences vs `quantcraft`: none
+      - first divergences vs `quantleet`: none
   - This supports the revised diagnosis: prior large mismatches came from
     validating attached protective stop behavior with a standalone order
     surface, not from the shipped standalone `stop_market` primitive.
 - Verification evidence:
   - Cross-validation command:
-    - `cd /tmp/quantcraft-stop-xval && uv run python run_standalone_stop_validation.py`
+    - `cd /tmp/quantleet-stop-xval && uv run python run_standalone_stop_validation.py`
     - Result: command exited `0`
     - Fresh artifact:
-      `/tmp/quantcraft-stop-xval/results/standalone_stop_validation.json`
+      `/tmp/quantleet-stop-xval/results/standalone_stop_validation.json`
   - Repo/document lane:
     - `uv run poe repo-check`
     - Result: `repository checks passed`

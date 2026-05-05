@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import pytest
 
-from quantcraft.trading.domain.costs import CostConfig
-from quantcraft.trading.domain.intents import OrderIntent
-from quantcraft.trading.domain.orders import Order
-from quantcraft.trading.domain.state import TradingState
-from quantcraft.trading.order_requests import PendingOrderRequest
-from quantcraft.trading.sizing import (
+from quantleet.trading.domain.costs import CostConfig
+from quantleet.trading.domain.intents import OrderIntent
+from quantleet.trading.domain.orders import Order
+from quantleet.trading.domain.state import TradingState
+from quantleet.trading.order_requests import PendingOrderRequest
+from quantleet.trading.sizing import (
     SizingConstraints,
     SizingReservations,
     resolve_pending_order_request,

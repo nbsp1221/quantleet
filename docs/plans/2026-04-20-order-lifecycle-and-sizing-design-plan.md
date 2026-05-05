@@ -11,7 +11,7 @@
 
 - Goal:
   Produce a repository-local, evidence-backed design slice that answers two
-  next hard-seam questions for `quantcraft.trading`:
+  next hard-seam questions for `quantleet.trading`:
   - what lifecycle/FSM direction should runtime `Order` prefer next for
     `market`, `limit`, `stop-market`, and `stop-limit`
   - what sizing direction should be preferred if percentage-based sizing is

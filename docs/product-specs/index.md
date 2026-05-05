@@ -15,7 +15,7 @@ behavior is governed by the rows below plus the repo contract in
 | Task Area | Document | Role | Scope | Read When |
 | --- | --- | --- | --- | --- |
 | Existing market-data behavior | [`market-data.md`](market-data.md) | Governing | current implemented scope | Before changing the existing market-data codebase or its tests. |
-| Historical ingestion under `quantcraft.data` | [`data-ingestion.md`](data-ingestion.md) | Governing | current implemented scope | Before changing the shipped historical ingestion surface for exchange, CSV, and dataframe-backed backtest workflows. |
+| Historical ingestion under `quantleet.data` | [`data-ingestion.md`](data-ingestion.md) | Governing | current implemented scope | Before changing the shipped historical ingestion surface for exchange, CSV, and dataframe-backed backtest workflows. |
 | Backtest baseline orientation | [`backtest.md`](backtest.md) | Pointer | current implemented baseline orientation | When scoping backtest expansion work from the shipped baseline; then read [`backtest-mvp.md`](backtest-mvp.md). |
 | Backtest MVP behavior | [`backtest-mvp.md`](backtest-mvp.md) | Governing | current implemented scope | Before changing the current backtest MVP behavior, tests, or documented baseline constraints. |
 | Backtest result plotting | [`backtest-plotting.md`](backtest-plotting.md) | Governing | current implemented first-beta plotting workflow | Before changing the first-beta plot API, plot implementation, plot dependency strategy, or documented result-visualization workflow. |

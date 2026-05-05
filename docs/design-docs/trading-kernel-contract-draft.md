@@ -19,7 +19,7 @@ This is **not** the canonical document for current implemented behavior.
 - The currently implemented research ergonomics surface is governed by
   [`../product-specs/research-ergonomics.md`](../product-specs/research-ergonomics.md).
 - Top-level structure and boundaries are governed by
-  [`quantcraft-architecture.md`](quantcraft-architecture.md).
+  [`quantleet-architecture.md`](quantleet-architecture.md).
 
 So this document is a **future-only draft**, not the current contract that
 should immediately change implementation.

@@ -25,7 +25,7 @@
   - [`docs/product-specs/backtest-mvp.md`](../product-specs/backtest-mvp.md)
   - [`docs/product-specs/research-ergonomics.md`](../product-specs/research-ergonomics.md)
   - [`docs/design-docs/index.md`](../design-docs/index.md)
-  - [`docs/design-docs/quantcraft-architecture.md`](../design-docs/quantcraft-architecture.md)
+  - [`docs/design-docs/quantleet-architecture.md`](../design-docs/quantleet-architecture.md)
   - [`docs/design-docs/package-topology-and-naming.md`](../design-docs/package-topology-and-naming.md)
   - [`docs/RELIABILITY.md`](../RELIABILITY.md)
   - [`docs/SECURITY.md`](../SECURITY.md)
@@ -40,7 +40,7 @@
 - In-repo scope:
   - add semantic validation for `BacktestEngine.initial_cash`
   - add semantic validation for `CostConfig`
-  - narrow the `quantcraft.integrations.venues.ccxt` public facade to the
+  - narrow the `quantleet.integrations.venues.ccxt` public facade to the
     intended stable surface and add negative proof tests
   - replace migration-history-named structure checks and legacy control-plane
     residue with steady-state contracts where feasible in this slice
@@ -82,7 +82,7 @@
   - `BacktestEngine` rejects invalid `initial_cash` before runtime summary math
   - `CostConfig` rejects invalid semantic values before matching/state logic can
     create optimistic fills or negative fees
-  - `quantcraft.integrations.venues.ccxt` exports only the intended public
+  - `quantleet.integrations.venues.ccxt` exports only the intended public
     facade, and tests prove helper leakage is absent
   - active architecture/repo checks no longer rely on migration-stage naming or
     legacy schema compatibility where steady-state contracts can replace them
@@ -142,7 +142,7 @@
     erase that warning just to make docs read “complete”
 - Blockers or scope changes:
   - 2026-04-17: the `backtest-mvp` limit-order conformance-gap note remains
-    real after local inspection of `src/quantcraft/backtest/execution_model.py`,
+    real after local inspection of `src/quantleet/backtest/execution_model.py`,
     so this slice did not remove that warning.
   - 2026-04-17: review fan-out rejected a blanket “fully complete overall”
     claim because the product-spec gap above remains open even after the
@@ -153,17 +153,17 @@
 - Findings:
   - Closed: `BacktestEngine` now rejects invalid `initial_cash` at
     construction time in
-    [src/quantcraft/backtest/engine.py](../../src/quantcraft/backtest/engine.py).
+    [src/quantleet/backtest/engine.py](../../src/quantleet/backtest/engine.py).
     New targeted proof lives in
     [tests/unit/backtest/test_engine.py](../../tests/unit/backtest/test_engine.py).
   - Closed: `CostConfig` now rejects invalid semantic values at dataclass
     construction time in
-    [src/quantcraft/trading/domain/costs.py](../../src/quantcraft/trading/domain/costs.py).
+    [src/quantleet/trading/domain/costs.py](../../src/quantleet/trading/domain/costs.py).
     New targeted proof lives in
     [tests/unit/trading/test_costs.py](../../tests/unit/trading/test_costs.py).
-  - Closed: the `quantcraft.integrations.venues.ccxt` package facade now
+  - Closed: the `quantleet.integrations.venues.ccxt` package facade now
     exports only `Exchange` and `MarketType` via
-    [src/quantcraft/integrations/venues/ccxt/__init__.py](../../src/quantcraft/integrations/venues/ccxt/__init__.py),
+    [src/quantleet/integrations/venues/ccxt/__init__.py](../../src/quantleet/integrations/venues/ccxt/__init__.py),
     and negative smoke/build assertions prove helper leakage is absent in
     [tests/smoke/local/test_public_imports.py](../../tests/smoke/local/test_public_imports.py)
     and
@@ -171,7 +171,7 @@
   - Closed: migration-history residue in active checks was reduced to
     steady-state contracts by:
     - removing legacy routing-index status-map fallback from
-      [src/quantcraft/_repo_tools.py](../../src/quantcraft/_repo_tools.py)
+      [src/quantleet/_repo_tools.py](../../src/quantleet/_repo_tools.py)
     - replacing stage-named structure tests with steady-state topology tests:
       - [test_capability_package_roots.py](../../tests/structure/architecture/test_capability_package_roots.py)
       - [test_ccxt_integration_ownership.py](../../tests/structure/architecture/test_ccxt_integration_ownership.py)
@@ -180,7 +180,7 @@
     an unfinished migration target:
     - [README.md](../../README.md)
     - [ARCHITECTURE.md](../../ARCHITECTURE.md)
-    - [docs/design-docs/quantcraft-architecture.md](../design-docs/quantcraft-architecture.md)
+    - [docs/design-docs/quantleet-architecture.md](../design-docs/quantleet-architecture.md)
     - [docs/design-docs/package-topology-and-naming.md](../design-docs/package-topology-and-naming.md)
   - Remaining material issue:
     - [docs/product-specs/backtest-mvp.md](../product-specs/backtest-mvp.md)
@@ -216,7 +216,7 @@
   - Review fan-out:
     - `Anscombe`: `Approved: no material findings.`
     - `Epicurus`: initially found stale governance residue in
-      `quantcraft-architecture.md`; parent fixed the doc before final synthesis
+      `quantleet-architecture.md`; parent fixed the doc before final synthesis
     - `Hegel`: confirmed one remaining material issue outside this slice's code
       changes — the still-real `backtest-mvp` limit-order conformance gap
 - Final disposition:

@@ -2,7 +2,7 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** Add a small read-only `self.position` runtime view to `quantcraft.research.Strategy` with the approved public fields `is_open`, `quantity`, and `average_entry_price`.
+**Goal:** Add a small read-only `self.position` runtime view to `quantleet.research.Strategy` with the approved public fields `is_open`, `quantity`, and `average_entry_price`.
 
 **Architecture:** Keep canonical mutable state in `trading.domain.state.TradingState`, derive a read-only strategy-facing position view in the `research` runtime layer, and bind that view onto `Strategy` during backtest execution. Do not widen the trading kernel or introduce a second mutable position model.
 
@@ -52,9 +52,9 @@ Expected:
 ### Task 2: Add the minimal read-only runtime position view
 
 **Files:**
-- Create or modify: `src/quantcraft/research/application/_runtime.py`
-- Modify: `src/quantcraft/research/application/strategy.py`
-- Modify: `src/quantcraft/research/application/backtest.py`
+- Create or modify: `src/quantleet/research/application/_runtime.py`
+- Modify: `src/quantleet/research/application/strategy.py`
+- Modify: `src/quantleet/research/application/backtest.py`
 
 **Step 1: Add a small read-only position view type**
 
@@ -156,8 +156,8 @@ Expected:
 ### Task 5: Simplify if the runtime logic becomes harder to reason about
 
 **Files:**
-- Modify only if needed: `src/quantcraft/research/application/_runtime.py`
-- Modify only if needed: `src/quantcraft/research/application/backtest.py`
+- Modify only if needed: `src/quantleet/research/application/_runtime.py`
+- Modify only if needed: `src/quantleet/research/application/backtest.py`
 
 **Step 1: Do a narrow simplification pass**
 

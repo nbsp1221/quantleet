@@ -25,7 +25,7 @@ def test_quickstart_docs_show_result_report_plot_and_preserve_legacy_surfaces() 
     )
 
     assert "result.report" in quickstart
-    assert "label=\"sma-cross\"" in quickstart
+    assert 'label="sma-cross"' in quickstart
     assert "result.trade_log" in quickstart
     assert "result.equity_curve" in quickstart
     assert "result.drawdown_curve" in quickstart

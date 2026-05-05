@@ -4,8 +4,8 @@ import inspect
 
 import pytest
 
-from quantcraft.backtest import BacktestResult, BacktestSummary, ExposureSummary
-from quantcraft.trading.domain.state import TradingState
+from quantleet.backtest import BacktestResult, BacktestSummary, ExposureSummary
+from quantleet.trading.domain.state import TradingState
 
 
 def _summary() -> BacktestSummary:

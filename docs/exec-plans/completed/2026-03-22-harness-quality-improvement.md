@@ -72,7 +72,7 @@ Every worker and reviewer must read:
 
 - `AGENTS.md`
 - `docs/references/openai-harness-engineering.md`
-- `docs/design-docs/quantcraft-architecture.md`
+- `docs/design-docs/quantleet-architecture.md`
 - `docs/design-docs/architecture-governance.md`
 - `docs/product-specs/backtest-mvp.md`
 - `docs/QUALITY_SCORE.md`
@@ -82,7 +82,7 @@ Additionally:
 
 - tasks that touch quality scoring must read `scripts/update_quality_score.py`
 - tasks that touch plan lifecycle must read `docs/exec-plans/active/index.md` and `docs/exec-plans/completed/index.md`
-- tasks that touch repository checks must read `src/quantcraft/_repo_tools.py` and the relevant `tests/structure/repo/` files
+- tasks that touch repository checks must read `src/quantleet/_repo_tools.py` and the relevant `tests/structure/repo/` files
 
 ## Non-Negotiable Guardrails
 
@@ -125,14 +125,14 @@ Additionally:
 
 - `docs/`
 - `scripts/`
-- `src/quantcraft/`
+- `src/quantleet/`
 - `tests/structure/repo/`
 
 **Files:**
 
 - Modify: `docs/QUALITY_SCORE.md`
 - Modify: `scripts/update_quality_score.py`
-- Modify: `src/quantcraft/_repo_tools.py`
+- Modify: `src/quantleet/_repo_tools.py`
 - Modify/Create: relevant repo-structure tests under `tests/structure/repo/`
 
 **Acceptance:**
@@ -151,7 +151,7 @@ Additionally:
 - `docs/PLANS.md`
 - `docs/exec-plans/active/`
 - `docs/exec-plans/completed/`
-- `src/quantcraft/`
+- `src/quantleet/`
 - `tests/structure/repo/`
 
 **Files:**
@@ -160,7 +160,7 @@ Additionally:
 - Modify: `docs/exec-plans/active/index.md`
 - Modify: `docs/exec-plans/completed/index.md`
 - Move or reclassify: `docs/exec-plans/active/2026-03-21-backtest-mvp-implementation.md`
-- Modify: `src/quantcraft/_repo_tools.py`
+- Modify: `src/quantleet/_repo_tools.py`
 - Modify/Create: relevant repo-structure tests under `tests/structure/repo/`
 
 **Acceptance:**
@@ -179,7 +179,7 @@ Additionally:
 - `docs/design-docs/`
 - `docs/product-specs/`
 - `AGENTS.md`
-- `src/quantcraft/`
+- `src/quantleet/`
 - `tests/structure/repo/`
 
 **Files:**
@@ -187,7 +187,7 @@ Additionally:
 - Modify: `docs/design-docs/index.md`
 - Modify: `docs/product-specs/index.md`
 - Modify: `AGENTS.md`
-- Modify: `src/quantcraft/_repo_tools.py`
+- Modify: `src/quantleet/_repo_tools.py`
 - Modify/Create: relevant repo-structure tests under `tests/structure/repo/`
 
 **Acceptance:**
@@ -204,7 +204,7 @@ Additionally:
 
 - `docs/design-docs/`
 - `docs/`
-- `src/quantcraft/`
+- `src/quantleet/`
 - `tests/structure/docs/`
 - `tests/structure/repo/`
 
@@ -216,7 +216,7 @@ Additionally:
 - Modify: `docs/design-docs/core-beliefs.md`
 - Modify: `docs/design-docs/index.md`
 - Modify: `docs/QUALITY_SCORE.md`
-- Modify: `src/quantcraft/_repo_tools.py`
+- Modify: `src/quantleet/_repo_tools.py`
 - Modify/Create: relevant structure tests under `tests/structure/docs/` and `tests/structure/repo/`
 
 **Acceptance:**

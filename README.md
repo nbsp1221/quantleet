@@ -1,6 +1,6 @@
-# QuantCraft
+# Quantleet
 
-QuantCraft is a Python backtesting and quant research toolkit focused on a
+Quantleet is a Python backtesting and quant research toolkit focused on a
 polished first-beta single-symbol historical backtesting workflow.
 
 The first public beta target is `0.1.0b1`. It is built for users who want to
@@ -45,7 +45,7 @@ Package-user installation for the first beta will use the published package
 once `0.1.0b1` is released:
 
 ```bash
-uv add quantcraft==0.1.0b1
+uv add quantleet==0.1.0b1
 ```
 
 From a local checkout today:
@@ -68,9 +68,9 @@ explicitly when needed.
 ## Quickstart
 
 ```python
-from quantcraft.backtest import BacktestEngine, CostConfig
-from quantcraft.data import DataFrameDataSource
-from quantcraft.research import Strategy, qc, ta
+from quantleet.backtest import BacktestEngine, CostConfig
+from quantleet.data import DataFrameDataSource
+from quantleet.research import Strategy, qc, ta
 
 
 class SmaCrossStrategy(Strategy):
@@ -152,10 +152,10 @@ See [CHANGELOG.md](CHANGELOG.md) for release notes.
 
 ## Financial Disclaimer
 
-QuantCraft is research and software tooling, not financial advice. Backtest
+Quantleet is research and software tooling, not financial advice. Backtest
 results do not guarantee future performance. You are responsible for data quality,
 assumptions, execution risk, and trading decisions.
 
 ## License
 
-QuantCraft is licensed under the MIT license.
+Quantleet is licensed under the MIT license.

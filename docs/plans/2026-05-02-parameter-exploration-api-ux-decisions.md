@@ -21,7 +21,7 @@
   - `docs/product-specs/backtest-mvp.md`
   - `docs/product-specs/backtest-plotting.md`
   - `docs/design-docs/package-topology-and-naming.md`
-  - `docs/design-docs/quantcraft-architecture.md`
+  - `docs/design-docs/quantleet-architecture.md`
   - `docs/RELIABILITY.md`
   - `docs/SECURITY.md`
   - `docs/PLANS.md`
@@ -87,7 +87,7 @@
   3. Run verification.
   4. Record evaluator findings and evidence.
 - Notes:
-  - Approved public model: `quantcraft.research.ParameterStudy`.
+  - Approved public model: `quantleet.research.ParameterStudy`.
   - Approved execution method: `ParameterStudy.grid_search(...)`.
   - Approved result concept: `GridSearchResult` with inspectable successful
     runs.

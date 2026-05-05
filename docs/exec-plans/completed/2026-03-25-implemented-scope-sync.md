@@ -22,7 +22,7 @@
 
 - `AGENTS.md`
 - `docs/references/openai-harness-engineering.md`
-- `docs/design-docs/quantcraft-architecture.md`
+- `docs/design-docs/quantleet-architecture.md`
 - `docs/design-docs/architecture-governance.md`
 - `docs/product-specs/backtest-mvp.md`
 - `docs/product-specs/research-ergonomics.md`

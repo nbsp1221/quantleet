@@ -5,14 +5,14 @@ from abc import ABC
 
 import pytest
 
-from quantcraft.backtest import BacktestEngine
-from quantcraft.backtest.strategy_runtime import _StrategyDriver
-from quantcraft.data import BarSeries, TimeBar
-from quantcraft.research import Strategy as PublicStrategy
-from quantcraft.research.strategy import Strategy
-from quantcraft.trading.domain.costs import CostConfig
-from quantcraft.trading.domain.events import BarEvent
-from quantcraft.trading.order_requests import PendingOrderRequest
+from quantleet.backtest import BacktestEngine
+from quantleet.backtest.strategy_runtime import _StrategyDriver
+from quantleet.data import BarSeries, TimeBar
+from quantleet.research import Strategy as PublicStrategy
+from quantleet.research.strategy import Strategy
+from quantleet.trading.domain.costs import CostConfig
+from quantleet.trading.domain.events import BarEvent
+from quantleet.trading.order_requests import PendingOrderRequest
 
 
 class BuyOnFirstBarStrategy(Strategy):

@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
-from quantcraft.backtest import BacktestEngine
-from quantcraft.data import BarSeries, TimeBar
-from quantcraft.research import ParameterStudy, Strategy
-from quantcraft.trading.domain.costs import CostConfig
-from quantcraft.trading.domain.events import BarEvent
+from quantleet.backtest import BacktestEngine
+from quantleet.data import BarSeries, TimeBar
+from quantleet.research import ParameterStudy, Strategy
+from quantleet.trading.domain.costs import CostConfig
+from quantleet.trading.domain.events import BarEvent
 
 
 def crossing_bars() -> BarSeries:

@@ -102,7 +102,7 @@ is not executable before trigger. Reservation is a resource-safety fact, not an
 execution fact.
 
 The reservation owner is the runtime or account-control layer, not
-`quantcraft.trading.domain.Order`. A reservation may be keyed by order id, but
+`quantleet.trading.domain.Order`. A reservation may be keyed by order id, but
 runtime `Order` should remain quantity and lifecycle oriented rather than
 absorbing cash, margin, portfolio, or risk-accounting fields.
 
@@ -139,7 +139,7 @@ submission generally uses concrete venue primitives such as base quantity,
 quote/notional amount, price, and trigger price rather than a dynamic
 "available balance percent" field.
 
-`quantcraft` chooses concrete base quantity as the runtime kernel primitive in
+`quantleet` chooses concrete base quantity as the runtime kernel primitive in
 this MVP. Future venue adapters may translate between venue-native base-size or
 quote-size APIs at the integration boundary, but that translation must not
 change runtime `Order` into a percent-based object.
@@ -381,7 +381,7 @@ Some venue and account models reserve resources when an order is accepted.
 Others accept a conditional order without immediate reservation and check
 available balance or margin when the trigger fires.
 
-`quantcraft` deliberately chooses the more conservative MVP model:
+`quantleet` deliberately chooses the more conservative MVP model:
 
 - fixed quantity is decided before runtime order creation
 - required resources are reserved when the order is accepted

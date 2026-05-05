@@ -5,7 +5,7 @@ import inspect
 import numpy as np
 import pytest
 
-from quantcraft.research.indicators.pure.rsi import rsi
+from quantleet.research.indicators.pure.rsi import rsi
 
 
 def test_rsi_matches_talib_signature_and_returns_ndarray() -> None:

@@ -92,31 +92,31 @@ def test_public_api_reference_uses_current_public_imports_only() -> None:
     reference = (ROOT / "docs/site/reference/public-api.md").read_text(encoding="utf-8")
 
     for marker in [
-        "quantcraft.data.TimeBar",
-        "quantcraft.data.BarSeries",
-        "quantcraft.data.DataFrameDataSource",
-        "quantcraft.data.CSVDataSource",
-        "quantcraft.data.CCXTDataSource",
-        "quantcraft.backtest.BacktestEngine",
-        "quantcraft.backtest.CostConfig",
-        "quantcraft.backtest.BacktestResult",
+        "quantleet.data.TimeBar",
+        "quantleet.data.BarSeries",
+        "quantleet.data.DataFrameDataSource",
+        "quantleet.data.CSVDataSource",
+        "quantleet.data.CCXTDataSource",
+        "quantleet.backtest.BacktestEngine",
+        "quantleet.backtest.CostConfig",
+        "quantleet.backtest.BacktestResult",
         "BacktestResult.report",
         "BacktestResult.plot()",
-        "quantcraft.research.Strategy",
+        "quantleet.research.Strategy",
         "Strategy.buy(...)",
         "Strategy.sell(...)",
-        "quantcraft.research.ParameterStudy",
+        "quantleet.research.ParameterStudy",
         "ParameterStudy.grid_search(...)",
-        "quantcraft.research.ta",
-        "quantcraft.research.qc",
+        "quantleet.research.ta",
+        "quantleet.research.qc",
     ]:
         assert marker in reference
 
     for forbidden in [
         "TimeInForce",
-        "from quantcraft import BacktestEngine",
-        "quantcraft.Bar",
-        "quantcraft.trading.domain",
+        "from quantleet import BacktestEngine",
+        "quantleet.Bar",
+        "quantleet.trading.domain",
     ]:
         assert forbidden not in reference
 

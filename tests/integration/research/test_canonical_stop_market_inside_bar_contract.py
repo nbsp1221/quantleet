@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from quantcraft.backtest import BacktestSummary, ExposureSummary
+from quantleet.backtest import BacktestSummary, ExposureSummary
 from tests.support_backtest import (
     canonical_stop_market_inside_bar_trade_log_digest,
     canonical_stop_market_inside_bar_trade_log_samples,

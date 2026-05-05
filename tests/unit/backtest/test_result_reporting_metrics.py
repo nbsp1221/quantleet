@@ -4,11 +4,11 @@ import math
 
 import pytest
 
-from quantcraft.backtest.reporting import periods_per_year_for_timeframe
-from quantcraft.data import BarSeries, TimeBar
-from quantcraft.research import Strategy
-from quantcraft.trading.domain.costs import CostConfig
-from quantcraft.trading.domain.events import BarEvent
+from quantleet.backtest.reporting import periods_per_year_for_timeframe
+from quantleet.data import BarSeries, TimeBar
+from quantleet.research import Strategy
+from quantleet.trading.domain.costs import CostConfig
+from quantleet.trading.domain.events import BarEvent
 from tests.integration.research.support_backtest_runner import run_engine_backtest
 
 

@@ -91,9 +91,9 @@
 ## Evaluator Review
 
 - Findings:
-  - the optimistic eager whole-series event materialization was removed from `src/quantcraft/research/application/backtest.py`
-  - `src/quantcraft/research/adapters/execution_model.py` now emits per-bar executable ticks and conservative decisive limit-touch prices instead of bar extremes
-  - `trading` matching stayed generic; no bar-aware logic was added under `src/quantcraft/trading/domain/`
+  - the optimistic eager whole-series event materialization was removed from `src/quantleet/research/application/backtest.py`
+  - `src/quantleet/research/adapters/execution_model.py` now emits per-bar executable ticks and conservative decisive limit-touch prices instead of bar extremes
+  - `trading` matching stayed generic; no bar-aware logic was added under `src/quantleet/trading/domain/`
   - deterministic integration contracts and backtest summary contracts were updated to the conservative fill outputs
   - review fan-out synthesis:
     - accepted: add explicit buy-side intrabar touched-limit regression coverage

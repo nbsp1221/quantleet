@@ -25,8 +25,8 @@ def test_poe_verify_includes_coverage_gate() -> None:
 def test_repository_defines_approved_coverage_thresholds() -> None:
     assert coverage_check.GLOBAL_MIN_COVERAGE == 90.0
     assert coverage_check.TRADING_DOMAIN_MIN_COVERAGE == 100.0
-    assert coverage_check.TRADING_DOMAIN_PREFIX == "src/quantcraft/trading/domain/"
+    assert coverage_check.TRADING_DOMAIN_PREFIX == "src/quantleet/trading/domain/"
 
 
 def test_coverage_harness_targets_source_only() -> None:
-    assert coverage_check.INCLUDE_PATTERN == "src/quantcraft/*"
+    assert coverage_check.INCLUDE_PATTERN == "src/quantleet/*"

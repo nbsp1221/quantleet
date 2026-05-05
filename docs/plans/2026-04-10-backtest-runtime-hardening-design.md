@@ -13,7 +13,7 @@ Related documents:
 - [../product-specs/backtest-mvp.md](../product-specs/backtest-mvp.md)
 - [../product-specs/research-ergonomics.md](../product-specs/research-ergonomics.md)
 - [../RELIABILITY.md](../RELIABILITY.md)
-- [../design-docs/quantcraft-architecture.md](../design-docs/quantcraft-architecture.md)
+- [../design-docs/quantleet-architecture.md](../design-docs/quantleet-architecture.md)
 - [../design-docs/architecture-governance.md](../design-docs/architecture-governance.md)
 
 ## Goal
@@ -34,7 +34,7 @@ should remain explicit backtest approximation.
 
 ## Background
 
-Today, `quantcraft` operates as the following combination:
+Today, `quantleet` operates as the following combination:
 
 - user surface: `Strategy.init()` + `Strategy.on_bar()`
 - time-series surface: `SeriesView` with causal indexing
@@ -97,7 +97,7 @@ Principles:
 - the runtime layer owns actual strategy-execution meaning
 - precompute is an optimization, not the source of meaning
 - `TA-Lib` remains the canonical batch reference backend
-- `quantcraft` owns runtime-contract authority
+- `quantleet` owns runtime-contract authority
 
 The key point is to stop allowing "precomputed, but accidentally causal-looking"
 behavior to stand in for the official runtime contract.
@@ -146,7 +146,7 @@ small and the shipped contract is intentionally narrow.
 
 Advantages:
 
-- it can match `quantcraft`'s runtime contract exactly
+- it can match `quantleet`'s runtime contract exactly
 - reset / initialized / append semantics remain under engine-level control
 - it helps future paper/live parity
 
@@ -168,7 +168,7 @@ Disadvantages:
 
 - warmup, `NaN`, and initialization semantics may differ from the current
   product spec
-- the external lifecycle contract may not match `quantcraft`'s runtime
+- the external lifecycle contract may not match `quantleet`'s runtime
   contract closely enough
 - semantic authority can drift outward too easily
 
@@ -192,7 +192,7 @@ The current baseline judgment is:
 - `TA-Lib only` is good as batch correctness reference, but weak as canonical
   runtime path
 - external incremental adapters are worth leaving open as secondary options
-- if shared runtime semantics matter in the long run, `quantcraft` should own
+- if shared runtime semantics matter in the long run, `quantleet` should own
   runtime behavior for at least the baseline indicator set
 
 So the baseline direction for official indicators is:
@@ -280,7 +280,7 @@ approximation explicit.
 This is aligned with the same family of concerns seen in
 `nautilus_trader`, where bar-based backtests maintain an internal order-book
 model, process bars as ordered price-point sequences, and separate fill-model
-concerns. `quantcraft` remains much narrower, but the architectural intent is
+concerns. `quantleet` remains much narrower, but the architectural intent is
 similar.
 
 Current recommended decision:
@@ -513,7 +513,7 @@ At the time of this document, the recommended baseline answers are:
 
 The conclusion is simple:
 
-- keep the current `quantcraft` direction
+- keep the current `quantleet` direction
 - but cut the current simplified implementation into safer long-term contracts
 - treat indicator runtime, not batch backend calls, as the source of official
   runtime meaning

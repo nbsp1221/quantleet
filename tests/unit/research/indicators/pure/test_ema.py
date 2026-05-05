@@ -5,7 +5,7 @@ import inspect
 import numpy as np
 import pytest
 
-from quantcraft.research.indicators.pure.ema import ema
+from quantleet.research.indicators.pure.ema import ema
 
 
 def test_ema_matches_talib_signature_and_returns_ndarray() -> None:

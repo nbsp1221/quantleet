@@ -2,7 +2,7 @@
 
 ## Goal
 
-Define a test structure for `quantcraft` that remains legible as the repository grows, makes it obvious what each test is validating, and separates deterministic local verification from network-backed validation.
+Define a test structure for `quantleet` that remains legible as the repository grows, makes it obvious what each test is validating, and separates deterministic local verification from network-backed validation.
 
 This design is intentionally aligned with two constraints:
 
@@ -24,7 +24,7 @@ The current repository still uses a flat `tests/` layout:
 - `tests/test_financial_policies.py`
 - `tests/test_quality_ops.py`
 
-That shape is acceptable for initial bootstrap work, but it will degrade quickly once `quantcraft` grows into:
+That shape is acceptable for initial bootstrap work, but it will degrade quickly once `quantleet` grows into:
 
 - market data
 - backtesting
@@ -194,7 +194,7 @@ These must not be part of the default test lane:
 
 - `smoke/live`
 
-This is necessary because `quantcraft` is a financial and quant repository where network variance, exchange availability, rate limits, and external state can make verification nondeterministic.
+This is necessary because `quantleet` is a financial and quant repository where network variance, exchange availability, rate limits, and external state can make verification nondeterministic.
 
 ### Optional Local Smoke
 

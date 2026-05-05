@@ -23,7 +23,7 @@
   - `docs/product-specs/backtest-mvp.md`
   - `docs/product-specs/backtest-plotting.md`
   - `docs/design-docs/package-topology-and-naming.md`
-  - `docs/design-docs/quantcraft-architecture.md`
+  - `docs/design-docs/quantleet-architecture.md`
   - `docs/RELIABILITY.md`
   - `docs/SECURITY.md`
 - Why these are governing: They define repo workflow, product-spec authority,

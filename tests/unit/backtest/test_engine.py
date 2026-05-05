@@ -4,11 +4,11 @@ import math
 
 import pytest
 
-from quantcraft.backtest import BacktestEngine
-from quantcraft.data import BarSeries, TimeBar
-from quantcraft.research import Strategy
-from quantcraft.trading.domain.costs import CostConfig
-from quantcraft.trading.domain.events import BarEvent
+from quantleet.backtest import BacktestEngine
+from quantleet.data import BarSeries, TimeBar
+from quantleet.research import Strategy
+from quantleet.trading.domain.costs import CostConfig
+from quantleet.trading.domain.events import BarEvent
 
 
 def test_backtest_engine_rejects_non_positive_initial_cash() -> None:

@@ -97,7 +97,7 @@
 
 - Findings:
   - no material conflict was found between the promoted conservative limit semantics and the reviewed official references
-  - the promoted contract is more conservative than the current `quantcraft` implementation and is directionally aligned with common OHLC backtest practice shown in Backtrader
+  - the promoted contract is more conservative than the current `quantleet` implementation and is directionally aligned with common OHLC backtest practice shown in Backtrader
   - the promoted contract remains compatible with real exchange semantics because marketable limits still fill immediately at a no-worse-than-limit executable price
   - the promoted performance rule needed one explicit clarification: order-aware traversal acceleration is acceptable only when it preserves the already-defined canonical path and does not fabricate order-specific prices
 - Verification evidence:

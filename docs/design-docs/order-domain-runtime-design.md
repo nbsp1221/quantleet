@@ -79,14 +79,14 @@ Verified current truth as of `2026-04-20`:
 
 Repository evidence:
 
-- [intents.py](/home/retn0/repositories/nbsp1221/quantcraft/src/quantcraft/trading/domain/intents.py:1)
-- [orders.py](/home/retn0/repositories/nbsp1221/quantcraft/src/quantcraft/trading/domain/orders.py:1)
-- [strategy.py](/home/retn0/repositories/nbsp1221/quantcraft/src/quantcraft/research/strategy.py:41)
-- [strategy_runtime.py](/home/retn0/repositories/nbsp1221/quantcraft/src/quantcraft/backtest/strategy_runtime.py:11)
-- [state.py](/home/retn0/repositories/nbsp1221/quantcraft/src/quantcraft/trading/domain/state.py:1)
-- [matching.py](/home/retn0/repositories/nbsp1221/quantcraft/src/quantcraft/trading/domain/matching.py:1)
-- [backtest-mvp.md](/home/retn0/repositories/nbsp1221/quantcraft/docs/product-specs/backtest-mvp.md:74)
-- [backtest-execution-semantics.md](/home/retn0/repositories/nbsp1221/quantcraft/docs/design-docs/backtest-execution-semantics.md:31)
+- [intents.py](/home/retn0/repositories/nbsp1221/quantleet/src/quantleet/trading/domain/intents.py:1)
+- [orders.py](/home/retn0/repositories/nbsp1221/quantleet/src/quantleet/trading/domain/orders.py:1)
+- [strategy.py](/home/retn0/repositories/nbsp1221/quantleet/src/quantleet/research/strategy.py:41)
+- [strategy_runtime.py](/home/retn0/repositories/nbsp1221/quantleet/src/quantleet/backtest/strategy_runtime.py:11)
+- [state.py](/home/retn0/repositories/nbsp1221/quantleet/src/quantleet/trading/domain/state.py:1)
+- [matching.py](/home/retn0/repositories/nbsp1221/quantleet/src/quantleet/trading/domain/matching.py:1)
+- [backtest-mvp.md](/home/retn0/repositories/nbsp1221/quantleet/docs/product-specs/backtest-mvp.md:74)
+- [backtest-execution-semantics.md](/home/retn0/repositories/nbsp1221/quantleet/docs/design-docs/backtest-execution-semantics.md:31)
 
 ## Decision Question
 
@@ -121,7 +121,7 @@ Introduce a large model now:
 
 The working hypothesis was:
 
-> Option B is the best fit for `quantcraft` now.
+> Option B is the best fit for `quantleet` now.
 
 That means:
 
@@ -148,11 +148,11 @@ across strategy/runtime orchestration.
 
 Sources:
 
-- [ARCHITECTURE.md](/home/retn0/repositories/nbsp1221/quantcraft/ARCHITECTURE.md:79)
-- [quantcraft-architecture.md](/home/retn0/repositories/nbsp1221/quantcraft/docs/design-docs/quantcraft-architecture.md:113)
-- [quantcraft-architecture.md](/home/retn0/repositories/nbsp1221/quantcraft/docs/design-docs/quantcraft-architecture.md:132)
-- [quantcraft-architecture.md](/home/retn0/repositories/nbsp1221/quantcraft/docs/design-docs/quantcraft-architecture.md:145)
-- [strategy_runtime.py](/home/retn0/repositories/nbsp1221/quantcraft/src/quantcraft/backtest/strategy_runtime.py:59)
+- [ARCHITECTURE.md](/home/retn0/repositories/nbsp1221/quantleet/ARCHITECTURE.md:79)
+- [quantleet-architecture.md](/home/retn0/repositories/nbsp1221/quantleet/docs/design-docs/quantleet-architecture.md:113)
+- [quantleet-architecture.md](/home/retn0/repositories/nbsp1221/quantleet/docs/design-docs/quantleet-architecture.md:132)
+- [quantleet-architecture.md](/home/retn0/repositories/nbsp1221/quantleet/docs/design-docs/quantleet-architecture.md:145)
+- [strategy_runtime.py](/home/retn0/repositories/nbsp1221/quantleet/src/quantleet/backtest/strategy_runtime.py:59)
 
 ### 2. The Current MVP Cannot Naturally Absorb Stop Orders
 
@@ -172,9 +172,9 @@ intent.
 
 Sources:
 
-- [matching.py](/home/retn0/repositories/nbsp1221/quantcraft/src/quantcraft/trading/domain/matching.py:10)
-- [strategy_runtime.py](/home/retn0/repositories/nbsp1221/quantcraft/src/quantcraft/backtest/strategy_runtime.py:59)
-- [backtest-mvp.md](/home/retn0/repositories/nbsp1221/quantcraft/docs/product-specs/backtest-mvp.md:162)
+- [matching.py](/home/retn0/repositories/nbsp1221/quantleet/src/quantleet/trading/domain/matching.py:10)
+- [strategy_runtime.py](/home/retn0/repositories/nbsp1221/quantleet/src/quantleet/backtest/strategy_runtime.py:59)
+- [backtest-mvp.md](/home/retn0/repositories/nbsp1221/quantleet/docs/product-specs/backtest-mvp.md:162)
 
 ### 3. Mature Engines Repeatedly Separate Request/Intent From Managed Order
 
@@ -330,7 +330,7 @@ bar-aware.
 
 Source:
 
-- [backtest-execution-semantics.md](/home/retn0/repositories/nbsp1221/quantcraft/docs/design-docs/backtest-execution-semantics.md:19)
+- [backtest-execution-semantics.md](/home/retn0/repositories/nbsp1221/quantleet/docs/design-docs/backtest-execution-semantics.md:19)
 
 ## Explicit Stop Line
 
@@ -363,11 +363,11 @@ implementation plan, not in this draft design note.
 
 See:
 
-- [2026-04-19-order-domain-runtime-implementation-plan.md](/home/retn0/repositories/nbsp1221/quantcraft/docs/plans/2026-04-19-order-domain-runtime-implementation-plan.md:1)
+- [2026-04-19-order-domain-runtime-implementation-plan.md](/home/retn0/repositories/nbsp1221/quantleet/docs/plans/2026-04-19-order-domain-runtime-implementation-plan.md:1)
 
 ## One-Line Summary
 
-`quantcraft` should not jump straight to a full OMS, but it also should not
+`quantleet` should not jump straight to a full OMS, but it also should not
 keep stretching `OrderIntent` into a fake runtime order.
 This seam note’s core recommendation led to the now-implemented minimal
 runtime `Order` boundary, while deeper object-responsibility questions are

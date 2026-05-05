@@ -41,9 +41,9 @@
 - In-repo scope:
   - Modify only the files needed for the first shipped `stop_market` slice and
     its tests under:
-    - `src/quantcraft/research/`
-    - `src/quantcraft/trading/`
-    - `src/quantcraft/backtest/`
+    - `src/quantleet/research/`
+    - `src/quantleet/trading/`
+    - `src/quantleet/backtest/`
     - `tests/unit/`
     - `tests/integration/research/`
   - Update this active plan with evaluator findings and fresh verification
@@ -176,7 +176,7 @@
       - `ruff check .`: pass
       - `mypy src`: pass
       - `pytest -q`: `398 passed, 3 skipped`
-      - coverage: `92%`, with `src/quantcraft/trading/domain/` at `100%`
+      - coverage: `92%`, with `src/quantleet/trading/domain/` at `100%`
       - `uv build`: pass
       - `scripts/repo_check.py`: pass
       - notebook validation: 4 notebooks validated

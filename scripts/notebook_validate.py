@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from quantcraft._notebook_tools import run_notebook_validation
+from quantleet._notebook_tools import run_notebook_validation
 
 
 def main() -> int:

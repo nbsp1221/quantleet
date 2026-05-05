@@ -16,13 +16,13 @@
 The session started from a small user-facing complaint about strategy-order UX,
 but the investigation exposed a deeper runtime question:
 
-> Should `quantcraft` keep stretching `OrderIntent`, or should it introduce a
+> Should `quantleet` keep stretching `OrderIntent`, or should it introduce a
 > real runtime `Order` model?
 
 This note is the evidence artifact for that question.
 It is not a governing design doc or an execution plan.
 
-## Current `quantcraft` Starting Point
+## Current `quantleet` Starting Point
 
 Current repository truth, before later Order-domain work:
 
@@ -38,11 +38,11 @@ Current repository truth, before later Order-domain work:
 
 Relevant local evidence:
 
-- [`../src/quantcraft/trading/domain/intents.py`](../../src/quantcraft/trading/domain/intents.py)
-- [`../src/quantcraft/trading/domain/matching.py`](../../src/quantcraft/trading/domain/matching.py)
-- [`../src/quantcraft/trading/domain/state.py`](../../src/quantcraft/trading/domain/state.py)
-- [`../src/quantcraft/backtest/strategy_runtime.py`](../../src/quantcraft/backtest/strategy_runtime.py)
-- [`../src/quantcraft/research/strategy.py`](../../src/quantcraft/research/strategy.py)
+- [`../src/quantleet/trading/domain/intents.py`](../../src/quantleet/trading/domain/intents.py)
+- [`../src/quantleet/trading/domain/matching.py`](../../src/quantleet/trading/domain/matching.py)
+- [`../src/quantleet/trading/domain/state.py`](../../src/quantleet/trading/domain/state.py)
+- [`../src/quantleet/backtest/strategy_runtime.py`](../../src/quantleet/backtest/strategy_runtime.py)
+- [`../src/quantleet/research/strategy.py`](../../src/quantleet/research/strategy.py)
 - [`../docs/product-specs/backtest-mvp.md`](../product-specs/backtest-mvp.md)
 
 ## Candidate Directions Considered
@@ -193,7 +193,7 @@ For future Order-domain work, the clean split is:
 
 ## One-Line Summary
 
-The best-supported local optimum for `quantcraft` is not “just use
+The best-supported local optimum for `quantleet` is not “just use
 `OrderIntent` longer” and not “build a full OMS now.”
 It is a minimal runtime `Order` layer with clear boundaries, supported by
 separate research and implementation artifacts.

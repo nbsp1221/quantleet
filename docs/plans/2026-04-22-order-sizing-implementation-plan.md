@@ -23,8 +23,8 @@ runtime-supplied state and price anchors. Keep `OrderIntent` plus runtime
 `Order` quantity-based. Backtest runtime should remain the owner of activation
 timing and executable-price context.
 
-**Tech Stack:** Python 3.13, `uv`, Poe tasks, `pytest`, `quantcraft.research`,
-`quantcraft.backtest`, `quantcraft.trading`, structure-doc checks
+**Tech Stack:** Python 3.13, `uv`, Poe tasks, `pytest`, `quantleet.research`,
+`quantleet.backtest`, `quantleet.trading`, structure-doc checks
 
 ---
 
@@ -49,13 +49,13 @@ The approved product direction is already frozen in
 
 Current repo truth is still narrower:
 
-- [`../../src/quantcraft/research/strategy.py`](../../src/quantcraft/research/strategy.py)
+- [`../../src/quantleet/research/strategy.py`](../../src/quantleet/research/strategy.py)
   only accepts `quantity`
-- [`../../src/quantcraft/trading/domain/intents.py`](../../src/quantcraft/trading/domain/intents.py)
+- [`../../src/quantleet/trading/domain/intents.py`](../../src/quantleet/trading/domain/intents.py)
   is quantity-only
-- [`../../src/quantcraft/trading/domain/orders.py`](../../src/quantcraft/trading/domain/orders.py)
+- [`../../src/quantleet/trading/domain/orders.py`](../../src/quantleet/trading/domain/orders.py)
   is quantity-only
-- [`../../src/quantcraft/backtest/strategy_runtime.py`](../../src/quantcraft/backtest/strategy_runtime.py)
+- [`../../src/quantleet/backtest/strategy_runtime.py`](../../src/quantleet/backtest/strategy_runtime.py)
   currently activates pending `OrderIntent` objects directly into runtime
   `Order`
 
@@ -204,9 +204,9 @@ The key ownership rule is:
 ### Task 2: Introduce A Neutral Shared Pending Request Shape
 
 **Files:**
-- Create: `src/quantcraft/trading/order_requests.py`
-- Modify: `src/quantcraft/research/strategy.py`
-- Modify: `src/quantcraft/backtest/strategy_runtime.py`
+- Create: `src/quantleet/trading/order_requests.py`
+- Modify: `src/quantleet/research/strategy.py`
+- Modify: `src/quantleet/backtest/strategy_runtime.py`
 - Modify: `tests/unit/research/test_strategy_surface.py`
 
 **Intent:**
@@ -240,7 +240,7 @@ The key ownership rule is:
 ### Task 3: Add One Canonical Shared Percent-Sizing Policy
 
 **Files:**
-- Create: `src/quantcraft/trading/sizing.py`
+- Create: `src/quantleet/trading/sizing.py`
 - Modify: `tests/unit/trading/test_sizing.py`
 
 **Intent:**
@@ -250,7 +250,7 @@ The key ownership rule is:
 **Recommended direction:**
 - keep this policy outside `trading.domain` so runtime-order models stay small
 - keep it internal in this slice rather than exporting it from the public
-  `quantcraft.trading` facade
+  `quantleet.trading` facade
 - design the policy to consume neutral inputs supplied by the runtime, such as:
   - side
   - requested percent
@@ -282,10 +282,10 @@ The key ownership rule is:
 ### Task 4: Teach Backtest Activation To Resolve Percent Requests Serially
 
 **Files:**
-- Modify: `src/quantcraft/backtest/runtime.py`
-- Modify: `src/quantcraft/backtest/strategy_runtime.py`
-- Modify: `src/quantcraft/backtest/order_activation.py`
-- Possibly create: `src/quantcraft/backtest/order_sizing.py`
+- Modify: `src/quantleet/backtest/runtime.py`
+- Modify: `src/quantleet/backtest/strategy_runtime.py`
+- Modify: `src/quantleet/backtest/order_activation.py`
+- Possibly create: `src/quantleet/backtest/order_sizing.py`
 - Modify: `tests/unit/backtest/test_order_activation_policy.py`
 - Create: `tests/unit/backtest/test_order_sizing_activation.py`
 
@@ -312,10 +312,10 @@ The key ownership rule is:
 ### Task 5: Preserve Quantity-Only Order Creation And Matching
 
 **Files:**
-- Modify: `src/quantcraft/trading/domain/intents.py` only if helper APIs or
+- Modify: `src/quantleet/trading/domain/intents.py` only if helper APIs or
   constructor ergonomics need minimal additive support; otherwise keep it
   unchanged
-- Modify: `src/quantcraft/trading/domain/orders.py` only if creation helpers
+- Modify: `src/quantleet/trading/domain/orders.py` only if creation helpers
   need to better support resolved intent creation; otherwise keep it unchanged
 - Modify: `tests/unit/trading/test_orders.py` only if helper coverage needs a
   small additive test

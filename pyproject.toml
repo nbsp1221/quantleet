@@ -1,5 +1,5 @@
 [project]
-name = "quantcraft"
+name = "quantleet"
 version = "0.1.0b1"
 description = "Single-symbol Python backtesting and quant research tooling"
 readme = "README.md"
@@ -25,10 +25,10 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/nbsp1221/quantcraft"
-Repository = "https://github.com/nbsp1221/quantcraft"
-Issues = "https://github.com/nbsp1221/quantcraft/issues"
-Changelog = "https://github.com/nbsp1221/quantcraft/blob/dev/CHANGELOG.md"
+Homepage = "https://github.com/nbsp1221/quantleet"
+Repository = "https://github.com/nbsp1221/quantleet"
+Issues = "https://github.com/nbsp1221/quantleet/issues"
+Changelog = "https://github.com/nbsp1221/quantleet/blob/main/CHANGELOG.md"
 
 [dependency-groups]
 dev = [
@@ -84,7 +84,7 @@ testpaths = ["tests"]
 [tool.mypy]
 python_version = "3.13"
 strict = true
-packages = ["quantcraft"]
+packages = ["quantleet"]
 
 [[tool.mypy.overrides]]
 module = ["ccxt", "ccxt.*"]
@@ -102,4 +102,4 @@ target-version = "py313"
 select = ["E", "F", "I"]
 
 [tool.coverage.report]
-include = ["src/quantcraft/*"]
+include = ["src/quantleet/*"]

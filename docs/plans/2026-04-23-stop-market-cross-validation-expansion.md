@@ -43,7 +43,7 @@
   - add this active plan
   - update plan findings after the expanded experiment
 - Out-of-repo scope:
-  - modify the temporary `/tmp/quantcraft-stop-xval` harness
+  - modify the temporary `/tmp/quantleet-stop-xval` harness
   - install additional local or remote comparator dependencies into the `/tmp`
     uv project when needed
   - execute expanded comparator runs there
@@ -77,7 +77,7 @@
   - final report explains mismatch causes in plain language and identifies any
     majority stop-fill pattern across the successfully executed comparator set
 - Out of scope:
-  - changing shipped `quantcraft` runtime code
+  - changing shipped `quantleet` runtime code
   - implementing `stop_limit`, linked orders, or new order families
 
 ## Evaluator Acceptance Contract
@@ -89,7 +89,7 @@
     observed stop-fill pattern
 - Acceptance artifact location:
   - this active plan
-  - temporary `/tmp/quantcraft-stop-xval/results/` artifacts
+  - temporary `/tmp/quantleet-stop-xval/results/` artifacts
 - How the generator and evaluator agreed on done before execution:
   - done means the comparator set has been materially widened beyond the
     current two-engine sample and the conclusions are supported by fresh output
@@ -122,15 +122,15 @@
 - Findings:
   - Fresh expanded stop-fill stress rerun focused on
     `mean_reversion_market` was executed from:
-    - `/tmp/quantcraft-stop-xval/run_stop_fill_expansion.py`
-    - `/tmp/quantcraft-stop-xval-nautilus/run_nautilus_mean_reversion.py`
+    - `/tmp/quantleet-stop-xval/run_stop_fill_expansion.py`
+    - `/tmp/quantleet-stop-xval-nautilus/run_nautilus_mean_reversion.py`
   - Successfully executed comparator engines:
     - `backtesting.py`
     - `backtrader`
     - `vectorbt`
     - `nautilus`
   - Repository engine under test:
-    - `quantcraft`
+    - `quantleet`
   - Triage-only comparator outcomes:
     - `pyalgotrade`
       - strategy translation did not produce credible closed-trade output for
@@ -148,18 +148,18 @@
         3.13 compatible (`typing.io` import failure), so it was not promoted to
         a runnable comparator
   - Trend judgment from the successful comparator set:
-    - `backtesting.py` matched `quantcraft` very closely on many early trades
+    - `backtesting.py` matched `quantleet` very closely on many early trades
       and remained less conservative than `backtrader` / `vectorbt`
-    - `nautilus` also tracked `quantcraft` much more closely than the more
+    - `nautilus` also tracked `quantleet` much more closely than the more
       conservative comparators
     - `backtrader` and `vectorbt` realized worse stop exits more often
     - therefore the prior “all comparators are more conservative” framing does
       not hold once the sample is widened
   - Practical product judgment:
-    - the widened sample suggests `quantcraft` is not an outlier by itself
+    - the widened sample suggests `quantleet` is not an outlier by itself
     - the comparator landscape appears split:
       - trigger-price-friendly or near-trigger models:
-        `quantcraft`, `backtesting.py`, `nautilus`
+        `quantleet`, `backtesting.py`, `nautilus`
       - more conservative post-cross models:
         `backtrader`, `vectorbt`
 - Verification evidence:
@@ -167,12 +167,12 @@
     - `uv run poe repo-check`
     - Result: `repository checks passed`
   - Expanded rerun command:
-    - `cd /tmp/quantcraft-stop-xval && uv run python run_stop_fill_expansion.py`
+    - `cd /tmp/quantleet-stop-xval && uv run python run_stop_fill_expansion.py`
   - Separate Nautilus runner command:
-    - `cd /tmp/quantcraft-stop-xval-nautilus && uv run python run_nautilus_mean_reversion.py`
+    - `cd /tmp/quantleet-stop-xval-nautilus && uv run python run_nautilus_mean_reversion.py`
   - Temporary result artifacts:
-    - `/tmp/quantcraft-stop-xval/results/stop_fill_expansion.json`
-    - `/tmp/quantcraft-stop-xval/results/cross_validation_results.json`
-    - `/tmp/quantcraft-stop-xval/results/summary.md`
+    - `/tmp/quantleet-stop-xval/results/stop_fill_expansion.json`
+    - `/tmp/quantleet-stop-xval/results/cross_validation_results.json`
+    - `/tmp/quantleet-stop-xval/results/summary.md`
 - Final disposition:
   - `accepted`

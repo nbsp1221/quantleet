@@ -4,9 +4,9 @@
 
 **Goal:** Bring the shipped backtest runtime into conformance with the conservative limit-order execution contract without moving bar-aware logic into the shared `trading` matcher.
 
-**Architecture:** Keep `quantcraft.trading` as a generic executable-event matcher and move all OHLC approximation into the `quantcraft.backtest` adapter/runtime layer. Replace the current eager four-point synthetic event tuple with per-bar decisive executable ticks derived from a canonical path, then preserve result-surface and runtime guarantees with focused integration and perf checks.
+**Architecture:** Keep `quantleet.trading` as a generic executable-event matcher and move all OHLC approximation into the `quantleet.backtest` adapter/runtime layer. Replace the current eager four-point synthetic event tuple with per-bar decisive executable ticks derived from a canonical path, then preserve result-surface and runtime guarantees with focused integration and perf checks.
 
-**Tech Stack:** Python 3.13, `uv`, `pytest`, Poe tasks, existing `quantcraft.backtest`, `quantcraft.trading`, and `quantcraft.research` packages
+**Tech Stack:** Python 3.13, `uv`, `pytest`, Poe tasks, existing `quantleet.backtest`, `quantleet.trading`, and `quantleet.research` packages
 
 ---
 
@@ -16,7 +16,7 @@ Scope:
 - Close the remaining limit-order conformance gap in the current backtest runtime.
 
 Owner:
-- One writer working in `src/quantcraft/backtest/*` plus the affected test and doc files listed below.
+- One writer working in `src/quantleet/backtest/*` plus the affected test and doc files listed below.
 
 Acceptance criteria:
 - Resting limit orders touched during continuous intrabar movement fill at the limit price, not the bar extreme.
@@ -39,16 +39,16 @@ Next-step note:
 
 The current limit-order gap is caused by the backtest adapter, not by the shared matcher.
 
-1. [`src/quantcraft/backtest/execution_model.py`](../../src/quantcraft/backtest/execution_model.py)
+1. [`src/quantleet/backtest/execution_model.py`](../../src/quantleet/backtest/execution_model.py)
    - materializes every bar as four isolated executable ticks plus a `BarEvent`
    - uses bar extrema directly as executable prices
    - cannot express “touched intrabar at the limit price” because it only emits endpoint ticks
 
-2. [`src/quantcraft/backtest/runtime.py`](../../src/quantcraft/backtest/runtime.py)
+2. [`src/quantleet/backtest/runtime.py`](../../src/quantleet/backtest/runtime.py)
    - consumes one eager whole-run event tuple via `events_from_bars(...)`
    - has no per-bar hook where active orders can shape decisive synthetic ticks without changing the canonical path
 
-3. [`src/quantcraft/trading/domain/matching.py`](../../src/quantcraft/trading/domain/matching.py)
+3. [`src/quantleet/trading/domain/matching.py`](../../src/quantleet/trading/domain/matching.py)
    - is intentionally generic and should stay unchanged except for tests proving the backtest layer did the right thing
 
 4. Current tests still freeze parts of the old behavior
@@ -155,7 +155,7 @@ git commit -m "🧪 Lock conservative backtest limit semantics"
 ### Task 2: Introduce A Canonical Path Representation In `backtest`
 
 **Files:**
-- Create: `src/quantcraft/backtest/path.py`
+- Create: `src/quantleet/backtest/path.py`
 - Modify: `tests/unit/backtest/test_execution_model.py`
 
 **Step 1: Write the failing path-model tests**
@@ -243,15 +243,15 @@ Expected: PASS for the new path-shape tests while the runtime-integration tests 
 **Step 5: Commit**
 
 ```bash
-git add src/quantcraft/backtest/path.py tests/unit/backtest/test_execution_model.py
+git add src/quantleet/backtest/path.py tests/unit/backtest/test_execution_model.py
 git commit -m "feat: add canonical backtest path model"
 ```
 
 ### Task 3: Refactor The Execution Model To Emit Per-Bar Decisive Ticks
 
 **Files:**
-- Modify: `src/quantcraft/backtest/execution_model.py`
-- Modify: `src/quantcraft/backtest/runtime.py`
+- Modify: `src/quantleet/backtest/execution_model.py`
+- Modify: `src/quantleet/backtest/runtime.py`
 - Modify: `tests/unit/backtest/test_execution_model.py`
 - Modify: `tests/integration/research/test_backtest_execution_semantics.py`
 
@@ -320,7 +320,7 @@ Expected: PASS for the new conservative limit tests.
 **Step 5: Commit**
 
 ```bash
-git add src/quantcraft/backtest/execution_model.py src/quantcraft/backtest/runtime.py tests/unit/backtest/test_execution_model.py tests/integration/research/test_backtest_execution_semantics.py
+git add src/quantleet/backtest/execution_model.py src/quantleet/backtest/runtime.py tests/unit/backtest/test_execution_model.py tests/integration/research/test_backtest_execution_semantics.py
 git commit -m "feat: emit conservative decisive ticks per bar"
 ```
 
@@ -389,8 +389,8 @@ git commit -m "📝 Rebaseline deterministic backtest contracts"
 ### Task 5: Verify Runtime Cost, Then Add Narrow Acceleration Only If Needed
 
 **Files:**
-- Modify if needed: `src/quantcraft/backtest/path.py`
-- Modify if needed: `src/quantcraft/backtest/execution_model.py`
+- Modify if needed: `src/quantleet/backtest/path.py`
+- Modify if needed: `src/quantleet/backtest/execution_model.py`
 - Modify if needed: `tests/unit/backtest/test_execution_model.py`
 - Create if needed: `tests/perf/test_backtest_limit_execution_benchmark.py`
 - Verify: `tests/perf/test_rsi_backtest_benchmark.py`
@@ -435,7 +435,7 @@ Expected: PASS with unchanged semantic outcomes.
 **Step 5: Commit**
 
 ```bash
-git add src/quantcraft/backtest/path.py src/quantcraft/backtest/execution_model.py tests/unit/backtest/test_execution_model.py
+git add src/quantleet/backtest/path.py src/quantleet/backtest/execution_model.py tests/unit/backtest/test_execution_model.py
 test -f tests/perf/test_backtest_limit_execution_benchmark.py && git add tests/perf/test_backtest_limit_execution_benchmark.py || true
 git commit -m "⚡ Preserve backtest semantics under runtime gate"
 ```

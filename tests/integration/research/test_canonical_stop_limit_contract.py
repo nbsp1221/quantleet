@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from quantcraft.data import TimeBar
-from quantcraft.trading.domain.costs import CostConfig
+from quantleet.data import TimeBar
+from quantleet.trading.domain.costs import CostConfig
 from tests.integration.research.support_backtest_runner import (
     BuyStopLimitStrategy,
     SellStopLimitStrategy,
@@ -26,9 +26,7 @@ def test_canonical_buy_stop_limit_trigger_and_fill_public_outcome() -> None:
 
     assert tuple(
         (fill.side, fill.quantity, fill.price, fill.timestamp) for fill in result.trade_log
-    ) == (
-        ("buy", 1.0, 105.0, 120),
-    )
+    ) == (("buy", 1.0, 105.0, 120),)
     assert result.final_state.position_quantity == 1.0
     assert result.summary.total_fills == 1
 
@@ -88,8 +86,6 @@ def test_canonical_sell_stop_limit_trigger_without_fill_public_outcome() -> None
 
     assert tuple(
         (fill.side, fill.quantity, fill.price, fill.timestamp) for fill in result.trade_log
-    ) == (
-        ("buy", 1.0, 100.0, 120),
-    )
+    ) == (("buy", 1.0, 100.0, 120),)
     assert result.final_state.position_quantity == 1.0
     assert result.summary.total_fills == 1

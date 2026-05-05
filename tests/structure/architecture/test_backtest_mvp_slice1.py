@@ -6,10 +6,10 @@ import re
 from pathlib import Path
 from types import ModuleType
 
-import quantcraft.research as research_package
-import quantcraft.trading.domain as trading_domain_package
-from quantcraft.trading.domain import __all__ as trading_domain_exports
-from quantcraft.trading.domain import events as trading_events
+import quantleet.research as research_package
+import quantleet.trading.domain as trading_domain_package
+from quantleet.trading.domain import __all__ as trading_domain_exports
+from quantleet.trading.domain import events as trading_events
 from scripts import check_architecture
 from tests.support import ROOT
 
@@ -31,13 +31,13 @@ def test_backtest_mvp_spec_marks_order_and_timer_events_as_deferred() -> None:
 
 def test_current_package_skeletons_exist() -> None:
     expected_paths = (
-        Path("src/quantcraft/data/__init__.py"),
-        Path("src/quantcraft/data/adapters/__init__.py"),
-        Path("src/quantcraft/research/__init__.py"),
-        Path("src/quantcraft/research/strategy.py"),
-        Path("src/quantcraft/backtest/__init__.py"),
-        Path("src/quantcraft/integrations/venues/ccxt/__init__.py"),
-        Path("src/quantcraft/trading/domain/__init__.py"),
+        Path("src/quantleet/data/__init__.py"),
+        Path("src/quantleet/data/adapters/__init__.py"),
+        Path("src/quantleet/research/__init__.py"),
+        Path("src/quantleet/research/strategy.py"),
+        Path("src/quantleet/backtest/__init__.py"),
+        Path("src/quantleet/integrations/venues/ccxt/__init__.py"),
+        Path("src/quantleet/trading/domain/__init__.py"),
     )
 
     for relative_path in expected_paths:

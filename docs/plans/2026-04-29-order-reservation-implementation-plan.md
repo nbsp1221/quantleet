@@ -66,8 +66,8 @@
     plan after full codebase investigation.
   - Granted scope:
     Tier A implementation of conservative order reservation and rejection
-    behavior in `src/quantcraft/trading`, `src/quantcraft/backtest`,
-    `src/quantcraft/research`, focused unit and integration tests, and product
+    behavior in `src/quantleet/trading`, `src/quantleet/backtest`,
+    `src/quantleet/research`, focused unit and integration tests, and product
     documentation status updates for `qty_percent` support across `market`,
     `limit`, `stop_market`, and `stop_limit`.
   - Expiration:
@@ -157,7 +157,7 @@
   - Poe task runner
   - `uv_build`
 - Runtime shape:
-  - installable local-first library under `src/quantcraft`
+  - installable local-first library under `src/quantleet`
   - no web server, database, queue, or HTTP API surface in the current package
 - Default verification:
   - `uv run poe verify`
@@ -169,13 +169,13 @@
 
 The codebase follows a capability-first package topology:
 
-- `quantcraft.trading` owns shared trading kernel concepts.
-- `quantcraft.trading.domain` owns order, fill, matching, cost, and state
+- `quantleet.trading` owns shared trading kernel concepts.
+- `quantleet.trading.domain` owns order, fill, matching, cost, and state
   invariants.
-- `quantcraft.trading.sizing` already owns shared sizing policy functions
+- `quantleet.trading.sizing` already owns shared sizing policy functions
   outside the domain-order object.
-- `quantcraft.research` owns strategy authoring ergonomics.
-- `quantcraft.backtest` owns historical runtime orchestration, synthetic OHLCV
+- `quantleet.research` owns strategy authoring ergonomics.
+- `quantleet.backtest` owns historical runtime orchestration, synthetic OHLCV
   execution, and result assembly.
 
 Important boundary findings:
@@ -211,36 +211,36 @@ Current source evidence:
 
 - `Strategy.buy()` / `Strategy.sell()` already expose `qty_percent`,
   `order_type`, `limit_price`, and `stop_price` at
-  `src/quantcraft/research/strategy.py:80`.
+  `src/quantleet/research/strategy.py:80`.
 - `Strategy._infer_trigger_condition()` currently rejects `qty_percent` for
-  all stop-family orders at `src/quantcraft/research/strategy.py:188`.
+  all stop-family orders at `src/quantleet/research/strategy.py:188`.
 - `PendingOrderRequest` validates exactly one sizing mode and validates
   `0 < qty_percent <= 100`, but currently rejects
   `qty_percent + stop_limit` at
-  `src/quantcraft/trading/order_requests.py:44`.
+  `src/quantleet/trading/order_requests.py:44`.
 - `OrderIntent` does not yet validate positive finite quantity at
-  `src/quantcraft/trading/domain/intents.py:24`.
+  `src/quantleet/trading/domain/intents.py:24`.
 - `Order` validates positive quantity, stop-family fields, and illegal dormant
-  fills at `src/quantcraft/trading/domain/orders.py:31`.
+  fills at `src/quantleet/trading/domain/orders.py:31`.
 - `_StrategyDriver.activate_pending_order_intents()` currently skips
   `ResolvedOrderSizing.is_noop` without emitting a public event at
-  `src/quantcraft/backtest/strategy_runtime.py:89`.
+  `src/quantleet/backtest/strategy_runtime.py:89`.
 - `trading.sizing` already has `SizingReservations`, `ResolvedOrderSizing`,
   buy/sell percent resolution, same-cycle reservation, rounding, fee-aware
   affordability, and active-order reservation helpers at
-  `src/quantcraft/trading/sizing.py:28`.
+  `src/quantleet/trading/sizing.py:28`.
 - `_active_buy_cash_reservation()` currently excludes dormant stop-family buy
-  orders at `src/quantcraft/trading/sizing.py:235`.
+  orders at `src/quantleet/trading/sizing.py:235`.
 - `_buy_anchor_price()` currently rejects stop-family buy requests at
-  `src/quantcraft/trading/sizing.py:270`.
+  `src/quantleet/trading/sizing.py:270`.
 - `_resolve_quantity_request()` currently returns quantity-only for buy
   stop-family orders and does not reserve cash at
-  `src/quantcraft/trading/sizing.py:108`.
+  `src/quantleet/trading/sizing.py:108`.
 - `_run_backtest()` applies fills directly and would currently rely on
   `TradingState.apply_fill()` raising if a buy is unaffordable at
-  `src/quantcraft/backtest/runtime.py:76`.
+  `src/quantleet/backtest/runtime.py:76`.
 - `BacktestResult` currently has no order-event or rejection-event surface at
-  `src/quantcraft/backtest/results.py:42`.
+  `src/quantleet/backtest/results.py:42`.
 
 ### Existing Tests To Preserve And Extend
 
@@ -395,9 +395,9 @@ Keep account-control behavior in backtest runtime orchestration. Do not move it
 into `Order`.
 
 Implementation should start with helper functions or a small dataclass in
-`src/quantcraft/backtest/strategy_runtime.py` and
-`src/quantcraft/backtest/runtime.py`. Only extract a new
-`src/quantcraft/backtest/account.py` if the code becomes clearer after tests
+`src/quantleet/backtest/strategy_runtime.py` and
+`src/quantleet/backtest/runtime.py`. Only extract a new
+`src/quantleet/backtest/account.py` if the code becomes clearer after tests
 force the shape.
 
 Minimum runtime behavior:
@@ -420,10 +420,10 @@ Minimum runtime behavior:
 
 **Files:**
 
-- Modify: `src/quantcraft/trading/domain/events.py`
-- Modify: `src/quantcraft/trading/domain/__init__.py`
-- Modify: `src/quantcraft/backtest/results.py`
-- Modify: `src/quantcraft/backtest/__init__.py` only if public export is needed
+- Modify: `src/quantleet/trading/domain/events.py`
+- Modify: `src/quantleet/trading/domain/__init__.py`
+- Modify: `src/quantleet/backtest/results.py`
+- Modify: `src/quantleet/backtest/__init__.py` only if public export is needed
 - Test: `tests/unit/trading/test_contracts.py`
 - Test: `tests/integration/research/test_backtest_result_contract.py`
 
@@ -464,10 +464,10 @@ Expected:
 
 **Step 3: Add the event dataclass**
 
-Implement the event in `src/quantcraft/trading/domain/events.py` using
+Implement the event in `src/quantleet/trading/domain/events.py` using
 `dataclass(frozen=True, slots=True)` and `Literal` reason codes.
 
-Export it from `src/quantcraft/trading/domain/__init__.py`.
+Export it from `src/quantleet/trading/domain/__init__.py`.
 
 **Step 4: Add result surface**
 
@@ -491,10 +491,10 @@ Expected:
 
 **Files:**
 
-- Modify: `src/quantcraft/research/strategy.py`
-- Modify: `src/quantcraft/trading/order_requests.py`
-- Modify: `src/quantcraft/trading/domain/intents.py`
-- Modify: `src/quantcraft/trading/domain/orders.py`
+- Modify: `src/quantleet/research/strategy.py`
+- Modify: `src/quantleet/trading/order_requests.py`
+- Modify: `src/quantleet/trading/domain/intents.py`
+- Modify: `src/quantleet/trading/domain/orders.py`
 - Test: `tests/unit/research/test_strategy_surface.py`
 - Test: `tests/unit/trading/test_contracts.py`
 - Test: `tests/unit/trading/test_orders.py`
@@ -561,7 +561,7 @@ Expected:
 
 **Files:**
 
-- Modify: `src/quantcraft/trading/sizing.py`
+- Modify: `src/quantleet/trading/sizing.py`
 - Test: `tests/unit/trading/test_sizing.py`
 
 **Step 1: Write failing anchor tests**
@@ -642,7 +642,7 @@ Expected:
 
 **Files:**
 
-- Modify: `src/quantcraft/trading/sizing.py`
+- Modify: `src/quantleet/trading/sizing.py`
 - Test: `tests/unit/trading/test_sizing.py`
 
 **Step 1: Write failing affordability tests**
@@ -727,8 +727,8 @@ Expected:
 
 **Files:**
 
-- Modify: `src/quantcraft/backtest/strategy_runtime.py`
-- Modify: `src/quantcraft/backtest/runtime.py`
+- Modify: `src/quantleet/backtest/strategy_runtime.py`
+- Modify: `src/quantleet/backtest/runtime.py`
 - Test: `tests/unit/backtest/test_order_sizing_activation.py`
 
 **Step 1: Write failing driver tests**
@@ -825,8 +825,8 @@ Expected:
 
 **Files:**
 
-- Modify: `src/quantcraft/backtest/runtime.py`
-- Reuse: `src/quantcraft/trading/sizing.py`
+- Modify: `src/quantleet/backtest/runtime.py`
+- Reuse: `src/quantleet/trading/sizing.py`
 - Test: `tests/unit/backtest/test_engine.py` or
   `tests/integration/research/test_order_reservation_contract.py`
 

@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 import pytest
 
-from quantcraft.research.indicators.runtime.views import IndicatorSeriesView
+from quantleet.research.indicators.runtime.views import IndicatorSeriesView
 
 
 @dataclass

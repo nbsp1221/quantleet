@@ -4,9 +4,9 @@
 
 **Goal:** Add and execute one notebook that demonstrates Binance spot and USD-M OHLCV fetching with charts.
 
-**Architecture:** Keep the notebook fully user-facing: import from `quantcraft`, fetch both datasets, convert rows to plotting inputs, and render simple close-price charts. Use `nbclient` to execute the notebook as a real validation artifact.
+**Architecture:** Keep the notebook fully user-facing: import from `quantleet`, fetch both datasets, convert rows to plotting inputs, and render simple close-price charts. Use `nbclient` to execute the notebook as a real validation artifact.
 
-**Tech Stack:** Python 3.13, quantcraft, ccxt, matplotlib, nbformat, nbclient
+**Tech Stack:** Python 3.13, quantleet, ccxt, matplotlib, nbformat, nbclient
 
 ---
 

@@ -201,7 +201,7 @@ Adopted lesson:
 Rejected lesson:
 
 - avoid one giant monolithic data table as the primary test style for
-  `quantcraft`; it gives breadth but becomes hard to understand and maintain
+  `quantleet`; it gives breadth but becomes hard to understand and maintain
 
 #### Adopt From LEAN
 
@@ -238,7 +238,7 @@ Adopted lesson:
 - integration tests should verify trigger facts and order identity are
   preserved across boundaries, not only local fill outcomes
 
-#### Keep From Current `quantcraft`
+#### Keep From Current `quantleet`
 
 Useful existing pattern:
 
@@ -248,7 +248,7 @@ Useful existing pattern:
 
 Evidence:
 
-- [test_backtest_execution_semantics.py](/home/retn0/repositories/nbsp1221/quantcraft/tests/integration/research/test_backtest_execution_semantics.py)
+- [test_backtest_execution_semantics.py](/home/retn0/repositories/nbsp1221/quantleet/tests/integration/research/test_backtest_execution_semantics.py)
 
 Adopted lesson:
 
@@ -552,11 +552,11 @@ one giant stop-order integration blob.
 - Findings:
   - The user's stated testing goals are compatible with current repo
     conventions and with the strongest comparator practices.
-  - The best fit for `quantcraft` is:
+  - The best fit for `quantleet` is:
     - LEAN-style contract-focused local tests
     - Freqtrade-style breadth of scenario coverage
     - Nautilus-style cross-boundary trigger invariant checks
-    - current `quantcraft`-style readable `TimeBar` integration scenarios
+    - current `quantleet`-style readable `TimeBar` integration scenarios
   - The document therefore recommends a split matrix rather than a single giant
     scenario table or a single happy-path contract test.
 - Verification evidence:

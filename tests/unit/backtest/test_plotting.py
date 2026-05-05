@@ -14,11 +14,11 @@ from matplotlib import pyplot as plt
 from matplotlib.figure import Figure
 from matplotlib.markers import MarkerStyle
 
-from quantcraft.backtest import BacktestResult, BacktestSummary, ExposureSummary
-from quantcraft.backtest.analytics import drawdown_curve_for_equity
-from quantcraft.backtest.results import _BacktestRunSnapshot
-from quantcraft.trading.domain.events import FillEvent
-from quantcraft.trading.domain.state import TradingState
+from quantleet.backtest import BacktestResult, BacktestSummary, ExposureSummary
+from quantleet.backtest.analytics import drawdown_curve_for_equity
+from quantleet.backtest.results import _BacktestRunSnapshot
+from quantleet.trading.domain.events import FillEvent
+from quantleet.trading.domain.state import TradingState
 
 
 @pytest.fixture(autouse=True)

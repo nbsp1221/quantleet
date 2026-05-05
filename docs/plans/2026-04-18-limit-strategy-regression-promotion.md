@@ -53,7 +53,7 @@
 - Out of scope:
   - performance-gate changes
   - expanding beyond the approved three-strategy limit set
-  - changes to `src/quantcraft/*` unless a fresh failing test proves a supporting bug in current code
+  - changes to `src/quantleet/*` unless a fresh failing test proves a supporting bug in current code
 
 ## Evaluator Acceptance Contract
 
@@ -102,7 +102,7 @@
     - each strategy has one focused contract file under `tests/integration/research/`
     - each contract pins the full `BacktestSummary`, `ExposureSummary`, first fills, last fills, and trade-log digest
   - The new strategies run through the public `BacktestEngine` plus normal `Strategy.init()` / `on_bar()` flow on the checked-in BTC USD-M 1h 2025 fixture.
-  - No production code under `src/quantcraft/*` was changed for this slice.
+  - No production code under `src/quantleet/*` was changed for this slice.
   - The repo-native strategy implementations now freeze the previously approved limit-regression families inside the canonical test surface; this closes the prior gap where real-data regressions existed only for market-order strategies.
   - Residual risk:
     - the approval docs named the strategy families but did not explicitly codify `EMA(20)` and `BB(20, 2)` before this implementation; the tests now freeze those parameters implicitly through the canonical helpers and snapshots

@@ -8,7 +8,7 @@
 
 Related documents:
 
-- [../design-docs/quantcraft-architecture.md](../design-docs/quantcraft-architecture.md)
+- [../design-docs/quantleet-architecture.md](../design-docs/quantleet-architecture.md)
 - [../design-docs/architecture-governance.md](../design-docs/architecture-governance.md)
 - [backtest-mvp.md](backtest-mvp.md)
 - [backtest-plotting.md](backtest-plotting.md)
@@ -34,7 +34,7 @@ Build a usable research surface on top of the current backtest kernel so that:
 
 ## Why This Slice Exists
 
-`quantcraft` already has a deterministic single-symbol backtest MVP, but it is still weak compared with established Python backtesting libraries in the following areas:
+`quantleet` already has a deterministic single-symbol backtest MVP, but it is still weak compared with established Python backtesting libraries in the following areas:
 
 - strategy-writing ergonomics
 - time-series access surface
@@ -84,26 +84,26 @@ trading stay outside the first beta.
 
 ## Official Import Surface
 
-The official user-facing research ergonomics surface lives under `quantcraft.research`.
-The canonical backtest runtime surface lives under `quantcraft.backtest`.
+The official user-facing research ergonomics surface lives under `quantleet.research`.
+The canonical backtest runtime surface lives under `quantleet.backtest`.
 
 Recommended import:
 
 ```python
-from quantcraft.backtest import BacktestEngine
-from quantcraft.research import ParameterStudy, Strategy, ta, qc
+from quantleet.backtest import BacktestEngine
+from quantleet.research import ParameterStudy, Strategy, ta, qc
 ```
 
 This slice does not promote:
 
-- root-level kitchen-sink imports such as `from quantcraft import ta, qc`
+- root-level kitchen-sink imports such as `from quantleet import ta, qc`
 - a fragmented public surface spread across many submodules
 
 ### Backtest Entry Surface
 
 The preferred public execution entry for the current research workflow is:
 
-- `quantcraft.backtest.BacktestEngine`
+- `quantleet.backtest.BacktestEngine`
 
 Approved execution paths:
 
@@ -112,9 +112,9 @@ Approved execution paths:
 
 Current rules:
 
-- `bars` must be `quantcraft.data.BarSeries`
-- the canonical single-bar type is `quantcraft.data.TimeBar`
-- `BarSeries.rows` must be `tuple[quantcraft.data.TimeBar, ...]`
+- `bars` must be `quantleet.data.BarSeries`
+- the canonical single-bar type is `quantleet.data.TimeBar`
+- `BarSeries.rows` must be `tuple[quantleet.data.TimeBar, ...]`
 - `source.load()` returns `BarSeries`
 - the engine does not expose public `bar_type`
 - the current historical backtest path fixes bar type internally to `time`
@@ -358,7 +358,7 @@ Rules:
 
 Users should not import third-party indicator libraries directly as the canonical research path.
 
-The public indicator contract is owned by `quantcraft` and exposed through `ta.*`.
+The public indicator contract is owned by `quantleet` and exposed through `ta.*`.
 
 The approved baseline signatures are:
 
@@ -372,7 +372,7 @@ The approved baseline signatures are:
 
 Rules:
 
-- the public contract belongs to `quantcraft`
+- the public contract belongs to `quantleet`
 - `TA-Lib` semantics are the canonical truth for warmup, lookback, seed, and `NaN` behavior
 - internal implementations may wrap `TA-Lib` or another calculation backend
 - external dependencies are implementation details, not public API ownership
@@ -589,7 +589,7 @@ Rules:
 - the document is the system of record
 - the notebook is an executable supporting artifact
 - the notebook must not define a competing contract
-- lower-layer setup imports used to construct example input data must be labeled as supporting setup types, not as part of the `quantcraft.research` public import surface
+- lower-layer setup imports used to construct example input data must be labeled as supporting setup types, not as part of the `quantleet.research` public import surface
 
 ### Canonical Quickstart Examples
 

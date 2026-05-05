@@ -8,7 +8,7 @@
 ## Planner Contract
 
 - Goal:
-  - Read the repository's governing docs, implemented product specs, key design docs, package layout, representative source modules, scripts, and tests, then produce a repo-wide analysis of what `quantcraft` is, what it is trying to become, how it is organized, and what state the current code appears to be in.
+  - Read the repository's governing docs, implemented product specs, key design docs, package layout, representative source modules, scripts, and tests, then produce a repo-wide analysis of what `quantleet` is, what it is trying to become, how it is organized, and what state the current code appears to be in.
 - Governing docs:
   - `AGENTS.md`
   - `README.md`
@@ -21,7 +21,7 @@
   - `docs/design-docs/index.md`
   - `docs/design-docs/core-beliefs.md`
   - `docs/design-docs/golden-principles.md`
-  - `docs/design-docs/quantcraft-architecture.md`
+  - `docs/design-docs/quantleet-architecture.md`
   - `docs/design-docs/package-topology-and-naming.md`
   - `docs/design-docs/backtest-execution-semantics.md`
   - `docs/RELIABILITY.md`
@@ -45,7 +45,7 @@
   - `git status --short`
   - `ls -la`
   - `rg --files src tests docs scripts`
-  - `find src/quantcraft -maxdepth 3 -type d | sort`
+  - `find src/quantleet -maxdepth 3 -type d | sort`
   - targeted `sed -n` reads over governing docs, source modules, tests, and scripts
 - Success criteria:
   - A concise but substantive analysis is delivered to the user that covers:
@@ -93,8 +93,8 @@
 ## Evaluator Review
 
 - Findings:
-  - `quantcraft` is a local-first Python quant engine/library organized around a
-    capability-first package topology under `src/quantcraft`, with current
+  - `quantleet` is a local-first Python quant engine/library organized around a
+    capability-first package topology under `src/quantleet`, with current
     implemented scope centered on historical market-data ingestion, research
     ergonomics, and a deterministic single-symbol backtest runtime.
   - The repository treats documentation as first-class authority. Product
@@ -128,7 +128,7 @@
   - Repository inventory:
     - `ls -la`
     - `rg --files src tests docs scripts`
-    - `find src/quantcraft -maxdepth 3 -type d | sort`
+    - `find src/quantleet -maxdepth 3 -type d | sort`
     - `git status --short`
   - Governing-doc and implementation reads:
     - targeted `sed -n` reads over `README.md`, `ARCHITECTURE.md`,

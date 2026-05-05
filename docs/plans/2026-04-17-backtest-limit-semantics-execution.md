@@ -28,7 +28,7 @@
 - Why these are governing:
   - they define the current backtest product contract, the canonical conservative path rules, the package boundaries, and the repository workflow/verification requirements
 - In-repo scope:
-  - update the current `src/quantcraft/backtest/*` execution path
+  - update the current `src/quantleet/backtest/*` execution path
   - add and update current semantics regressions in `tests/unit/backtest/*` and `tests/integration/research/*`
   - preserve public result contracts unless conservative semantics intentionally change them
   - run repo-local verification from the current worktree
@@ -51,7 +51,7 @@
   - the first bar has no synthetic gap segment
   - marketable limits at bar start fill immediately at the first executable price no worse than the limit
   - non-increasing timestamps are still rejected before path generation
-  - `src/quantcraft/trading/domain/matching.py` stays bar-agnostic and unchanged unless fresh evidence proves otherwise
+  - `src/quantleet/trading/domain/matching.py` stays bar-agnostic and unchanged unless fresh evidence proves otherwise
   - default and runtime-sensitive verification lanes pass from the current worktree
 - Out of scope:
   - changing the public API
@@ -93,7 +93,7 @@
   - external process guidance from Anthropic's `Harness design for long-running application development` is advisory for orchestration style, not repository authority
 - Blockers or scope changes:
   - 2026-04-17: red phase added unit regressions for touched-limit, gap-cross, and marketable-limit semantics plus integration regressions for deterministic result drift
-  - 2026-04-17: implementation stayed within `src/quantcraft/backtest/execution_model.py` and `src/quantcraft/backtest/runtime.py`; `trading` code was intentionally left unchanged
+  - 2026-04-17: implementation stayed within `src/quantleet/backtest/execution_model.py` and `src/quantleet/backtest/runtime.py`; `trading` code was intentionally left unchanged
   - 2026-04-17: evaluator fan-out flagged one concrete post-implementation gap in runtime-ordering coverage, so an explicit out-of-order runtime regression was added before the final verification rerun
   - 2026-04-17: reviewer fan-out also noted that the gap segment remains implicit in the decisive event stream because `previous_close` is not used to emit executable events; this was accepted as a residual risk, not a blocker, because the governing contract requires `open` as the first executable price and the current tests lock the observable outcomes that matter in this slice
 
@@ -101,9 +101,9 @@
 
 - Findings:
   - The change closes the remaining conservative limit-order conformance gap in the shipped backtest runtime without moving bar-aware behavior into `trading`.
-  - `src/quantcraft/backtest/execution_model.py` now exposes `tick_events_for_bar(...)` and inserts decisive synthetic ticks at crossed resting limit prices along the canonical intrabar route, while preserving `open` as the first executable price.
-  - `src/quantcraft/backtest/runtime.py` now consumes per-bar decisive ticks instead of an eager whole-series event tuple, includes pending intents in per-bar traversal planning, and still activates pending intents before matching the first tick at a timestamp.
-  - `src/quantcraft/trading/domain/matching.py` was not changed; the shared matcher remains bar-agnostic, which matches the governing design boundary.
+  - `src/quantleet/backtest/execution_model.py` now exposes `tick_events_for_bar(...)` and inserts decisive synthetic ticks at crossed resting limit prices along the canonical intrabar route, while preserving `open` as the first executable price.
+  - `src/quantleet/backtest/runtime.py` now consumes per-bar decisive ticks instead of an eager whole-series event tuple, includes pending intents in per-bar traversal planning, and still activates pending intents before matching the first tick at a timestamp.
+  - `src/quantleet/trading/domain/matching.py` was not changed; the shared matcher remains bar-agnostic, which matches the governing design boundary.
   - The deterministic integration/result contracts were rebaselined from the optimistic sell fill at `115.0` to the conservative touched-limit fill at `114.0`.
   - Added regression coverage now locks:
     - sell-side intrabar touched-limit fill at the limit price

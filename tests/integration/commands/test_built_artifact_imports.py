@@ -31,8 +31,8 @@ def test_built_wheel_exposes_documented_public_imports() -> None:
         text=True,
     )
 
-    wheels = sorted(artifact_dir.glob("quantcraft-*.whl"))
-    assert wheels, "expected uv build to produce a quantcraft wheel"
+    wheels = sorted(artifact_dir.glob("quantleet-*.whl"))
+    assert wheels, "expected uv build to produce a quantleet wheel"
 
     wheel_path = wheels[-1]
     assert any(requirement.startswith("matplotlib") for requirement in _wheel_requires(wheel_path))
@@ -40,31 +40,31 @@ def test_built_wheel_exposes_documented_public_imports() -> None:
         """
         import importlib
 
-        import quantcraft
+        import quantleet
 
-        module_path = quantcraft.__file__ or ""
+        module_path = quantleet.__file__ or ""
         assert "site-packages" in module_path, module_path
         assert module_path.endswith("__init__.py"), module_path
         for name in ("Exchange", "MarketType", "TimeBar", "BacktestEngine"):
             try:
-                getattr(quantcraft, name)
+                getattr(quantleet, name)
             except AttributeError:
                 pass
             else:
-                raise AssertionError(f"quantcraft should not export {name}")
+                raise AssertionError(f"quantleet should not export {name}")
 
-        data_module = importlib.import_module("quantcraft.data")
+        data_module = importlib.import_module("quantleet.data")
         assert getattr(data_module, "TimeBar", None) is not None
         assert getattr(data_module, "BarSeries", None) is not None
         assert getattr(data_module, "CCXTDataSource", None) is not None
         assert getattr(data_module, "CSVDataSource", None) is not None
         assert getattr(data_module, "DataFrameDataSource", None) is not None
 
-        research_module = importlib.import_module("quantcraft.research")
-        backtest_module = importlib.import_module("quantcraft.backtest")
-        execution_module = importlib.import_module("quantcraft.execution")
-        integrations_module = importlib.import_module("quantcraft.integrations")
-        ccxt_module = importlib.import_module("quantcraft.integrations.venues.ccxt")
+        research_module = importlib.import_module("quantleet.research")
+        backtest_module = importlib.import_module("quantleet.backtest")
+        execution_module = importlib.import_module("quantleet.execution")
+        integrations_module = importlib.import_module("quantleet.integrations")
+        ccxt_module = importlib.import_module("quantleet.integrations.venues.ccxt")
         assert getattr(research_module, "Strategy", None) is not None
         assert getattr(research_module, "ParameterStudy", None) is not None
         assert getattr(research_module, "GridSearchResult", None) is not None
@@ -94,24 +94,24 @@ def test_built_wheel_exposes_documented_public_imports() -> None:
         assert getattr(integrations_module, "__all__", None) == []
 
         for module_name in (
-            "quantcraft.exchange",
-            "quantcraft.data.adapters.exchange_backend",
-            "quantcraft.data.domain",
-            "quantcraft.data.domain.bars",
-            "quantcraft.data.domain.sources",
-            "quantcraft.research.domain",
-            "quantcraft.research.domain.series",
-            "quantcraft.research.application",
-            "quantcraft.research.application.backtest",
-            "quantcraft.research.application.engine",
-            "quantcraft.research.application.order_activation",
-            "quantcraft.research.application.strategy",
-            "quantcraft.research.application._runtime",
-            "quantcraft.research.adapters",
-            "quantcraft.research.adapters.execution_model",
-            "quantcraft.data.application",
-            "quantcraft.trading.application",
-            "quantcraft.trading.adapters",
+            "quantleet.exchange",
+            "quantleet.data.adapters.exchange_backend",
+            "quantleet.data.domain",
+            "quantleet.data.domain.bars",
+            "quantleet.data.domain.sources",
+            "quantleet.research.domain",
+            "quantleet.research.domain.series",
+            "quantleet.research.application",
+            "quantleet.research.application.backtest",
+            "quantleet.research.application.engine",
+            "quantleet.research.application.order_activation",
+            "quantleet.research.application.strategy",
+            "quantleet.research.application._runtime",
+            "quantleet.research.adapters",
+            "quantleet.research.adapters.execution_model",
+            "quantleet.data.application",
+            "quantleet.trading.application",
+            "quantleet.trading.adapters",
         ):
             try:
                 importlib.import_module(module_name)

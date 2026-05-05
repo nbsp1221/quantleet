@@ -8,7 +8,7 @@
 ## Planner Contract
 
 - Goal:
-  - Assess whether `quantcraft` can realistically become a single framework
+  - Assess whether `quantleet` can realistically become a single framework
     covering backtest, paper trading, and live trading with minimal strategy
     rewrites, and identify the architectural conditions required to make that
     promise credible.
@@ -121,7 +121,7 @@
     - medium: trade-tick replay -> paper -> live
     - weakest but still viable: OHLCV with conservative synthetic path ->
       paper -> live
-  - Architecture implication for `quantcraft`:
+  - Architecture implication for `quantleet`:
     - you can build the framework you want
     - the user-facing Pine-like DSL should be treated as an authoring layer
     - the internal engine should use stricter symbol-bearing intents/targets

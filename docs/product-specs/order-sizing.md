@@ -55,7 +55,7 @@ where users often think in:
 - "deploy 80% of available capital"
 - "take off 30% of the current position"
 
-This shipped slice improves that UX without forcing `quantcraft` into a full
+This shipped slice improves that UX without forcing `quantleet` into a full
 portfolio-construction layer.
 
 ## Current Repository Truth
@@ -79,10 +79,10 @@ Current shipped truth:
 
 Repository evidence:
 
-- [strategy.py](/home/retn0/repositories/nbsp1221/quantcraft/src/quantcraft/research/strategy.py:64)
-- [intents.py](/home/retn0/repositories/nbsp1221/quantcraft/src/quantcraft/trading/domain/intents.py:11)
-- [orders.py](/home/retn0/repositories/nbsp1221/quantcraft/src/quantcraft/trading/domain/orders.py:10)
-- [backtest-mvp.md](/home/retn0/repositories/nbsp1221/quantcraft/docs/product-specs/backtest-mvp.md:106)
+- [strategy.py](/home/retn0/repositories/nbsp1221/quantleet/src/quantleet/research/strategy.py:64)
+- [intents.py](/home/retn0/repositories/nbsp1221/quantleet/src/quantleet/trading/domain/intents.py:11)
+- [orders.py](/home/retn0/repositories/nbsp1221/quantleet/src/quantleet/trading/domain/orders.py:10)
+- [backtest-mvp.md](/home/retn0/repositories/nbsp1221/quantleet/docs/product-specs/backtest-mvp.md:106)
 
 ## Public UX Direction
 
@@ -158,7 +158,7 @@ The intended boundary is:
 This preserves the current `OrderIntent != runtime Order` seam and keeps the
 runtime trading kernel quantity-based.
 
-This slice does **not** require `quantcraft.trading` domain models to carry raw
+This slice does **not** require `quantleet.trading` domain models to carry raw
 percentage fields.
 
 To avoid environment drift, one canonical shared sizing policy should define:

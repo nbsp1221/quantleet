@@ -77,14 +77,14 @@
 
 - `/tmp` setup:
   - `uv init --bare --python 3.13`
-  - `uv add --editable /home/retn0/repositories/nbsp1221/quantcraft`
+  - `uv add --editable /home/retn0/repositories/nbsp1221/quantleet`
   - `uv add pandas backtesting backtrader vectorbt`
 - Experiment command:
   - `uv run python -X faulthandler compare_parameter_study.py --output comparison-results.json`
 - Result artifact:
-  - `/tmp/quantcraft-external-comparison/comparison-results.json`
+  - `/tmp/quantleet-external-comparison/comparison-results.json`
 - Dataset:
-  - `/home/retn0/repositories/nbsp1221/quantcraft/tests/fixtures/backtest/binance_usdm_btcusdtusdt_1h_2025.csv`
+  - `/home/retn0/repositories/nbsp1221/quantleet/tests/fixtures/backtest/binance_usdm_btcusdtusdt_1h_2025.csv`
   - rows: `8760`
   - start: `2025-01-01T00:00:00+00:00`
   - end: `2025-12-31T23:00:00+00:00`

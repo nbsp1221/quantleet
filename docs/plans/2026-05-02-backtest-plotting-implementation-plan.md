@@ -4,7 +4,7 @@
 
 **Goal:** Implement the first-beta `BacktestResult.plot()` workflow so engine-produced backtest results can render price, fills, equity, and underwater drawdown without users passing bars again or reloading a source.
 
-**Architecture:** Keep plotting ownership inside `quantcraft.backtest`. `BacktestResult.plot()` is a thin public facade; `quantcraft.backtest.plotting` owns Matplotlib rendering; runtime owns the immutable run snapshot and `drawdown_curve`; reporting shares pure backtest analytics helpers but is not the plot data source. The shared `trading` kernel remains unchanged.
+**Architecture:** Keep plotting ownership inside `quantleet.backtest`. `BacktestResult.plot()` is a thin public facade; `quantleet.backtest.plotting` owns Matplotlib rendering; runtime owns the immutable run snapshot and `drawdown_curve`; reporting shares pure backtest analytics helpers but is not the plot data source. The shared `trading` kernel remains unchanged.
 
 **Tech Stack:** Python 3.13, stdlib frozen dataclasses, `datetime.UTC`, Matplotlib runtime dependency with lazy imports, pytest, pytest monkeypatch, Ruff, mypy, uv, Poe task runner, wheel metadata checks via stdlib `zipfile`/`email.parser` or a clean temporary package environment.
 
@@ -57,7 +57,7 @@
     bar type, timestamps, and closes.
   - Populate `drawdown_curve` and `_run_snapshot` from `BacktestEngine.run(...)`
     paths after `BarSeries` materialization.
-  - Add `src/quantcraft/backtest/plotting.py` with lazy Matplotlib rendering.
+  - Add `src/quantleet/backtest/plotting.py` with lazy Matplotlib rendering.
   - Add unit, integration, smoke, structure, perf-adjacent, packaging, docs,
     and notebook coverage described below.
   - Update quickstart/product docs and notebook examples to show `result.plot()`
@@ -69,7 +69,7 @@
 - Tier A progression requested: `no`
 - Approval record, if required:
   - Tier A approval is not required because implementation must not modify
-    `src/quantcraft/trading` or `src/quantcraft/execution`.
+    `src/quantleet/trading` or `src/quantleet/execution`.
   - If execution discovers a required `trading` or `execution` source change,
     stop and request explicit Tier A approval before continuing.
 - Verification commands:
@@ -89,7 +89,7 @@
   - `result.plot()` works immediately after both `engine.run(bars=...)` and
     `engine.run(source=...)`.
   - Users never pass `bars`, `source`, dataframe, or report into `plot()`.
-  - Matplotlib is a runtime package dependency, but normal `quantcraft.backtest`
+  - Matplotlib is a runtime package dependency, but normal `quantleet.backtest`
     imports do not import Matplotlib.
   - Engine-produced results contain populated `drawdown_curve` and private
     immutable plot data.
@@ -138,7 +138,7 @@
 - Auto-fail conditions:
   - Prescribing `trading` or `execution` source changes without Tier A approval.
   - Making `plot()` accept `bars`, `source`, dataframe, or report parameters.
-  - Importing Matplotlib from `quantcraft.backtest.__init__`, `results.py`, or
+  - Importing Matplotlib from `quantleet.backtest.__init__`, `results.py`, or
     any non-plot import path.
   - Deriving plot data from `BacktestReport`.
   - Testing private snapshot shape as the primary evidence for normal behavior.
@@ -149,7 +149,7 @@
 
 - Planned slice order:
   1. Read governing docs and plotting specs.
-  2. Survey `src/quantcraft`, tests, docs, Poe tasks, and repo harness code.
+  2. Survey `src/quantleet`, tests, docs, Poe tasks, and repo harness code.
   3. Map reusable runtime/reporting/data/test patterns and implementation risks.
   4. Write this how-focused implementation plan.
   5. Run repository-document verification.
@@ -168,7 +168,7 @@
 
 ### Technology And Infrastructure
 
-- Python 3.13 package under `src/quantcraft`.
+- Python 3.13 package under `src/quantleet`.
 - `uv` manages dependencies and lockfile.
 - Poe task runner owns repo command surface.
 - pytest uses `--import-mode=importlib`.
@@ -183,14 +183,14 @@
 
 The current package topology matches the capability-first architecture:
 
-- `quantcraft.data` owns `TimeBar`, `BarSeries`, `HistoricalDataSource`, and
+- `quantleet.data` owns `TimeBar`, `BarSeries`, `HistoricalDataSource`, and
   concrete source adapters.
-- `quantcraft.trading` owns the Tier A matching/accounting/event kernel.
-- `quantcraft.backtest` owns `BacktestEngine`, runtime orchestration,
+- `quantleet.trading` owns the Tier A matching/accounting/event kernel.
+- `quantleet.backtest` owns `BacktestEngine`, runtime orchestration,
   execution model, order activation, result models, and reporting.
-- `quantcraft.research` owns the user strategy surface.
+- `quantleet.research` owns the user strategy surface.
 
-For plotting, the correct owner is `quantcraft.backtest`. The implementation
+For plotting, the correct owner is `quantleet.backtest`. The implementation
 may import from `data` and `trading`; it must not import from `research`,
 `execution`, or app surfaces.
 
@@ -212,18 +212,18 @@ BacktestEngine.run(...)
 
 Relevant files:
 
-- `src/quantcraft/backtest/engine.py`
+- `src/quantleet/backtest/engine.py`
   - validates exactly one of `bars` or `source`
   - materializes `source.load()` before calling `_run_backtest`
   - rejects empty `BarSeries` before runtime, so empty plot data is mainly an
     invalid/manual result concern
-- `src/quantcraft/backtest/runtime.py`
+- `src/quantleet/backtest/runtime.py`
   - owns the marked equity stream
   - currently appends `equity_curve` once per bar
   - currently computes summary max drawdown with private `_max_drawdown`
   - currently builds `BacktestReport` through `_ReportBuilder`
   - already has all data needed to create a run snapshot from `bars`
-- `src/quantcraft/backtest/results.py`
+- `src/quantleet/backtest/results.py`
   - frozen slots dataclasses
   - current `BacktestResult` positional fields:
     `trade_log`, `equity_curve`, `final_state`, `summary`
@@ -231,7 +231,7 @@ Relevant files:
   - `_report` is keyword-only, `compare=False`, `repr=False`
   - this is the right place for `_BacktestRunSnapshot`,
     `drawdown_curve`, `_run_snapshot`, and `plot()`
-- `src/quantcraft/backtest/reporting.py`
+- `src/quantleet/backtest/reporting.py`
   - `_ReportBuilder.record_equity(...)` independently computes drawdown
   - risk max drawdown currently uses `_max_drawdown(tuple(point.drawdown ...))`
   - report must share the same pure drawdown formula, but plotting must not
@@ -240,7 +240,7 @@ Relevant files:
 ### Current Data Contracts
 
 - `TimeBar` and `BarSeries` are frozen slots dataclasses in
-  `src/quantcraft/data/bars.py`.
+  `src/quantleet/data/bars.py`.
 - `BarSeries.rows` is already an immutable tuple of `TimeBar` values.
 - `DataFrameDataSource.load()` copies mutable row-like input into new
   `TimeBar` objects, which is useful for mutation-resistance tests.
@@ -281,7 +281,7 @@ Existing reusable patterns:
   - perf tests are explicit-only unless selected by path or `--run-perf`
 - `tests/perf/test_rsi_backtest_benchmark.py`
   - existing perf command currently targets only this file
-- `src/quantcraft/_repo_tools.py`
+- `src/quantleet/_repo_tools.py`
   - domain-dependency checks allow `backtest -> data/trading`
   - generic architecture checks do not currently forbid `backtest -> research`
     beyond the configured allowed list, so plotting-specific structure tests
@@ -315,7 +315,7 @@ Current gap:
 
 ### Result Data Model
 
-Modify `src/quantcraft/backtest/results.py`:
+Modify `src/quantleet/backtest/results.py`:
 
 ```python
 from typing import TYPE_CHECKING
@@ -352,7 +352,7 @@ Add the facade:
 
 ```python
 def plot(self) -> "Figure":
-    from quantcraft.backtest.plotting import plot_backtest_result
+    from quantleet.backtest.plotting import plot_backtest_result
 
     return plot_backtest_result(self)
 ```
@@ -361,7 +361,7 @@ Do not export `_BacktestRunSnapshot` in `__all__`.
 
 ### Backtest Analytics Helpers
 
-Create `src/quantcraft/backtest/analytics.py` for backtest-owned pure result
+Create `src/quantleet/backtest/analytics.py` for backtest-owned pure result
 analytics that are not report-specific.
 
 Recommended functions:
@@ -392,7 +392,7 @@ cannot drift.
 
 ### Runtime Population
 
-Modify `src/quantcraft/backtest/runtime.py`:
+Modify `src/quantleet/backtest/runtime.py`:
 
 - build `equity_curve_tuple = tuple(equity_curve)` after the bar loop
 - compute `drawdown_curve = drawdown_curve_for_equity(equity_curve_tuple)`
@@ -419,7 +419,7 @@ because runtime and result model are inside the same bounded context.
 
 ### Reporting Consolidation
 
-Modify `src/quantcraft/backtest/reporting.py`:
+Modify `src/quantleet/backtest/reporting.py`:
 
 - import `drawdown_for_equity` and `max_drawdown`
 - in `_ReportBuilder.record_equity(...)`, keep `_equity_peak` but compute
@@ -431,13 +431,13 @@ Do not make reporting the source of `BacktestResult.drawdown_curve`.
 
 ### Plotting Module
 
-Create `src/quantcraft/backtest/plotting.py`.
+Create `src/quantleet/backtest/plotting.py`.
 
 Rules:
 
 - no top-level Matplotlib imports
-- no import from `quantcraft.research`
-- no import from `quantcraft.backtest.reporting`
+- no import from `quantleet.research`
+- no import from `quantleet.backtest.reporting`
 - no file writes
 - no `show()`
 - no `close()`
@@ -452,7 +452,7 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING
 
-from quantcraft.backtest.results import BacktestResult
+from quantleet.backtest.results import BacktestResult
 
 if TYPE_CHECKING:
     from matplotlib.figure import Figure
@@ -646,10 +646,10 @@ Expected:
 
 **Files:**
 
-- Create: `src/quantcraft/backtest/analytics.py`
+- Create: `src/quantleet/backtest/analytics.py`
 - Create or modify: `tests/unit/backtest/test_plotting.py`
-- Modify later: `src/quantcraft/backtest/runtime.py`
-- Modify later: `src/quantcraft/backtest/reporting.py`
+- Modify later: `src/quantleet/backtest/runtime.py`
+- Modify later: `src/quantleet/backtest/reporting.py`
 
 **Step 1: Write failing drawdown tests**
 
@@ -669,7 +669,7 @@ Example:
 ```python
 import pytest
 
-from quantcraft.backtest.analytics import drawdown_curve_for_equity
+from quantleet.backtest.analytics import drawdown_curve_for_equity
 
 
 @pytest.mark.parametrize(
@@ -697,7 +697,7 @@ uv run pytest tests/unit/backtest/test_plotting.py::test_drawdown_curve_uses_pos
 
 Expected:
 
-- FAIL because `quantcraft.backtest.analytics` does not exist.
+- FAIL because `quantleet.backtest.analytics` does not exist.
 
 **Step 3: Implement analytics helper**
 
@@ -720,7 +720,7 @@ Expected:
 
 **Files:**
 
-- Modify: `src/quantcraft/backtest/results.py`
+- Modify: `src/quantleet/backtest/results.py`
 - Modify: `tests/integration/research/test_backtest_result_contract.py`
 - Modify: `tests/unit/backtest/test_results.py`
 - Modify or create: `tests/unit/backtest/test_plotting.py`
@@ -779,8 +779,8 @@ Expected:
 
 **Files:**
 
-- Modify: `src/quantcraft/backtest/runtime.py`
-- Modify: `src/quantcraft/backtest/reporting.py`
+- Modify: `src/quantleet/backtest/runtime.py`
+- Modify: `src/quantleet/backtest/reporting.py`
 - Modify: `tests/integration/research/test_backtest_result_contract.py`
 - Modify: canonical summary tests that compare full `BacktestSummary` or
   `BacktestResult` values if needed
@@ -838,7 +838,7 @@ Expected:
 
 **Files:**
 
-- Create: `src/quantcraft/backtest/plotting.py`
+- Create: `src/quantleet/backtest/plotting.py`
 - Modify: `tests/unit/backtest/test_plotting.py`
 
 **Step 1: Add Matplotlib test hygiene**
@@ -972,8 +972,8 @@ Also call `result.plot()` twice and assert:
 Use fresh interpreter subprocesses:
 
 ```python
-python -c "import quantcraft.backtest, sys; assert 'matplotlib' not in sys.modules"
-python -c "import quantcraft.backtest.results, sys; assert 'matplotlib' not in sys.modules"
+python -c "import quantleet.backtest, sys; assert 'matplotlib' not in sys.modules"
+python -c "import quantleet.backtest.results, sys; assert 'matplotlib' not in sys.modules"
 ```
 
 Then separately verify a plot call may import Matplotlib.
@@ -983,18 +983,18 @@ Then separately verify a plot call may import Matplotlib.
 In `tests/structure/architecture/test_backtest_plotting_boundaries.py`, parse
 AST imports for:
 
-- `src/quantcraft/backtest/plotting.py`
-- `src/quantcraft/backtest/__init__.py`
-- `src/quantcraft/backtest/results.py`
-- `src/quantcraft/data/**/*.py`
-- `src/quantcraft/trading/**/*.py`
+- `src/quantleet/backtest/plotting.py`
+- `src/quantleet/backtest/__init__.py`
+- `src/quantleet/backtest/results.py`
+- `src/quantleet/data/**/*.py`
+- `src/quantleet/trading/**/*.py`
 
 Required assertions:
 
-- plotting implementation lives under `src/quantcraft/backtest/`
-- `backtest` and `backtest.plotting` do not import `quantcraft.research`,
-  `quantcraft.execution`, `apps`, or deep sibling internals
-- `backtest.plotting` does not import `quantcraft.backtest.reporting`
+- plotting implementation lives under `src/quantleet/backtest/`
+- `backtest` and `backtest.plotting` do not import `quantleet.research`,
+  `quantleet.execution`, `apps`, or deep sibling internals
+- `backtest.plotting` does not import `quantleet.backtest.reporting`
 - `data` does not import plotting code
 - `trading` does not import `backtest`, `research`, or `matplotlib`
 
@@ -1026,7 +1026,7 @@ tests/integration/backtest/test_plotting.py
 
 Use local deterministic fixtures rather than importing support from
 `tests/integration/research/...` when practical. It is fine for strategies to
-subclass `quantcraft.research.Strategy` because this is the current public
+subclass `quantleet.research.Strategy` because this is the current public
 strategy authoring surface.
 
 **Step 2: Write failing integration tests**
@@ -1274,7 +1274,7 @@ Review the diff against:
 Auto-fail the slice if:
 
 - `result.plot()` accepts any bars/source/report argument
-- Matplotlib is imported during normal `quantcraft.backtest` import
+- Matplotlib is imported during normal `quantleet.backtest` import
 - `plotting.py` imports `research` or `reporting`
 - plot data comes from `BacktestReport`
 - 10,000-bar test is not run by `uv run poe verify-runtime`
@@ -1301,7 +1301,7 @@ Auto-fail the slice if:
     contract: the public API is no-argument `result.plot()`, returns a
     Matplotlib figure, and renders price, fills, equity, and underwater
     drawdown from result-owned run data.
-  - Plotting remains owned by `quantcraft.backtest`; it does not route through
+  - Plotting remains owned by `quantleet.backtest`; it does not route through
     `BacktestReport`, does not import `research`, `execution`, or
     `integrations`, and Matplotlib imports remain lazy until plotting is
     invoked.

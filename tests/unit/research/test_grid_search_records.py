@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import math
 
-from quantcraft.research import GridSearchResult, GridSearchRow
+from quantleet.research import GridSearchResult, GridSearchRow
 from tests.unit.research.support_parameter_study import (
     NoTradeStrategy,
     make_bars,

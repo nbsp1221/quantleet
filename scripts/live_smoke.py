@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from quantcraft._repo_tools import run_live_smoke
+from quantleet._repo_tools import run_live_smoke
 
 
 def main() -> int:

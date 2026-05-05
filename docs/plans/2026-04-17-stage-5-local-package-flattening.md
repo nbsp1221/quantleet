@@ -28,7 +28,7 @@
   - [`docs/product-specs/backtest-mvp.md`](../product-specs/backtest-mvp.md)
   - [`docs/product-specs/research-ergonomics.md`](../product-specs/research-ergonomics.md)
   - [`docs/design-docs/index.md`](../design-docs/index.md)
-  - [`docs/design-docs/quantcraft-architecture.md`](../design-docs/quantcraft-architecture.md)
+  - [`docs/design-docs/quantleet-architecture.md`](../design-docs/quantleet-architecture.md)
   - [`docs/design-docs/package-topology-and-naming.md`](../design-docs/package-topology-and-naming.md)
   - [`docs/RELIABILITY.md`](../RELIABILITY.md)
   - [`docs/SECURITY.md`](../SECURITY.md)
@@ -105,7 +105,7 @@
 - Out of scope:
   - final public-surface narrowing
   - root compatibility alias deletion
-  - removing `quantcraft.research.application.*` or `quantcraft.trading.domain.*`
+  - removing `quantleet.research.application.*` or `quantleet.trading.domain.*`
     compatibility paths purely for cleanliness
 
 ## Evaluator Acceptance Contract
@@ -166,27 +166,27 @@
     - `Bernoulli`: `research` flattening candidates
     - `Carson`: `trading` flattening candidates and Tier A caution
   - the final Stage 5 owned file group became:
-    - `src/quantcraft/data/bars.py`
-    - `src/quantcraft/data/sources.py`
-    - `src/quantcraft/data/__init__.py`
-    - `src/quantcraft/data/domain/__init__.py`
-    - `src/quantcraft/data/domain/bars.py`
-    - `src/quantcraft/data/domain/sources.py`
-    - `src/quantcraft/data/adapters/ccxt_source.py`
-    - `src/quantcraft/data/adapters/csv_source.py`
-    - `src/quantcraft/data/adapters/dataframe_source.py`
-    - `src/quantcraft/data/adapters/exchange_backend.py`
-    - `src/quantcraft/backtest/engine.py`
-    - `src/quantcraft/integrations/venues/ccxt/market_data.py`
-    - `src/quantcraft/exchange.py`
-    - `src/quantcraft/research/series.py`
-    - `src/quantcraft/research/domain/__init__.py`
-    - `src/quantcraft/research/domain/series.py`
-    - `src/quantcraft/research/application/strategy.py`
-    - `src/quantcraft/research/indicators/runtime/factory.py`
-    - `src/quantcraft/trading/application/__init__.py`
-    - `src/quantcraft/trading/adapters/__init__.py`
-    - `src/quantcraft/data/application/__init__.py`
+    - `src/quantleet/data/bars.py`
+    - `src/quantleet/data/sources.py`
+    - `src/quantleet/data/__init__.py`
+    - `src/quantleet/data/domain/__init__.py`
+    - `src/quantleet/data/domain/bars.py`
+    - `src/quantleet/data/domain/sources.py`
+    - `src/quantleet/data/adapters/ccxt_source.py`
+    - `src/quantleet/data/adapters/csv_source.py`
+    - `src/quantleet/data/adapters/dataframe_source.py`
+    - `src/quantleet/data/adapters/exchange_backend.py`
+    - `src/quantleet/backtest/engine.py`
+    - `src/quantleet/integrations/venues/ccxt/market_data.py`
+    - `src/quantleet/exchange.py`
+    - `src/quantleet/research/series.py`
+    - `src/quantleet/research/domain/__init__.py`
+    - `src/quantleet/research/domain/series.py`
+    - `src/quantleet/research/application/strategy.py`
+    - `src/quantleet/research/indicators/runtime/factory.py`
+    - `src/quantleet/trading/application/__init__.py`
+    - `src/quantleet/trading/adapters/__init__.py`
+    - `src/quantleet/data/application/__init__.py`
     - `tests/unit/data/test_bars.py`
     - `tests/unit/data/domain/test_bars.py`
     - `tests/unit/data/domain/test_sources.py`
@@ -228,10 +228,10 @@
     - `trading`: do not flatten `trading.domain.*` yet; only remove empty
       placeholder package paths
   - the implementation matches that bounded Stage 5 shape:
-    - canonical `data` contracts now live in `src/quantcraft/data/bars.py` and
-      `src/quantcraft/data/sources.py`
+    - canonical `data` contracts now live in `src/quantleet/data/bars.py` and
+      `src/quantleet/data/sources.py`
     - canonical research series contracts now live in
-      `src/quantcraft/research/series.py`
+      `src/quantleet/research/series.py`
     - `data.domain*` and `research.domain*` are reduced to explicit re-export
       shims
     - empty ceremonial package paths under `data/application`,
@@ -245,8 +245,8 @@
     - empty directories were removed and local/built-artifact smoke tests now
       assert those package paths fail to import
     - built-artifact and local smoke tests now import
-      `quantcraft.data.domain.bars`, `quantcraft.data.domain.sources`, and
-      `quantcraft.research.domain.series` directly and prove identity with the
+      `quantleet.data.domain.bars`, `quantleet.data.domain.sources`, and
+      `quantleet.research.domain.series` directly and prove identity with the
       new canonical owners
 - Verification evidence:
   - Anthropic harness reference reviewed:
@@ -256,9 +256,9 @@
     - source: https://www.anthropic.com/engineering/harness-design-long-running-apps
   - read-only research split:
     - `Einstein`: recommended flattening `data.domain` ownership into
-      `quantcraft.data.bars` and `quantcraft.data.sources`
+      `quantleet.data.bars` and `quantleet.data.sources`
     - `Bernoulli`: recommended flattening `research.domain.series` into
-      `quantcraft.research.series`
+      `quantleet.research.series`
     - `Carson`: recommended against flattening `trading.domain.*` in this slice
       and limited the safe move to deletion of empty placeholder package paths
   - targeted Stage 5 lane:

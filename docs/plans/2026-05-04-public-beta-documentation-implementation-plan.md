@@ -36,7 +36,7 @@
   - `docs/product-specs/data-ingestion.md`
   - `docs/design-docs/index.md`
   - `docs/design-docs/package-topology-and-naming.md`
-  - `docs/design-docs/quantcraft-architecture.md`
+  - `docs/design-docs/quantleet-architecture.md`
   - `docs/RELIABILITY.md`
   - `docs/SECURITY.md`
   - `docs/DESIGN.md`
@@ -56,7 +56,7 @@
 - Out-of-repo scope:
   - No external deployment, GitHub Pages setup, custom domain, package publishing, connector use, or `/tmp` clone changes.
 - Tier A progression requested: `no`
-- Approval record, if required: Not required. This slice changes docs, metadata, and tests only. It must not change `src/quantcraft/trading`, `src/quantcraft/execution`, or runtime behavior.
+- Approval record, if required: Not required. This slice changes docs, metadata, and tests only. It must not change `src/quantleet/trading`, `src/quantleet/execution`, or runtime behavior.
 - Verification commands:
   - `git diff --check`
   - `uv run poe repo-check`
@@ -70,8 +70,8 @@
   - README and public docs describe shipped behavior only.
   - README, `docs/site/index.md`, and `docs/site/quickstart.md` include the concise financial disclaimer.
   - Public docs include exactly three canonical examples: SMA crossover quickstart, orders and sizing, and parameter exploration.
-  - Public docs use current public imports from `quantcraft.data`, `quantcraft.backtest`, and `quantcraft.research`.
-  - Public docs do not document nonexistent public symbols such as root-level `quantcraft.BacktestEngine`, public `Bar`, or `TimeInForce` unless code first ships those symbols in a separate approved runtime/API slice.
+  - Public docs use current public imports from `quantleet.data`, `quantleet.backtest`, and `quantleet.research`.
+  - Public docs do not document nonexistent public symbols such as root-level `quantleet.BacktestEngine`, public `Bar`, or `TimeInForce` unless code first ships those symbols in a separate approved runtime/API slice.
   - Package metadata uses `0.1.0b1` and MIT license metadata while still leaving `LICENSE` untouched.
 - Out of scope:
   - Runtime feature work.
@@ -103,47 +103,47 @@
 ### Package And Tooling
 
 - `pyproject.toml` currently declares:
-  - `name = "quantcraft"`
+  - `name = "quantleet"`
   - `version = "0.1.0"`
   - `description = "Quant research and trading infrastructure toolkit"`
   - `requires-python = ">=3.13"`
   - runtime dependencies: `ccxt`, `matplotlib`, `ta-lib`
   - dev tooling: `coverage`, `ipykernel`, `mypy`, `nbclient`, `nbformat`, `poethepoet`, `pytest`, `pytest-benchmark`, `ruff`
-- Poe is the repo command surface. Required task names are enforced by `src/quantcraft/_repo_tools.py` and tests under `tests/structure/repo/`.
+- Poe is the repo command surface. Required task names are enforced by `src/quantleet/_repo_tools.py` and tests under `tests/structure/repo/`.
 - No Node, Astro, or Starlight package manifest currently exists. This plan therefore creates Starlight-compatible Markdown source structure only; it does not introduce a docs build.
 
 ### Current Public Import Truth
 
-- Root package `quantcraft` intentionally exports no public symbols.
+- Root package `quantleet` intentionally exports no public symbols.
 - Public data imports:
-  - `from quantcraft.data import TimeBar, BarSeries`
-  - `from quantcraft.data import HistoricalDataSource`
-  - `from quantcraft.data import CCXTDataSource, CSVDataSource, DataFrameDataSource`
+  - `from quantleet.data import TimeBar, BarSeries`
+  - `from quantleet.data import HistoricalDataSource`
+  - `from quantleet.data import CCXTDataSource, CSVDataSource, DataFrameDataSource`
 - Public backtest imports:
-  - `from quantcraft.backtest import BacktestEngine, CostConfig`
-  - `from quantcraft.backtest import BacktestResult, BacktestSummary, ExposureSummary`
+  - `from quantleet.backtest import BacktestEngine, CostConfig`
+  - `from quantleet.backtest import BacktestResult, BacktestSummary, ExposureSummary`
   - reporting objects such as `BacktestReport`, `RunManifest`, `ExecutionAssumptions`, `ReturnMetrics`, `RiskMetrics`, `TradeMetrics`, `CostMetrics`, `ExposureMetrics`, `EquityPoint`, `ReportingFill`, and `ClosedTrade`
 - Public research imports:
-  - `from quantcraft.research import Strategy, ParameterStudy, GridSearchResult, GridSearchRow, ta, qc`
+  - `from quantleet.research import Strategy, ParameterStudy, GridSearchResult, GridSearchRow, ta, qc`
 - Current strategy order intake:
   - `Strategy.buy(...)` and `Strategy.sell(...)` accept `quantity`, `qty_percent`, `order_type`, `limit_price`, `stop_price`, and `tag`.
   - Supported `order_type` values are `market`, `limit`, `stop_market`, and `stop_limit`.
   - The current single-symbol workflow may omit `symbol`; explicit symbols must match the active series symbol.
 - Current trading-domain internals:
-  - `OrderSide` and `OrderType` are defined under `quantcraft.trading.domain.intents`.
-  - `Order` is defined under `quantcraft.trading.domain.orders`.
-  - No `TimeInForce` symbol exists anywhere in `src/quantcraft`.
+  - `OrderSide` and `OrderType` are defined under `quantleet.trading.domain.intents`.
+  - `Order` is defined under `quantleet.trading.domain.orders`.
+  - No `TimeInForce` symbol exists anywhere in `src/quantleet`.
   - No public `Bar` class exists; the public historical bar type is `TimeBar`.
 - Documentation implication:
   - The curated public API reference should document current public imports first.
   - Public examples need cost configuration; this slice exposes `CostConfig`
-    through `quantcraft.backtest` so public docs do not teach
-    `quantcraft.trading.domain` imports.
+    through `quantleet.backtest` so public docs do not teach
+    `quantleet.trading.domain` imports.
   - `Bar` and `TimeInForce` from the product spec are not documentable as current public API without a separate API/runtime change. This implementation slice must either omit them from user docs and record the spec/code mismatch, or first get a separate approved API-surface plan.
 
 ### Existing Test And Docs Constraints
 
-- `scripts/check_docs.py` delegates to `quantcraft._repo_tools.collect_doc_issues`.
+- `scripts/check_docs.py` delegates to `quantleet._repo_tools.collect_doc_issues`.
 - Required docs currently enforced by repo checks are:
   - `README.md`
   - `AGENTS.md`
@@ -155,7 +155,7 @@
   - `docs/design-docs/index.md`
   - `docs/product-specs/index.md`
 - Existing structure tests assert current README text and will need intentional updates when README becomes public-facing.
-- Existing smoke tests assert public imports and intentionally reject root-level `quantcraft.BacktestEngine`.
+- Existing smoke tests assert public imports and intentionally reject root-level `quantleet.BacktestEngine`.
 - Existing quickstart reference at `docs/references/research-ergonomics-quickstart.md` contains reusable current examples for `BacktestEngine`, `Strategy`, `DataFrameDataSource`, `BarSeries`, `TimeBar`, `ta`, `qc`, `result.report`, and `result.plot()`.
 - `.github/` currently has no checked-in files.
 
@@ -187,11 +187,11 @@
 - Checks the evaluator will use:
   - Review `git diff --stat` and `git diff --name-only`.
   - Search for forbidden direct public links with `rg -n "AGENTS\\.md|docs/plans|docs/product-specs|docs/design-docs|docs/research" docs/site README.md`.
-  - Search for unsupported public API claims with `rg -n "\\bTimeInForce\\b|from quantcraft import BacktestEngine|\\bBar\\b" docs/site README.md`.
+  - Search for unsupported public API claims with `rg -n "\\bTimeInForce\\b|from quantleet import BacktestEngine|\\bBar\\b" docs/site README.md`.
   - Run the verification commands listed in the Planner Contract.
 - Auto-fail conditions:
   - `LICENSE` appears in the diff.
-  - Any file under `src/quantcraft/trading/` or `src/quantcraft/execution/` changes.
+  - Any file under `src/quantleet/trading/` or `src/quantleet/execution/` changes.
   - Public docs link directly to internal workflow docs.
   - Public docs require live exchange access for quickstart success.
   - Public docs present live trading, paper trading, shorting, leverage, multi-symbol, or multi-timeframe as first-beta supported behavior.
@@ -337,9 +337,9 @@ Expected:
 Use code that mirrors the docs and only imports public capability surfaces:
 
 ```python
-from quantcraft.backtest import BacktestEngine, CostConfig
-from quantcraft.data import BarSeries, DataFrameDataSource, TimeBar
-from quantcraft.research import ParameterStudy, Strategy, qc, ta
+from quantleet.backtest import BacktestEngine, CostConfig
+from quantleet.data import BarSeries, DataFrameDataSource, TimeBar
+from quantleet.research import ParameterStudy, Strategy, qc, ta
 ```
 
 Test 1: SMA crossover quickstart.
@@ -446,10 +446,10 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/nbsp1221/quantcraft"
-Repository = "https://github.com/nbsp1221/quantcraft"
-Issues = "https://github.com/nbsp1221/quantcraft/issues"
-Changelog = "https://github.com/nbsp1221/quantcraft/blob/dev/CHANGELOG.md"
+Homepage = "https://github.com/nbsp1221/quantleet"
+Repository = "https://github.com/nbsp1221/quantleet"
+Issues = "https://github.com/nbsp1221/quantleet/issues"
+Changelog = "https://github.com/nbsp1221/quantleet/blob/dev/CHANGELOG.md"
 ```
 
 Do not add a hosted documentation URL in this slice unless the actual deployment exists.
@@ -478,9 +478,9 @@ Expected:
 Use this structure:
 
 ```markdown
-# QuantCraft
+# Quantleet
 
-QuantCraft is a Python backtesting and quant research toolkit focused on a
+Quantleet is a Python backtesting and quant research toolkit focused on a
 polished first-beta single-symbol historical backtesting workflow.
 
 ## Beta Scope
@@ -586,7 +586,7 @@ Include:
 - do not file secrets, credentials, exploit details, or fund-moving risks in public issues
 - never commit API keys or exchange credentials
 - financial safety boundary:
-  - QuantCraft is research/software tooling
+  - Quantleet is research/software tooling
   - backtests are not execution guarantees
   - users own data assumptions and trading decisions
 - supported version initially `0.1.0b1`
@@ -680,9 +680,9 @@ Include:
 - current public imports only:
 
 ```python
-from quantcraft.backtest import BacktestEngine, CostConfig
-from quantcraft.data import DataFrameDataSource
-from quantcraft.research import Strategy, qc, ta
+from quantleet.backtest import BacktestEngine, CostConfig
+from quantleet.data import DataFrameDataSource
+from quantleet.research import Strategy, qc, ta
 ```
 
 - `result.report`
@@ -735,22 +735,22 @@ State unsupported:
 
 Document current public surfaces only:
 
-- `quantcraft.data.TimeBar`
-- `quantcraft.data.BarSeries`
-- `quantcraft.data.DataFrameDataSource`
-- `quantcraft.data.CSVDataSource`
-- `quantcraft.data.CCXTDataSource`
-- `quantcraft.backtest.BacktestEngine`
-- `quantcraft.backtest.BacktestResult`
+- `quantleet.data.TimeBar`
+- `quantleet.data.BarSeries`
+- `quantleet.data.DataFrameDataSource`
+- `quantleet.data.CSVDataSource`
+- `quantleet.data.CCXTDataSource`
+- `quantleet.backtest.BacktestEngine`
+- `quantleet.backtest.BacktestResult`
 - `BacktestResult.report`
 - `BacktestResult.plot()`
-- `quantcraft.research.Strategy`
+- `quantleet.research.Strategy`
 - `Strategy.buy(...)`
 - `Strategy.sell(...)`
-- `quantcraft.research.ParameterStudy`
+- `quantleet.research.ParameterStudy`
 - `ParameterStudy.grid_search(...)`
-- `quantcraft.research.ta`
-- `quantcraft.research.qc`
+- `quantleet.research.ta`
+- `quantleet.research.qc`
 
 Record that lower-level trading-domain objects are not the primary beta import surface. Do not document `TimeInForce` as public API.
 
@@ -770,7 +770,7 @@ Expected:
 
 **Files:**
 
-- Modify: `src/quantcraft/_repo_tools.py`
+- Modify: `src/quantleet/_repo_tools.py`
 - Modify: `tests/structure/repo/test_repo_check_contracts.py`
 
 **Step 1: Extend doc checks narrowly**
@@ -878,13 +878,13 @@ Update `## Evaluator Review` with:
 - Findings:
   - GPT-5.5 medium third-party review found a blocking public-docs API issue:
     README and `docs/site` initially taught users to import `CostConfig` from
-    `quantcraft.trading.domain.costs`. Fixed by exposing `CostConfig` from
-    `quantcraft.backtest`, updating README, `docs/site`, smoke tests, and built
-    artifact import tests to use `from quantcraft.backtest import BacktestEngine,
+    `quantleet.trading.domain.costs`. Fixed by exposing `CostConfig` from
+    `quantleet.backtest`, updating README, `docs/site`, smoke tests, and built
+    artifact import tests to use `from quantleet.backtest import BacktestEngine,
     CostConfig`.
   - GPT-5.5 medium third-party review found installation docs lacked a concrete
-    package install command. Fixed by adding `uv add quantcraft==0.1.0b1` and
-    `python -m pip install quantcraft==0.1.0b1` guidance.
+    package install command. Fixed by adding `uv add quantleet==0.1.0b1` and
+    `python -m pip install quantleet==0.1.0b1` guidance.
   - GPT-5.5 medium third-party review found this evaluator artifact was still
     pending. Fixed by recording review findings and verification evidence here.
   - GPT-5.5 medium second-pass review found no remaining blocking issues.
@@ -893,7 +893,7 @@ Update `## Evaluator Review` with:
     Starlight-compatible Markdown source under `docs/site/`, not a built docs
     site.
   - No `LICENSE` file was created or modified.
-  - No files under `src/quantcraft/trading/` or `src/quantcraft/execution/`
+  - No files under `src/quantleet/trading/` or `src/quantleet/execution/`
     were changed.
 - Verification evidence:
   - `git diff --check` passed with no output before third-party review.
@@ -903,7 +903,7 @@ Update `## Evaluator Review` with:
     -q` passed with `89 passed in 0.65s` before third-party review.
   - `uv run poe verify` passed before third-party review: Ruff passed, mypy
     passed, pytest reported `625 passed, 4 skipped`, coverage policy passed,
-    build produced `quantcraft-0.1.0b1`, repo-check passed, and all tracked
+    build produced `quantleet-0.1.0b1`, repo-check passed, and all tracked
     notebooks validated.
   - Post-review targeted check `uv run pytest
     tests/smoke/local/test_public_imports.py
@@ -923,7 +923,7 @@ Update `## Evaluator Review` with:
     `90 passed in 1.19s`.
   - Final post-review `uv run poe verify` passed: Ruff passed, mypy passed,
     pytest reported `625 passed, 4 skipped`, coverage policy passed, build
-    produced `quantcraft-0.1.0b1`, repo-check passed, and all tracked notebooks
+    produced `quantleet-0.1.0b1`, repo-check passed, and all tracked notebooks
     validated.
   - GPT-5.5 medium second-pass review also ran `git diff --check`, targeted
     docs/smoke/metadata tests, `uv build`, README quickstart execution,

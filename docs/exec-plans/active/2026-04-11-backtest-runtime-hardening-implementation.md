@@ -4,9 +4,9 @@
 
 **Goal:** Harden the current backtest runtime so that indicator causality, runtime ownership, OHLCV execution approximation, and shared trading-semantics boundaries are explicit, testable, and safe for future paper/live extension without changing the current public research UX.
 
-**Architecture:** Keep the current public `quantcraft.research` surface and current single-symbol long-only Backtest MVP behavior stable, while making three internal contracts explicit: indicator runtime contract, backtest execution-model contract, and order-activation policy contract. Shared trading meaning remains in `trading`, historical approximation remains in `research`, and any ambiguity between them must be resolved through tests and documented stop conditions rather than agent inference.
+**Architecture:** Keep the current public `quantleet.research` surface and current single-symbol long-only Backtest MVP behavior stable, while making three internal contracts explicit: indicator runtime contract, backtest execution-model contract, and order-activation policy contract. Shared trading meaning remains in `trading`, historical approximation remains in `research`, and any ambiguity between them must be resolved through tests and documented stop conditions rather than agent inference.
 
-**Tech Stack:** Python 3.13, `uv`, `pytest`, `pytest-benchmark`, `ruff`, `mypy`, `quantcraft.data`, `quantcraft.research`, `quantcraft.trading`
+**Tech Stack:** Python 3.13, `uv`, `pytest`, `pytest-benchmark`, `ruff`, `mypy`, `quantleet.data`, `quantleet.research`, `quantleet.trading`
 
 ## Lifecycle
 
@@ -30,7 +30,7 @@ Every worker and reviewer must read:
 - `AGENTS.md`
 - `ARCHITECTURE.md`
 - `docs/RELIABILITY.md`
-- `docs/design-docs/quantcraft-architecture.md`
+- `docs/design-docs/quantleet-architecture.md`
 - `docs/design-docs/architecture-governance.md`
 - `docs/product-specs/backtest-mvp.md`
 - `docs/product-specs/research-ergonomics.md`
@@ -66,7 +66,7 @@ Required preserved behavior:
 
 ## Non-Negotiable Guardrails
 
-1. Do not change the current public `quantcraft.research` API in this batch.
+1. Do not change the current public `quantleet.research` API in this batch.
 2. Do not change the current implemented Backtest MVP semantics unless the
    canonical product spec is first updated with human approval.
 3. Do not move fill matching, fill application, or trading state transitions
@@ -119,9 +119,9 @@ The following remain owned by `trading`:
 
 Canonical code paths today:
 
-- `src/quantcraft/trading/domain/intents.py`
-- `src/quantcraft/trading/domain/matching.py`
-- `src/quantcraft/trading/domain/state.py`
+- `src/quantleet/trading/domain/intents.py`
+- `src/quantleet/trading/domain/matching.py`
+- `src/quantleet/trading/domain/state.py`
 
 ### Historical Approximation
 
@@ -134,9 +134,9 @@ The following remain owned by `research`:
 
 Canonical code paths today:
 
-- `src/quantcraft/research/adapters/execution_model.py`
-- `src/quantcraft/research/application/backtest.py`
-- `src/quantcraft/research/application/_runtime.py`
+- `src/quantleet/research/adapters/execution_model.py`
+- `src/quantleet/research/application/backtest.py`
+- `src/quantleet/research/application/_runtime.py`
 
 ### Order Activation Policy In This Batch
 
@@ -242,12 +242,12 @@ internal abstractions.
 
 **Files to read before coding:**
 
-- `src/quantcraft/research/ta.py`
-- `src/quantcraft/research/indicators/runtime/base.py`
-- `src/quantcraft/research/indicators/runtime/runtime.py`
-- `src/quantcraft/research/indicators/runtime/factory.py`
-- `src/quantcraft/research/application/backtest.py`
-- `src/quantcraft/research/adapters/execution_model.py`
+- `src/quantleet/research/ta.py`
+- `src/quantleet/research/indicators/runtime/base.py`
+- `src/quantleet/research/indicators/runtime/runtime.py`
+- `src/quantleet/research/indicators/runtime/factory.py`
+- `src/quantleet/research/application/backtest.py`
+- `src/quantleet/research/adapters/execution_model.py`
 
 **Required work:**
 
@@ -277,9 +277,9 @@ without changing current public `ta.*` ergonomics.
 
 **Ownership:**
 
-- `src/quantcraft/research/indicators/runtime/`
-- `src/quantcraft/research/indicators/pure/`
-- `src/quantcraft/research/ta.py`
+- `src/quantleet/research/indicators/runtime/`
+- `src/quantleet/research/indicators/pure/`
+- `src/quantleet/research/ta.py`
 - `tests/unit/research/indicators/runtime/`
 - `tests/unit/research/test_indicator_surface.py`
 - `tests/integration/research/test_canonical_rsi_contract.py`
@@ -319,8 +319,8 @@ backtest execution-model abstraction while preserving current behavior.
 
 **Ownership:**
 
-- `src/quantcraft/research/adapters/`
-- `src/quantcraft/research/application/backtest.py`
+- `src/quantleet/research/adapters/`
+- `src/quantleet/research/application/backtest.py`
 - `tests/unit/research/adapters/`
 - `tests/integration/research/`
 
@@ -352,8 +352,8 @@ loop convention.
 
 **Ownership:**
 
-- `src/quantcraft/research/application/`
-- optionally `src/quantcraft/trading/application/` only if behavior remains
+- `src/quantleet/research/application/`
+- optionally `src/quantleet/trading/application/` only if behavior remains
   identical and ownership is unambiguous
 - `tests/integration/research/`
 - `tests/unit/research/application/`
@@ -436,12 +436,12 @@ At the end of every slice, run the narrowest relevant test set first, then:
 
 After any slice touching one of the following paths, run:
 
-- `src/quantcraft/research/ta.py`
-- `src/quantcraft/research/adapters/execution_model.py`
-- `src/quantcraft/research/indicators/runtime/`
-- `src/quantcraft/research/indicators/pure/`
-- `src/quantcraft/research/application/backtest.py`
-- `src/quantcraft/research/application/order_activation.py`
+- `src/quantleet/research/ta.py`
+- `src/quantleet/research/adapters/execution_model.py`
+- `src/quantleet/research/indicators/runtime/`
+- `src/quantleet/research/indicators/pure/`
+- `src/quantleet/research/application/backtest.py`
+- `src/quantleet/research/application/order_activation.py`
 
 Required command:
 

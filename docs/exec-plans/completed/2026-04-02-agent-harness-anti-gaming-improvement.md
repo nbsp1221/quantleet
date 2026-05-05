@@ -2,7 +2,7 @@
 
 > **For Codex:** REQUIRED SUB-SKILLS: read `docs/plans/2026-04-02-agent-harness-anti-gaming-design.md` before implementation, then use `subagent-driven-development` or `executing-plans` for any future execution batch.
 
-**Goal:** Improve the `quantcraft` harness so AI agents are guided toward the real product goal of a public, usable quant/backtesting library, while reducing the risk of proxy-metric gaming, fake rigor, and issue-shaped local optimization.
+**Goal:** Improve the `quantleet` harness so AI agents are guided toward the real product goal of a public, usable quant/backtesting library, while reducing the risk of proxy-metric gaming, fake rigor, and issue-shaped local optimization.
 
 **Architecture:** This batch should strengthen the harness control plane rather than expand product scope. The implementation should separate mechanical checks, LLM-assisted critique, and human judgment explicitly, and should only promote new enforcement where the protected behavior is objective, high-signal, and worth the complexity.
 
@@ -203,7 +203,7 @@ Do not let a future agent choose easier surrogate journeys after the slice begin
 
 **Likely files:**
 
-- `src/quantcraft/_repo_tools.py`
+- `src/quantleet/_repo_tools.py`
 - `scripts/repo_check.py`
 - `tests/structure/repo/`
 

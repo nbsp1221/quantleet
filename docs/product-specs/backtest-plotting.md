@@ -12,7 +12,7 @@ Related documents:
 - [research-ergonomics.md](research-ergonomics.md)
 - [backtest-mvp.md](backtest-mvp.md)
 - [../design-docs/package-topology-and-naming.md](../design-docs/package-topology-and-naming.md)
-- [../design-docs/quantcraft-architecture.md](../design-docs/quantcraft-architecture.md)
+- [../design-docs/quantleet-architecture.md](../design-docs/quantleet-architecture.md)
 
 This document defines the product contract for the implemented first-beta
 backtest plot.
@@ -81,7 +81,7 @@ depend on user-owned mutable dataframe state after the run completes.
 The result method remains a facade:
 
 - `BacktestResult.plot()` owns the public UX.
-- `quantcraft.backtest.plotting` owns matplotlib-specific rendering.
+- `quantleet.backtest.plotting` owns matplotlib-specific rendering.
 - `BacktestReport` owns structured analytics and readable reporting, not chart
   rendering.
 - `BacktestEngine` remains the runtime entry point, not a stateful last-run
@@ -103,10 +103,10 @@ plotting is a core workflow:
 | `backtrader` | `matplotlib` is an optional `plotting` extra | Plotting is built in but installation keeps it optional. Backtrader is a historical/popular comparator rather than a current-practice anchor. See [installation docs](https://www.backtrader.com/docu/installation/) and [setup.py](https://raw.githubusercontent.com/mementum/backtrader/master/setup.py). |
 | `PyBroker` | No core matplotlib dependency; docs show manual matplotlib usage | Result data is exposed and users plot manually. See [installation docs](https://www.pybroker.com/en/latest/install.html), [backtest docs](https://www.pybroker.com/en/latest/notebooks/2.%20Backtesting%20a%20Strategy.html), and [setup.cfg](https://raw.githubusercontent.com/edtechre/pybroker/master/setup.cfg). |
 
-For `quantcraft`, the first-beta product promise is closer to `backtesting.py`,
+For `quantleet`, the first-beta product promise is closer to `backtesting.py`,
 `vectorbt`, and `quantstats` than to PyBroker's manual plotting model. Basic
 plotting is part of the implemented beta inspection path, so `pip install
-quantcraft` should be enough for `result.plot()` to work.
+quantleet` should be enough for `result.plot()` to work.
 This accepts Matplotlib's transitive dependency footprint in favor of a
 zero-extra plotting workflow for the beta user.
 
@@ -163,7 +163,7 @@ options may be added only when they are documented and tested. `bars` and
 `BacktestResult` must not import Matplotlib at normal runtime import time. If a
 return annotation is exposed from `results.py`, it must use `TYPE_CHECKING`,
 quoted annotations, or another approach that preserves localized plotting
-imports. The concrete Matplotlib import belongs in `quantcraft.backtest.plotting`.
+imports. The concrete Matplotlib import belongs in `quantleet.backtest.plotting`.
 
 ### Non-Primary APIs
 

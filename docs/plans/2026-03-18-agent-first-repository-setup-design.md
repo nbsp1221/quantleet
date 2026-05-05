@@ -2,7 +2,7 @@
 
 ## Goal
 
-Set up `quantcraft` so it can be developed in an agent-first way without requiring the repository owner to continuously read and supervise raw code, while still keeping financial-domain risk under tight control.
+Set up `quantleet` so it can be developed in an agent-first way without requiring the repository owner to continuously read and supervise raw code, while still keeping financial-domain risk under tight control.
 
 This design is grounded in the OpenAI article "Harness engineering: leveraging Codex in an agent-first world" from 2026-02-11. The design only adopts principles stated in that article and maps them to this repository's current Python-library shape.
 
@@ -11,7 +11,7 @@ This design is grounded in the OpenAI article "Harness engineering: leveraging C
 Current repository state:
 
 - Python 3.13 library managed with `uv`
-- one package: `src/quantcraft`
+- one package: `src/quantleet`
 - current implemented scope is small market-data access through `Exchange`
 - local verification already exists:
   - `pytest`
@@ -38,7 +38,7 @@ These principles come directly from the OpenAI article and are treated as requir
 
 ## Product and Safety Constraints
 
-`quantcraft` is expected to grow into a quant library and framework that eventually covers:
+`quantleet` is expected to grow into a quant library and framework that eventually covers:
 
 - crypto and stock data collection
 - research utilities
@@ -146,7 +146,7 @@ The repository should remain a single Python package for now, but it should be o
 
 This means using a hybrid structure:
 
-- keep `src/quantcraft/...`
+- keep `src/quantleet/...`
 - define domain boundaries now
 - enforce import and layer rules now
 - leave room for later package extraction without rewriting the architecture

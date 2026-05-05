@@ -18,7 +18,7 @@ Related research docs:
 
 ## Purpose
 
-Capture the most relevant lessons from `vectorbt` for `quantcraft`, especially around fast research workflows, multi-asset analysis, and parameter-sweep ergonomics.
+Capture the most relevant lessons from `vectorbt` for `quantleet`, especially around fast research workflows, multi-asset analysis, and parameter-sweep ergonomics.
 
 ## Project Snapshot
 
@@ -37,7 +37,7 @@ The public API is oriented around objects such as `Portfolio.from_orders`, `Port
 
 ## Data And Execution Model
 
-The library is optimized for vectorized simulation across large datasets, multiple assets, grouped columns, and many parameter combinations. It also exposes walk-forward splitters and rich portfolio-analysis primitives. This is excellent for fast exploratory research, but it is a different execution model from `quantcraft`'s current event-driven kernel.
+The library is optimized for vectorized simulation across large datasets, multiple assets, grouped columns, and many parameter combinations. It also exposes walk-forward splitters and rich portfolio-analysis primitives. This is excellent for fast exploratory research, but it is a different execution model from `quantleet`'s current event-driven kernel.
 
 ## Order And Fill Model
 

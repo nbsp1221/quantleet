@@ -9,7 +9,7 @@
 
 ## Planner Contract
 
-- Goal: Validate whether `quantcraft`'s future real-data limit-order canonical regressions can be trusted by comparing the same dataset and strategy logic against multiple external backtesting libraries before freezing any new golden results.
+- Goal: Validate whether `quantleet`'s future real-data limit-order canonical regressions can be trusted by comparing the same dataset and strategy logic against multiple external backtesting libraries before freezing any new golden results.
 - Governing docs:
   - `AGENTS.md`
   - `README.md`
@@ -42,10 +42,10 @@
   - `git diff -- docs/plans/2026-04-15-limit-cross-engine-experiment.md`
 - Success criteria:
   - select at least three reasonable external comparator libraries with official documented limit-order support
-  - run the shared BTC USD-M 1h 2025 fixture through `quantcraft` and the comparator libraries for the approved limit strategy set or the maximal subset that can be expressed comparably
+  - run the shared BTC USD-M 1h 2025 fixture through `quantleet` and the comparator libraries for the approved limit strategy set or the maximal subset that can be expressed comparably
   - capture where results align, differ slightly, or diverge materially
   - identify whether divergences appear to come from engine semantics, library defaults, or strategy-translation constraints
-  - produce a clear recommendation for whether `quantcraft` values are trustworthy enough to freeze as canonical regressions
+  - produce a clear recommendation for whether `quantleet` values are trustworthy enough to freeze as canonical regressions
 - Out of scope:
   - live trading
   - secrets or external account usage
@@ -54,7 +54,7 @@
 ## Evaluator Acceptance Contract
 
 - Evaluator owner: Codex
-- Evaluator-owned done contract for this slice: The experiment is complete only if it produces evidence-bearing cross-engine comparisons that can either support or block freezing `quantcraft` limit-order golden results.
+- Evaluator-owned done contract for this slice: The experiment is complete only if it produces evidence-bearing cross-engine comparisons that can either support or block freezing `quantleet` limit-order golden results.
 - Acceptance artifact location: this active plan plus any linked result notes created during the experiment
 - How the generator and evaluator agreed on done before execution: at least three external comparator libraries must be investigated from official docs first, and actual run outputs must be reviewed before any trust claim is made
 - Checks the evaluator will use:
@@ -63,7 +63,7 @@
   - comparison tables or normalized result summaries
   - confirmation that repo-local tests still pass if repo files change
 - Auto-fail conditions:
-  - freezing or endorsing `quantcraft` limit golden values without external comparison evidence
+  - freezing or endorsing `quantleet` limit golden values without external comparison evidence
   - relying on libraries that cannot express comparable limit semantics without clearly labeling the mismatch
   - mixing unsupported assumptions into the comparison without documentation
 
@@ -80,7 +80,7 @@
   - if a library cannot support a strategy or cost model comparably, record the limitation rather than forcing a bad comparison
 - Blockers or scope changes:
   - 2026-04-15 scope change approved in-session by the user:
-    - add `NautilusTrader` as an explicit comparator because its architecture is philosophically closest to `quantcraft`
+    - add `NautilusTrader` as an explicit comparator because its architecture is philosophically closest to `quantleet`
     - rerun the comparison with non-zero cost assumptions:
       - slippage: `1 tick`
       - fee rate: `0.04%`
@@ -95,13 +95,13 @@
     - slippage `1 tick`
     - `NautilusTrader` added as an explicit comparator
   - `Backtrader` and `PyAlgoTrade` formed a tight conservative cluster in the cost run
-  - `quantcraft` remained materially more optimistic than that conservative cluster on all three approved strategies
-  - `NautilusTrader` was successfully ported for the EMA pullback strategy and landed extremely close to `quantcraft`, which is evidence that `quantcraft` may be closer to an execution-engine style optimistic fill philosophy than to conservative bar-backtester semantics
+  - `quantleet` remained materially more optimistic than that conservative cluster on all three approved strategies
+  - `NautilusTrader` was successfully ported for the EMA pullback strategy and landed extremely close to `quantleet`, which is evidence that `quantleet` may be closer to an execution-engine style optimistic fill philosophy than to conservative bar-backtester semantics
   - the current Nautilus ports for the other two strategies are not yet apples-to-apples enough to use as decisive validation for the whole strategy set
-  - the experiment still does not support freezing `quantcraft` limit-order golden results yet; a semantics decision is needed first
+  - the experiment still does not support freezing `quantleet` limit-order golden results yet; a semantics decision is needed first
 - Verification evidence:
   - zero-cost baseline evidence recorded in `docs/plans/2026-04-15-limit-cross-engine-results.md`
-  - cost-adjusted rerun output for `quantcraft`, `backtrader`, and `pyalgotrade`
+  - cost-adjusted rerun output for `quantleet`, `backtrader`, and `pyalgotrade`
   - NautilusTrader successful EMA pullback run with a custom market-only one-tick slippage fill model
 - Final disposition:
   - complete for the cost-adjusted comparison slice; canonical freezing remains blocked pending a semantics decision and a cleaner all-strategy Nautilus comparison

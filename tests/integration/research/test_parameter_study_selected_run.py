@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import matplotlib.pyplot as plt
 
-from quantcraft.backtest import BacktestResult
-from quantcraft.research import ParameterStudy
+from quantleet.backtest import BacktestResult
+from quantleet.research import ParameterStudy
 from tests.integration.research.test_parameter_study_grid_search import (
     ParameterizedRoundTripStrategy,
     crossing_bars,

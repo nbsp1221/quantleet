@@ -25,8 +25,8 @@ Expected: fail because the module does not exist yet.
 ### Task 2: Write the minimal implementation
 
 **Files:**
-- Create: `src/quantcraft/binance.py`
-- Modify: `src/quantcraft/__init__.py`
+- Create: `src/quantleet/binance.py`
+- Modify: `src/quantleet/__init__.py`
 
 **Step 1:** Add `BinanceMarket`.
 
@@ -34,7 +34,7 @@ Expected: fail because the module does not exist yet.
 
 **Step 3:** Add `fetch_binance_ohlcv(...)`.
 
-**Step 4:** Export the new symbols from `quantcraft.__init__`.
+**Step 4:** Export the new symbols from `quantleet.__init__`.
 
 ### Task 3: Verify the feature and the project gates
 

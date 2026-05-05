@@ -1,7 +1,7 @@
 # Active Plan
 
 - Date: `2026-04-17`
-- Task: `Rerun real-strategy limit-order cross-validation on the current quantcraft worktree`
+- Task: `Rerun real-strategy limit-order cross-validation on the current quantleet worktree`
 - Status: `complete`
 - Risk class: `Tier B`
 - Requestor: `user`
@@ -10,9 +10,9 @@
 ## Planner Contract
 
 - Goal:
-  - verify the current `quantcraft` limit-order semantics using real limit-order strategies on the checked-in dataset instead of synthetic micro-repros
-  - compare current `quantcraft` outputs against multiple external backtesting libraries under matched cost assumptions
-  - decide whether any observed mismatch is evidence of a current `quantcraft` logic issue
+  - verify the current `quantleet` limit-order semantics using real limit-order strategies on the checked-in dataset instead of synthetic micro-repros
+  - compare current `quantleet` outputs against multiple external backtesting libraries under matched cost assumptions
+  - decide whether any observed mismatch is evidence of a current `quantleet` logic issue
 - Governing docs:
   - `AGENTS.md`
   - `docs/product-specs/backtest-mvp.md`
@@ -27,7 +27,7 @@
   - they define the approved limit-strategy set, the prior trust problem, the intended conservative fill contract, and the repository verification rules
 - In-repo scope:
   - this plan artifact
-  - current-worktree `quantcraft` runs against the checked-in dataset
+  - current-worktree `quantleet` runs against the checked-in dataset
   - repo-local notes derived from fresh execution
 - Out-of-repo scope:
   - ephemeral comparator installs via `uv --with ...`
@@ -36,21 +36,21 @@
 - Approval record, if required:
   - requestor: `user`
   - human approver: `user`
-  - countersignature or equivalent verification marker: explicit in-chat instruction to run real strategy backtests across libraries and judge whether mismatches imply a `quantcraft` bug
+  - countersignature or equivalent verification marker: explicit in-chat instruction to run real strategy backtests across libraries and judge whether mismatches imply a `quantleet` bug
   - scope granted: ephemeral external comparator installation/execution, temporary scripts under `/tmp`, and reuse of the checked-in BTC USD-M 1h 2025 fixture for cross-engine validation
   - expiration: end of current session
   - audit reference or sanitized audit link: current chat plus this active plan
 - Verification commands:
-  - `uv run python ...` current-worktree `quantcraft` runs
+  - `uv run python ...` current-worktree `quantleet` runs
   - `uv run --with <library> python ...` comparator runs
   - focused `uv run pytest ... -q` only if needed to confirm the current repo path still matches the observed behavior
 - Success criteria:
-  - run the approved real-data limit strategy set or a clearly documented maximal comparable subset on the current `quantcraft` worktree
+  - run the approved real-data limit strategy set or a clearly documented maximal comparable subset on the current `quantleet` worktree
   - run the same strategy logic on at least five external libraries when technically feasible in the current session
   - match fee/slippage assumptions where comparator APIs allow it, and document any unavoidable deviations
-  - produce a per-engine judgment for every mismatch: `quantcraft bug`, `comparator default difference`, `strategy-port mismatch`, or `not apples-to-apples`
+  - produce a per-engine judgment for every mismatch: `quantleet bug`, `comparator default difference`, `strategy-port mismatch`, or `not apples-to-apples`
 - Out of scope:
-  - code changes to `quantcraft`
+  - code changes to `quantleet`
   - freezing canonical golden fixtures
   - claiming universal semantic equivalence where a comparator cannot express the same strategy semantics
 
@@ -65,19 +65,19 @@
 - How the generator and evaluator agreed on done before execution:
   - if a library cannot express the strategy faithfully, the evaluator will classify it as not apples-to-apples rather than folding it into the result tally
 - Checks the evaluator will use:
-  - fresh run outputs from current `quantcraft`
+  - fresh run outputs from current `quantleet`
   - fresh run outputs from external libraries
   - source inspection of comparator defaults when a mismatch needs attribution
 - Auto-fail conditions:
   - concluding “no bug” without running the real strategies
   - counting a non-comparable port as if it were equivalent evidence
-  - attributing a mismatch to `quantcraft` without isolating comparator-specific defaults
+  - attributing a mismatch to `quantleet` without isolating comparator-specific defaults
 
 ## Generator Work Log
 
 - Planned slice order:
   - locate or reconstruct the approved real-data strategy implementations
-  - run current `quantcraft` baselines on the checked-in dataset
+  - run current `quantleet` baselines on the checked-in dataset
   - run comparator engines in parallel where practical
   - synthesize mismatch causes
 - Notes:
@@ -87,10 +87,10 @@
     - `Market Entry With Take-Profit Sell-Limit Exit`
   - 2026-04-17: a temporary comparator harness was created under `/tmp/strategy2_cross_validate.py` to keep runs reproducible without touching repo source
   - 2026-04-17: the initial cost-bearing pass exposed two harness issues:
-    - `quantcraft` timestamp lookup used seconds instead of milliseconds
+    - `quantleet` timestamp lookup used seconds instead of milliseconds
     - `lib-pybroker` needed `Decimal`-compatible limit-price multiplication
     - both harness issues were corrected and the strategy rerun
-  - 2026-04-17: a second zero-cost pass was added because several external libraries do not expose a clean fixed one-tick market-only slippage surface comparable to `quantcraft`
+  - 2026-04-17: a second zero-cost pass was added because several external libraries do not expose a clean fixed one-tick market-only slippage surface comparable to `quantleet`
   - 2026-04-17: `quanttrader` was executed against the same dataset but failed due its own runtime/dataframe dtype issues; it remains checked and classified as unreliable, not skipped
   - 2026-04-18: the slice was extended to cover the remaining approved strategies with a dedicated temporary harness under `/tmp/limit_strategy13_cross_validate.py`
   - 2026-04-18: for strategies 1 and 3, the primary judgment was made from the zero-cost apples-to-apples reruns because those libraries expose more comparable semantic surfaces than cost surfaces
@@ -103,58 +103,58 @@
     - market buy when RSI 14 on the completed bar is below `30`
     - once filled, place a sell limit at `entry_price * 1.02`
   - Equal-cost zero-cost rerun results:
-    - `quantcraft`: `14` closed trades, `29` fills, `999657.298`
+    - `quantleet`: `14` closed trades, `29` fills, `999657.298`
     - `backtrader`: `14` closed trades, `29` fills, `999657.298`
     - `pyalgotrade`: `14` closed trades, `29` fills, `999657.298`
   - This is the strongest fresh evidence in the session because it uses:
     - a real limit-order strategy
     - the checked-in real dataset
-    - the current `quantcraft` worktree
+    - the current `quantleet` worktree
     - matched cost assumptions across engines that can actually express them
   - Mismatch judgment for the other checked libraries:
-    - `backtesting.py` diverged (`15` trades, `30` fills, `999744.898`) and is best classified as comparator/order-lifecycle difference or port mismatch, not a `quantcraft` bug, because the conservative cluster of `quantcraft` + `backtrader` + `pyalgotrade` matched exactly on the same strategy and dataset
-    - `lib-pybroker` diverged materially (`0` closed trades, `1` fill, `993436.25`) and prior source/default inspection shows this is due to its own default exit model and order scheduling, not a `quantcraft` defect:
+    - `backtesting.py` diverged (`15` trades, `30` fills, `999744.898`) and is best classified as comparator/order-lifecycle difference or port mismatch, not a `quantleet` bug, because the conservative cluster of `quantleet` + `backtrader` + `pyalgotrade` matched exactly on the same strategy and dataset
+    - `lib-pybroker` diverged materially (`0` closed trades, `1` fill, `993436.25`) and prior source/default inspection shows this is due to its own default exit model and order scheduling, not a `quantleet` defect:
       - `exit_sell_fill_price` defaults to `PriceType.MIDDLE`
       - the repo already documented PyBroker as a poor comparator for persistent resting limits
-    - `quanttrader` failed at runtime on the same dataset due its own dataframe dtype/runtime compatibility issue (`Invalid value '94147.2' for dtype 'int64'`) and is therefore not reliable comparator evidence against `quantcraft`
+    - `quanttrader` failed at runtime on the same dataset due its own dataframe dtype/runtime compatibility issue (`Invalid value '94147.2' for dtype 'int64'`) and is therefore not reliable comparator evidence against `quantleet`
   - Cost-bearing rerun:
-    - `quantcraft` matched the historical conservative cluster shape with `14` closed trades / `29` fills / `998389.9213`
+    - `quantleet` matched the historical conservative cluster shape with `14` closed trades / `29` fills / `998389.9213`
     - `backtrader` and `pyalgotrade` landed extremely close at `998389.9944`
     - the small residual difference is accepted as harness/comparator cost-surface mismatch because this pass did not implement a shared one-tick market-only slippage model across all engines
   - Final judgment:
-    - for the approved real-data passive sell-limit strategy family, no fresh evidence indicates a current `quantcraft` logic bug
-    - the opposite is true: on the zero-cost apples-to-apples rerun, `quantcraft` matched the conservative external cluster exactly
+    - for the approved real-data passive sell-limit strategy family, no fresh evidence indicates a current `quantleet` logic bug
+    - the opposite is true: on the zero-cost apples-to-apples rerun, `quantleet` matched the conservative external cluster exactly
   - Additional approved strategy coverage:
     - Strategy 1: `EMA Pullback Buy-Limit With Market Exit`
       - zero-cost rerun:
-        - `quantcraft`: `29 / 58 / 1002247.9271`
+        - `quantleet`: `29 / 58 / 1002247.9271`
         - `backtrader`: `29 / 58 / 1002247.9271`
         - `pyalgotrade`: `28 / 56 / 1002261.077`
         - `backtesting.py`: `29 / 58 / 1002247.9271`
       - judgment:
-        - `quantcraft`, `backtrader`, and `backtesting.py` matched exactly
-        - `pyalgotrade` diverged slightly and is best classified as comparator/order-lifecycle difference, not a `quantcraft` bug, because two other comparators matched `quantcraft` exactly on the same strategy and dataset
+        - `quantleet`, `backtrader`, and `backtesting.py` matched exactly
+        - `pyalgotrade` diverged slightly and is best classified as comparator/order-lifecycle difference, not a `quantleet` bug, because two other comparators matched `quantleet` exactly on the same strategy and dataset
     - Strategy 3: `Bollinger Lower-Band Buy-Limit With Middle-Band Sell-Limit`
       - zero-cost rerun:
-        - `quantcraft`: `26 / 53 / 998057.135`
+        - `quantleet`: `26 / 53 / 998057.135`
         - `backtrader`: `26 / 53 / 998057.135`
         - `pyalgotrade`: `26 / 53 / 998057.135`
         - `backtesting.py`: `27 / 54 / 998144.735`
       - judgment:
-        - `quantcraft`, `backtrader`, and `pyalgotrade` matched exactly
-        - `backtesting.py` diverged slightly and is best classified as comparator contingent-order / lifecycle behavior, not a `quantcraft` bug
+        - `quantleet`, `backtrader`, and `pyalgotrade` matched exactly
+        - `backtesting.py` diverged slightly and is best classified as comparator contingent-order / lifecycle behavior, not a `quantleet` bug
   - Full approved-set synthesis:
     - Strategy 1: exact match with two external comparators, one additional slight comparator divergence
     - Strategy 2: exact zero-cost match with the conservative comparator pair
     - Strategy 3: exact match with two external comparators, one additional slight comparator divergence
-    - Across the approved three-strategy set, no mismatch pattern points back to a current `quantcraft` limit-order logic defect
+    - Across the approved three-strategy set, no mismatch pattern points back to a current `quantleet` limit-order logic defect
 - Verification evidence:
   - Temporary cross-validation harness:
     - `/tmp/strategy2_cross_validate.py`
   - Fresh cost-bearing run:
     - command: `uv run --with pandas --with backtrader --with pyalgotrade --with backtesting --with lib-pybroker --with quanttrader python /tmp/strategy2_cross_validate.py`
     - results:
-      - `quantcraft`: `14 / 29 / 998389.9213`
+      - `quantleet`: `14 / 29 / 998389.9213`
       - `backtrader`: `14 / 29 / 998389.9944`
       - `pyalgotrade`: `14 / 29 / 998389.9944`
       - `backtesting.py`: `15 / 30 / 998442.5161`
@@ -163,7 +163,7 @@
   - Fresh zero-cost run:
     - command: `ZERO_COST=1 uv run --with pandas --with backtrader --with pyalgotrade --with backtesting --with lib-pybroker --with quanttrader python /tmp/strategy2_cross_validate.py`
     - results:
-      - `quantcraft`: `14 / 29 / 999657.298`
+      - `quantleet`: `14 / 29 / 999657.298`
       - `backtrader`: `14 / 29 / 999657.298`
       - `pyalgotrade`: `14 / 29 / 999657.298`
       - `backtesting.py`: `15 / 30 / 999744.898`
@@ -176,14 +176,14 @@
   - Strategy 1 zero-cost rerun:
     - command: `ZERO_COST=1 STRATEGY_NAME=strategy1 uv run --with pandas --with backtrader --with pyalgotrade --with backtesting python /tmp/limit_strategy13_cross_validate.py`
     - results:
-      - `quantcraft`: `29 / 58 / 1002247.9271`
+      - `quantleet`: `29 / 58 / 1002247.9271`
       - `backtrader`: `29 / 58 / 1002247.9271`
       - `pyalgotrade`: `28 / 56 / 1002261.077`
       - `backtesting.py`: `29 / 58 / 1002247.9271`
   - Strategy 3 zero-cost rerun:
     - command: `ZERO_COST=1 STRATEGY_NAME=strategy3 uv run --with pandas --with backtrader --with pyalgotrade --with backtesting python /tmp/limit_strategy13_cross_validate.py`
     - results:
-      - `quantcraft`: `26 / 53 / 998057.135`
+      - `quantleet`: `26 / 53 / 998057.135`
       - `backtrader`: `26 / 53 / 998057.135`
       - `pyalgotrade`: `26 / 53 / 998057.135`
       - `backtesting.py`: `27 / 54 / 998144.735`

@@ -5,7 +5,7 @@ import inspect
 import numpy as np
 import pytest
 
-from quantcraft.research.indicators.pure.bb import PureBollingerBandsResult, bb
+from quantleet.research.indicators.pure.bb import PureBollingerBandsResult, bb
 
 
 def test_bb_matches_talib_signature_and_result_shape() -> None:

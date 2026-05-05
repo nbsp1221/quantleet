@@ -20,8 +20,8 @@ construction in `backtest`, and keep fill-driven accounting unchanged. Ship
 `stop_market` end-to-end only after the exact trigger contract is frozen in
 tests; defer `stop_limit` and all sizing work.
 
-**Tech Stack:** Python 3.13, `uv`, Poe tasks, `pytest`, `quantcraft.trading`,
-`quantcraft.backtest`, and `quantcraft.research`
+**Tech Stack:** Python 3.13, `uv`, Poe tasks, `pytest`, `quantleet.trading`,
+`quantleet.backtest`, and `quantleet.research`
 
 ---
 
@@ -34,12 +34,12 @@ tests; defer `stop_limit` and all sizing work.
 
 ## Why This Slice
 
-Current `quantcraft` already has a real runtime `Order`, but it only knows
+Current `quantleet` already has a real runtime `Order`, but it only knows
 market/limit fills:
 
-- [`src/quantcraft/trading/domain/orders.py`](../../src/quantcraft/trading/domain/orders.py)
-- [`src/quantcraft/trading/domain/matching.py`](../../src/quantcraft/trading/domain/matching.py)
-- [`src/quantcraft/backtest/runtime.py`](../../src/quantcraft/backtest/runtime.py)
+- [`src/quantleet/trading/domain/orders.py`](../../src/quantleet/trading/domain/orders.py)
+- [`src/quantleet/trading/domain/matching.py`](../../src/quantleet/trading/domain/matching.py)
+- [`src/quantleet/backtest/runtime.py`](../../src/quantleet/backtest/runtime.py)
 
 Existing draft research/design work is advisory only, but it consistently
 pointed to three constraints that still fit current repo truth:
@@ -215,8 +215,8 @@ Backtest/runtime contract:
 ### Task 3: Extend The Public Request Shape Additively For `stop_market`
 
 **Files:**
-- Modify: `src/quantcraft/trading/domain/intents.py`
-- Modify: `src/quantcraft/research/strategy.py`
+- Modify: `src/quantleet/trading/domain/intents.py`
+- Modify: `src/quantleet/research/strategy.py`
 - Modify: `tests/unit/trading/test_contracts.py`
 - Modify: `tests/unit/research/test_strategy_surface.py`
 
@@ -238,7 +238,7 @@ Backtest/runtime contract:
 ### Task 4: Promote Runtime `Order` To A Minimal Trigger-Aware Aggregate
 
 **Files:**
-- Modify: `src/quantcraft/trading/domain/orders.py`
+- Modify: `src/quantleet/trading/domain/orders.py`
 - Modify: `tests/unit/trading/test_orders.py`
 
 **Intent:**
@@ -263,7 +263,7 @@ Backtest/runtime contract:
 ### Task 5: Keep Matching Pure By Splitting Trigger Detection From Fill Matching
 
 **Files:**
-- Modify: `src/quantcraft/trading/domain/matching.py`
+- Modify: `src/quantleet/trading/domain/matching.py`
 - Modify: `tests/unit/trading/test_matching_and_state.py`
 
 **Intent:**
@@ -291,9 +291,9 @@ Backtest/runtime contract:
 ### Task 6: Teach The Backtest Runtime And Execution Model The New Trigger Path
 
 **Files:**
-- Modify: `src/quantcraft/backtest/execution_model.py`
-- Modify: `src/quantcraft/backtest/runtime.py`
-- Modify: `src/quantcraft/backtest/strategy_runtime.py`
+- Modify: `src/quantleet/backtest/execution_model.py`
+- Modify: `src/quantleet/backtest/runtime.py`
+- Modify: `src/quantleet/backtest/strategy_runtime.py`
 
 **Intent:**
 - Make the backtest path produce correct stop-market trigger/fill behavior
@@ -325,7 +325,7 @@ Backtest/runtime contract:
 
 **Files:**
 - Modify only if necessary:
-  - `src/quantcraft/trading/domain/state.py`
+  - `src/quantleet/trading/domain/state.py`
   - result-surface tests
 
 **Intent:**

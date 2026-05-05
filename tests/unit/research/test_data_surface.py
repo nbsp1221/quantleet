@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from quantcraft.backtest.strategy_runtime import _StrategyDriver
-from quantcraft.data import BarSeries, TimeBar
-from quantcraft.research.strategy import Strategy
-from quantcraft.trading.domain.events import BarEvent
+from quantleet.backtest.strategy_runtime import _StrategyDriver
+from quantleet.data import BarSeries, TimeBar
+from quantleet.research.strategy import Strategy
+from quantleet.trading.domain.events import BarEvent
 
 
 class RecordsDataSurfaceStrategy(Strategy):

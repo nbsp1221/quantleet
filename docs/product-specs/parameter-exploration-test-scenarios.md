@@ -29,7 +29,7 @@ The first-beta feature exists so a single-symbol research user can compare a
 small, finite strategy parameter grid without writing custom backtest loops.
 The core contract is:
 
-- `quantcraft.research.ParameterStudy` is the public research study container.
+- `quantleet.research.ParameterStudy` is the public research study container.
 - `ParameterStudy(...).grid_search(...)` accepts finite ordered parameter
   values, an optional constraint, an optional single objective, and a beta
   candidate-count guardrail.
@@ -127,7 +127,7 @@ Out of scope:
 | Integration | `tests/integration/research/test_parameter_study_grid_search.py` | Real `ParameterStudy` plus `BacktestEngine` finite-grid workflows over deterministic `BarSeries`. |
 | Integration | `tests/integration/research/test_parameter_study_failures.py` | Constraint, strategy factory, backtest, and metric-extraction failure behavior with real public workflows where practical. |
 | Integration | `tests/integration/research/test_parameter_study_selected_run.py` | Selected-row access to normal `BacktestResult.report` and `BacktestResult.plot()`. |
-| Smoke | `tests/smoke/local/test_public_imports.py` | `ParameterStudy` remains importable from `quantcraft.research`. |
+| Smoke | `tests/smoke/local/test_public_imports.py` | `ParameterStudy` remains importable from `quantleet.research`. |
 | Structure | `tests/structure/architecture/test_parameter_exploration_boundaries.py` | Research owns study UX, composes public backtest surface, and does not add Tier A or optimizer dependency drift. |
 | Docs | `tests/structure/docs/test_parameter_exploration_docs.py` | Product docs and examples keep the canonical beta workflow and avoid out-of-scope optimizer claims. |
 | Notebook or example validation | existing notebook/example validation lane, if an example is added | The canonical constrained-grid example runs without hidden setup. |
@@ -580,8 +580,8 @@ Required assertions:
 
 Required assertions:
 
-- `from quantcraft.research import ParameterStudy, Strategy, ta` works
-- `ParameterStudy` is not promoted from `quantcraft.backtest`
+- `from quantleet.research import ParameterStudy, Strategy, ta` works
+- `ParameterStudy` is not promoted from `quantleet.backtest`
 - public docs use the research import path
 
 ### S2: Package Boundary
@@ -621,7 +621,7 @@ Required assertions:
 
 Required assertions:
 
-- the built package artifact exposes `quantcraft.research.ParameterStudy`
+- the built package artifact exposes `quantleet.research.ParameterStudy`
 - local smoke import tests pass from the installed artifact context used by the
   current command tests
 

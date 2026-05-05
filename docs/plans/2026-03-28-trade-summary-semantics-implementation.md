@@ -2,11 +2,11 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** Align `quantcraft` backtest summary metrics with mainstream backtesting-library expectations by reporting trade statistics on closed net trades rather than raw fills.
+**Goal:** Align `quantleet` backtest summary metrics with mainstream backtesting-library expectations by reporting trade statistics on closed net trades rather than raw fills.
 
 **Architecture:** Keep the current fill log and matching engine unchanged, but change the summary layer in `research.application.backtest` so user-facing trade statistics are derived from closed long-only trade slices using net PnL after fees. Preserve raw fill information separately via an explicit `total_fills` field instead of overloading `total_trades`.
 
-**Tech Stack:** Python 3.13, existing `quantcraft.research` backtest path, existing `quantcraft.trading` state and fill events, `pytest`, repository docs/specs.
+**Tech Stack:** Python 3.13, existing `quantleet.research` backtest path, existing `quantleet.trading` state and fill events, `pytest`, repository docs/specs.
 
 ---
 
@@ -14,7 +14,7 @@
 
 **Files:**
 - Modify: `tests/integration/research/test_backtest_runner.py`
-- Reuse: `src/quantcraft/research/application/backtest.py`
+- Reuse: `src/quantleet/research/application/backtest.py`
 
 **Step 1: Write the failing tests**
 
@@ -85,16 +85,16 @@ Expected:
 **Step 5: Commit**
 
 ```bash
-git add src/quantcraft/research/application/backtest.py tests/integration/research/test_backtest_runner.py
+git add src/quantleet/research/application/backtest.py tests/integration/research/test_backtest_runner.py
 git commit -m "✨ Align backtest trade summary semantics"
 ```
 
 ### Task 2: Implement net closed-trade accounting for long-only summary statistics
 
 **Files:**
-- Modify: `src/quantcraft/research/application/backtest.py`
-- Reuse: `src/quantcraft/trading/domain/state.py`
-- Reuse: `src/quantcraft/trading/domain/events.py`
+- Modify: `src/quantleet/research/application/backtest.py`
+- Reuse: `src/quantleet/trading/domain/state.py`
+- Reuse: `src/quantleet/trading/domain/events.py`
 - Test: `tests/integration/research/test_backtest_runner.py`
 
 **Step 1: Write the failing test**
@@ -130,7 +130,7 @@ Expected:
 
 **Step 3: Write the minimal implementation**
 
-In `src/quantcraft/research/application/backtest.py`:
+In `src/quantleet/research/application/backtest.py`:
 
 - keep the current `trade_log` and `TradingState` contract
 - add a private accumulator for open entry-fee inventory
@@ -159,7 +159,7 @@ Expected:
 **Step 5: Commit**
 
 ```bash
-git add src/quantcraft/research/application/backtest.py tests/integration/research/test_backtest_runner.py
+git add src/quantleet/research/application/backtest.py tests/integration/research/test_backtest_runner.py
 git commit -m "✨ Add net closed-trade summary accounting"
 ```
 
@@ -275,6 +275,6 @@ Expected:
 **Step 5: Commit the verified batch**
 
 ```bash
-git add src/quantcraft/research/application/backtest.py tests/integration/research/test_backtest_runner.py docs/product-specs/research-ergonomics.md docs/product-specs/backtest-mvp.md docs/references/research-ergonomics-quickstart.md tests/structure/repo/test_repository_entrypoint_docs.py
+git add src/quantleet/research/application/backtest.py tests/integration/research/test_backtest_runner.py docs/product-specs/research-ergonomics.md docs/product-specs/backtest-mvp.md docs/references/research-ergonomics-quickstart.md tests/structure/repo/test_repository_entrypoint_docs.py
 git commit -m "✨ Align backtest summary metrics with closed trades"
 ```

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from quantcraft.research.indicators.runtime.runtime import IndicatorRuntime
+from quantleet.research.indicators.runtime.runtime import IndicatorRuntime
 
 
 class MutableSeries:

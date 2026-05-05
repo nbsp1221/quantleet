@@ -119,11 +119,11 @@
     - inheritance versus composition for trigger commonality
 - Checks the evaluator will use:
   - Compare the new spec against current implementation truth in:
-    - `src/quantcraft/trading/domain/intents.py`
-    - `src/quantcraft/trading/domain/orders.py`
-    - `src/quantcraft/trading/domain/matching.py`
-    - `src/quantcraft/backtest/execution_model.py`
-    - `src/quantcraft/backtest/strategy_runtime.py`
+    - `src/quantleet/trading/domain/intents.py`
+    - `src/quantleet/trading/domain/orders.py`
+    - `src/quantleet/trading/domain/matching.py`
+    - `src/quantleet/backtest/execution_model.py`
+    - `src/quantleet/backtest/strategy_runtime.py`
   - Compare the design decision against comparator evidence from Nautilus,
     LEAN, backtrader, backtesting.py, lumibot, vectorbt, and freqtrade.
   - Run `uv run poe repo-check`.
@@ -187,15 +187,15 @@ Current implemented truth as of `2026-04-23`:
 
 Repo evidence:
 
-- [src/quantcraft/trading/domain/intents.py](/home/retn0/repositories/nbsp1221/quantcraft/src/quantcraft/trading/domain/intents.py)
-- [src/quantcraft/trading/domain/orders.py](/home/retn0/repositories/nbsp1221/quantcraft/src/quantcraft/trading/domain/orders.py)
-- [src/quantcraft/trading/domain/matching.py](/home/retn0/repositories/nbsp1221/quantcraft/src/quantcraft/trading/domain/matching.py)
-- [src/quantcraft/backtest/execution_model.py](/home/retn0/repositories/nbsp1221/quantcraft/src/quantcraft/backtest/execution_model.py)
-- [src/quantcraft/backtest/strategy_runtime.py](/home/retn0/repositories/nbsp1221/quantcraft/src/quantcraft/backtest/strategy_runtime.py)
+- [src/quantleet/trading/domain/intents.py](/home/retn0/repositories/nbsp1221/quantleet/src/quantleet/trading/domain/intents.py)
+- [src/quantleet/trading/domain/orders.py](/home/retn0/repositories/nbsp1221/quantleet/src/quantleet/trading/domain/orders.py)
+- [src/quantleet/trading/domain/matching.py](/home/retn0/repositories/nbsp1221/quantleet/src/quantleet/trading/domain/matching.py)
+- [src/quantleet/backtest/execution_model.py](/home/retn0/repositories/nbsp1221/quantleet/src/quantleet/backtest/execution_model.py)
+- [src/quantleet/backtest/strategy_runtime.py](/home/retn0/repositories/nbsp1221/quantleet/src/quantleet/backtest/strategy_runtime.py)
 
 ### 3. Problem Definition
 
-Current `quantcraft` can express only immediately executable `market` and
+Current `quantleet` can express only immediately executable `market` and
 working `limit` orders.
 
 That is enough for:
@@ -285,7 +285,7 @@ This design/spec explicitly does **not** require the next code slice to add:
 
 ### 8. Primary Decision
 
-`quantcraft` should model stop-family behavior as a **shared-kernel runtime
+`quantleet` should model stop-family behavior as a **shared-kernel runtime
 order concern**, not as a backtest-only convenience.
 
 That means:
@@ -427,7 +427,7 @@ Layering rule for the first slice:
 
 - `OrderTriggered` is a runtime/backtest-internal event
 - it is not automatically promoted into the public
-  `quantcraft.trading.domain.events` export surface in the first shipped slice
+  `quantleet.trading.domain.events` export surface in the first shipped slice
 - the first implementation may use it to coordinate trigger-aware runtime
   semantics without widening the public event contract
 - for the first shipped slice, `trigger_type` is fixed to synthetic executable
@@ -848,7 +848,7 @@ inside the design box fixed above.
 - Findings:
   - Comparator evidence strongly supports a hybrid design:
     explicit stop-family order types plus explicit trigger facts.
-  - Nautilus provides the best match for `quantcraft` because it keeps stop
+  - Nautilus provides the best match for `quantleet` because it keeps stop
     semantics in a shared runtime order model rather than flattening them into
     a bar-only backtest convenience.
   - The best-practice recommendation is therefore:
@@ -859,10 +859,10 @@ inside the design box fixed above.
   - No additional user decision is required to freeze the design at this stage.
 - Verification evidence:
   - repository truth reads over:
-    - `src/quantcraft/trading/domain/intents.py`
-    - `src/quantcraft/trading/domain/events.py`
-    - `src/quantcraft/backtest/execution_model.py`
-    - `src/quantcraft/backtest/strategy_runtime.py`
+    - `src/quantleet/trading/domain/intents.py`
+    - `src/quantleet/trading/domain/events.py`
+    - `src/quantleet/backtest/execution_model.py`
+    - `src/quantleet/backtest/strategy_runtime.py`
   - comparator-source reads over:
     - `/tmp/nautilus_trader/nautilus_trader/model/orders/*`
     - `/tmp/lean/Common/Orders/*`

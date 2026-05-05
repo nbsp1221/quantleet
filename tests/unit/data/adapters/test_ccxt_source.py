@@ -4,7 +4,7 @@ import importlib
 
 import pytest
 
-import quantcraft.integrations.venues.ccxt.market_data as exchange_backend
+import quantleet.integrations.venues.ccxt.market_data as exchange_backend
 
 
 class FakeExchangeClient:
@@ -60,17 +60,17 @@ class FakeExchangeClient:
 
 
 def _ccxt_source_type() -> type:
-    data_module = importlib.import_module("quantcraft.data")
+    data_module = importlib.import_module("quantleet.data")
     return getattr(data_module, "CCXTDataSource")
 
 
 def _time_bar_type() -> type:
-    data_module = importlib.import_module("quantcraft.data")
+    data_module = importlib.import_module("quantleet.data")
     return getattr(data_module, "TimeBar")
 
 
 def _bar_series_type() -> type:
-    data_module = importlib.import_module("quantcraft.data")
+    data_module = importlib.import_module("quantleet.data")
     return getattr(data_module, "BarSeries")
 
 

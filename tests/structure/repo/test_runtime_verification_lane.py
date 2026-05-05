@@ -31,14 +31,14 @@ def test_runtime_verification_lane_is_documented_with_trigger_paths() -> None:
         assert "runtime-sensitive backtest or research" in content
 
     for path in [
-        "src/quantcraft/backtest/engine.py",
-        "src/quantcraft/backtest/runtime.py",
-        "src/quantcraft/backtest/execution_model.py",
-        "src/quantcraft/backtest/order_activation.py",
-        "src/quantcraft/backtest/strategy_runtime.py",
-        "src/quantcraft/research/ta.py",
-        "src/quantcraft/research/strategy.py",
-        "src/quantcraft/research/indicators/runtime/",
-        "src/quantcraft/research/indicators/pure/",
+        "src/quantleet/backtest/engine.py",
+        "src/quantleet/backtest/runtime.py",
+        "src/quantleet/backtest/execution_model.py",
+        "src/quantleet/backtest/order_activation.py",
+        "src/quantleet/backtest/strategy_runtime.py",
+        "src/quantleet/research/ta.py",
+        "src/quantleet/research/strategy.py",
+        "src/quantleet/research/indicators/runtime/",
+        "src/quantleet/research/indicators/pure/",
     ]:
         assert path in reliability or path in agents

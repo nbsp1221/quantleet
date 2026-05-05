@@ -5,7 +5,7 @@ import inspect
 import numpy as np
 import pytest
 
-from quantcraft.research.indicators.pure.cci import cci
+from quantleet.research.indicators.pure.cci import cci
 
 
 def test_cci_matches_talib_signature_and_returns_ndarray() -> None:

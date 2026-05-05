@@ -11,7 +11,7 @@
 
 **Architecture:** Keep the current `PendingOrderRequest -> OrderIntent -> Order -> FillEvent -> TradingState` seam intact, but extend it with explicit trigger facts. Normalize strategy-facing `stop_price` into durable runtime `trigger_price + trigger_condition` at request time using the current `on_bar()` close, keep stop orders dormant until the matcher sees a causal synthetic executable point, and delegate triggered `stop_market` fills back into the existing market-fill path instead of creating a second stop-specific fill engine. Defer `stop_limit` execution, trailing logic, and stop-aware `%` sizing.
 
-**Tech Stack:** Python 3.13, frozen `dataclass` aggregates, `pytest`, `uv`, Poe tasks, `quantcraft.trading`, `quantcraft.backtest`, `quantcraft.research`
+**Tech Stack:** Python 3.13, frozen `dataclass` aggregates, `pytest`, `uv`, Poe tasks, `quantleet.trading`, `quantleet.backtest`, `quantleet.research`
 
 ---
 
@@ -56,15 +56,15 @@
 - Supporting references:
   - `docs/plans/2026-04-21-order-stop-market-implementation-plan.md`
   - `docs/plans/2026-04-21-order-stop-market-execution-plan.md`
-  - `src/quantcraft/trading/domain/intents.py`
-  - `src/quantcraft/trading/order_requests.py`
-  - `src/quantcraft/research/strategy.py`
-  - `src/quantcraft/backtest/strategy_runtime.py`
-  - `src/quantcraft/trading/domain/orders.py`
-  - `src/quantcraft/trading/domain/matching.py`
-  - `src/quantcraft/backtest/execution_model.py`
-  - `src/quantcraft/backtest/runtime.py`
-  - `src/quantcraft/trading/sizing.py`
+  - `src/quantleet/trading/domain/intents.py`
+  - `src/quantleet/trading/order_requests.py`
+  - `src/quantleet/research/strategy.py`
+  - `src/quantleet/backtest/strategy_runtime.py`
+  - `src/quantleet/trading/domain/orders.py`
+  - `src/quantleet/trading/domain/matching.py`
+  - `src/quantleet/backtest/execution_model.py`
+  - `src/quantleet/backtest/runtime.py`
+  - `src/quantleet/trading/sizing.py`
 - Why these references matter:
   - They are the exact code seams the stop-trigger slice must extend.
   - The older `2026-04-21` plan artifacts are useful historical context, but
@@ -164,25 +164,25 @@ The future implementation starts from these concrete seams.
 ### Current Strategy And Request Surface
 
 - `Strategy.buy()` / `Strategy.sell()` in
-  `src/quantcraft/research/strategy.py` currently accept:
+  `src/quantleet/research/strategy.py` currently accept:
   - `symbol`
   - one sizing mode
   - `order_type`
   - `limit_price`
   - `tag`
 - `_StrategyDriver.handle_bar()` and `_StrategyDriver.activate_pending_order_requests()`
-  in `src/quantcraft/backtest/strategy_runtime.py` own:
+  in `src/quantleet/backtest/strategy_runtime.py` own:
   - `on_bar()` lifecycle enforcement
   - next-bar order activation
   - runtime `OrderIntent` creation
-- `PendingOrderRequest` in `src/quantcraft/trading/order_requests.py` is the
+- `PendingOrderRequest` in `src/quantleet/trading/order_requests.py` is the
   current request-side validation object.
 
 ### Current Runtime Order And Matching Surface
 
-- `OrderIntent` in `src/quantcraft/trading/domain/intents.py` is still
+- `OrderIntent` in `src/quantleet/trading/domain/intents.py` is still
   quantity-only and `market|limit` only.
-- `Order` in `src/quantcraft/trading/domain/orders.py` is a frozen aggregate
+- `Order` in `src/quantleet/trading/domain/orders.py` is a frozen aggregate
   with:
   - `id`
   - `symbol`
@@ -192,18 +192,18 @@ The future implementation starts from these concrete seams.
   - `limit_price`
   - `tag`
   - `filled_quantity`
-- `match_order()` in `src/quantcraft/trading/domain/matching.py` assumes every
+- `match_order()` in `src/quantleet/trading/domain/matching.py` assumes every
   active order is already executable and only distinguishes `market` vs
   `limit`.
 
 ### Current Backtest Path Construction
 
 - `ConservativeOHLCVExecutionModel.tick_events_for_bar()` in
-  `src/quantcraft/backtest/execution_model.py` emits:
+  `src/quantleet/backtest/execution_model.py` emits:
   - `open`
   - canonical turning points
   - decisive crossed `limit_price` points for currently active orders
-- `_run_backtest()` in `src/quantcraft/backtest/runtime.py` currently:
+- `_run_backtest()` in `src/quantleet/backtest/runtime.py` currently:
   - activates pending orders at the next bar
   - loops ticks for that bar
   - matches every active order on every tick
@@ -212,7 +212,7 @@ The future implementation starts from these concrete seams.
 ### Current Sizing Pressure
 
 - `resolve_pending_order_request()` and helper anchor-price logic in
-  `src/quantcraft/trading/sizing.py` currently know only:
+  `src/quantleet/trading/sizing.py` currently know only:
   - ordinary market buy anchors
   - ordinary limit buy anchors
 - Stop-aware `%` sizing is therefore still unresolved. This plan keeps
@@ -420,10 +420,10 @@ Expected:
 
 Update only the request and strategy surfaces:
 
-- `src/quantcraft/trading/domain/intents.py`
-- `src/quantcraft/trading/order_requests.py`
-- `src/quantcraft/research/strategy.py`
-- `src/quantcraft/backtest/strategy_runtime.py`
+- `src/quantleet/trading/domain/intents.py`
+- `src/quantleet/trading/order_requests.py`
+- `src/quantleet/research/strategy.py`
+- `src/quantleet/backtest/strategy_runtime.py`
 
 Core changes:
 
@@ -446,15 +446,15 @@ Expected:
 **Step 5: Commit**
 
 ```bash
-git add tests/unit/trading/test_contracts.py tests/unit/research/test_strategy_surface.py src/quantcraft/trading/domain/intents.py src/quantcraft/trading/order_requests.py src/quantcraft/research/strategy.py src/quantcraft/backtest/strategy_runtime.py
+git add tests/unit/trading/test_contracts.py tests/unit/research/test_strategy_surface.py src/quantleet/trading/domain/intents.py src/quantleet/trading/order_requests.py src/quantleet/research/strategy.py src/quantleet/backtest/strategy_runtime.py
 git commit -m "feat: add stop-market request normalization"
 ```
 
 ## Task 2: Promote `OrderIntent` And Runtime `Order` To Trigger-Aware Truth
 
 **Files:**
-- Modify: `src/quantcraft/trading/domain/intents.py`
-- Modify: `src/quantcraft/trading/domain/orders.py`
+- Modify: `src/quantleet/trading/domain/intents.py`
+- Modify: `src/quantleet/trading/domain/orders.py`
 - Modify: `tests/unit/trading/test_orders.py`
 
 **Step 1: Write the failing tests**
@@ -534,14 +534,14 @@ Expected:
 **Step 5: Commit**
 
 ```bash
-git add tests/unit/trading/test_orders.py src/quantcraft/trading/domain/intents.py src/quantcraft/trading/domain/orders.py
+git add tests/unit/trading/test_orders.py src/quantleet/trading/domain/intents.py src/quantleet/trading/domain/orders.py
 git commit -m "feat: add trigger-aware runtime orders"
 ```
 
 ## Task 3: Keep Matching Pure While Adding Trigger Predicates
 
 **Files:**
-- Modify: `src/quantcraft/trading/domain/matching.py`
+- Modify: `src/quantleet/trading/domain/matching.py`
 - Modify: `tests/unit/trading/test_matching_and_state.py`
 
 **Step 1: Write the failing tests**
@@ -599,14 +599,14 @@ Expected:
 **Step 5: Commit**
 
 ```bash
-git add tests/unit/trading/test_matching_and_state.py src/quantcraft/trading/domain/matching.py
+git add tests/unit/trading/test_matching_and_state.py src/quantleet/trading/domain/matching.py
 git commit -m "feat: add stop trigger predicates to matcher"
 ```
 
 ## Task 4: Make The Execution Model Emit Stop-Crossing Decisive Points
 
 **Files:**
-- Modify: `src/quantcraft/backtest/execution_model.py`
+- Modify: `src/quantleet/backtest/execution_model.py`
 - Modify: `tests/unit/backtest/test_execution_model.py`
 
 **Step 1: Write the failing tests**
@@ -665,16 +665,16 @@ Expected:
 **Step 5: Commit**
 
 ```bash
-git add tests/unit/backtest/test_execution_model.py src/quantcraft/backtest/execution_model.py
+git add tests/unit/backtest/test_execution_model.py src/quantleet/backtest/execution_model.py
 git commit -m "feat: emit decisive stop crossings in execution model"
 ```
 
 ## Task 5: Integrate Stop-Market Ordering Into The Backtest Runtime Loop
 
 **Files:**
-- Modify: `src/quantcraft/backtest/strategy_runtime.py`
-- Modify: `src/quantcraft/backtest/runtime.py`
-- Modify: `src/quantcraft/trading/sizing.py`
+- Modify: `src/quantleet/backtest/strategy_runtime.py`
+- Modify: `src/quantleet/backtest/runtime.py`
+- Modify: `src/quantleet/trading/sizing.py`
 - Modify: `tests/unit/backtest/test_order_sizing_activation.py`
 - Modify: `tests/integration/research/support_backtest_runner.py`
 - Modify: `tests/integration/research/test_backtest_execution_semantics.py`
@@ -760,7 +760,7 @@ Expected:
 **Step 5: Commit**
 
 ```bash
-git add tests/unit/backtest/test_order_sizing_activation.py tests/integration/research/support_backtest_runner.py tests/integration/research/test_backtest_execution_semantics.py src/quantcraft/backtest/strategy_runtime.py src/quantcraft/backtest/runtime.py
+git add tests/unit/backtest/test_order_sizing_activation.py tests/integration/research/support_backtest_runner.py tests/integration/research/test_backtest_execution_semantics.py src/quantleet/backtest/strategy_runtime.py src/quantleet/backtest/runtime.py
 git commit -m "feat: wire stop-market orders into backtest runtime"
 ```
 

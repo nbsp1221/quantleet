@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from quantcraft._repo_tools import parse_routing_index_entries
+from quantleet._repo_tools import parse_routing_index_entries
 from scripts import check_docs, repo_check
 from tests.structure.repo.test_poe_task_contracts import write_minimal_repo_docs
 from tests.support import ROOT

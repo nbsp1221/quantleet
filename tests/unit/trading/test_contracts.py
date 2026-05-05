@@ -3,13 +3,13 @@ from __future__ import annotations
 from dataclasses import MISSING, Field, fields
 from typing import Callable, Literal, get_args, get_type_hints
 
-from quantcraft.trading.domain import __all__ as trading_domain_exports
-from quantcraft.trading.domain import events as trading_events
-from quantcraft.trading.domain.costs import CostConfig
-from quantcraft.trading.domain.events import BarEvent, FillEvent, TickEvent
-from quantcraft.trading.domain.intents import OrderIntent
-from quantcraft.trading.domain.orders import Order
-from quantcraft.trading.order_requests import PendingOrderRequest
+from quantleet.trading.domain import __all__ as trading_domain_exports
+from quantleet.trading.domain import events as trading_events
+from quantleet.trading.domain.costs import CostConfig
+from quantleet.trading.domain.events import BarEvent, FillEvent, TickEvent
+from quantleet.trading.domain.intents import OrderIntent
+from quantleet.trading.domain.orders import Order
+from quantleet.trading.order_requests import PendingOrderRequest
 
 
 def test_order_intent_matches_backtest_mvp_minimum_contract() -> None:
@@ -44,20 +44,27 @@ def test_order_intent_matches_backtest_mvp_minimum_contract() -> None:
                 get_origin_and_args(annotation) == (Literal, ("buy", "sell"))
             ),
             "order_type": lambda annotation: (
-                get_origin_and_args(annotation) == (
+                get_origin_and_args(annotation)
+                == (
                     Literal,
                     ("market", "limit", "stop_market", "stop_limit"),
                 )
             ),
             "trigger_price": lambda annotation: set(get_args(annotation)) == {float, type(None)},
-            "trigger_condition": lambda annotation: set(get_args(annotation)) == {
-                Literal["crosses_above", "crosses_below"],
-                type(None),
-            },
-            "trigger_type": lambda annotation: set(get_args(annotation)) == {
-                Literal["last"],
-                type(None),
-            },
+            "trigger_condition": lambda annotation: (
+                set(get_args(annotation))
+                == {
+                    Literal["crosses_above", "crosses_below"],
+                    type(None),
+                }
+            ),
+            "trigger_type": lambda annotation: (
+                set(get_args(annotation))
+                == {
+                    Literal["last"],
+                    type(None),
+                }
+            ),
             "limit_price": lambda annotation: set(get_args(annotation)) == {float, type(None)},
             "tag": lambda annotation: set(get_args(annotation)) == {str, type(None)},
         },

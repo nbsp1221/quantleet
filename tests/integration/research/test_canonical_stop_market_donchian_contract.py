@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from quantcraft.backtest import BacktestSummary, ExposureSummary
+from quantleet.backtest import BacktestSummary, ExposureSummary
 from tests.support_backtest import (
     canonical_stop_market_donchian_trade_log_digest,
     canonical_stop_market_donchian_trade_log_samples,
@@ -12,9 +12,7 @@ from tests.support_backtest import (
 
 
 def test_canonical_stop_market_donchian_backtest_matches_public_result_contract() -> None:
-    result = run_canonical_stop_market_donchian_backtest(
-        load_canonical_stop_market_donchian_bars()
-    )
+    result = run_canonical_stop_market_donchian_backtest(load_canonical_stop_market_donchian_bars())
 
     assert result.summary == BacktestSummary(
         total_trades=11,

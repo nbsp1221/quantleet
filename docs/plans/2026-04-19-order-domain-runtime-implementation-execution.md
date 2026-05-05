@@ -10,7 +10,7 @@
 ## Planner Contract
 
 - Goal:
-  Implement the first runtime `Order` seam in `quantcraft` by introducing a
+  Implement the first runtime `Order` seam in `quantleet` by introducing a
   trading-owned `Order` model for the current market/limit slice, migrating the
   backtest runtime away from using raw `OrderIntent` as fake runtime order
   truth, and preserving current shipped backtest semantics.
@@ -42,7 +42,7 @@
     system of record, and read-heavy fan-out plus bounded review loops improve
     reliability.
 - In-repo scope:
-  - Create `src/quantcraft/trading/domain/orders.py`
+  - Create `src/quantleet/trading/domain/orders.py`
   - Update the trading/backtest runtime path to manage runtime orders for the
     current market/limit slice
   - Update focused unit/integration tests and any minimally affected docs
@@ -62,7 +62,7 @@
       validate it, use `$subagent-orchestration`, and follow the harness
       protocol
     - Granted scope:
-      Tier A code changes in `src/quantcraft/trading/*` and affected
+      Tier A code changes in `src/quantleet/trading/*` and affected
       `backtest`/tests/docs required to implement the first runtime `Order`
       seam for current market/limit behavior only
     - Expiration:
@@ -87,7 +87,7 @@
   - `uv run poe verify`
   - `uv run poe repo-check`
 - Success criteria:
-  - runtime `Order` exists in `quantcraft.trading.domain`
+  - runtime `Order` exists in `quantleet.trading.domain`
   - current market/limit behavior remains intact
   - backtest runtime no longer treats raw `OrderIntent` tuples as runtime order
     truth
@@ -108,7 +108,7 @@
     preserved semantics are proven by focused tests plus runtime verification,
     and bounded review fan-out leaves no material findings.
 - Acceptance artifact location:
-  - `src/quantcraft/trading/domain/orders.py`
+  - `src/quantleet/trading/domain/orders.py`
   - affected runtime/test/doc files in this slice
   - this active plan
 - How the generator and evaluator agreed on done before execution:
@@ -151,12 +151,12 @@
     - matcher contract remains `FillEvent | None`
     - `Strategy` still emits only pending `OrderIntent`
   - Current write set:
-    - `src/quantcraft/trading/domain/orders.py`
-    - `src/quantcraft/trading/domain/matching.py`
-    - `src/quantcraft/trading/domain/__init__.py`
-    - `src/quantcraft/backtest/strategy_runtime.py`
-    - `src/quantcraft/backtest/runtime.py`
-    - `src/quantcraft/backtest/execution_model.py`
+    - `src/quantleet/trading/domain/orders.py`
+    - `src/quantleet/trading/domain/matching.py`
+    - `src/quantleet/trading/domain/__init__.py`
+    - `src/quantleet/backtest/strategy_runtime.py`
+    - `src/quantleet/backtest/runtime.py`
+    - `src/quantleet/backtest/execution_model.py`
     - `tests/unit/trading/test_orders.py`
     - `tests/unit/trading/test_matching_and_state.py`
     - `tests/unit/backtest/test_execution_model.py`

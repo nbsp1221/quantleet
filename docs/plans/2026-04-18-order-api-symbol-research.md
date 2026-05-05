@@ -8,7 +8,7 @@
 ## Planner Contract
 
 - Goal:
-  - Compare the current `quantcraft` strategy order API against representative
+  - Compare the current `quantleet` strategy order API against representative
     external quant and backtesting libraries, with emphasis on whether
     `buy()`/`sell()` require an explicit instrument symbol in the strategy
     callback and how single-asset versus multi-asset engines typically model
@@ -25,7 +25,7 @@
   - They define the current public strategy surface, current MVP scope, and
     the repository workflow contract this research must follow.
 - In-repo scope:
-  - Current `quantcraft` docs and source related to strategy order API.
+  - Current `quantleet` docs and source related to strategy order API.
 - Out-of-repo scope:
   - Official documentation and authoritative examples for external libraries.
 - Tier A progression requested: `no`
@@ -75,7 +75,7 @@
 ## Evaluator Review
 
 - Findings:
-  - Local fact: the current `quantcraft` research strategy contract explicitly
+  - Local fact: the current `quantleet` research strategy contract explicitly
     requires `symbol=...` on `buy()` and `sell()`, and the concrete method
     signatures enforce that requirement.
   - Comparative result: this is unusual for single-asset strategy DSLs, but
@@ -99,7 +99,7 @@
       orders because their API is built around broader multi-asset algorithm
       contexts.
   - User-facing judgment:
-    - because `quantcraft` currently documents itself as a deterministic
+    - because `quantleet` currently documents itself as a deterministic
       single-symbol backtest MVP, requiring `symbol=...` on every `buy()` and
       `sell()` call will feel odd to many users coming from `backtesting.py`,
       `backtrader`, or vectorized signal frameworks
@@ -108,7 +108,7 @@
 - Verification evidence:
   - Local evidence:
     - `docs/product-specs/research-ergonomics.md`
-    - `src/quantcraft/research/strategy.py`
+    - `src/quantleet/research/strategy.py`
   - External official docs reviewed:
     - backtesting.py docs and quickstart:
       - `https://kernc.github.io/backtesting.py/`

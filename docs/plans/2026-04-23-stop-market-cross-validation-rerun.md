@@ -40,7 +40,7 @@
   - update the real-world validation strategy candidate document
   - add this active rerun plan
 - Out-of-repo scope:
-  - modify the temporary `/tmp/quantcraft-stop-xval` harness
+  - modify the temporary `/tmp/quantleet-stop-xval` harness
   - rerun the experiment there
   - update temporary result artifacts there
 - Tier A progression requested: `yes`
@@ -69,7 +69,7 @@
   - final report clearly separates stop primitive agreement from remaining
     library-specific fill-model differences
 - Out of scope:
-  - changing shipped `quantcraft` runtime code
+  - changing shipped `quantleet` runtime code
   - implementing OCO/OTO/brackets
 
 ## Evaluator Acceptance Contract
@@ -82,7 +82,7 @@
 - Acceptance artifact location:
   - this active plan
   - revised doc under `docs/plans/`
-  - temporary `/tmp/quantcraft-stop-xval/results/` artifacts
+  - temporary `/tmp/quantleet-stop-xval/results/` artifacts
 - How the generator and evaluator agreed on done before execution:
   - done means the bracket-linked confound has been removed from the validation
     target and the rerun reflects that narrower scope
@@ -115,7 +115,7 @@
     shipped primitives.
   - Fresh rerun findings:
     - `breakout_stop_entry`
-      - exact agreement across `quantcraft`, `backtesting.py`, and
+      - exact agreement across `quantleet`, `backtesting.py`, and
         `backtrader`
     - `pullback_limit_atr`
       - trade counts matched across all three engines
@@ -128,7 +128,7 @@
   - Overall judgment:
     - confidence is now high that the shipped `stop_market` primitive is
       fundamentally working
-    - the main unresolved design question is whether `quantcraft` should keep
+    - the main unresolved design question is whether `quantleet` should keep
       its current trigger-point-oriented stop fill behavior or adopt a more
       conservative post-gap bar fill model
 - Verification evidence:
@@ -136,9 +136,9 @@
     - `uv run poe repo-check`
     - Result: `repository checks passed`
   - Rerun command:
-    - `cd /tmp/quantcraft-stop-xval && uv run python run_cross_validation.py`
+    - `cd /tmp/quantleet-stop-xval && uv run python run_cross_validation.py`
   - Temporary result artifacts:
-    - `/tmp/quantcraft-stop-xval/results/cross_validation_results.json`
-    - `/tmp/quantcraft-stop-xval/results/summary.md`
+    - `/tmp/quantleet-stop-xval/results/cross_validation_results.json`
+    - `/tmp/quantleet-stop-xval/results/summary.md`
 - Final disposition:
   - `accepted`

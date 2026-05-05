@@ -11,7 +11,7 @@
   - Define the problem behind the current `symbol=...` friction in strategy
     APIs, research how representative quant libraries model single-asset and
     multi-asset strategies, and recommend a future-proof architecture direction
-    for `quantcraft` that preserves Pine-like ergonomics for simple strategies
+    for `quantleet` that preserves Pine-like ergonomics for simple strategies
     without boxing the engine out of multi-asset use cases.
 - Governing docs:
   - `AGENTS.md`
@@ -128,7 +128,7 @@
       - venue/execution engine
       - pair-scanning bot
     - the class hierarchy follows that choice rather than the other way around
-  - For `quantcraft`, the current product promise is still a single-symbol
+  - For `quantleet`, the current product promise is still a single-symbol
     backtest/research UX. That makes Pine-like single-asset ergonomics a
     natural top-level user DSL. But the long-term engine should still use
     explicit symbol-bearing internal intents/targets, because every multi-asset
@@ -138,7 +138,7 @@
   - Local governing docs:
     - `docs/product-specs/backtest-mvp.md`
     - `docs/product-specs/research-ergonomics.md`
-    - `src/quantcraft/research/strategy.py`
+    - `src/quantleet/research/strategy.py`
   - Official external docs reviewed:
     - Backtesting.py:
       - `https://kernc.github.io/backtesting.py/`
@@ -166,6 +166,6 @@
   - Complete for the comparison slice. Conclusion: other libraries are often
     fundamentally different; there is no universal inheritance structure to
     copy. The right design move is to choose the primary user mental model for
-    `quantcraft`, then let the public strategy DSL and the engine contracts
+    `quantleet`, then let the public strategy DSL and the engine contracts
     diverge where necessary. The resulting design baseline is recorded in
     `docs/design-docs/unified-strategy-runtime-design.md`.

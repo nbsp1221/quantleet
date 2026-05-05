@@ -7,7 +7,7 @@ from typing import Any
 
 import pytest
 
-from quantcraft.research import ParameterStudy
+from quantleet.research import ParameterStudy
 from tests.unit.research.support_parameter_study import (
     CountingEngine,
     NoTradeStrategy,

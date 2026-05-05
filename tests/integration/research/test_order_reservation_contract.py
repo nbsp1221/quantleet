@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import pytest
 
-from quantcraft.data import TimeBar
-from quantcraft.research import Strategy
-from quantcraft.trading.domain.costs import CostConfig
-from quantcraft.trading.domain.events import OrderRejectedEvent
+from quantleet.data import TimeBar
+from quantleet.research import Strategy
+from quantleet.trading.domain.costs import CostConfig
+from quantleet.trading.domain.events import OrderRejectedEvent
 from tests.integration.research.support_backtest_runner import make_bar_series, run_engine_backtest
 
 

@@ -4,7 +4,7 @@ import inspect
 
 import pytest
 
-from quantcraft.research import GridSearchResult, GridSearchRow, ParameterStudy
+from quantleet.research import GridSearchResult, GridSearchRow, ParameterStudy
 from tests.unit.research.support_parameter_study import (
     CountingEngine,
     NoTradeStrategy,

@@ -18,7 +18,7 @@ Related documents:
 
 ## Goal
 
-Keep the official `quantcraft.research.ta` public namespace, but refactor the
+Keep the official `quantleet.research.ta` public namespace, but refactor the
 implementation into three layers:
 
 - pure indicator layer
@@ -34,7 +34,7 @@ This refactor exists to:
 
 ## Core Decisions
 
-1. `quantcraft.research.ta` remains the official public import surface.
+1. `quantleet.research.ta` remains the official public import surface.
 2. `TA-Lib` is the baseline computation backend for the pure indicator layer.
 3. `SeriesView`, append/rebuild policy, memoization, and live-view semantics
    belong to the runtime layer.
@@ -53,9 +53,9 @@ This refactor exists to:
 The current structure concentrates too much indicator responsibility in a few
 files:
 
-- `src/quantcraft/research/ta.py`
-- `src/quantcraft/research/_indicator_runtime.py`
-- `src/quantcraft/research/_indicator_kernels.py`
+- `src/quantleet/research/ta.py`
+- `src/quantleet/research/_indicator_runtime.py`
+- `src/quantleet/research/_indicator_kernels.py`
 - `tests/unit/research/test_indicator_surface.py`
 - `tests/unit/research/test_indicator_runtime.py`
 
@@ -65,9 +65,9 @@ behavior.
 
 By contrast, `coinfluent`'s `quantleet.utils.ta` has clearer per-indicator file
 ownership and per-indicator tests. However, `coinfluent` is mainly an
-array-batch wrapper design, while `quantcraft` has a live causal contract where
+array-batch wrapper design, while `quantleet` has a live causal contract where
 indicators bound in `Strategy.init()` continue to update as bars arrive. That
-means `quantcraft` should adopt the ownership model without dropping the runtime
+means `quantleet` should adopt the ownership model without dropping the runtime
 layer.
 
 ## External Evidence
@@ -126,7 +126,7 @@ Source:
 
 This refactor does not aim to:
 
-- remove the `quantcraft.research.ta` namespace
+- remove the `quantleet.research.ta` namespace
 - convert public research ergonomics into a batch-array API
 - add plotting, parameter sweeps, or walk-forward tooling
 - promote indicator cache behavior into the public contract
@@ -138,7 +138,7 @@ The public namespace stays, but indicator naming aligns with Pine built-ins.
 
 ### Approved Target Public Naming
 
-| Current `quantcraft` public name | Target public name | Decision |
+| Current `quantleet` public name | Target public name | Decision |
 | --- | --- | --- |
 | `ta.sma` | `ta.sma` | keep |
 | `ta.ema` | `ta.ema` | keep |
@@ -161,7 +161,7 @@ Rules:
 
 Reasons:
 
-- the current `quantcraft` research ergonomics contract already models
+- the current `quantleet` research ergonomics contract already models
   multi-output indicators as named result objects
 - in Python, attribute access is more readable and self-describing than
   index-based tuple access
@@ -194,7 +194,7 @@ public result-object type name from the current product contract.
 
 ## Semantic Divergence Policy
 
-This refactor aims to make the current `quantcraft` contract, the new pure
+This refactor aims to make the current `quantleet` contract, the new pure
 `TA-Lib` backend, and Pine-aligned target semantics converge. However,
 divergence may still appear in areas such as:
 
@@ -216,7 +216,7 @@ The default tie-breaker is therefore human escalation, not autonomous inference.
 
 This refactor must preserve the following:
 
-1. `from quantcraft.research import ta` remains the public surface
+1. `from quantleet.research import ta` remains the public surface
 2. existing strategy call style such as `ta.sma(self.data.close, length=...)`
    continues to work
 3. indicators bound in `Strategy.init()` continue to behave as live causal views
@@ -254,7 +254,7 @@ Disallowed structures:
 
 ### Public Facade
 
-- `src/quantcraft/research/ta.py`
+- `src/quantleet/research/ta.py`
 
 Responsibilities:
 
@@ -272,20 +272,20 @@ Forbidden:
 
 Paths:
 
-- `src/quantcraft/research/indicators/`
-- `src/quantcraft/research/indicators/pure/`
+- `src/quantleet/research/indicators/`
+- `src/quantleet/research/indicators/pure/`
 
 Required files:
 
-- `src/quantcraft/research/indicators/__init__.py`
-- `src/quantcraft/research/indicators/pure/__init__.py`
-- `src/quantcraft/research/indicators/pure/sma.py`
-- `src/quantcraft/research/indicators/pure/ema.py`
-- `src/quantcraft/research/indicators/pure/rsi.py`
-- `src/quantcraft/research/indicators/pure/atr.py`
-- `src/quantcraft/research/indicators/pure/cci.py`
-- `src/quantcraft/research/indicators/pure/bb.py`
-- `src/quantcraft/research/indicators/pure/macd.py`
+- `src/quantleet/research/indicators/__init__.py`
+- `src/quantleet/research/indicators/pure/__init__.py`
+- `src/quantleet/research/indicators/pure/sma.py`
+- `src/quantleet/research/indicators/pure/ema.py`
+- `src/quantleet/research/indicators/pure/rsi.py`
+- `src/quantleet/research/indicators/pure/atr.py`
+- `src/quantleet/research/indicators/pure/cci.py`
+- `src/quantleet/research/indicators/pure/bb.py`
+- `src/quantleet/research/indicators/pure/macd.py`
 
 Rules:
 
@@ -309,15 +309,15 @@ Fixed file mapping:
 
 Paths:
 
-- `src/quantcraft/research/indicators/runtime/`
+- `src/quantleet/research/indicators/runtime/`
 
 Required files:
 
-- `src/quantcraft/research/indicators/runtime/__init__.py`
-- `src/quantcraft/research/indicators/runtime/base.py`
-- `src/quantcraft/research/indicators/runtime/views.py`
-- `src/quantcraft/research/indicators/runtime/runtime.py`
-- `src/quantcraft/research/indicators/runtime/factory.py`
+- `src/quantleet/research/indicators/runtime/__init__.py`
+- `src/quantleet/research/indicators/runtime/base.py`
+- `src/quantleet/research/indicators/runtime/views.py`
+- `src/quantleet/research/indicators/runtime/runtime.py`
+- `src/quantleet/research/indicators/runtime/factory.py`
 
 Rules:
 

@@ -1,6 +1,6 @@
 # Binance Notebook Validation Design
 
-**Goal:** Validate that an external developer can use the current `quantcraft` package from a Jupyter notebook to fetch Binance spot and USD-M OHLCV data and plot simple charts.
+**Goal:** Validate that an external developer can use the current `quantleet` package from a Jupyter notebook to fetch Binance spot and USD-M OHLCV data and plot simple charts.
 
 **Scope:**
 - One notebook only.

@@ -77,22 +77,22 @@ The performance gate is explicit:
 Run `uv run poe verify-runtime` when a change touches the runtime-sensitive
 backtest or research path, especially:
 
-- `src/quantcraft/backtest/engine.py`
-- `src/quantcraft/backtest/runtime.py`
-- `src/quantcraft/backtest/execution_model.py`
-- `src/quantcraft/backtest/order_activation.py`
-- `src/quantcraft/backtest/strategy_runtime.py`
-- `src/quantcraft/research/ta.py`
-- `src/quantcraft/research/strategy.py`
-- `src/quantcraft/research/indicators/runtime/runtime.py`
-- `src/quantcraft/research/indicators/runtime/factory.py`
-- `src/quantcraft/research/indicators/pure/`
+- `src/quantleet/backtest/engine.py`
+- `src/quantleet/backtest/runtime.py`
+- `src/quantleet/backtest/execution_model.py`
+- `src/quantleet/backtest/order_activation.py`
+- `src/quantleet/backtest/strategy_runtime.py`
+- `src/quantleet/research/ta.py`
+- `src/quantleet/research/strategy.py`
+- `src/quantleet/research/indicators/runtime/runtime.py`
+- `src/quantleet/research/indicators/runtime/factory.py`
+- `src/quantleet/research/indicators/pure/`
 
 ## Coverage Guardrail
 
-The repository treats coverage as a repo-local reliability floor for source code under `src/quantcraft`.
+The repository treats coverage as a repo-local reliability floor for source code under `src/quantleet`.
 
 - global source line coverage must stay at or above `90%`
-- files under `src/quantcraft/trading/domain/` must remain at `100%` line coverage
+- files under `src/quantleet/trading/domain/` must remain at `100%` line coverage
 
 This is a risk-based guardrail for agent work, not a substitute for contract tests or structure checks.

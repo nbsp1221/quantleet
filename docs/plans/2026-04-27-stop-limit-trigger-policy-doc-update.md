@@ -61,7 +61,7 @@
   - Bar backtest `close` is described as the current bar-based implementation's
     reference price, not as the general product model.
   - Equality against the reference `last` is documented as a conservative
-    `quantcraft` rejection policy.
+    `quantleet` rejection policy.
   - Same-event priority is documented as existing executable orders before
     newly triggered stop-family orders, aligned with deterministic
     price-time-like priority.
@@ -128,7 +128,7 @@
     - side, position purpose, and limit price do not determine trigger
       direction
     - equality against the reference `last` is rejected as a conservative
-      `quantcraft` ambiguity policy
+      `quantleet` ambiguity policy
     - existing executable orders are evaluated before newly triggered
       stop-family orders at the same event point
   - External practice synthesis:
@@ -144,7 +144,7 @@
       deterministic price-time-like backtest rule.
   - Subagent findings incorporated:
     - The test scenario plan now states that equality rejection is a local
-      `quantcraft` ambiguity policy, not universal venue conformance.
+      `quantleet` ambiguity policy, not universal venue conformance.
     - The E3 priority scenario now tests public fill ordering with sufficient
       cash first; constrained-cash behavior is demoted to an additional
       accounting interaction variant.

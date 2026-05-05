@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from quantcraft._repo_tools import (
+from quantleet._repo_tools import (
     TIER_A,
     collect_architecture_issues,
     validate_domain_dependency,

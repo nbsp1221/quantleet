@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from quantcraft.backtest import BacktestSummary, ExposureSummary
+from quantleet.backtest import BacktestSummary, ExposureSummary
 from tests.support_backtest import (
     canonical_stop_limit_buy_trade_log_digest,
     canonical_stop_limit_donchian_trade_log_digest,
@@ -29,7 +29,7 @@ def test_canonical_stop_limit_opening_range_pins_entry_evidence_and_full_regress
         "c363b95498cfe981d8c289db72b0ab3755f995af56bfa94e8adaecebc2d1a925"
     )
 
-    # Cross-engine evidence covers stop-limit entry fills; full output is QuantCraft's
+    # Cross-engine evidence covers stop-limit entry fills; full output is Quantleet's
     # canonical regression snapshot, including its market-exit and cost policies.
     assert result.summary == BacktestSummary(
         total_trades=31,
@@ -52,9 +52,7 @@ def test_canonical_stop_limit_opening_range_pins_entry_evidence_and_full_regress
         ),
     )
 
-    first_fills, last_fills = canonical_stop_limit_opening_range_trade_log_samples(
-        result.trade_log
-    )
+    first_fills, last_fills = canonical_stop_limit_opening_range_trade_log_samples(result.trade_log)
     assert first_fills == (
         {
             "timestamp": 1735743600000,
@@ -141,7 +139,7 @@ def test_canonical_stop_limit_donchian_pins_entry_evidence_and_full_regression()
         "6da6a52ca5c224cf67a5d4c22532d4d04a20909b8e0c2e5a551fc196aef57ad9"
     )
 
-    # Cross-engine evidence covers stop-limit entry fills; full output is QuantCraft's
+    # Cross-engine evidence covers stop-limit entry fills; full output is Quantleet's
     # canonical regression snapshot, including its market-exit and cost policies.
     assert result.summary == BacktestSummary(
         total_trades=14,
@@ -253,7 +251,7 @@ def test_canonical_stop_limit_inside_bar_pins_entry_evidence_and_full_regression
         "e3c64692347ae87144fd681ecc67f09e69960a4f0a4a9a44b087d87c1178bb70"
     )
 
-    # Cross-engine evidence covers stop-limit entry fills; full output is QuantCraft's
+    # Cross-engine evidence covers stop-limit entry fills; full output is Quantleet's
     # canonical regression snapshot, including its market-exit and cost policies.
     assert result.summary == BacktestSummary(
         total_trades=32,

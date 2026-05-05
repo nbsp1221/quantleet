@@ -8,7 +8,7 @@ not a workflow manual.
 - Use [`../ARCHITECTURE.md`](../ARCHITECTURE.md) for the top-level domain map,
   dependency rules, and safety tiers.
 - Use
-  [`design-docs/quantcraft-architecture.md`](design-docs/quantcraft-architecture.md)
+  [`design-docs/quantleet-architecture.md`](design-docs/quantleet-architecture.md)
   for the long-lived architecture contract.
 - Use
   [`design-docs/architecture-governance.md`](design-docs/architecture-governance.md)

@@ -78,27 +78,27 @@ Rules:
 
 The following files must exist:
 
-- `src/quantcraft/research/indicators/__init__.py`
-- `src/quantcraft/research/indicators/pure/__init__.py`
-- `src/quantcraft/research/indicators/pure/sma.py`
-- `src/quantcraft/research/indicators/pure/ema.py`
-- `src/quantcraft/research/indicators/pure/rsi.py`
-- `src/quantcraft/research/indicators/pure/atr.py`
-- `src/quantcraft/research/indicators/pure/cci.py`
-- `src/quantcraft/research/indicators/pure/bb.py`
-- `src/quantcraft/research/indicators/pure/macd.py`
-- `src/quantcraft/research/indicators/runtime/__init__.py`
-- `src/quantcraft/research/indicators/runtime/base.py`
-- `src/quantcraft/research/indicators/runtime/views.py`
-- `src/quantcraft/research/indicators/runtime/runtime.py`
-- `src/quantcraft/research/indicators/runtime/factory.py`
+- `src/quantleet/research/indicators/__init__.py`
+- `src/quantleet/research/indicators/pure/__init__.py`
+- `src/quantleet/research/indicators/pure/sma.py`
+- `src/quantleet/research/indicators/pure/ema.py`
+- `src/quantleet/research/indicators/pure/rsi.py`
+- `src/quantleet/research/indicators/pure/atr.py`
+- `src/quantleet/research/indicators/pure/cci.py`
+- `src/quantleet/research/indicators/pure/bb.py`
+- `src/quantleet/research/indicators/pure/macd.py`
+- `src/quantleet/research/indicators/runtime/__init__.py`
+- `src/quantleet/research/indicators/runtime/base.py`
+- `src/quantleet/research/indicators/runtime/views.py`
+- `src/quantleet/research/indicators/runtime/runtime.py`
+- `src/quantleet/research/indicators/runtime/factory.py`
 
 ### Legacy Removal
 
 The following files must not exist in the final state:
 
-- `src/quantcraft/research/_indicator_kernels.py`
-- `src/quantcraft/research/_indicator_runtime.py`
+- `src/quantleet/research/_indicator_kernels.py`
+- `src/quantleet/research/_indicator_runtime.py`
 - `tests/unit/research/test_indicator_runtime.py`
 
 ### Test Layout

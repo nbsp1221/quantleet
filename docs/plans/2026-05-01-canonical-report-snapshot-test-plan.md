@@ -63,27 +63,27 @@
     semantics.
   - Add only small helper tests if needed to protect the snapshot helper itself.
 - Out-of-repo scope:
-  - Do not make `/tmp/quantcraft-backtest-crosscheck` a test dependency.
+  - Do not make `/tmp/quantleet-backtest-crosscheck` a test dependency.
   - Do not add external metrics libraries to the repository.
   - Do not require network access, live services, or package downloads in the
     repo test lane.
 - Tier A progression requested: `no`
 - Approval record, if required:
   - Tier A approval is not required. The planned changes are tests and test
-    helpers under `tests/`; they must not modify `src/quantcraft/trading` or
-    `src/quantcraft/execution`.
+    helpers under `tests/`; they must not modify `src/quantleet/trading` or
+    `src/quantleet/execution`.
 - External evidence record:
   - requestor: User
   - human approver: User
   - verification marker: User explicitly requested `/tmp` experiments comparing
-    QuantCraft to external libraries and then validating `result.report`
+    Quantleet to external libraries and then validating `result.report`
     statistics.
-  - granted scope: Use the local `/tmp/quantcraft-backtest-crosscheck`
+  - granted scope: Use the local `/tmp/quantleet-backtest-crosscheck`
     experiment outputs as planning evidence only.
   - expiration: This canonical report snapshot test-hardening slice only.
   - audit reference:
-    - `/tmp/quantcraft-backtest-crosscheck/outputs/comparison_report.md`
-    - `/tmp/quantcraft-backtest-crosscheck/outputs/report_metric_crosscheck.md`
+    - `/tmp/quantleet-backtest-crosscheck/outputs/comparison_report.md`
+    - `/tmp/quantleet-backtest-crosscheck/outputs/report_metric_crosscheck.md`
 - Verification commands:
   - `uv run pytest tests/integration/research/test_canonical_rsi_contract.py tests/integration/research/test_canonical_ema_cross_contract.py tests/integration/research/test_macd_regression_contract.py -q`
   - `uv run pytest tests/unit/backtest/test_result_reporting_metrics.py tests/unit/backtest/test_result_reporting_records.py -q`
@@ -215,21 +215,21 @@ The test changes must implement the following principles.
 The following evidence justifies adding full report snapshots to the market
 order canonical tests:
 
-- `/tmp/quantcraft-backtest-crosscheck/outputs/comparison_report.md`
-  - QuantCraft, `backtesting.py`, `backtrader`, and `vectorbt` were run against
+- `/tmp/quantleet-backtest-crosscheck/outputs/comparison_report.md`
+  - Quantleet, `backtesting.py`, `backtrader`, and `vectorbt` were run against
     the same BTCUSDT 1h CSV and aligned RSI/EMA/MACD signals.
   - `timestamp`, `side`, and `quantity` matched for all three market-order
     canonical strategies.
-  - `vectorbt` matched QuantCraft final equity to numerical noise.
+  - `vectorbt` matched Quantleet final equity to numerical noise.
   - `backtesting.py` and `backtrader` differences were explained by fixed
     absolute slippage support and engine price-clamp policy.
-- `/tmp/quantcraft-backtest-crosscheck/outputs/report_metric_crosscheck.md`
+- `/tmp/quantleet-backtest-crosscheck/outputs/report_metric_crosscheck.md`
   - `38` public report metrics across `3` scenarios produced `114` compatible
     reference matches.
   - `vectorbt` and `quantstats` matched return/risk metrics after aligning
     periods and risk-free assumptions.
   - The only external diagnostic difference was `vectorbt` max-drawdown sign
-    convention: vectorbt returns a negative drawdown return, while QuantCraft
+    convention: vectorbt returns a negative drawdown return, while Quantleet
     reports positive magnitude.
 
 This evidence does not make `/tmp` part of the repo test harness. It is the
@@ -616,7 +616,7 @@ Safe staged assertions:
 Full scalar snapshots for limit/stop should wait for one of:
 
 - external execution-policy comparison evidence for limit/stop, or
-- an explicit decision that these are QuantCraft-only canonical regression
+- an explicit decision that these are Quantleet-only canonical regression
   contracts rather than external-validation-backed contracts.
 
 **Step 3: Run focused limit/stop tests if changed**

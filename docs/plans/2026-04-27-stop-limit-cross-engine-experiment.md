@@ -9,24 +9,24 @@
 
 ## Planner Contract
 
-- Goal: define a repeatable experiment that compares QuantCraft stop-limit behavior against other backtesting engines, explains any differences, and promotes validated stop-limit entry behavior into QuantCraft-owned regression tests.
+- Goal: define a repeatable experiment that compares Quantleet stop-limit behavior against other backtesting engines, explains any differences, and promotes validated stop-limit entry behavior into Quantleet-owned regression tests.
 - Governing docs:
   - [`../PLANS.md`](../PLANS.md)
   - [`../../AGENTS.md`](../../AGENTS.md)
   - [`../product-specs/stop-limit.md`](../product-specs/stop-limit.md)
   - [`2026-04-27-stop-limit-test-scenarios.md`](2026-04-27-stop-limit-test-scenarios.md)
   - [`2026-04-27-stop-limit-implementation.md`](2026-04-27-stop-limit-implementation.md)
-- Why these are governing: this is a plan artifact under `docs/plans/`; the stop-limit product spec and test scenario plan define the QuantCraft contract being cross-checked.
+- Why these are governing: this is a plan artifact under `docs/plans/`; the stop-limit product spec and test scenario plan define the Quantleet contract being cross-checked.
 - In-repo scope:
   - write and maintain this experiment design and execution record;
-  - add QuantCraft-owned canonical regression tests for the three promoted stop-limit strategy shapes under `tests/support_backtest.py` and `tests/integration/research/`.
+  - add Quantleet-owned canonical regression tests for the three promoted stop-limit strategy shapes under `tests/support_backtest.py` and `tests/integration/research/`.
 - Out-of-repo scope: create and run an isolated `/tmp` uv experiment workspace for cross-engine stop-limit comparison.
 - Tier A progression requested: `no`
 - Approval record, if required:
   - Requestor: user
   - Human approver: user
   - Verification marker: 2026-04-27 chat instruction, "실제로 실험을 진행, 그리고 나한테 최종 보고해줘"
-  - Granted scope: create `/tmp/quantcraft-stop-limit-crosscheck`, install external Python backtesting libraries with `uv`, run local experiments against the repository CSV, and report results.
+  - Granted scope: create `/tmp/quantleet-stop-limit-crosscheck`, install external Python backtesting libraries with `uv`, run local experiments against the repository CSV, and report results.
   - Expiration: this experiment slice only.
   - Audit reference: this plan document.
 - Verification commands:
@@ -38,11 +38,11 @@
   - The document names candidate strategies and libraries with source evidence.
   - The document explicitly says equal output is not the primary goal.
   - The document forbids OCO, OTO, OCOTO, bracket, and attached child-order APIs.
-  - The document defines how differences will be categorized before deciding whether QuantCraft is wrong.
-  - The `/tmp` experiment produces QuantCraft baseline outputs and external engine outputs or documented blockers.
-  - The promoted tests distinguish cross-engine validated stop-limit entry fills from QuantCraft-specific full-result regression snapshots.
+  - The document defines how differences will be categorized before deciding whether Quantleet is wrong.
+  - The `/tmp` experiment produces Quantleet baseline outputs and external engine outputs or documented blockers.
+  - The promoted tests distinguish cross-engine validated stop-limit entry fills from Quantleet-specific full-result regression snapshots.
 - Out of scope:
-  - Modifying production QuantCraft code.
+  - Modifying production Quantleet code.
   - Searching for alpha-producing strategies.
 
 ## Experiment Thesis
@@ -68,7 +68,7 @@ Use the existing canonical CSV:
 - OHLCV columns only
 - Initial cash: `1_000_000.0`
 - Quantity: fixed `1.0`
-- Fees, spread, slippage: first run at zero to isolate order semantics; optional second run with QuantCraft canonical costs
+- Fees, spread, slippage: first run at zero to isolate order semantics; optional second run with Quantleet canonical costs
 - Position model: long-only unless an engine requires explicit signed orders for exits
 
 ## Strategy Candidates
@@ -93,7 +93,7 @@ Why it is useful:
 
 - Tests stop-limit as breakout entry.
 - Produces gap-through cases where trigger occurs but limit may not fill.
-- Closely mirrors an existing QuantCraft canonical stop-market family, but replaces only the order type.
+- Closely mirrors an existing Quantleet canonical stop-market family, but replaces only the order type.
 
 Restrictions:
 
@@ -119,7 +119,7 @@ Why it is useful:
 
 - Exercises long-lived pending stop-limit entries.
 - Produces triggered-but-unfilled orders that can carry across bars.
-- Uses a well-known trend-following breakout shape already represented in QuantCraft stop-market canonical coverage.
+- Uses a well-known trend-following breakout shape already represented in Quantleet stop-market canonical coverage.
 
 Restrictions:
 
@@ -165,8 +165,8 @@ The initial experiment should target at least five engines. The first five below
    - Evidence: NautilusTrader backtesting docs describe `STOP_LIMIT` fill-price behavior and explicitly state that limit-type orders can rest after triggering and remain unfilled if the market does not reach the limit price.
    - Source: <https://nautilustrader.io/docs/latest/concepts/backtesting>
    - Expected adapter call: use the order factory's stop-limit path with explicit `instrument_id`, `order_side`, `quantity`, stop price, limit price, and `TriggerType` configured as close to last/trade triggering as the available data permits.
-   - Known comparison risk: Nautilus has a richer event-driven, venue/account/order-emulation model than QuantCraft. Adapter work may be heavier than simpler libraries, and trigger source configuration must be recorded carefully.
-   - Why it is the anchor: it is philosophically closest to QuantCraft's direction because it treats order semantics, emulation, backtesting, and live/paper execution as one coherent trading-engine model rather than a chart-only backtest helper.
+   - Known comparison risk: Nautilus has a richer event-driven, venue/account/order-emulation model than Quantleet. Adapter work may be heavier than simpler libraries, and trigger source configuration must be recorded carefully.
+   - Why it is the anchor: it is philosophically closest to Quantleet's direction because it treats order semantics, emulation, backtesting, and live/paper execution as one coherent trading-engine model rather than a chart-only backtest helper.
 
 ### Tier 1: Primary Cross-Check Engines
 
@@ -180,13 +180,13 @@ The initial experiment should target at least five engines. The first five below
    - Evidence: `Strategy.buy()` and `Strategy.sell()` accept both `limit` and `stop`; docs state limit, stop-limit, and stop-market orders fill when their conditions are met.
    - Source: <https://kernc.github.io/backtesting.py/doc/backtesting/backtesting.html>
    - Expected adapter call: `self.buy(size=1, stop=stop_price, limit=limit_price)`
-   - Known comparison risk: short/exit behavior differs from QuantCraft; docs warn that `sell()` is not necessarily a close unless configured or explicitly closed.
+   - Known comparison risk: short/exit behavior differs from Quantleet; docs warn that `sell()` is not necessarily a close unless configured or explicitly closed.
 
 3. Zipline Reloaded / Zipline 3
    - Evidence: `order()` accepts `limit_price` and `stop_price`; docs state passing both is equivalent to `StopLimitOrder(limit_price, stop_price)`.
    - Source: <https://zipline.ml4trading.io/api-reference.html>
    - Expected adapter call: `order(asset, 1, limit_price=limit_price, stop_price=stop_price)`
-   - Known comparison risk: asset ingestion and calendar setup may dominate adapter complexity; daily/minute-style simulation details may not match QuantCraft's 1h CSV path.
+   - Known comparison risk: asset ingestion and calendar setup may dominate adapter complexity; daily/minute-style simulation details may not match Quantleet's 1h CSV path.
 
 4. PyAlgoTrade
    - Evidence: docs expose `enterLongStopLimit(instrument, stopPrice, limitPrice, quantity, ...)` and `enterShortStopLimit(...)`.
@@ -216,7 +216,7 @@ The initial experiment should target at least five engines. The first five below
 
 ## Experimental Protocol
 
-1. Create an isolated workspace under `/tmp`, for example `/tmp/quantcraft-stop-limit-crosscheck`.
+1. Create an isolated workspace under `/tmp`, for example `/tmp/quantleet-stop-limit-crosscheck`.
 2. Use `uv` per engine to isolate dependencies:
    - one subdirectory per engine
    - one script per strategy per engine, or one adapter script with `--engine` and `--strategy`
@@ -232,9 +232,9 @@ The initial experiment should target at least five engines. The first five below
    - normalized fill log: timestamp, side, quantity, price, fee if available, tag if available
    - open orders at end, if available
    - engine warnings or adapter limitations
-5. Run QuantCraft through the same schema first.
+5. Run Quantleet through the same schema first.
 6. Run external engines one at a time.
-7. Diff each external result against QuantCraft at three layers:
+7. Diff each external result against Quantleet at three layers:
    - order lifecycle: submit, trigger, fill, carry, cancel/expire
    - fill log: side, timestamp, quantity, price
    - portfolio result: cash, equity, position, fees
@@ -245,13 +245,13 @@ The initial experiment should target at least five engines. The first five below
 Each mismatch must be assigned one primary cause:
 
 - `activation_timing`: same-bar vs next-bar order activation.
-- `trigger_direction_policy`: engine derives stop direction from side, while QuantCraft derives from stop price vs last evaluated reference.
+- `trigger_direction_policy`: engine derives stop direction from side, while Quantleet derives from stop price vs last evaluated reference.
 - `gap_trigger_policy`: gap-through fills at open, triggers without fill, or uses stop price.
 - `post_trigger_limit_policy`: limit can fill at the trigger point, later in the same bar, only later bars, or not at all.
 - `ohlc_path_policy`: engine assumes a different intra-bar sequence.
 - `price_improvement_policy`: engine fills at open/better price instead of strict trigger/limit tick.
 - `priority_policy`: older active orders vs newly triggered orders are ordered differently.
-- `position_model_policy`: engine opens short/hedged trades where QuantCraft treats flat sells as no-op.
+- `position_model_policy`: engine opens short/hedged trades where Quantleet treats flat sells as no-op.
 - `fee_slippage_policy`: cost model mismatch.
 - `rounding_policy`: tick size or decimal rounding mismatch.
 - `adapter_limitation`: the engine API cannot express the exact independent stop-limit primitive.
@@ -263,7 +263,7 @@ The experiment is complete when:
 
 - NautilusTrader has either a completed run or a documented setup blocker.
 - At least five total engines have either a completed run or a documented blocker.
-- All three strategies have a QuantCraft baseline JSON output.
+- All three strategies have a Quantleet baseline JSON output.
 - At least three external engines successfully run all three strategies.
 - Every mismatch has a taxonomy label and a short explanation.
 - Any `unexplained` mismatch has a reproduction row-level example from the CSV.
@@ -303,7 +303,7 @@ Poor promotion candidates:
   - Document must be present under `docs/plans/`.
   - Document must include strategy selection, library selection, experiment protocol, mismatch taxonomy, and explicit non-goals.
   - Document must cite external sources for strategy and library choices.
-  - Promoted canonical tests must separate cross-engine validated stop-limit entry-fill evidence from QuantCraft-specific full-result regression snapshots.
+  - Promoted canonical tests must separate cross-engine validated stop-limit entry-fill evidence from Quantleet-specific full-result regression snapshots.
 - Acceptance artifact location: this document.
 - How the generator and evaluator agreed on done before execution: the slice started as an experiment document, then user-approved execution, Nautilus follow-up, and canonical test promotion were recorded as scoped approval records in this same active plan.
 - Checks the evaluator will use:
@@ -323,17 +323,17 @@ Poor promotion candidates:
   - Write this experiment plan.
   - Run repo-check.
 - Notes:
-  - NautilusTrader is the anchor engine because its order model and backtesting/live execution philosophy are closest to QuantCraft's intended direction.
+  - NautilusTrader is the anchor engine because its order model and backtesting/live execution philosophy are closest to Quantleet's intended direction.
   - Backtrader, backtesting.py, Zipline, PyAlgoTrade, and Lumibot form the remaining primary engine set.
   - PyBroker and LEAN are fallback candidates, not required first-pass engines.
   - Lumibot must be empirically checked because its current docs show simple stop-limit order construction, while older package docs warned about backtest limitations for stop/limit orders.
-  - Execution workspace: `/tmp/quantcraft-stop-limit-crosscheck`.
+  - Execution workspace: `/tmp/quantleet-stop-limit-crosscheck`.
   - Generated artifacts:
-    - `/tmp/quantcraft-stop-limit-crosscheck/REPORT.md`
-    - `/tmp/quantcraft-stop-limit-crosscheck/comparison_summary.json`
-    - `/tmp/quantcraft-stop-limit-crosscheck/results/*.json`
+    - `/tmp/quantleet-stop-limit-crosscheck/REPORT.md`
+    - `/tmp/quantleet-stop-limit-crosscheck/comparison_summary.json`
+    - `/tmp/quantleet-stop-limit-crosscheck/results/*.json`
   - Successful full runs:
-    - QuantCraft baseline: `opening_range`, `donchian`, `inside_bar`
+    - Quantleet baseline: `opening_range`, `donchian`, `inside_bar`
     - `backtesting.py`: all three strategies
     - `backtrader`: all three strategies
     - `PyAlgoTrade`: all three strategies
@@ -342,24 +342,24 @@ Poor promotion candidates:
     - Zipline Reloaded 3.1.1: `StopLimitOrder(limit_price, stop_price)` exists; full run needs CSV bundle/data-portal setup.
     - Lumibot 4.5.5: `Strategy.create_order` exposes `stop_price` and `stop_limit_price`; full run needs a CSV-backed broker/data adapter and SIMPLE order verification.
   - Primary result:
-    - `backtesting.py` matched QuantCraft fill-by-fill for all three strategies.
-    - `backtrader` matched QuantCraft fill-by-fill for all three strategies after adapter datetime normalization.
+    - `backtesting.py` matched Quantleet fill-by-fill for all three strategies.
+    - `backtrader` matched Quantleet fill-by-fill for all three strategies after adapter datetime normalization.
     - `PyAlgoTrade` differed on timed market exit behavior; first mismatches were exits, not stop-limit entries.
   - Nautilus follow-up execution approval:
     - Requestor: user
     - Human approver: user
     - Verification marker: 2026-04-27 chat instruction, "nautilus만 이번에는 본격적으로 교차검증해봐"
-    - Granted scope: clone/read NautilusTrader official repository or docs under `/tmp`, install/run Nautilus with `uv`, build a Nautilus-only CSV adapter, compare its output to QuantCraft, and report.
+    - Granted scope: clone/read NautilusTrader official repository or docs under `/tmp`, install/run Nautilus with `uv`, build a Nautilus-only CSV adapter, compare its output to Quantleet, and report.
     - Expiration: Nautilus follow-up slice only.
     - Audit reference: this plan document.
   - Nautilus follow-up execution results:
     - Official source clone: `/tmp/nautilus_trader_official`
-    - Adapter script: `/tmp/quantcraft-stop-limit-crosscheck/scripts/run_nautilus.py`
-    - Report: `/tmp/quantcraft-stop-limit-crosscheck/NAUTILUS_REPORT.md`
-    - Machine summary: `/tmp/quantcraft-stop-limit-crosscheck/nautilus_comparison_summary.json`
+    - Adapter script: `/tmp/quantleet-stop-limit-crosscheck/scripts/run_nautilus.py`
+    - Report: `/tmp/quantleet-stop-limit-crosscheck/NAUTILUS_REPORT.md`
+    - Machine summary: `/tmp/quantleet-stop-limit-crosscheck/nautilus_comparison_summary.json`
     - Full runs completed for `opening_range`, `donchian`, and `inside_bar`.
-    - Stop-limit BUY fills matched QuantCraft for all three strategies after normalizing to the CSV's 0.1 price precision.
-    - Full fills did not exactly match because Nautilus' plain market exit leg fills from `on_bar` at the current bar close, while QuantCraft records the request at the next executable tick, which is the next bar open in this experiment.
+    - Stop-limit BUY fills matched Quantleet for all three strategies after normalizing to the CSV's 0.1 price precision.
+    - Full fills did not exactly match because Nautilus' plain market exit leg fills from `on_bar` at the current bar close, while Quantleet records the request at the next executable tick, which is the next bar open in this experiment.
     - Mismatch classification: `market_exit_policy`, not `stop_limit_policy`.
   - Canonical test promotion approval:
     - Requestor: user
@@ -371,23 +371,23 @@ Poor promotion candidates:
   - Canonical test promotion acceptance target:
     - Add canonical strategy helpers for `opening_range`, `donchian`, and `inside_bar` stop-limit entries.
     - Add integration tests that pin the stop-limit entry-fill digest as cross-engine evidence.
-    - Add integration tests that pin `BacktestSummary`, first/last fill samples, and full trade-log digest as QuantCraft-owned regression snapshots.
-    - Keep external-engine outputs out of the assertions; external engines remain evidence, while QuantCraft's public result contract is the durable test artifact.
+    - Add integration tests that pin `BacktestSummary`, first/last fill samples, and full trade-log digest as Quantleet-owned regression snapshots.
+    - Keep external-engine outputs out of the assertions; external engines remain evidence, while Quantleet's public result contract is the durable test artifact.
   - Canonical test promotion implementation:
     - Added `tests/integration/research/test_canonical_stop_limit_crosscheck_regression.py`.
     - Added reusable stop-limit canonical helpers to `tests/support_backtest.py`.
-    - Renamed the test intent from "cross-engine contract" to "cross-engine evidence and QuantCraft full regression" after review clarified that external engines validated the entry leg, while full portfolio totals also include QuantCraft-specific exit, fee, and slippage policy.
+    - Renamed the test intent from "cross-engine contract" to "cross-engine evidence and Quantleet full regression" after review clarified that external engines validated the entry leg, while full portfolio totals also include Quantleet-specific exit, fee, and slippage policy.
 - Blockers or scope changes:
   - NautilusTrader, Zipline Reloaded, and Lumibot were not promoted from capability probes to full runs in this slice because their setup complexity is adapter-specific and not a stop-limit capability gap.
 
 ## Evaluator Review
 
 - Findings:
-  - No QuantCraft stop-limit mismatch was found in the successful cross-engine runs.
+  - No Quantleet stop-limit mismatch was found in the successful cross-engine runs.
   - `PyAlgoTrade` mismatches are classified as `activation_timing/market_exit_policy`; they occur on the timed market exit leg, while the initial stop-limit entries match the expected trigger prices.
   - Nautilus follow-up resolved the adapter blocker: full Nautilus runs now exist for all three strategies, and no stop-limit entry mismatch was found.
   - Subagent review found no correctness issue in the strategy helpers and confirmed the `/tmp` signal comparison had no mismatches for all three promoted strategies.
-  - Subagent review found two process/test-contract issues that were fixed before final: the planner scope now includes canonical test promotion, and the promoted tests now distinguish entry-fill evidence from full QuantCraft regression snapshots.
+  - Subagent review found two process/test-contract issues that were fixed before final: the planner scope now includes canonical test promotion, and the promoted tests now distinguish entry-fill evidence from full Quantleet regression snapshots.
 - Verification evidence:
   - `uv run poe repo-check` passed: `repository checks passed`.
   - `uv run pytest tests/integration/research/test_canonical_stop_limit_crosscheck_regression.py -q` passed: `3 passed`.
@@ -402,4 +402,4 @@ Poor promotion candidates:
     - `notebook_validate.py`: four notebooks validated
     - `pytest tests/perf/test_rsi_backtest_benchmark.py -q -x --run-perf`: `2 passed`
 - Final disposition:
-  - Complete. The experiment was executed in `/tmp/quantcraft-stop-limit-crosscheck`, and the three promoted stop-limit strategy shapes are now covered by QuantCraft-owned canonical regression tests.
+  - Complete. The experiment was executed in `/tmp/quantleet-stop-limit-crosscheck`, and the three promoted stop-limit strategy shapes are now covered by Quantleet-owned canonical regression tests.

@@ -24,7 +24,7 @@
   - `ARCHITECTURE.md`
   - `docs/design-docs/index.md`
   - `docs/design-docs/package-topology-and-naming.md`
-  - `docs/design-docs/quantcraft-architecture.md`
+  - `docs/design-docs/quantleet-architecture.md`
   - `docs/design-docs/backtest-execution-semantics.md`
   - `docs/RELIABILITY.md`
   - `docs/SECURITY.md`

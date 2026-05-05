@@ -4,7 +4,7 @@ import math
 
 import pytest
 
-from quantcraft.trading.domain.costs import CostConfig
+from quantleet.trading.domain.costs import CostConfig
 
 
 def test_cost_config_rejects_non_positive_tick_size() -> None:

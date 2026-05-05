@@ -15,7 +15,7 @@ Related documents:
 - [backtest-plotting.md](backtest-plotting.md)
 - [data-ingestion.md](data-ingestion.md)
 - [../design-docs/package-topology-and-naming.md](../design-docs/package-topology-and-naming.md)
-- [../design-docs/quantcraft-architecture.md](../design-docs/quantcraft-architecture.md)
+- [../design-docs/quantleet-architecture.md](../design-docs/quantleet-architecture.md)
 - [../../AGENTS.md](../../AGENTS.md)
 - [../../README.md](../../README.md)
 
@@ -27,7 +27,7 @@ agent-driven development system of record.
 
 ## Background And Problem Definition
 
-`quantcraft` is close to its first public beta target: a polished single-symbol
+`quantleet` is close to its first public beta target: a polished single-symbol
 Python backtesting experience for users who want to test a strategy on
 historical OHLCV data. The implemented beta surface already includes strategy
 authoring ergonomics, data sources, market/limit/stop-family order behavior,
@@ -218,7 +218,7 @@ Public beta documentation must include a concise financial disclaimer in:
 - `docs/site/index.md`
 - `docs/site/quickstart.md`
 
-The disclaimer must state that QuantCraft is research/software tooling, not
+The disclaimer must state that Quantleet is research/software tooling, not
 financial advice; that backtest results do not guarantee future performance;
 and that users are responsible for data quality, assumptions, execution risk,
 and trading decisions.
@@ -322,7 +322,7 @@ The PR template should ask for:
 AI-assisted and agent-led development may be disclosed in contributor-facing
 surfaces. Any AI-generated or AI-assisted contribution must be reviewed,
 understood, owned, and verified by a human contributor before acceptance.
-Public-facing product documentation must present QuantCraft primarily as a
+Public-facing product documentation must present Quantleet primarily as a
 trustworthy Python quant/backtesting library, not as an AI-development
 experiment.
 
@@ -505,8 +505,8 @@ commitment.
   long-or-flat, and non-live unless later product specs explicitly expand it.
 - Tier A `trading` and `execution` work still requires explicit human approval
   before implementation can be treated as approved.
-- Public docs must use documented package surfaces such as `quantcraft.data`,
-  `quantcraft.backtest`, and `quantcraft.research` rather than relying on deep
+- Public docs must use documented package surfaces such as `quantleet.data`,
+  `quantleet.backtest`, and `quantleet.research` rather than relying on deep
   internal modules.
 - GitHub PR and release-facing docs must not require external
   connectors or private systems for ordinary open-source participation.
@@ -524,7 +524,7 @@ commitment.
 The public beta documentation product is ready when:
 
 - README presents the beta product clearly and routes to public docs.
-- README presents QuantCraft as a trustworthy Python quant/backtesting library,
+- README presents Quantleet as a trustworthy Python quant/backtesting library,
   not as an AI-development experiment.
 - A clean install path is documented and verified.
 - A user can copy a quickstart and produce a `BacktestResult`.

@@ -6,9 +6,9 @@ from types import SimpleNamespace
 
 import pytest
 
-from quantcraft.data import BarSeries
-from quantcraft.research import ParameterStudy, Strategy
-from quantcraft.trading.domain.events import BarEvent
+from quantleet.data import BarSeries
+from quantleet.research import ParameterStudy, Strategy
+from quantleet.trading.domain.events import BarEvent
 from tests.integration.research.test_parameter_study_grid_search import crossing_bars, engine
 from tests.unit.research.support_parameter_study import NoTradeStrategy
 

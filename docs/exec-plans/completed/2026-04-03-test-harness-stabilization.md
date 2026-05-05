@@ -1,6 +1,6 @@
 # Test Harness Stabilization Plan
 
-**Goal:** Strengthen `quantcraft`'s test and verification harness so agent-caused regressions are caught more reliably at the artifact, behavior, and runtime-verification levels without broadening current product scope.
+**Goal:** Strengthen `quantleet`'s test and verification harness so agent-caused regressions are caught more reliably at the artifact, behavior, and runtime-verification levels without broadening current product scope.
 
 **Architecture:** Keep the current `unit / integration / structure / smoke / perf` taxonomy and the existing `scripts/ + poe` command contract. Improve the harness by adding stronger artifact-backed user-journey checks, replacing a few syntax-level checks with behavior-level checks where they are the only effective guard, and codifying a stricter explicit verification lane for runtime-sensitive work rather than weakening the current default-lane policy.
 
@@ -22,14 +22,14 @@
 
 ## Context
 
-This plan exists because `quantcraft` is intentionally agent-first and depends on a mechanical harness to keep the current implemented scope stable.
+This plan exists because `quantleet` is intentionally agent-first and depends on a mechanical harness to keep the current implemented scope stable.
 
 The current repository already has strong coverage and a meaningful default verification bundle:
 
 - `uv run poe verify` passes
 - `uv run poe perf-check` passes
 - source coverage floor is enforced at `90%`
-- `src/quantcraft/trading/domain/` is enforced at `100%` line coverage
+- `src/quantleet/trading/domain/` is enforced at `100%` line coverage
 
 That baseline is good, but harness quality depends on more than raw pass counts.
 The remaining question is whether the current tests validate the behaviors that matter most when an agent makes a plausible mistake.
@@ -48,7 +48,7 @@ The article's most relevant harness lessons for this repository are:
 4. each work slice should have an explicit contract for what "done" means
 5. hard thresholds are useful when they protect a specific behavior rather than acting as fake rigor
 
-For `quantcraft`, that implies the best stabilization work is not "add more tests everywhere."
+For `quantleet`, that implies the best stabilization work is not "add more tests everywhere."
 It is to improve the places where current checks are too indirect, too source-tree-local, or too weakly tied to real user journeys.
 
 ## Revalidated Findings
@@ -136,9 +136,9 @@ This plan does not:
 
 - add a smoke/integration check that builds the wheel and validates documented public imports from an isolated install target
 - ensure the check exercises:
-  - `quantcraft`
-  - `quantcraft.data`
-  - `quantcraft.research`
+  - `quantleet`
+  - `quantleet.data`
+  - `quantleet.research`
 - keep the existing fast source-tree smoke test if it still provides value, but stop treating it as sufficient evidence for clean-install behavior
 
 **Acceptance:**
@@ -212,10 +212,10 @@ This plan does not:
 - define a stricter explicit verification lane such as a dedicated research/runtime verification task
 - document when agents must run it
 - tie those trigger conditions to specific file areas such as:
-  - `src/quantcraft/research/_indicator_runtime.py`
-  - `src/quantcraft/research/_indicator_kernels.py`
-  - `src/quantcraft/research/ta.py`
-  - `src/quantcraft/research/application/backtest.py`
+  - `src/quantleet/research/_indicator_runtime.py`
+  - `src/quantleet/research/_indicator_kernels.py`
+  - `src/quantleet/research/ta.py`
+  - `src/quantleet/research/application/backtest.py`
   - canonical perf fixtures
 - add structure tests that keep the lane and its documentation aligned
 
@@ -231,7 +231,7 @@ This plan does not:
 
 **Target areas:**
 
-- `src/quantcraft/_repo_tools.py`
+- `src/quantleet/_repo_tools.py`
 - `tests/structure/repo/`
 - `tests/unit/` where finer-grained helper coverage is appropriate
 

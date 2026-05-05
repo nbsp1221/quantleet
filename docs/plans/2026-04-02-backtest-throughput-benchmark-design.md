@@ -2,7 +2,7 @@
 
 ## Goal
 
-Measure `quantcraft`'s current single-symbol backtest throughput against a small set
+Measure `quantleet`'s current single-symbol backtest throughput against a small set
 of relevant Python backtesting libraries, using the same data and the same
 strategy shape, so the next optimization slice can target a defensible runtime
 goal instead of guessing.
@@ -17,7 +17,7 @@ The question for this batch is narrow:
 
 Included:
 
-- one repository-local benchmark harness for `quantcraft`
+- one repository-local benchmark harness for `quantleet`
 - one comparator harness rooted in `/tmp`
 - one shared input dataset for all engines
 - comparator libraries:
@@ -125,11 +125,11 @@ setup costs on the first execution.
 
 This benchmark batch is successful when:
 
-- `quantcraft` has a repository-local benchmark script for the canonical RSI
+- `quantleet` has a repository-local benchmark script for the canonical RSI
   scenario
 - the shared dataset is fixed and reused across all compared engines
 - comparator runs complete for the selected library set, or skipped engines are
   explicitly explained
 - runtime numbers are paired with result-shape notes
-- the final report proposes a concrete optimization target for `quantcraft`
+- the final report proposes a concrete optimization target for `quantleet`
 

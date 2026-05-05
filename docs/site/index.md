@@ -1,6 +1,6 @@
-# QuantCraft
+# Quantleet
 
-QuantCraft is a Python backtesting and quant research toolkit focused on a
+Quantleet is a Python backtesting and quant research toolkit focused on a
 polished first-beta single-symbol historical backtesting workflow.
 
 The first public beta, `0.1.0b1`, is for users who want to load OHLCV history,
@@ -26,6 +26,6 @@ the result, and compare a small finite parameter grid.
 
 ## Financial Disclaimer
 
-QuantCraft is research and software tooling, not financial advice. Backtest
+Quantleet is research and software tooling, not financial advice. Backtest
 results do not guarantee future performance. You are responsible for data quality,
 assumptions, execution risk, and trading decisions.

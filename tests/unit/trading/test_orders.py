@@ -5,9 +5,9 @@ from dataclasses import fields
 
 import pytest
 
-from quantcraft.trading.domain.events import FillEvent
-from quantcraft.trading.domain.intents import OrderIntent
-from quantcraft.trading.domain.orders import Order
+from quantleet.trading.domain.events import FillEvent
+from quantleet.trading.domain.intents import OrderIntent
+from quantleet.trading.domain.orders import Order
 
 
 def test_order_from_intent_preserves_runtime_fields() -> None:

@@ -10,7 +10,7 @@ def _read(path: str) -> str:
 def test_parameter_exploration_docs_route_to_research_public_path() -> None:
     product_spec = _read("docs/product-specs/parameter-exploration.md")
 
-    assert "from quantcraft.research import ParameterStudy, Strategy, ta" in product_spec
+    assert "from quantleet.research import ParameterStudy, Strategy, ta" in product_spec
     assert "ParameterStudy(...).grid_search(...)" in product_spec
 
 

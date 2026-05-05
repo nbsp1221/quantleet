@@ -22,7 +22,7 @@ Related documents:
 
 ## Goal
 
-Define the long-lived architecture direction for `quantcraft` as a personal
+Define the long-lived architecture direction for `quantleet` as a personal
 quant framework that:
 
 1. lets one strategy codebase move through research, backtest, paper trading,
@@ -45,7 +45,7 @@ Because this document is still a `Draft`:
 
 ## Product Intent
 
-`quantcraft` is not being designed primarily as a general-purpose open source
+`quantleet` is not being designed primarily as a general-purpose open source
 product for every user and every venue.
 
 The primary intent is:
@@ -200,7 +200,7 @@ separate engines.
 Current compatibility note:
 
 - the currently shipped public base class remains
-  `quantcraft.research.Strategy`
+  `quantleet.research.Strategy`
 - this document does not declare that class renamed or removed
 - if `SingleAssetStrategy` is introduced later, it should land through an
   explicit compatibility-preserving migration plan rather than as an immediate
@@ -520,7 +520,7 @@ this draft alone.
 
 The immediate task is to define a migration path such as:
 
-- keep `quantcraft.research.Strategy` as the shipped surface for now
+- keep `quantleet.research.Strategy` as the shipped surface for now
 - optionally introduce a future `SingleAssetStrategy` as an additive alias or
   sibling
 - preserve compatibility until product specs, examples, and runtime

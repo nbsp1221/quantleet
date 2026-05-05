@@ -23,7 +23,7 @@
   - `docs/SECURITY.md` defines the safety boundary for trading-related work.
   - `docs/PLANS.md` defines plan authority for this slice.
 - In-repo scope:
-  - Plan artifact creation, local analysis notes, and comparison against the checked-out `quantcraft` API/docs.
+  - Plan artifact creation, local analysis notes, and comparison against the checked-out `quantleet` API/docs.
 - Out-of-repo scope:
   - Temporary clones under `/tmp`
   - Task-driven network access limited to fetching public Git repositories required for this comparison
@@ -43,9 +43,9 @@
 - Success criteria:
   - Produce an evidence-based comparison of several relevant libraries, showing exactly how each library expresses order size and whether `% of equity/balance` is first-class, helper-based, or absent.
   - Distinguish source-backed findings from inference.
-  - Relate those findings back to the current `quantcraft` API.
+  - Relate those findings back to the current `quantleet` API.
 - Out of scope:
-  - Modifying `quantcraft`
+  - Modifying `quantleet`
   - Authenticating to services
   - Running live trading flows
   - Exhaustive benchmarking or full feature comparison beyond sizing semantics
@@ -59,15 +59,15 @@
 - Acceptance artifact location:
   - `docs/plans/2026-04-18-competitor-sizing-api-research.md`
 - How the generator and evaluator agreed on done before execution:
-  - Done means cloning a representative set of libraries, inspecting the actual order-entry API code, cross-checking any ambiguous cases with docs or tests in the same repo, and summarizing the results in relation to `quantcraft`.
+  - Done means cloning a representative set of libraries, inspecting the actual order-entry API code, cross-checking any ambiguous cases with docs or tests in the same repo, and summarizing the results in relation to `quantleet`.
 - Checks the evaluator will use:
   - Successful clone evidence
   - Source file reads for sizing APIs
-  - Comparison against local `quantcraft` order API files
+  - Comparison against local `quantleet` order API files
 - Auto-fail conditions:
   - Reporting unsupported claims without source evidence
   - Confusing helper patterns with first-class core API support
-  - Omitting the current `quantcraft` baseline from the comparison
+  - Omitting the current `quantleet` baseline from the comparison
 
 ## Generator Work Log
 
@@ -75,7 +75,7 @@
   - Create active plan and approval record
   - Clone representative libraries into `/tmp`
   - Inspect manifests, public docs, and sizing-related source files
-  - Compare findings against `quantcraft`
+  - Compare findings against `quantleet`
   - Record evaluator findings and answer the user
 - Notes:
   - The target is sizing semantics, not full architectural review.
@@ -85,7 +85,7 @@
 ## Evaluator Review
 
 - Findings:
-  - `quantcraft` 현재 공개 전략 API는 `quantity` 기반만 지원한다. 전략 계층은 `cash`/`equity`를 노출하지 않고, 주문 모델도 `quantity`만 가진다. 따라서 `% balance/equity` sizing은 현재 공식 API에 없다.
+  - `quantleet` 현재 공개 전략 API는 `quantity` 기반만 지원한다. 전략 계층은 `cash`/`equity`를 노출하지 않고, 주문 모델도 `quantity`만 가진다. 따라서 `% balance/equity` sizing은 현재 공식 API에 없다.
   - `backtesting.py`는 핵심 주문 API 자체가 상대 sizing을 지원한다. `buy(size=...)` / `sell(size=...)`에서 `0 < size < 1`은 equity fraction, `size >= 1`은 unit quantity로 해석된다. 내부 브로커는 상대 sizing을 실제 단위 수량으로 변환할 때 `margin_available`, leverage, 수수료를 고려한다.
   - `backtrader`는 세 층을 모두 제공한다:
     - 기본 `buy(size=...)` / `sell(size=...)`의 explicit quantity
@@ -102,7 +102,7 @@
     - 코어 주문 API에 상대 sizing을 직접 넣는 방식 (`backtesting.py`, `vectorbt`)
     - 전략/브로커 layer에 portfolio target 또는 sizer abstraction을 두는 방식 (`backtrader`)
     - 주문 API는 quantity를 유지하고, strategy가 cash/equity를 읽어 sizing hook/helper로 계산하는 방식 (`freqtrade`, `lumibot`, 부분적으로 `nautilus_trader`)
-  - 따라서 사용자 질문인 "내 잔고의 몇 %를 넣을 것이냐"는 업계에서 충분히 일반적이다. 다만 그것을 어디에 두느냐는 라이브러리 성격에 따라 갈린다. `quantcraft`처럼 현재 전략 계층에서 `cash`/`equity`를 숨기고 단순 `quantity`만 허용하는 설계는 MVP로는 이해되지만, 경쟁 라이브러리 대비 실사용 전략 ergonomics는 약한 편이다.
+  - 따라서 사용자 질문인 "내 잔고의 몇 %를 넣을 것이냐"는 업계에서 충분히 일반적이다. 다만 그것을 어디에 두느냐는 라이브러리 성격에 따라 갈린다. `quantleet`처럼 현재 전략 계층에서 `cash`/`equity`를 숨기고 단순 `quantity`만 허용하는 설계는 MVP로는 이해되지만, 경쟁 라이브러리 대비 실사용 전략 ergonomics는 약한 편이다.
 - Verification evidence:
   - Active plan and approval record:
     - `docs/plans/2026-04-18-competitor-sizing-api-research.md`
@@ -131,9 +131,9 @@
     - `nautilus_trader/nautilus_trader/model/orders/limit.pyx`
     - `nautilus_trader/nautilus_trader/adapters/kraken/execution.py`
   - Local baseline comparison files:
-    - `src/quantcraft/research/strategy.py`
-    - `src/quantcraft/trading/domain/intents.py`
+    - `src/quantleet/research/strategy.py`
+    - `src/quantleet/trading/domain/intents.py`
     - `docs/product-specs/research-ergonomics.md`
     - `docs/product-specs/backtest-mvp.md`
 - Final disposition:
-  - Complete. The requested competitor source-code survey was performed using temporary public Git clones and read-only source inspection, then compared against the current `quantcraft` order-entry surface.
+  - Complete. The requested competitor source-code survey was performed using temporary public Git clones and read-only source inspection, then compared against the current `quantleet` order-entry surface.

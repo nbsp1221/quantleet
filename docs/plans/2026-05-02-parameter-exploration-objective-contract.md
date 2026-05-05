@@ -18,7 +18,7 @@
   - `docs/product-specs/parameter-exploration.md`
   - `docs/product-specs/research-ergonomics.md`
   - `docs/design-docs/package-topology-and-naming.md`
-  - `docs/design-docs/quantcraft-architecture.md`
+  - `docs/design-docs/quantleet-architecture.md`
   - `docs/RELIABILITY.md`
   - `docs/SECURITY.md`
   - `docs/PLANS.md`

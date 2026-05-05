@@ -8,7 +8,7 @@
 - Authority: `non-governing`
 - Scope:
   narrow design guidance for what the runtime `Order` object in
-  `quantcraft.trading` should own
+  `quantleet.trading` should own
 - Read after:
   [`order-domain-runtime-design.md`](order-domain-runtime-design.md)
 
@@ -32,7 +32,7 @@ Concretely, this document fixes:
 
 ## Current Code Truth
 
-`quantcraft` already has a minimal runtime `Order`.
+`quantleet` already has a minimal runtime `Order`.
 
 - `OrderIntent` is created by strategy code
 - the backtest runtime activates pending intents into working `Order` values
@@ -46,10 +46,10 @@ The current core loop therefore already has this boundary:
 
 Local evidence:
 
-- [`../../src/quantcraft/trading/domain/orders.py`](../../src/quantcraft/trading/domain/orders.py)
-- [`../../src/quantcraft/trading/domain/matching.py`](../../src/quantcraft/trading/domain/matching.py)
-- [`../../src/quantcraft/backtest/runtime.py`](../../src/quantcraft/backtest/runtime.py)
-- [`../../src/quantcraft/trading/domain/state.py`](../../src/quantcraft/trading/domain/state.py)
+- [`../../src/quantleet/trading/domain/orders.py`](../../src/quantleet/trading/domain/orders.py)
+- [`../../src/quantleet/trading/domain/matching.py`](../../src/quantleet/trading/domain/matching.py)
+- [`../../src/quantleet/backtest/runtime.py`](../../src/quantleet/backtest/runtime.py)
+- [`../../src/quantleet/trading/domain/state.py`](../../src/quantleet/trading/domain/state.py)
 
 ## Decision
 
@@ -196,7 +196,7 @@ Bad default:
 - “broadcast the event and let every component fix its own state whenever it
   notices”
 
-That pattern conflicts with the deterministic backtest semantics `quantcraft`
+That pattern conflicts with the deterministic backtest semantics `quantleet`
 currently wants.
 
 At the same time, paper/live paths will eventually treat these as authoritative
@@ -317,6 +317,6 @@ See also:
 
 ## One-Line Summary
 
-The best current fit for `quantcraft` is a runtime `Order` that is **small but
+The best current fit for `quantleet` is a runtime `Order` that is **small but
 behavioral**: rich enough to enforce order-local invariants, but not so large
 that it absorbs matching, runtime orchestration, or accounting.

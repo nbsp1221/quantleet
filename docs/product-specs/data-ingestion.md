@@ -11,10 +11,10 @@ Related documents:
 - [market-data.md](market-data.md)
 - [backtest-mvp.md](backtest-mvp.md)
 - [research-ergonomics.md](research-ergonomics.md)
-- [../design-docs/quantcraft-architecture.md](../design-docs/quantcraft-architecture.md)
+- [../design-docs/quantleet-architecture.md](../design-docs/quantleet-architecture.md)
 - [../design-docs/architecture-governance.md](../design-docs/architecture-governance.md)
 
-This document is the canonical current implemented-scope contract for the shipped historical ingestion surface under `quantcraft.data`.
+This document is the canonical current implemented-scope contract for the shipped historical ingestion surface under `quantleet.data`.
 
 ## Goal
 
@@ -27,11 +27,11 @@ Provide the current official historical data-ingestion surface that:
 
 ## Why This Slice Exists
 
-`quantcraft` already has:
+`quantleet` already has:
 
 - implemented market-data utilities
 - an implemented Backtest MVP
-- an implemented `quantcraft.research` ergonomics surface
+- an implemented `quantleet.research` ergonomics surface
 
 What is still weak is the user-facing ingestion path that connects external historical data to the current backtest workflow.
 
@@ -47,8 +47,8 @@ This implemented slice closes that gap without introducing storage, scheduling, 
 
 This implemented slice includes:
 
-- public historical `DataSource` objects under `quantcraft.data`
-- normalization into `quantcraft.data.BarSeries`
+- public historical `DataSource` objects under `quantleet.data`
+- normalization into `quantleet.data.BarSeries`
 - the ingestion path that feeds those datasets into the current backtest workflow
 
 ## Out Of Scope
@@ -67,7 +67,7 @@ This implemented slice does not include:
 The official public ingestion namespace for this slice is:
 
 ```python
-from quantcraft.data import CCXTDataSource, CSVDataSource, DataFrameDataSource
+from quantleet.data import CCXTDataSource, CSVDataSource, DataFrameDataSource
 ```
 
 Acquisition and normalization belong to `data`.
@@ -113,7 +113,7 @@ The first approved baseline includes:
 - `CSVDataSource`
 - `DataFrameDataSource`
 
-This gives `quantcraft` three practical first-run paths:
+This gives `quantleet` three practical first-run paths:
 
 1. fetch historical bars from an exchange-backed provider
 2. load historical bars from a local CSV file
@@ -123,7 +123,7 @@ This gives `quantcraft` three practical first-run paths:
 
 All official sources must return the same self-describing historical dataset:
 
-- `quantcraft.data.BarSeries`
+- `quantleet.data.BarSeries`
 
 Current dataset rules:
 
@@ -137,8 +137,8 @@ Current dataset rules:
 
 Ownership rule:
 
-- the canonical normalized single-bar type for this slice is `quantcraft.data.TimeBar`
-- the canonical engine-facing dataset type for this slice is `quantcraft.data.BarSeries`
+- the canonical normalized single-bar type for this slice is `quantleet.data.TimeBar`
+- the canonical engine-facing dataset type for this slice is `quantleet.data.BarSeries`
 - `research` consumes those types
 - `shared` must not be used as a shortcut location for these business shapes
 
@@ -252,10 +252,10 @@ Illustrative direction:
 ```python
 from datetime import UTC, datetime, timedelta
 
-from quantcraft.data import CCXTDataSource
-from quantcraft.trading.domain.costs import CostConfig
-from quantcraft.backtest import BacktestEngine
-from quantcraft.research import Strategy, ta, qc
+from quantleet.data import CCXTDataSource
+from quantleet.trading.domain.costs import CostConfig
+from quantleet.backtest import BacktestEngine
+from quantleet.research import Strategy, ta, qc
 
 
 class RsiStrategy(Strategy):
@@ -305,7 +305,7 @@ result = engine.run(
 
 This slice is complete when:
 
-1. users can import `CCXTDataSource`, `CSVDataSource`, and `DataFrameDataSource` from `quantcraft.data`
+1. users can import `CCXTDataSource`, `CSVDataSource`, and `DataFrameDataSource` from `quantleet.data`
 2. all three sources load historical inputs into `BarSeries`
 3. the current backtest path can consume those datasets without introducing a second ingestion-only bar type
 4. the first documented and tested exchange-backed path works for Binance via `ccxt`
@@ -316,7 +316,7 @@ This slice is complete when:
 
 Agents implementing this slice must not:
 
-- invent new top-level ingestion namespaces outside `quantcraft.data`
+- invent new top-level ingestion namespaces outside `quantleet.data`
 - expose raw provider payloads as the public return type
 - collapse source-specific logic into `research`
 - expand this slice into caching, persistence, scheduling, or live-feed infrastructure

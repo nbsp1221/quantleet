@@ -83,7 +83,7 @@
   - documentation artifacts from the conservative-semantics investigation remain present and are now the only working-tree changes
   - the repository is intentionally left in a temporary doc/code divergence state because the user requested rollback of code only
 - Verification evidence:
-  - `git diff --stat -- src/quantcraft/research/adapters/execution_model.py src/quantcraft/research/application/backtest.py tests/integration/research/support_backtest_runner.py tests/integration/research/test_backtest_execution_semantics.py tests/integration/research/test_backtest_result_contract.py tests/unit/research/adapters/test_execution_model.py` -> no output
+  - `git diff --stat -- src/quantleet/research/adapters/execution_model.py src/quantleet/research/application/backtest.py tests/integration/research/support_backtest_runner.py tests/integration/research/test_backtest_execution_semantics.py tests/integration/research/test_backtest_result_contract.py tests/unit/research/adapters/test_execution_model.py` -> no output
   - `uv run pytest tests/unit/research/adapters/test_execution_model.py tests/integration/research/test_backtest_execution_semantics.py tests/integration/research/test_backtest_result_contract.py -q` -> `20 passed in 0.11s`
   - `uv run pytest tests/integration/research -q` -> `24 passed in 0.87s`
   - `uv run poe verify-runtime` -> lint, mypy, full pytest, coverage, build, repo-check, notebook validation, and perf check all passed

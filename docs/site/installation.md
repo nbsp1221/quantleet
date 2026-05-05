@@ -1,6 +1,6 @@
 # Installation
 
-QuantCraft requires Python 3.13.
+Quantleet requires Python 3.13.
 
 The first beta package is `0.1.0b1`. Once published, package users should
 install that release from the configured Python package index.
@@ -8,13 +8,13 @@ install that release from the configured Python package index.
 With `uv`:
 
 ```bash
-uv add quantcraft==0.1.0b1
+uv add quantleet==0.1.0b1
 ```
 
 With `pip`:
 
 ```bash
-python -m pip install quantcraft==0.1.0b1
+python -m pip install quantleet==0.1.0b1
 ```
 
 From a local checkout:

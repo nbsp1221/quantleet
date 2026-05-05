@@ -7,8 +7,8 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 ROOT = Path(__file__).resolve().parents[1]
-INCLUDE_PATTERN = "src/quantcraft/*"
-TRADING_DOMAIN_PREFIX = "src/quantcraft/trading/domain/"
+INCLUDE_PATTERN = "src/quantleet/*"
+TRADING_DOMAIN_PREFIX = "src/quantleet/trading/domain/"
 GLOBAL_MIN_COVERAGE = 90.0
 TRADING_DOMAIN_MIN_COVERAGE = 100.0
 

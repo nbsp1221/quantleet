@@ -28,7 +28,7 @@
   - [`docs/product-specs/backtest-mvp.md`](../product-specs/backtest-mvp.md)
   - [`docs/product-specs/research-ergonomics.md`](../product-specs/research-ergonomics.md)
   - [`docs/design-docs/index.md`](../design-docs/index.md)
-  - [`docs/design-docs/quantcraft-architecture.md`](../design-docs/quantcraft-architecture.md)
+  - [`docs/design-docs/quantleet-architecture.md`](../design-docs/quantleet-architecture.md)
   - [`docs/design-docs/package-topology-and-naming.md`](../design-docs/package-topology-and-naming.md)
   - [`docs/RELIABILITY.md`](../RELIABILITY.md)
   - [`docs/SECURITY.md`](../SECURITY.md)
@@ -74,7 +74,7 @@
 - Verification commands:
   - architecture/inventory support:
     - `rg --files src tests docs scripts`
-    - `rg -n "research\\.application|research\\.adapters|data\\.domain|quantcraft\\.exchange|from quantcraft import .*BacktestEngine|from quantcraft import .*Exchange|__getattr__|import_module\\(" src tests docs notebooks`
+    - `rg -n "research\\.application|research\\.adapters|data\\.domain|quantleet\\.exchange|from quantleet import .*BacktestEngine|from quantleet import .*Exchange|__getattr__|import_module\\(" src tests docs notebooks`
   - default repository lane:
     - `uv run poe verify`
   - runtime-sensitive lane:
@@ -143,7 +143,7 @@
   - 2026-04-17: one review delegate incorrectly reported stale `_repo_tools.py`
     allowlist and live-smoke import issues. Local source inspection showed the
     current file already imports `Exchange` and `MarketType` from
-    `quantcraft.integrations.venues.ccxt` and has
+    `quantleet.integrations.venues.ccxt` and has
     `ALLOWED_ROOT_MODULE_DEPENDENCIES = set()`, so those candidate findings
     were rejected during synthesis.
   - 2026-04-17: reviewer fan-out surfaced two reproducible correctness holes in
@@ -156,9 +156,9 @@
   - High: `BacktestEngine` currently accepts `initial_cash <= 0`, and the
     runtime later divides by that value when computing `total_return`.
     Evidence:
-    - [src/quantcraft/backtest/engine.py](../../src/quantcraft/backtest/engine.py)
+    - [src/quantleet/backtest/engine.py](../../src/quantleet/backtest/engine.py)
       exposes `initial_cash` with no validation.
-    - [src/quantcraft/backtest/runtime.py](../../src/quantcraft/backtest/runtime.py)
+    - [src/quantleet/backtest/runtime.py](../../src/quantleet/backtest/runtime.py)
       computes `total_return = round((state.equity - initial_cash) / initial_cash, 12)`.
     - Fresh local reproduction during this audit:
       - `uv run python - <<'PY' ... BacktestEngine(initial_cash=0.0, ...) ...`
@@ -169,9 +169,9 @@
   - High: `CostConfig` accepts negative values, and current matching/state code
     turns them into better-than-market fills and negative fees.
     Evidence:
-    - [src/quantcraft/trading/domain/costs.py](../../src/quantcraft/trading/domain/costs.py)
+    - [src/quantleet/trading/domain/costs.py](../../src/quantleet/trading/domain/costs.py)
       is an unconstrained dataclass.
-    - [src/quantcraft/trading/domain/matching.py](../../src/quantcraft/trading/domain/matching.py)
+    - [src/quantleet/trading/domain/matching.py](../../src/quantleet/trading/domain/matching.py)
       applies `slippage = costs.tick_size * costs.slippage_ticks` and
       `fee = round(fill_price * intent.quantity * costs.fee_rate, 12)` with no
       non-negative validation.
@@ -189,7 +189,7 @@
     - [README.md](../../README.md): “the current codebase now largely follows”
     - [ARCHITECTURE.md](../../ARCHITECTURE.md): “older layer-first remnants and
       compatibility cleanup debt”
-    - [docs/design-docs/quantcraft-architecture.md](../design-docs/quantcraft-architecture.md):
+    - [docs/design-docs/quantleet-architecture.md](../design-docs/quantleet-architecture.md):
       “This is not a claim that current code already matches the target.”
     - [docs/design-docs/package-topology-and-naming.md](../design-docs/package-topology-and-naming.md):
       “still contains older layer-first package remnants”
@@ -205,7 +205,7 @@
     - [tests/structure/architecture/test_stage1_target_package_boundaries.py](../../tests/structure/architecture/test_stage1_target_package_boundaries.py)
     - [tests/structure/architecture/test_stage4_integrations_materialization.py](../../tests/structure/architecture/test_stage4_integrations_materialization.py)
     - [tests/structure/architecture/test_stage5_local_package_flattening.py](../../tests/structure/architecture/test_stage5_local_package_flattening.py)
-    - [src/quantcraft/_repo_tools.py](../../src/quantcraft/_repo_tools.py)
+    - [src/quantleet/_repo_tools.py](../../src/quantleet/_repo_tools.py)
       still parses legacy index-status-map schemas for repo-check support
     Why this matters:
     - these are not runtime bugs, but they are residual migration/control-plane
@@ -218,21 +218,21 @@
     - not a shipped runtime problem, but it is residual topology noise.
   - Confirmed non-finding: the old public shim modules are largely gone.
     Evidence:
-    - [src/quantcraft/__init__.py](../../src/quantcraft/__init__.py) exports no
+    - [src/quantleet/__init__.py](../../src/quantleet/__init__.py) exports no
       legacy root symbols
     - [tests/smoke/local/test_public_imports.py](../../tests/smoke/local/test_public_imports.py)
       and [tests/integration/commands/test_built_artifact_imports.py](../../tests/integration/commands/test_built_artifact_imports.py)
       both assert removed legacy imports now fail
     - code search across `src`, `tests`, and non-historical docs found no
       active source/doc references that still treat
-      `quantcraft.exchange`, `quantcraft.data.domain`, or
-      `quantcraft.research.application` as supported current imports
+      `quantleet.exchange`, `quantleet.data.domain`, or
+      `quantleet.research.application` as supported current imports
 - Verification evidence:
   - Inventory and seam search:
     - `rg --files src tests docs scripts notebooks`
-    - `rg -n "research\\.application|research\\.adapters|data\\.domain|quantcraft\\.exchange|from quantcraft import .*BacktestEngine|from quantcraft import .*Exchange|__getattr__|import_module\\(" src tests docs scripts notebooks`
+    - `rg -n "research\\.application|research\\.adapters|data\\.domain|quantleet\\.exchange|from quantleet import .*BacktestEngine|from quantleet import .*Exchange|__getattr__|import_module\\(" src tests docs scripts notebooks`
     - `rg -n "shim|compat|compatibility|legacy|fallback|deprecated|transitional" src tests README.md ARCHITECTURE.md docs/design-docs docs/product-specs docs/references docs/RELIABILITY.md docs/SECURITY.md`
-    - `rg -n "research\\.application|research\\.adapters|data\\.domain|quantcraft\\.exchange" src tests README.md ARCHITECTURE.md docs/design-docs docs/product-specs docs/references docs/RELIABILITY.md`
+    - `rg -n "research\\.application|research\\.adapters|data\\.domain|quantleet\\.exchange" src tests README.md ARCHITECTURE.md docs/design-docs docs/product-specs docs/references docs/RELIABILITY.md`
   - Importability sweep:
     - `uv run python - <<'PY' ... pkgutil.walk_packages ... importlib.import_module(...) ...`
     - result: `FAILURES=0`

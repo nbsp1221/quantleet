@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from quantcraft._repo_tools import collect_doc_issues
+from quantleet._repo_tools import collect_doc_issues
 
 
 def collect_issues(root: Path) -> list[str]:

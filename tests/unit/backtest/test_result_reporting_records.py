@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from quantcraft.trading.domain.costs import CostConfig
-from quantcraft.trading.domain.events import FillEvent
+from quantleet.trading.domain.costs import CostConfig
+from quantleet.trading.domain.events import FillEvent
 from tests.integration.research.support_backtest_runner import (
     DeterministicEntryExitStrategy,
     OlderLimitThenNewerMarketExitStrategy,

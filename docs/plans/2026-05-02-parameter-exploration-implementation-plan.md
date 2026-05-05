@@ -4,7 +4,7 @@
 
 **Goal:** Implement the first-beta `ParameterStudy(...).grid_search(...)` workflow so users can compare a finite parameter grid through the existing single-symbol backtest and report surfaces.
 
-**Architecture:** Keep parameter exploration inside `quantcraft.research` as a study/result UX layer. `ParameterStudy` owns validation, deterministic candidate enumeration, failure capture, result rows, objective selection, and record output; it composes the public `BacktestEngine.run(bars=..., strategy=...)` path and reads engine-produced `BacktestResult.report` metrics. Do not add optimizer behavior to `BacktestEngine`, do not create a second execution model, and do not modify Tier A `trading` or `execution` code.
+**Architecture:** Keep parameter exploration inside `quantleet.research` as a study/result UX layer. `ParameterStudy` owns validation, deterministic candidate enumeration, failure capture, result rows, objective selection, and record output; it composes the public `BacktestEngine.run(bars=..., strategy=...)` path and reads engine-produced `BacktestResult.report` metrics. Do not add optimizer behavior to `BacktestEngine`, do not create a second execution model, and do not modify Tier A `trading` or `execution` code.
 
 **Tech Stack:** Python 3.13, stdlib dataclasses, `itertools`, `math`, `types.MappingProxyType`, `typing`, pytest, Ruff, mypy strict mode, uv, Poe task runner. No new runtime dependency.
 
@@ -42,7 +42,7 @@
   - `docs/product-specs/backtest-plotting.md`
   - `docs/design-docs/index.md`
   - `docs/design-docs/package-topology-and-naming.md`
-  - `docs/design-docs/quantcraft-architecture.md`
+  - `docs/design-docs/quantleet-architecture.md`
 - Why these are governing:
   - The parameter exploration product spec fixes the beta API, product scope,
     objective model, failure policy, record schema, and non-goals.
@@ -53,7 +53,7 @@
   - Architecture and package-topology docs keep study UX under `research`, keep
     historical execution under `backtest`, and keep Tier A domains untouched.
 - In-repo scope:
-  - Add the `quantcraft.research.ParameterStudy` public study container.
+  - Add the `quantleet.research.ParameterStudy` public study container.
   - Add the returned `GridSearchResult` comparison artifact and row selection
     objects under the research package.
   - Add deterministic finite-grid validation, enumeration, constraints,
@@ -72,7 +72,7 @@
 - Tier A progression requested: `no`
 - Approval record, if required:
   - Tier A approval is not required because this implementation must not modify
-    `src/quantcraft/trading` or `src/quantcraft/execution`.
+    `src/quantleet/trading` or `src/quantleet/execution`.
   - If execution discovers a required Tier A source change, stop and create a
     human approval record before continuing.
 - Verification commands:
@@ -89,7 +89,7 @@
   - `uv build`
   - `uv run poe verify-runtime`
 - Success criteria:
-  - `from quantcraft.research import ParameterStudy` works.
+  - `from quantleet.research import ParameterStudy` works.
   - `ParameterStudy(engine=..., bars=..., strategy_factory=...).grid_search(...)`
     runs finite grids through the existing `BacktestEngine.run(bars=...)`
     path.
@@ -111,7 +111,7 @@
     explicitly recorded with cause.
 - Out of scope:
   - New order semantics.
-  - Changes under `src/quantcraft/trading` or `src/quantcraft/execution`.
+  - Changes under `src/quantleet/trading` or `src/quantleet/execution`.
   - Parallel execution controls.
   - Persistence, resume, retry queues, or result caching.
   - Random/Bayesian/SAMBO/genetic search.
@@ -137,7 +137,7 @@
   - Manual review against `docs/product-specs/parameter-exploration.md`.
   - Manual review against
     `docs/product-specs/parameter-exploration-test-scenarios.md`.
-  - Manual review against the current `src/quantcraft` and `tests` layout.
+  - Manual review against the current `src/quantleet` and `tests` layout.
   - `uv run poe repo-check`.
   - `uv run pytest tests/structure/docs tests/structure/repo -q`.
 - Auto-fail conditions:
@@ -176,7 +176,7 @@
 
 ### Technology And Infrastructure
 
-- Python 3.13 package under `src/quantcraft`.
+- Python 3.13 package under `src/quantleet`.
 - `uv` manages dependencies and lockfile.
 - Poe owns repository command surface through `pyproject.toml`.
 - pytest uses `--import-mode=importlib`.
@@ -188,7 +188,7 @@
 
 ### Package Structure
 
-Current capability roots under `src/quantcraft`:
+Current capability roots under `src/quantleet`:
 
 - `data`: `BarSeries`, `TimeBar`, and historical source contracts.
 - `research`: public `Strategy`, `ta`, `qc`, indicator runtime, and series
@@ -199,21 +199,21 @@ Current capability roots under `src/quantcraft`:
 - `execution`: future execution context; Tier A.
 - `integrations`: venue/data integrations.
 
-The implementation belongs under `src/quantcraft/research`. `research` is
+The implementation belongs under `src/quantleet/research`. `research` is
 allowed to depend on the public `backtest` surface, `data`, and `trading`.
 `backtest` must not import `research` to host optimizer behavior.
 
 ### Existing Public Surfaces
 
-- `quantcraft.research.__init__` lazily exports `Strategy`, `qc`, and `ta`.
+- `quantleet.research.__init__` lazily exports `Strategy`, `qc`, and `ta`.
   It should be extended to lazily export `ParameterStudy` and the returned
   public result/row types without importing backtest at module import time.
-- `quantcraft.backtest.__init__` exports `BacktestEngine`, `BacktestResult`,
+- `quantleet.backtest.__init__` exports `BacktestEngine`, `BacktestResult`,
   `BacktestReport`, and report dataclasses. Do not add parameter exploration
   exports here.
-- `quantcraft.data.__init__` exports `BarSeries`, `TimeBar`, and data sources.
+- `quantleet.data.__init__` exports `BarSeries`, `TimeBar`, and data sources.
   `ParameterStudy` should require a materialized `BarSeries`.
-- The root `quantcraft.__init__` intentionally exports nothing. Do not promote
+- The root `quantleet.__init__` intentionally exports nothing. Do not promote
   `ParameterStudy` to the root package.
 
 ### Existing Backtest Flow
@@ -230,23 +230,23 @@ ParameterStudy.grid_search(...)
 
 Important existing files:
 
-- `src/quantcraft/backtest/engine.py`
+- `src/quantleet/backtest/engine.py`
   - `BacktestEngine.run(...)` validates exactly one of `bars` or `source`.
   - The study must call `engine.run(bars=..., strategy=..., label=...)`.
-- `src/quantcraft/backtest/runtime.py`
+- `src/quantleet/backtest/runtime.py`
   - Owns historical execution and report construction.
   - It already creates a fresh `_StrategyDriver`, `TradingState`, orders, and
     report builder per `run(...)` call.
-- `src/quantcraft/backtest/strategy_runtime.py`
+- `src/quantleet/backtest/strategy_runtime.py`
   - `_StrategyDriver.initialize(...)` resets public strategy runtime state, but
     arbitrary user attributes may not reset. The study must call the strategy
     factory once per admissible combination instead of reusing one strategy.
-- `src/quantcraft/backtest/reporting.py`
+- `src/quantleet/backtest/reporting.py`
   - Owns typed `BacktestReport` groups: `run`, `execution`, `returns`, `risk`,
     `trades`, `costs`, `exposure`.
   - Parameter exploration must read these typed fields, not parse
     `BacktestReport.to_text()`.
-- `src/quantcraft/backtest/results.py`
+- `src/quantleet/backtest/results.py`
   - `BacktestResult.report` is available only for engine-produced results.
   - `BacktestResult.plot()` is the selected-run visual inspection path.
 
@@ -313,8 +313,8 @@ Relevant reusable test helpers:
 
 ### Areas Affected
 
-- `src/quantcraft/research/__init__.py`
-- New `src/quantcraft/research/parameter_exploration.py`
+- `src/quantleet/research/__init__.py`
+- New `src/quantleet/research/parameter_exploration.py`
 - Unit tests under `tests/unit/research/`
 - Integration tests under `tests/integration/research/`
 - Smoke imports under `tests/smoke/local/test_public_imports.py`
@@ -330,7 +330,7 @@ Relevant reusable test helpers:
 - Do not parse `BacktestReport.to_text()`.
 - Do not duplicate report metric formulas in `research`; read typed report
   fields.
-- Do not add parameter exploration to `quantcraft.backtest`.
+- Do not add parameter exploration to `quantleet.backtest`.
 - Do not add helper modules under old removed `research/domain`,
   `research/application`, or `research/adapters` paths.
 - Do not use pandas as the required result output.
@@ -339,7 +339,7 @@ Relevant reusable test helpers:
 
 ### New Module
 
-Create `src/quantcraft/research/parameter_exploration.py`.
+Create `src/quantleet/research/parameter_exploration.py`.
 
 Keep the beta in one cohesive module first. Split only if the file becomes
 materially difficult to navigate after implementation. A single module is
@@ -353,8 +353,8 @@ Expected public classes:
 - `GridSearchRow`
 
 `GridSearchResult` and `GridSearchRow` are public because users receive and
-inspect them. They should be exported from `quantcraft.research` alongside
-`ParameterStudy`, but not from `quantcraft.backtest` or the root package.
+inspect them. They should be exported from `quantleet.research` alongside
+`ParameterStudy`, but not from `quantleet.backtest` or the root package.
 
 ### Type Model
 
@@ -633,22 +633,22 @@ candidate #N
 
 ### Production Files
 
-- Create: `src/quantcraft/research/parameter_exploration.py`
+- Create: `src/quantleet/research/parameter_exploration.py`
   - Own `ParameterStudy`, `GridSearchResult`, `GridSearchRow`, type aliases,
     metric registry, grid validation, row construction, objective validation,
     selection, and record output.
-- Modify: `src/quantcraft/research/__init__.py`
+- Modify: `src/quantleet/research/__init__.py`
   - Add lazy exports for `ParameterStudy`, `GridSearchResult`, and
     `GridSearchRow`.
   - Preserve lazy `Strategy`, `qc`, and `ta` behavior.
 
 No production changes should be made in:
 
-- `src/quantcraft/backtest/engine.py`
-- `src/quantcraft/backtest/runtime.py`
-- `src/quantcraft/backtest/reporting.py`
-- `src/quantcraft/trading/**`
-- `src/quantcraft/execution/**`
+- `src/quantleet/backtest/engine.py`
+- `src/quantleet/backtest/runtime.py`
+- `src/quantleet/backtest/reporting.py`
+- `src/quantleet/trading/**`
+- `src/quantleet/execution/**`
 
 If implementation reveals a necessary change in those files, pause and update
 the plan before editing.
@@ -706,12 +706,12 @@ feature lands.
 
 - Modify: `tests/smoke/local/test_public_imports.py`
 - Create: `tests/unit/research/test_parameter_study_preflight.py`
-- Create: `src/quantcraft/research/parameter_exploration.py`
-- Modify: `src/quantcraft/research/__init__.py`
+- Create: `src/quantleet/research/parameter_exploration.py`
+- Modify: `src/quantleet/research/__init__.py`
 
 **Steps:**
 
-1. Write failing tests for `from quantcraft.research import ParameterStudy`.
+1. Write failing tests for `from quantleet.research import ParameterStudy`.
 2. Write failing tests for constructing with `engine`, `bars`, and
    `strategy_factory`.
 3. Write failing tests that `source=` is not accepted and deferred controls are
@@ -727,7 +727,7 @@ Expected initial failure: import/signature errors.
 
 **Files:**
 
-- Modify: `src/quantcraft/research/parameter_exploration.py`
+- Modify: `src/quantleet/research/parameter_exploration.py`
 - Create: `tests/unit/research/test_parameter_grid_validation.py`
 - Extend: `tests/unit/research/test_parameter_study_preflight.py`
 
@@ -749,7 +749,7 @@ call.
 
 **Files:**
 
-- Modify: `src/quantcraft/research/parameter_exploration.py`
+- Modify: `src/quantleet/research/parameter_exploration.py`
 - Extend: `tests/unit/research/test_parameter_grid_validation.py`
 - Extend: `tests/integration/research/test_parameter_study_grid_search.py`
 
@@ -771,7 +771,7 @@ receive failure diagnostics.
 
 **Files:**
 
-- Modify: `src/quantcraft/research/parameter_exploration.py`
+- Modify: `src/quantleet/research/parameter_exploration.py`
 - Create: `tests/integration/research/test_parameter_study_grid_search.py`
 - Create or extend: `tests/integration/research/test_parameter_study_failures.py`
 
@@ -794,7 +794,7 @@ Expected completion: successful rows retain real engine-produced
 
 **Files:**
 
-- Modify: `src/quantcraft/research/parameter_exploration.py`
+- Modify: `src/quantleet/research/parameter_exploration.py`
 - Create: `tests/unit/research/test_grid_search_records.py`
 - Extend: `tests/integration/research/test_parameter_study_grid_search.py`
 
@@ -815,7 +815,7 @@ Expected completion: records are portable plain Python dictionaries and emit no
 
 **Files:**
 
-- Modify: `src/quantcraft/research/parameter_exploration.py`
+- Modify: `src/quantleet/research/parameter_exploration.py`
 - Create: `tests/unit/research/test_grid_search_result_selection.py`
 - Extend: `tests/unit/research/test_parameter_study_preflight.py`
 
@@ -837,7 +837,7 @@ rejected, or undefined-objective rows.
 
 **Files:**
 
-- Modify: `src/quantcraft/research/parameter_exploration.py`
+- Modify: `src/quantleet/research/parameter_exploration.py`
 - Create: `tests/integration/research/test_parameter_study_failures.py`
 - Extend: `tests/unit/research/test_grid_search_records.py`
 
@@ -862,7 +862,7 @@ custom public exceptions.
 **Files:**
 
 - Create: `tests/integration/research/test_parameter_study_selected_run.py`
-- Modify: `src/quantcraft/research/parameter_exploration.py` only if needed
+- Modify: `src/quantleet/research/parameter_exploration.py` only if needed
 
 **Steps:**
 
@@ -931,7 +931,7 @@ workspace state.
 - Existing `Strategy`, `ta`, `qc`, `BacktestEngine`, `BacktestResult.report`,
   and `BacktestResult.plot()` behavior must remain compatible.
 - Existing root package exports must remain empty.
-- Existing `quantcraft.backtest` exports must not gain optimizer/study names.
+- Existing `quantleet.backtest` exports must not gain optimizer/study names.
 - No data migrations, persistent files, or schema changes are involved.
 - No new runtime dependency is needed.
 - Manually constructed `BacktestResult` values remain valid; parameter
@@ -990,9 +990,9 @@ workspace state.
 ### Implementation Slice Review
 
 - Generator changes:
-  - Added `src/quantcraft/research/parameter_exploration.py` with
+  - Added `src/quantleet/research/parameter_exploration.py` with
     `ParameterStudy`, `GridSearchResult`, and `GridSearchRow`.
-  - Extended `quantcraft.research` lazy exports for the new public study/result
+  - Extended `quantleet.research` lazy exports for the new public study/result
     surface.
   - Added unit tests for grid validation, preflight validation, objective
     selection, record output, metric states, and failure diagnostics.

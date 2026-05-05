@@ -39,7 +39,7 @@ as production code and should outlive implementation details.
 Operational rules:
 
 1. Test observable behavior and public contracts, not private implementation.
-   A refactor of `quantcraft.backtest.plotting` should not require rewriting
+   A refactor of `quantleet.backtest.plotting` should not require rewriting
    tests unless the user-visible contract changes.
 2. Each test should explain one behavior. If a test name needs "and", split it
    unless the behavior is one inseparable workflow.
@@ -268,8 +268,8 @@ non-plot workflows.
 
 Scenarios:
 
-- importing `quantcraft.backtest.results` does not import `matplotlib`
-- importing `quantcraft.backtest` does not import `matplotlib`
+- importing `quantleet.backtest.results` does not import `matplotlib`
+- importing `quantleet.backtest` does not import `matplotlib`
 - calling `result.plot()` performs the plotting import path
 
 Required assertions:
@@ -427,8 +427,8 @@ source.
 
 Acceptable approaches:
 
-- prefer a structure test proving `quantcraft.backtest.plotting` does not
-  import `quantcraft.backtest.reporting` or read `BacktestReport` internals
+- prefer a structure test proving `quantleet.backtest.plotting` does not
+  import `quantleet.backtest.reporting` or read `BacktestReport` internals
 - use an engine-produced result and verify plot data matches result-owned fields
   rather than report-only fields
 - only if necessary for an otherwise unreachable invalid state, use a narrowly
@@ -441,7 +441,7 @@ Required assertions:
 
 ### I8: Built Artifact Runtime Dependency
 
-Purpose: prove `pip install quantcraft` includes plotting dependency.
+Purpose: prove `pip install quantleet` includes plotting dependency.
 
 Flow:
 
@@ -464,7 +464,7 @@ Purpose: protect lazy import and normal library import cost.
 
 Required assertions:
 
-- `python -c "import quantcraft.backtest, sys; assert 'matplotlib' not in sys.modules"`
+- `python -c "import quantleet.backtest, sys; assert 'matplotlib' not in sys.modules"`
   passes in a fresh process
 - a separate plot call may import Matplotlib
 
@@ -474,9 +474,9 @@ Purpose: preserve package ownership.
 
 Required assertions:
 
-- plotting implementation lives under `src/quantcraft/backtest/`
-- `quantcraft.backtest` and `quantcraft.backtest.plotting` do not import
-  `quantcraft.research`, `quantcraft.execution`, `apps`, or deep sibling
+- plotting implementation lives under `src/quantleet/backtest/`
+- `quantleet.backtest` and `quantleet.backtest.plotting` do not import
+  `quantleet.research`, `quantleet.execution`, `apps`, or deep sibling
   internals
 - `trading` does not import `backtest`, `research`, or Matplotlib
 - `data` does not import plotting code
@@ -554,7 +554,7 @@ The implementation slice should run:
 - smoke tests for public imports and built artifact imports
 - structure tests for import and package-boundary rules
 - `uv run poe verify`
-- `uv run poe verify-runtime` if runtime code in `src/quantcraft/backtest/runtime.py`
+- `uv run poe verify-runtime` if runtime code in `src/quantleet/backtest/runtime.py`
   changes to populate snapshots or `drawdown_curve`
 
 ## Out Of Scope

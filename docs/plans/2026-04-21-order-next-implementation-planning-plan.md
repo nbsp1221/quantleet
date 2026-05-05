@@ -11,7 +11,7 @@
 
 - Goal:
   Produce one concrete, repository-local implementation plan for the next
-  `quantcraft.trading` slice after the current runtime-Order seam and
+  `quantleet.trading` slice after the current runtime-Order seam and
   lifecycle/sizing design drafts. The plan must state what code should change
   next, what must stay deferred, how the work should be verified, and why that
   sequence is narrower and safer than the main alternatives.

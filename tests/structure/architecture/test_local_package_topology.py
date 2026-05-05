@@ -7,9 +7,9 @@ from tests.support import ROOT
 
 def test_local_owner_files_exist() -> None:
     expected_paths = (
-        Path("src/quantcraft/data/bars.py"),
-        Path("src/quantcraft/data/sources.py"),
-        Path("src/quantcraft/research/series.py"),
+        Path("src/quantleet/data/bars.py"),
+        Path("src/quantleet/data/sources.py"),
+        Path("src/quantleet/research/series.py"),
     )
 
     for relative_path in expected_paths:
@@ -18,8 +18,8 @@ def test_local_owner_files_exist() -> None:
 
 def test_removed_domain_shims_stay_absent() -> None:
     removed_paths = (
-        ROOT / "src/quantcraft/data/domain",
-        ROOT / "src/quantcraft/research/domain",
+        ROOT / "src/quantleet/data/domain",
+        ROOT / "src/quantleet/research/domain",
     )
 
     for path in removed_paths:
@@ -28,9 +28,9 @@ def test_removed_domain_shims_stay_absent() -> None:
 
 def test_removed_placeholder_directories_stay_absent() -> None:
     removed_paths = (
-        ROOT / "src/quantcraft/data/application",
-        ROOT / "src/quantcraft/trading/application",
-        ROOT / "src/quantcraft/trading/adapters",
+        ROOT / "src/quantleet/data/application",
+        ROOT / "src/quantleet/trading/application",
+        ROOT / "src/quantleet/trading/adapters",
     )
 
     for path in removed_paths:

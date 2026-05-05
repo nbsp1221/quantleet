@@ -5,7 +5,7 @@ import inspect
 import numpy as np
 import pytest
 
-from quantcraft.research.indicators.pure.atr import atr
+from quantleet.research.indicators.pure.atr import atr
 
 
 def test_atr_matches_talib_signature_and_returns_ndarray() -> None:

@@ -18,7 +18,7 @@ Related research docs:
 
 ## Purpose
 
-Capture the most relevant lessons from `PyBroker` for `quantcraft`, especially around practical multi-symbol research workflows, ML integration, and walk-forward-oriented user tooling.
+Capture the most relevant lessons from `PyBroker` for `quantleet`, especially around practical multi-symbol research workflows, ML integration, and walk-forward-oriented user tooling.
 
 ## Project Snapshot
 
@@ -33,7 +33,7 @@ Capture the most relevant lessons from `PyBroker` for `quantcraft`, especially a
 
 ## Strategy API Shape
 
-The README examples show a `Strategy` object configured with a data source and execution callbacks. Users define execution logic through context objects that expose indicators, models, positions, share sizing, hold durations, and stop settings. That is broader than `quantcraft`'s current `on_bar` MVP, but it is still approachable and pragmatic.
+The README examples show a `Strategy` object configured with a data source and execution callbacks. Users define execution logic through context objects that expose indicators, models, positions, share sizing, hold durations, and stop settings. That is broader than `quantleet`'s current `on_bar` MVP, but it is still approachable and pragmatic.
 
 ## Data And Execution Model
 
@@ -41,11 +41,11 @@ The public docs emphasize multi-symbol workflows, pluggable data sources, ML mod
 
 ## Order And Fill Model
 
-The local code inspection exposed context fields for buy and sell share sizing, hold periods, stop-loss configuration, limit prices, cover behavior, long and short positions, and slippage models. That suggests a richer research order model than current `quantcraft`, but it still reads as a backtest-centric execution surface rather than a venue-realistic shared kernel.
+The local code inspection exposed context fields for buy and sell share sizing, hold periods, stop-loss configuration, limit prices, cover behavior, long and short positions, and slippage models. That suggests a richer research order model than current `quantleet`, but it still reads as a backtest-centric execution surface rather than a venue-realistic shared kernel.
 
 ## Backtest vs Live Story
 
-This pass found a strong backtesting and research story, but not an equally strong first-class live-trading parity story. `PyBroker` is therefore more useful to `quantcraft` as a reference for research breadth than for one-kernel backtest/paper/live architecture.
+This pass found a strong backtesting and research story, but not an equally strong first-class live-trading parity story. `PyBroker` is therefore more useful to `quantleet` as a reference for research breadth than for one-kernel backtest/paper/live architecture.
 
 ## UX/DX Notes
 
@@ -59,7 +59,7 @@ This pass found a strong backtesting and research story, but not an equally stro
 - strong multi-symbol research usability
 - built-in ML and walk-forward capabilities
 - caching and parallelism for practical iteration speed
-- richer research workflow coverage than current `quantcraft`
+- richer research workflow coverage than current `quantleet`
 
 ## Weaknesses
 

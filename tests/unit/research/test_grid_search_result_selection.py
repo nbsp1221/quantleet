@@ -4,7 +4,7 @@ import math
 
 import pytest
 
-from quantcraft.research import GridSearchResult, GridSearchRow
+from quantleet.research import GridSearchResult, GridSearchRow
 
 
 def row(
@@ -36,8 +36,7 @@ def test_best_and_top_rank_by_explicit_max_and_min_objectives() -> None:
     assert result.best().run_index == 1
     assert [selected.run_index for selected in result.top(2)] == [1, 2]
     assert [
-        selected.run_index
-        for selected in result.top(2, objective=("returns.total_return", "min"))
+        selected.run_index for selected in result.top(2, objective=("returns.total_return", "min"))
     ] == [0, 2]
 
 

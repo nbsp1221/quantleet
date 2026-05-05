@@ -4,7 +4,7 @@
 > authority for the current docs-only slice. A later active plan must adopt or
 > narrow this plan before code changes begin.
 
-**Goal:** Introduce the first runtime `Order` seam inside `quantcraft.trading`
+**Goal:** Introduce the first runtime `Order` seam inside `quantleet.trading`
 without breaking current market/limit behavior or collapsing the shared-kernel
 boundary into backtest-specific logic.
 
@@ -16,7 +16,7 @@ state path, and migrate backtest runtime orchestration away from using raw
 deterministic rather than introducing a free-form async event mesh.
 
 **Tech Stack:** Python 3.13, `uv`, `pytest`, Poe tasks, current
-`quantcraft.trading`, `quantcraft.backtest`, and `quantcraft.research`
+`quantleet.trading`, `quantleet.backtest`, and `quantleet.research`
 packages
 
 ---
@@ -52,8 +52,8 @@ Scope:
 
 Owner:
 - One writer operating primarily in:
-  - `src/quantcraft/trading/domain/*`
-  - `src/quantcraft/backtest/*`
+  - `src/quantleet/trading/domain/*`
+  - `src/quantleet/backtest/*`
   - affected tests and docs
 
 Acceptance criteria:
@@ -90,10 +90,10 @@ The current repository has three relevant constraints:
 
 Concrete local evidence:
 
-- [`../../src/quantcraft/trading/domain/intents.py`](../../src/quantcraft/trading/domain/intents.py)
-- [`../../src/quantcraft/trading/domain/matching.py`](../../src/quantcraft/trading/domain/matching.py)
-- [`../../src/quantcraft/backtest/strategy_runtime.py`](../../src/quantcraft/backtest/strategy_runtime.py)
-- [`../../src/quantcraft/backtest/runtime.py`](../../src/quantcraft/backtest/runtime.py)
+- [`../../src/quantleet/trading/domain/intents.py`](../../src/quantleet/trading/domain/intents.py)
+- [`../../src/quantleet/trading/domain/matching.py`](../../src/quantleet/trading/domain/matching.py)
+- [`../../src/quantleet/backtest/strategy_runtime.py`](../../src/quantleet/backtest/strategy_runtime.py)
+- [`../../src/quantleet/backtest/runtime.py`](../../src/quantleet/backtest/runtime.py)
 - [`../../docs/design-docs/order-domain-runtime-design.md`](../../docs/design-docs/order-domain-runtime-design.md)
 
 ## Planned Implementation Slices
@@ -126,8 +126,8 @@ Concrete local evidence:
 ### Task 2: Add `trading.domain.orders`
 
 **Files:**
-- Create: `src/quantcraft/trading/domain/orders.py`
-- Modify: `src/quantcraft/trading/domain/__init__.py`
+- Create: `src/quantleet/trading/domain/orders.py`
+- Modify: `src/quantleet/trading/domain/__init__.py`
 
 **Intent:**
 - Introduce the minimal runtime `Order` model.
@@ -154,7 +154,7 @@ Concrete local evidence:
 ### Task 3: Keep Matching As Market-Fact Calculation
 
 **Files:**
-- Modify: `src/quantcraft/trading/domain/matching.py`
+- Modify: `src/quantleet/trading/domain/matching.py`
 - Possibly modify: `tests/unit/trading/test_matching_and_state.py`
 
 **Intent:**
@@ -180,10 +180,10 @@ refactor.
 ### Task 4: Move Runtime Order Ownership Out Of Strategy State
 
 **Files:**
-- Modify: `src/quantcraft/backtest/execution_model.py`
-- Modify: `src/quantcraft/backtest/strategy_runtime.py`
-- Modify: `src/quantcraft/backtest/runtime.py`
-- Possibly modify: `src/quantcraft/backtest/order_activation.py`
+- Modify: `src/quantleet/backtest/execution_model.py`
+- Modify: `src/quantleet/backtest/strategy_runtime.py`
+- Modify: `src/quantleet/backtest/runtime.py`
+- Possibly modify: `src/quantleet/backtest/order_activation.py`
 
 **Intent:**
 - Replace the current use of active/pending `OrderIntent` tuples as the nearest
@@ -202,7 +202,7 @@ refactor.
 ### Task 5: Preserve Fill-Driven Accounting
 
 **Files:**
-- Modify: `src/quantcraft/trading/domain/state.py`
+- Modify: `src/quantleet/trading/domain/state.py`
 - Modify: current result-surface tests only if internal refactor requires it
 
 **Intent:**

@@ -18,7 +18,7 @@ Related documents:
 
 ## Goal
 
-Review the current `quantcraft` harness with one explicit concern in mind:
+Review the current `quantleet` harness with one explicit concern in mind:
 
 - how to help AI agents solve the real product problem
 - without rewarding proxy-metric gaming, empty checks, or locally optimized but strategically wrong changes
@@ -43,7 +43,7 @@ However, agent-first repositories still fail in a predictable way:
 - the local objective diverges from the real product goal
 - the agent then "wins" the metric while losing the actual user value
 
-For `quantcraft`, this risk is especially important because the long-term goal is not merely "pass tests." It is to ship a public `pip` library that humans and AI agents can easily discover, understand, trust, and use for quant research and backtesting.
+For `quantleet`, this risk is especially important because the long-term goal is not merely "pass tests." It is to ship a public `pip` library that humans and AI agents can easily discover, understand, trust, and use for quant research and backtesting.
 
 That means the harness must not accidentally teach agents that:
 
@@ -80,7 +80,7 @@ The harness should therefore prefer:
 The most important anti-gaming guardrail is not a clever evaluator.
 It is a small, explicit set of workflows that the library actually exists to serve.
 
-For `quantcraft`, future harness work should anchor itself to a few canonical journeys before inventing new metrics or benchmarks:
+For `quantleet`, future harness work should anchor itself to a few canonical journeys before inventing new metrics or benchmarks:
 
 1. clean install -> canonical public imports -> smallest documented backtest
 2. dataframe-backed quickstart -> `DataFrameDataSource` -> `BacktestEngine.run(source=...)`
@@ -296,7 +296,7 @@ Rule:
 
 - if a decision changes the product's north star, public surface, or evaluation philosophy, it is not fully delegable
 
-## What This Means For `quantcraft`
+## What This Means For `quantleet`
 
 The library's actual north star is:
 

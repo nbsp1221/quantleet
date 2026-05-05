@@ -18,7 +18,7 @@ Related research docs:
 
 ## Purpose
 
-Capture the most relevant lessons from `backtesting.py` for `quantcraft`, especially around bar-facing strategy ergonomics, reporting, and low-friction experimentation.
+Capture the most relevant lessons from `backtesting.py` for `quantleet`, especially around bar-facing strategy ergonomics, reporting, and low-friction experimentation.
 
 ## Project Snapshot
 
@@ -74,7 +74,7 @@ This is where `backtesting.py` stands out.
 ## Weaknesses
 
 - less compelling for multi-asset or portfolio construction workflows
-- candle-native assumptions are more implicit than `quantcraft`'s current gap and intrabar rules
+- candle-native assumptions are more implicit than `quantleet`'s current gap and intrabar rules
 - no strong shared-kernel backtest-to-live story was visible in this pass
 
 ## What Quantcraft Should Learn
@@ -87,7 +87,7 @@ This is where `backtesting.py` stands out.
 
 - do not hide execution assumptions behind convenience helpers
 - do not let a polished backtest-only API become a substitute for a coherent paper/live kernel plan
-- do not optimize only for the single-asset case if `quantcraft` intends to expand into multi-symbol execution later
+- do not optimize only for the single-asset case if `quantleet` intends to expand into multi-symbol execution later
 
 ## Sources
 

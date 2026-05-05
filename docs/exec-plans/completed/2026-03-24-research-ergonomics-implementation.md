@@ -4,7 +4,7 @@
 
 **Goal:** Build the first approved `Research Ergonomics` slice set on top of the completed Backtest MVP so that users and future agents share one clear research-facing strategy, series, indicator, helper, and result surface.
 
-**Architecture:** This batch stays inside the `research` bounded context and extends the existing Backtest MVP surface without changing the underlying trading semantics. The implementation should introduce a small public API under `quantcraft.research`, a controlled causal `SeriesView`, a thin `ta.*` wrapper surface, a small `qc.*` helper surface, a richer result layer, and canonical quickstart assets while keeping examples out of `src/`.
+**Architecture:** This batch stays inside the `research` bounded context and extends the existing Backtest MVP surface without changing the underlying trading semantics. The implementation should introduce a small public API under `quantleet.research`, a controlled causal `SeriesView`, a thin `ta.*` wrapper surface, a small `qc.*` helper surface, a richer result layer, and canonical quickstart assets while keeping examples out of `src/`.
 
 **Tech Stack:** Python 3.12+, `uv`, `pytest`, `ruff`, `mypy`, repo-local `scripts/` harness
 
@@ -29,7 +29,7 @@ Every worker and reviewer must read:
 
 - `AGENTS.md`
 - `docs/references/openai-harness-engineering.md`
-- `docs/design-docs/quantcraft-architecture.md`
+- `docs/design-docs/quantleet-architecture.md`
 - `docs/design-docs/architecture-governance.md`
 - `docs/product-specs/backtest-mvp.md`
 - `docs/product-specs/research-ergonomics.md`
@@ -56,21 +56,21 @@ Slices that touch existing trading/backtest execution flow must also read:
 
 **Ownership:**
 
-- `src/quantcraft/research/`
+- `src/quantleet/research/`
 - `tests/unit/research/application/`
 - `tests/structure/architecture/`
 
 **Files:**
 
-- Modify: `src/quantcraft/research/__init__.py`
-- Modify: `src/quantcraft/research/application/__init__.py`
-- Modify: `src/quantcraft/research/application/strategy.py`
+- Modify: `src/quantleet/research/__init__.py`
+- Modify: `src/quantleet/research/application/__init__.py`
+- Modify: `src/quantleet/research/application/strategy.py`
 - Modify/Create: `tests/unit/research/application/test_strategy_surface.py`
 - Modify/Create: relevant architecture tests under `tests/structure/architecture/`
 
 **Acceptance:**
 
-- `from quantcraft.research import Strategy, ta, qc, run_backtest` is the approved public import path.
+- `from quantleet.research import Strategy, ta, qc, run_backtest` is the approved public import path.
 - `Strategy` is an abstract base class.
 - `Strategy` exposes `init()` and `on_bar()` as the only official hooks.
 - `init()` is allowed to bind indicators and prepare state, but order creation from `init()` is rejected.
@@ -83,14 +83,14 @@ Slices that touch existing trading/backtest execution flow must also read:
 
 **Ownership:**
 
-- `src/quantcraft/research/`
-- `src/quantcraft/research/domain/`
+- `src/quantleet/research/`
+- `src/quantleet/research/domain/`
 - `tests/unit/research/`
 
 **Files:**
 
-- Create/Modify: `src/quantcraft/research/domain/` modules for `SeriesView` and related small read-only types
-- Modify: `src/quantcraft/research/application/strategy.py`
+- Create/Modify: `src/quantleet/research/domain/` modules for `SeriesView` and related small read-only types
+- Modify: `src/quantleet/research/application/strategy.py`
 - Modify/Create: unit tests under `tests/unit/research/`
 
 **Acceptance:**
@@ -111,14 +111,14 @@ Slices that touch existing trading/backtest execution flow must also read:
 
 **Ownership:**
 
-- `src/quantcraft/research/`
+- `src/quantleet/research/`
 - `tests/unit/research/`
 
 **Files:**
 
-- Create: `src/quantcraft/research/ta.py`
-- Create: `src/quantcraft/research/qc.py`
-- Modify: `src/quantcraft/research/__init__.py`
+- Create: `src/quantleet/research/ta.py`
+- Create: `src/quantleet/research/qc.py`
+- Modify: `src/quantleet/research/__init__.py`
 - Modify/Create: unit tests under `tests/unit/research/`
 
 **Acceptance:**
@@ -147,13 +147,13 @@ Slices that touch existing trading/backtest execution flow must also read:
 
 **Ownership:**
 
-- `src/quantcraft/research/application/`
+- `src/quantleet/research/application/`
 - `tests/unit/research/application/`
 - `tests/integration/research/`
 
 **Files:**
 
-- Modify: `src/quantcraft/research/application/backtest.py`
+- Modify: `src/quantleet/research/application/backtest.py`
 - Modify/Create: unit and integration tests under `tests/unit/research/application/` and `tests/integration/research/`
 
 **Acceptance:**

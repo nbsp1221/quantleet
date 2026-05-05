@@ -36,7 +36,7 @@
   - update accepted limit-order plan artifacts whose header status is stale
   - add this active plan and record verification evidence
 - Out-of-repo scope:
-  - code changes under `src/quantcraft/*`
+  - code changes under `src/quantleet/*`
   - test behavior changes
   - rewriting historical analysis documents whose statements were correct at their original timestamp
 - Tier A progression requested: `no`

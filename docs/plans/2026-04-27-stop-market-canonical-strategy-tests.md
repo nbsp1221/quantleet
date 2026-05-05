@@ -44,12 +44,12 @@
   - complete this active plan with evaluator findings and fresh verification
 - Out-of-repo scope:
   - none for implementation
-  - read-only reference to the completed `/tmp/quantcraft-stop-xval` result
+  - read-only reference to the completed `/tmp/quantleet-stop-xval` result
     artifact is allowed as prior evidence only
 - Tier A progression requested: `no`
 - Approval record, if required:
-  - None. This slice does not change `src/quantcraft/trading` or
-    `src/quantcraft/execution`; it promotes validated behavior into
+  - None. This slice does not change `src/quantleet/trading` or
+    `src/quantleet/execution`; it promotes validated behavior into
     repo-native integration tests.
 - Verification commands:
   - `uv run pytest tests/integration/research/test_canonical_stop_market_opening_range_contract.py tests/integration/research/test_canonical_stop_market_donchian_contract.py tests/integration/research/test_canonical_stop_market_inside_bar_contract.py -q`

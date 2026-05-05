@@ -11,7 +11,7 @@
 
 - Goal:
   - write the first repository product spec for `stop_limit` orders before
-    implementation, grounded in current `quantcraft` order architecture and
+    implementation, grounded in current `quantleet` order architecture and
     external exchange/broker order semantics
 - Governing docs:
   - `AGENTS.md`
@@ -71,7 +71,7 @@
     - included and excluded scope
     - canonical test matrix for the later implementation plan
   - the spec cites external official sources for stop-limit semantics and
-    records how `quantcraft` intentionally maps or narrows those concepts
+    records how `quantleet` intentionally maps or narrows those concepts
   - read-only subagent review covers:
     - external exchange/broker best practice
     - repository architecture/spec conformance

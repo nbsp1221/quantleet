@@ -6,7 +6,7 @@
 - Status: `research note`
 - Authority: `non-governing`
 - Purpose:
-  Preserve the architectural insights gathered from `quantcraft` repository analysis,
+  Preserve the architectural insights gathered from `quantleet` repository analysis,
   cross-library comparison, and iterative design discussion about a unified
   research-to-live trading engine.
 
@@ -23,7 +23,7 @@ The intended direction is a personal long-lived quant framework which can:
 - eventually support multiple strategies on one account
 
 This note captures the key insights learned while testing that goal against the
-current `quantcraft` codebase and against several mature trading libraries.
+current `quantleet` codebase and against several mature trading libraries.
 
 It does **not** redefine current approved architecture or current shipped API.
 Treat it as dated research evidence for later planning or design-doc work, not
@@ -37,11 +37,11 @@ This note was written against these current authority docs:
 - [`../../ARCHITECTURE.md`](../../ARCHITECTURE.md)
 - [`../PLANS.md`](../PLANS.md)
 - [`../design-docs/index.md`](../design-docs/index.md)
-- [`../design-docs/quantcraft-architecture.md`](../design-docs/quantcraft-architecture.md)
+- [`../design-docs/quantleet-architecture.md`](../design-docs/quantleet-architecture.md)
 - [`../design-docs/unified-strategy-runtime-design.md`](../design-docs/unified-strategy-runtime-design.md)
 - [`../product-specs/backtest-mvp.md`](../product-specs/backtest-mvp.md)
 
-## Current `quantcraft` Truth
+## Current `quantleet` Truth
 
 The current repository is not yet a full unified trading runtime.
 
@@ -69,19 +69,19 @@ What does **not** exist yet:
 
 The key implication is:
 
-> `quantcraft` currently has a valid shared-kernel *direction*, but its actual
+> `quantleet` currently has a valid shared-kernel *direction*, but its actual
 > implementation is still an MVP focused on matching fills and updating one
 > spot-like long-only state.
 
 Repository evidence referenced for this section:
 
 - [`../product-specs/backtest-mvp.md`](../product-specs/backtest-mvp.md)
-- [`../../src/quantcraft/research/strategy.py`](../../src/quantcraft/research/strategy.py)
-- [`../../src/quantcraft/trading/domain/intents.py`](../../src/quantcraft/trading/domain/intents.py)
-- [`../../src/quantcraft/trading/domain/events.py`](../../src/quantcraft/trading/domain/events.py)
-- [`../../src/quantcraft/trading/domain/state.py`](../../src/quantcraft/trading/domain/state.py)
-- [`../../src/quantcraft/backtest/results.py`](../../src/quantcraft/backtest/results.py)
-- [`../../src/quantcraft/backtest/runtime.py`](../../src/quantcraft/backtest/runtime.py)
+- [`../../src/quantleet/research/strategy.py`](../../src/quantleet/research/strategy.py)
+- [`../../src/quantleet/trading/domain/intents.py`](../../src/quantleet/trading/domain/intents.py)
+- [`../../src/quantleet/trading/domain/events.py`](../../src/quantleet/trading/domain/events.py)
+- [`../../src/quantleet/trading/domain/state.py`](../../src/quantleet/trading/domain/state.py)
+- [`../../src/quantleet/backtest/results.py`](../../src/quantleet/backtest/results.py)
+- [`../../src/quantleet/backtest/runtime.py`](../../src/quantleet/backtest/runtime.py)
 
 ## The Most Important Architectural Insight
 
@@ -125,7 +125,7 @@ However, several of them each contain design choices worth extracting.
 The practical conclusion is:
 
 > There is no perfect off-the-shelf answer, but there can be a strong
-> `quantcraft`-specific local optimum built from the right principles at the
+> `quantleet`-specific local optimum built from the right principles at the
 > right layer.
 
 ## Cross-Library Takeaways
@@ -370,9 +370,9 @@ The goal is not that all three are identical.
 The goal is that they share the same internal trading meaning and differ
 mainly in event source, adapter behavior, and capability constraints.
 
-## Implications Considered For Future `quantcraft` Work
+## Implications Considered For Future `quantleet` Work
 
-The session did not conclude that `quantcraft` should immediately implement all
+The session did not conclude that `quantleet` should immediately implement all
 of this.
 
 The more realistic conclusion was:
@@ -455,7 +455,7 @@ The session repeatedly reinforced this principle:
 - trading should not absorb venue protocol code
 - integrations should not absorb core trading meaning
 
-This aligns with the approved `quantcraft` architecture and should remain a
+This aligns with the approved `quantleet` architecture and should remain a
 design guardrail.
 
 ## The Key "Near-Answer"
@@ -473,7 +473,7 @@ That means:
 - learn portfolio target/risk layering from LEAN
 - learn operational stoploss and bot supervision lessons from Freqtrade
 
-The "correct" architecture for `quantcraft` is therefore not a clone of any
+The "correct" architecture for `quantleet` is therefore not a clone of any
 one system.
 It is a layered synthesis tuned to the project's specific goal:
 

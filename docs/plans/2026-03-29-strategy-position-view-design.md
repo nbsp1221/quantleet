@@ -9,7 +9,7 @@
 Related documents:
 
 - [../../ARCHITECTURE.md](../../ARCHITECTURE.md)
-- [../design-docs/quantcraft-architecture.md](../design-docs/quantcraft-architecture.md)
+- [../design-docs/quantleet-architecture.md](../design-docs/quantleet-architecture.md)
 - [../product-specs/research-ergonomics.md](../product-specs/research-ergonomics.md)
 - [../product-specs/backtest-mvp.md](../product-specs/backtest-mvp.md)
 - [../references/openai-harness-engineering.md](../references/openai-harness-engineering.md)
@@ -17,7 +17,7 @@ Related documents:
 
 ## Goal
 
-Add a small read-only `self.position` surface to `quantcraft.research.Strategy` so users can write conventional one-position strategies without maintaining ad-hoc local booleans such as `self.in_position`.
+Add a small read-only `self.position` surface to `quantleet.research.Strategy` so users can write conventional one-position strategies without maintaining ad-hoc local booleans such as `self.in_position`.
 
 This slice improves research UX without changing the underlying long-only shared trading kernel.
 
@@ -45,7 +45,7 @@ Key lesson:
 
 Do not copy directly:
 
-- Pine hides more engine detail than `quantcraft` should hide
+- Pine hides more engine detail than `quantleet` should hide
 
 ### backtesting.py
 

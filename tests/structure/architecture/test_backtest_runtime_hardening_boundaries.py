@@ -10,12 +10,12 @@ def _parse_module(relative_path: str) -> ast.AST:
 
 
 def test_backtest_loop_imports_execution_model_directly() -> None:
-    tree = _parse_module("src/quantcraft/backtest/runtime.py")
+    tree = _parse_module("src/quantleet/backtest/runtime.py")
 
     execution_model_imports = [
         node
         for node in ast.walk(tree)
-        if isinstance(node, ast.ImportFrom) and node.module == "quantcraft.backtest.execution_model"
+        if isinstance(node, ast.ImportFrom) and node.module == "quantleet.backtest.execution_model"
     ]
 
     imported_names = {alias.name for node in execution_model_imports for alias in node.names}
@@ -24,13 +24,12 @@ def test_backtest_loop_imports_execution_model_directly() -> None:
 
 
 def test_backtest_loop_uses_backtest_owned_strategy_driver() -> None:
-    tree = _parse_module("src/quantcraft/backtest/runtime.py")
+    tree = _parse_module("src/quantleet/backtest/runtime.py")
 
     runtime_imports = [
         node
         for node in ast.walk(tree)
-        if isinstance(node, ast.ImportFrom)
-        and node.module == "quantcraft.backtest.strategy_runtime"
+        if isinstance(node, ast.ImportFrom) and node.module == "quantleet.backtest.strategy_runtime"
     ]
 
     imported_names = {alias.name for node in runtime_imports for alias in node.names}
@@ -39,13 +38,13 @@ def test_backtest_loop_uses_backtest_owned_strategy_driver() -> None:
 
 
 def test_backtest_loop_does_not_revert_to_unnamed_synthetic_event_helper() -> None:
-    tree = _parse_module("src/quantcraft/backtest/runtime.py")
+    tree = _parse_module("src/quantleet/backtest/runtime.py")
 
     synthetic_helper_imports = [
         node
         for node in ast.walk(tree)
         if isinstance(node, ast.ImportFrom)
-        and node.module == "quantcraft.research.adapters.synthetic_events"
+        and node.module == "quantleet.research.adapters.synthetic_events"
     ]
 
     imported_names = {alias.name for node in synthetic_helper_imports for alias in node.names}
@@ -54,18 +53,18 @@ def test_backtest_loop_does_not_revert_to_unnamed_synthetic_event_helper() -> No
 
 
 def test_execution_model_wrapper_module_is_not_reintroduced() -> None:
-    wrapper_path = ROOT / "src" / "quantcraft" / "research" / "adapters" / "synthetic_events.py"
+    wrapper_path = ROOT / "src" / "quantleet" / "research" / "adapters" / "synthetic_events.py"
 
     assert not wrapper_path.exists()
 
 
 def test_research_backtest_routes_fill_state_transitions_through_trading_kernel() -> None:
-    tree = _parse_module("src/quantcraft/backtest/runtime.py")
+    tree = _parse_module("src/quantleet/backtest/runtime.py")
 
     state_imports = [
         node
         for node in ast.walk(tree)
-        if isinstance(node, ast.ImportFrom) and node.module == "quantcraft.trading.domain.state"
+        if isinstance(node, ast.ImportFrom) and node.module == "quantleet.trading.domain.state"
     ]
     imported_names = {alias.name for node in state_imports for alias in node.names}
     local_function_names = {
@@ -84,9 +83,9 @@ def test_research_backtest_routes_fill_state_transitions_through_trading_kernel(
 
 def test_removed_research_backtest_compatibility_modules() -> None:
     removed_paths = (
-        ROOT / "src/quantcraft/research/application",
-        ROOT / "src/quantcraft/research/adapters",
-        ROOT / "src/quantcraft/research/adapters/execution_model.py",
+        ROOT / "src/quantleet/research/application",
+        ROOT / "src/quantleet/research/adapters",
+        ROOT / "src/quantleet/research/adapters/execution_model.py",
     )
 
     for path in removed_paths:
@@ -94,7 +93,7 @@ def test_removed_research_backtest_compatibility_modules() -> None:
 
 
 def test_execution_package_does_not_define_a_second_position_engine() -> None:
-    execution_root = ROOT / "src" / "quantcraft" / "execution"
+    execution_root = ROOT / "src" / "quantleet" / "execution"
     if not execution_root.exists():
         return
 
@@ -108,7 +107,7 @@ def test_execution_package_does_not_define_a_second_position_engine() -> None:
         state_imports = [
             node
             for node in ast.walk(tree)
-            if isinstance(node, ast.ImportFrom) and node.module == "quantcraft.trading.domain.state"
+            if isinstance(node, ast.ImportFrom) and node.module == "quantleet.trading.domain.state"
         ]
         imported_names = {alias.name for node in state_imports for alias in node.names}
         noncanonical_state_imports = [
@@ -117,7 +116,7 @@ def test_execution_package_does_not_define_a_second_position_engine() -> None:
             if isinstance(node, ast.ImportFrom)
             and node.module is not None
             and node.module.endswith(".state")
-            and node.module != "quantcraft.trading.domain.state"
+            and node.module != "quantleet.trading.domain.state"
         ]
 
         assert "TradingState" not in defined_names, path

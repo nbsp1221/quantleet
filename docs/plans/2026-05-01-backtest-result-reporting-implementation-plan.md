@@ -4,7 +4,7 @@
 
 **Goal:** Implement the first-beta single-symbol backtest reporting surface so an engine-produced `BacktestResult` exposes a typed, human-readable, and machine-readable `result.report`.
 
-**Architecture:** Keep reporting ownership inside `quantcraft.backtest`, because the report is derived from historical runtime data and must not contaminate the shared `trading` kernel. Add an additive `BacktestResult.report` property backed by runtime-collected provenance, pure metric functions, and frozen report dataclasses. Preserve existing `BacktestResult`, `BacktestSummary`, `trade_log`, `equity_curve`, and `order_events` behavior while making richer beta reporting available from the returned result.
+**Architecture:** Keep reporting ownership inside `quantleet.backtest`, because the report is derived from historical runtime data and must not contaminate the shared `trading` kernel. Add an additive `BacktestResult.report` property backed by runtime-collected provenance, pure metric functions, and frozen report dataclasses. Preserve existing `BacktestResult`, `BacktestSummary`, `trade_log`, `equity_curve`, and `order_events` behavior while making richer beta reporting available from the returned result.
 
 **Tech Stack:** Python 3.13, stdlib dataclasses, `math`, `statistics`, pytest, Ruff, mypy, uv, Poe task runner. No new runtime dependency.
 
@@ -70,7 +70,7 @@
 - Tier A progression requested: `no`
 - Approval record, if required:
   - Tier A approval is not required for this plan because the implementation
-    must not modify `src/quantcraft/trading` or `src/quantcraft/execution`.
+    must not modify `src/quantleet/trading` or `src/quantleet/execution`.
   - If execution discovers that `trading` changes are necessary, stop and create
     a Tier A approval record before implementation continues.
 - Verification commands:
@@ -127,7 +127,7 @@
   - `uv run poe repo-check`.
   - `uv run pytest tests/structure/docs tests/structure/repo -q`.
 - Auto-fail conditions:
-  - Prescribing changes under `src/quantcraft/trading` without Tier A approval.
+  - Prescribing changes under `src/quantleet/trading` without Tier A approval.
   - Adding report-only fields to `FillEvent` or `TradingState`.
   - Making a helper-only report API instead of `result.report`.
   - Relying on arbitrary public strategy-attribute introspection.
@@ -155,14 +155,14 @@
 
 ### Current Architecture
 
-The repository is a Python 3.13 local-first library under `src/quantcraft` with
+The repository is a Python 3.13 local-first library under `src/quantleet` with
 capability-first package ownership:
 
-- `quantcraft.data` owns normalized historical bar inputs.
-- `quantcraft.research` owns user strategy ergonomics.
-- `quantcraft.backtest` owns historical orchestration, synthetic execution
+- `quantleet.data` owns normalized historical bar inputs.
+- `quantleet.research` owns user strategy ergonomics.
+- `quantleet.backtest` owns historical orchestration, synthetic execution
   modeling, runtime result assembly, and now richer reporting.
-- `quantcraft.trading` owns the shared trading kernel and is Tier A.
+- `quantleet.trading` owns the shared trading kernel and is Tier A.
 
 The reporting implementation must stay in `backtest` and `research`. It must
 read trading-domain objects, but it must not move reporting concerns into the
@@ -190,9 +190,9 @@ Source evidence:
 
 - `BacktestResult` currently exposes `trade_log`, `equity_curve`,
   `final_state`, `summary`, `execution_model_name`, and `order_events` in
-  `src/quantcraft/backtest/results.py`.
+  `src/quantleet/backtest/results.py`.
 - `BacktestEngine.run(...)` currently accepts only `strategy`, `bars`, and
-  `source` in `src/quantcraft/backtest/engine.py`.
+  `source` in `src/quantleet/backtest/engine.py`.
 - `_run_backtest(...)` already has the data needed to collect most report
   provenance: bars, costs, execution model, active orders, fills, order
   rejections, marked equity, and final state.
@@ -244,7 +244,7 @@ implementation verification must include `uv run poe verify-runtime`.
 
 Create:
 
-- `src/quantcraft/backtest/reporting.py`
+- `src/quantleet/backtest/reporting.py`
 - `tests/unit/backtest/test_result_reporting_metrics.py`
 - `tests/unit/backtest/test_result_reporting_records.py`
 - `tests/integration/research/test_backtest_result_reporting_contract.py`
@@ -254,12 +254,12 @@ Create:
 
 Modify:
 
-- `src/quantcraft/backtest/results.py`
-- `src/quantcraft/backtest/runtime.py`
-- `src/quantcraft/backtest/engine.py`
-- `src/quantcraft/backtest/strategy_runtime.py`
-- `src/quantcraft/backtest/__init__.py`
-- `src/quantcraft/research/strategy.py`
+- `src/quantleet/backtest/results.py`
+- `src/quantleet/backtest/runtime.py`
+- `src/quantleet/backtest/engine.py`
+- `src/quantleet/backtest/strategy_runtime.py`
+- `src/quantleet/backtest/__init__.py`
+- `src/quantleet/research/strategy.py`
 - `docs/product-specs/research-ergonomics.md`
 - `docs/references/research-ergonomics-quickstart.md`
 - `notebooks/research-ergonomics-quickstart.ipynb`
@@ -268,10 +268,10 @@ Modify:
 
 Do not modify:
 
-- `src/quantcraft/trading/domain/events.py`
-- `src/quantcraft/trading/domain/state.py`
-- `src/quantcraft/trading/domain/orders.py`
-- `src/quantcraft/trading/domain/intents.py`
+- `src/quantleet/trading/domain/events.py`
+- `src/quantleet/trading/domain/state.py`
+- `src/quantleet/trading/domain/orders.py`
+- `src/quantleet/trading/domain/intents.py`
 
 ### Public API Contract
 
@@ -295,7 +295,7 @@ keyword-only optional argument after `source`.
 
 ### Report Model
 
-Add frozen dataclasses in `src/quantcraft/backtest/reporting.py`:
+Add frozen dataclasses in `src/quantleet/backtest/reporting.py`:
 
 ```python
 @dataclass(frozen=True, slots=True)
@@ -412,7 +412,7 @@ class _ReportBuilder:
     def build(self, ...) -> BacktestReport: ...
 ```
 
-The builder must live in `quantcraft.backtest.reporting`, not `trading`.
+The builder must live in `quantleet.backtest.reporting`, not `trading`.
 `runtime.py` should call it at the two fill application sites and at each
 end-of-bar mark.
 
@@ -497,9 +497,9 @@ Rationale:
 - Modify: `tests/unit/backtest/test_engine.py`
 - Modify: `tests/unit/research/test_strategy_surface.py`
 - Modify: `tests/integration/research/test_backtest_result_contract.py`
-- Modify: `src/quantcraft/backtest/engine.py`
-- Modify: `src/quantcraft/research/strategy.py`
-- Modify: `src/quantcraft/backtest/results.py`
+- Modify: `src/quantleet/backtest/engine.py`
+- Modify: `src/quantleet/research/strategy.py`
+- Modify: `src/quantleet/backtest/results.py`
 
 **Step 1: Write failing tests**
 
@@ -547,8 +547,8 @@ Expected:
 
 **Files:**
 
-- Create: `src/quantcraft/backtest/reporting.py`
-- Modify: `src/quantcraft/backtest/__init__.py`
+- Create: `src/quantleet/backtest/reporting.py`
+- Modify: `src/quantleet/backtest/__init__.py`
 - Modify: `tests/smoke/local/test_public_imports.py`
 - Create: `tests/unit/backtest/test_result_reporting_records.py`
 
@@ -556,7 +556,7 @@ Expected:
 
 Assert:
 
-- `quantcraft.backtest.BacktestReport` imports from the public backtest surface.
+- `quantleet.backtest.BacktestReport` imports from the public backtest surface.
 - Report dataclasses are frozen and expose the required fields.
 - Structured values are accessible without parsing formatted text.
 - `str(report)` or `report.to_text()` contains grouped section labels, but the
@@ -577,7 +577,7 @@ Expected:
 - Add report dataclasses listed in this plan.
 - Add `BacktestReport.to_text()` and `__str__()`.
 - Export `BacktestReport` and stable public dataclasses from
-  `quantcraft.backtest`.
+  `quantleet.backtest`.
 
 **Step 4: Run focused tests and verify pass**
 
@@ -588,7 +588,7 @@ Run the same focused command.
 **Files:**
 
 - Create: `tests/unit/backtest/test_result_reporting_metrics.py`
-- Modify: `src/quantcraft/backtest/reporting.py`
+- Modify: `src/quantleet/backtest/reporting.py`
 
 **Step 1: Write failing metric tests**
 
@@ -657,8 +657,8 @@ Expected:
 
 **Files:**
 
-- Modify: `src/quantcraft/backtest/reporting.py`
-- Modify: `src/quantcraft/backtest/runtime.py`
+- Modify: `src/quantleet/backtest/reporting.py`
+- Modify: `src/quantleet/backtest/runtime.py`
 - Create: `tests/integration/research/test_backtest_result_reporting_contract.py`
 
 **Step 1: Write failing integration tests**
@@ -709,9 +709,9 @@ Run the same integration command.
 
 **Files:**
 
-- Modify: `src/quantcraft/backtest/engine.py`
-- Modify: `src/quantcraft/backtest/runtime.py`
-- Modify: `src/quantcraft/backtest/reporting.py`
+- Modify: `src/quantleet/backtest/engine.py`
+- Modify: `src/quantleet/backtest/runtime.py`
+- Modify: `src/quantleet/backtest/reporting.py`
 - Modify: `tests/integration/research/test_backtest_result_reporting_contract.py`
 
 **Step 1: Write failing tests**
@@ -752,8 +752,8 @@ Run the same focused test.
 
 **Files:**
 
-- Modify: `src/quantcraft/backtest/reporting.py`
-- Modify: `src/quantcraft/backtest/runtime.py`
+- Modify: `src/quantleet/backtest/reporting.py`
+- Modify: `src/quantleet/backtest/runtime.py`
 - Create/modify: `tests/unit/backtest/test_result_reporting_records.py`
 - Modify: `tests/integration/research/test_backtest_result_reporting_edge_cases.py`
 
@@ -814,9 +814,9 @@ Run the same focused command.
 
 **Files:**
 
-- Modify: `src/quantcraft/backtest/engine.py`
-- Modify: `src/quantcraft/backtest/runtime.py`
-- Modify: `src/quantcraft/backtest/reporting.py`
+- Modify: `src/quantleet/backtest/engine.py`
+- Modify: `src/quantleet/backtest/runtime.py`
+- Modify: `src/quantleet/backtest/reporting.py`
 - Modify: `tests/integration/research/test_backtest_result_reporting_edge_cases.py`
 
 **Step 1: Write failing tests**
@@ -862,7 +862,7 @@ Run the same focused command.
 
 **Files:**
 
-- Modify: `src/quantcraft/backtest/reporting.py`
+- Modify: `src/quantleet/backtest/reporting.py`
 - Create: `tests/smoke/local/test_backtest_result_reporting_quickstart.py`
 - Modify: `tests/smoke/local/test_public_imports.py`
 
@@ -1030,9 +1030,9 @@ Update this document's `Evaluator Review` section with:
 
 - Findings:
   - No blocking findings remain after the implementation and review-fix pass.
-    The code keeps reporting ownership in `quantcraft.backtest`, uses additive
+    The code keeps reporting ownership in `quantleet.backtest`, uses additive
     `BacktestResult.report` compatibility, and does not modify Tier A
-    `src/quantcraft/trading` or `src/quantcraft/execution` files.
+    `src/quantleet/trading` or `src/quantleet/execution` files.
   - Third-party subagent review initially found metric-contract gaps in
     annualized volatility, Sharpe, first-return handling, timestamp-delta
     annualization, total-loss annualized return, fee-drag denominator, product
@@ -1040,7 +1040,7 @@ Update this document's `Evaluator Review` section with:
     findings were reviewed and fixed before final verification.
   - The final implementation exposes `BacktestEngine.run(..., label=...)`,
     `Strategy.display_name`, `Strategy.parameters()`, public report dataclasses
-    from `quantcraft.backtest`, and `result.report` for engine-produced
+    from `quantleet.backtest`, and `result.report` for engine-produced
     results.
   - Remaining risk is ordinary beta-surface risk: the first report renderer is
     intentionally compact and the metric suite is deterministic rather than
@@ -1052,8 +1052,8 @@ Update this document's `Evaluator Review` section with:
   - Broader impacted lanes passed:
     `uv run pytest tests/unit/backtest tests/unit/research tests/integration/research tests/smoke/local tests/structure/docs tests/structure/repo -q`
     with output `323 passed`.
-  - `uv build` passed and built `dist/quantcraft-0.1.0.tar.gz` and
-    `dist/quantcraft-0.1.0-py3-none-any.whl`.
+  - `uv build` passed and built `dist/quantleet-0.1.0.tar.gz` and
+    `dist/quantleet-0.1.0-py3-none-any.whl`.
   - `uv run poe verify-runtime` passed after review fixes:
     - `ruff check .`: `All checks passed!`
     - `mypy src`: `Success: no issues found in 52 source files`

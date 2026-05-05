@@ -7,11 +7,11 @@ from dataclasses import dataclass
 
 import pytest
 
-from quantcraft.backtest import BacktestEngine
-from quantcraft.data import BarSeries
-from quantcraft.research import ParameterStudy, Strategy, ta
-from quantcraft.trading.domain.costs import CostConfig
-from quantcraft.trading.domain.events import BarEvent
+from quantleet.backtest import BacktestEngine
+from quantleet.data import BarSeries
+from quantleet.research import ParameterStudy, Strategy, ta
+from quantleet.trading.domain.costs import CostConfig
+from quantleet.trading.domain.events import BarEvent
 from tests.support_backtest import load_canonical_bars
 
 type ParameterGrid = dict[str, list[int]]

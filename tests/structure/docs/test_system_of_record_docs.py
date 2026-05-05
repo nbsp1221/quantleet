@@ -1,4 +1,4 @@
-from quantcraft._repo_tools import parse_routing_index_entries
+from quantleet._repo_tools import parse_routing_index_entries
 from tests.support import ROOT
 
 
@@ -12,7 +12,7 @@ def test_core_guardrail_and_routing_docs_exist() -> None:
         "docs/RELIABILITY.md",
         "docs/SECURITY.md",
         "docs/design-docs/index.md",
-        "docs/design-docs/quantcraft-architecture.md",
+        "docs/design-docs/quantleet-architecture.md",
         "docs/design-docs/architecture-governance.md",
         "docs/product-specs/index.md",
         "docs/product-specs/backtest-mvp.md",
@@ -37,7 +37,7 @@ def test_design_docs_are_discoverable_from_routing_index() -> None:
             continue
         assert path.name in indexed_targets
 
-    assert not (ROOT / "docs/plans/2026-03-18-quantcraft-architecture-draft-ko.md").exists()
+    assert not (ROOT / "docs/plans/2026-03-18-quantleet-architecture-draft-ko.md").exists()
 
 
 def test_product_specs_are_discoverable_from_routing_index() -> None:
@@ -58,7 +58,7 @@ def test_architecture_doc_points_to_design_docs_not_plans() -> None:
     architecture = (ROOT / "ARCHITECTURE.md").read_text(encoding="utf-8")
 
     assert "docs/design-docs/" in architecture
-    assert "docs/plans/2026-03-18-quantcraft-architecture-draft-ko.md" not in architecture
+    assert "docs/plans/2026-03-18-quantleet-architecture-draft-ko.md" not in architecture
 
 
 def test_agents_routes_to_governing_docs_and_repo_checks() -> None:

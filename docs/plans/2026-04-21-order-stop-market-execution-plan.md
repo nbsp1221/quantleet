@@ -17,7 +17,7 @@
 ## Planner Contract
 
 - Goal:
-  Carry the approved next implementation slice for `quantcraft.trading` into a
+  Carry the approved next implementation slice for `quantleet.trading` into a
   docs-only handoff artifact for a future implementation session. The slice is:
   add trigger-aware runtime `Order` behavior and end-to-end `stop_market`
   backtest support while explicitly deferring `stop_limit`, sizing, and UX

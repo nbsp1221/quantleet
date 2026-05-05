@@ -92,12 +92,12 @@ Current repository truth:
 
 Repository evidence:
 
-- [strategy.py](/home/retn0/repositories/nbsp1221/quantcraft/src/quantcraft/research/strategy.py)
-- [intents.py](/home/retn0/repositories/nbsp1221/quantcraft/src/quantcraft/trading/domain/intents.py)
-- [orders.py](/home/retn0/repositories/nbsp1221/quantcraft/src/quantcraft/trading/domain/orders.py)
-- [matching.py](/home/retn0/repositories/nbsp1221/quantcraft/src/quantcraft/trading/domain/matching.py)
-- [execution_model.py](/home/retn0/repositories/nbsp1221/quantcraft/src/quantcraft/backtest/execution_model.py)
-- [runtime.py](/home/retn0/repositories/nbsp1221/quantcraft/src/quantcraft/backtest/runtime.py)
+- [strategy.py](/home/retn0/repositories/nbsp1221/quantleet/src/quantleet/research/strategy.py)
+- [intents.py](/home/retn0/repositories/nbsp1221/quantleet/src/quantleet/trading/domain/intents.py)
+- [orders.py](/home/retn0/repositories/nbsp1221/quantleet/src/quantleet/trading/domain/orders.py)
+- [matching.py](/home/retn0/repositories/nbsp1221/quantleet/src/quantleet/trading/domain/matching.py)
+- [execution_model.py](/home/retn0/repositories/nbsp1221/quantleet/src/quantleet/backtest/execution_model.py)
+- [runtime.py](/home/retn0/repositories/nbsp1221/quantleet/src/quantleet/backtest/runtime.py)
 
 ## Public UX Direction
 
@@ -141,7 +141,7 @@ snake_case order types such as `stop_market`.
 > a stop-triggered order that becomes a working limit order only after its
 > trigger condition is satisfied
 
-In `quantcraft`, `stop` is a generic price-trigger primitive. It is not a
+In `quantleet`, `stop` is a generic price-trigger primitive. It is not a
 venue-specific synonym for stop-loss, take-profit, bracket, reduce-only, or
 position-close behavior. Those higher-level names describe how a trigger is
 used around a position; this slice implements the lower-level trigger order
@@ -208,7 +208,7 @@ last evaluated `last` reference price available to strategy order intake. Future
 paper or live workflows should use their own last evaluated `last` tick. This
 keeps the product rule tick-based rather than bar-specific.
 
-The equality rejection is a conservative `quantcraft` policy, not a claim that
+The equality rejection is a conservative `quantleet` policy, not a claim that
 all venues reject already-met trigger orders. Some venues immediately trigger
 already-met stops; others reject stops that would trigger immediately or are too
 close to the current market. Because this product surface does not expose
@@ -260,7 +260,7 @@ Typical venue examples use:
 Those relationships are common because they make the triggered order more
 likely to execute after a breakout or protective trigger. They should be
 documented as examples, not enforced as a product invariant. Some venues impose
-venue-specific price bands or order-entry constraints. `quantcraft` should keep
+venue-specific price bands or order-entry constraints. `quantleet` should keep
 those as future venue/instrument constraints rather than hard-coding them into
 the first research/backtest slice.
 
@@ -407,7 +407,7 @@ Ordering guidance:
 - a triggered but unfilled stop-limit keeps stable order identity and remains in
   the active order set for later events
 
-This is `quantcraft`'s deterministic price-time-like priority policy. It aligns
+This is `quantleet`'s deterministic price-time-like priority policy. It aligns
 with common central-limit-order-book price-time/FIFO practice: orders already
 eligible for execution are evaluated before orders that only become eligible at
 the current event.

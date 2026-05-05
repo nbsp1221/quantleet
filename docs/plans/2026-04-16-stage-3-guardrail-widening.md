@@ -149,7 +149,7 @@
     - `Turing`: verification bundle and runtime-lane wording truth
     - `Plato`: structure-test and public-surface boundary discipline
   - final Stage 3 owned file group became:
-    - `src/quantcraft/_repo_tools.py`
+    - `src/quantleet/_repo_tools.py`
     - `pyproject.toml`
     - `tests/structure/architecture/test_domain_boundaries.py`
     - `tests/structure/repo/test_runtime_verification_lane.py`
@@ -188,7 +188,7 @@
     - `pyproject.toml` still described `verify-runtime` as the stronger lane
       for runtime-sensitive research changes only
     - `_repo_tools.py` still rejected `data -> integrations`, which undershot
-      the approved dependency rules in `quantcraft-architecture.md`
+      the approved dependency rules in `quantleet-architecture.md`
   - both blockers were resolved inside the slice:
     - `verify-runtime` help text now matches the Stage 3 backtest-or-research
       wording and is pinned by `test_runtime_verification_lane.py`

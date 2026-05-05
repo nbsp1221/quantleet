@@ -12,17 +12,17 @@ def _write_csv(path: Path, content: str) -> None:
 
 
 def _csv_source_type() -> type:
-    data_module = importlib.import_module("quantcraft.data")
+    data_module = importlib.import_module("quantleet.data")
     return getattr(data_module, "CSVDataSource")
 
 
 def _time_bar_type() -> type:
-    data_module = importlib.import_module("quantcraft.data")
+    data_module = importlib.import_module("quantleet.data")
     return getattr(data_module, "TimeBar")
 
 
 def _bar_series_type() -> type:
-    data_module = importlib.import_module("quantcraft.data")
+    data_module = importlib.import_module("quantleet.data")
     return getattr(data_module, "BarSeries")
 
 

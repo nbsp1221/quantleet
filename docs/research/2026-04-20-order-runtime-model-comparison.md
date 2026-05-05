@@ -24,7 +24,7 @@ What remained open was narrower:
 This document is a research note that gathers support and rebuttal evidence for
 those questions. It is not a governing document.
 
-## Current `quantcraft` Truth
+## Current `quantleet` Truth
 
 The current codebase already contains a small runtime `Order`.
 
@@ -38,10 +38,10 @@ The current codebase already contains a small runtime `Order`.
 
 Local evidence:
 
-- [`../../src/quantcraft/trading/domain/orders.py`](../../src/quantcraft/trading/domain/orders.py)
-- [`../../src/quantcraft/trading/domain/matching.py`](../../src/quantcraft/trading/domain/matching.py)
-- [`../../src/quantcraft/backtest/runtime.py`](../../src/quantcraft/backtest/runtime.py)
-- [`../../src/quantcraft/backtest/strategy_runtime.py`](../../src/quantcraft/backtest/strategy_runtime.py)
+- [`../../src/quantleet/trading/domain/orders.py`](../../src/quantleet/trading/domain/orders.py)
+- [`../../src/quantleet/trading/domain/matching.py`](../../src/quantleet/trading/domain/matching.py)
+- [`../../src/quantleet/backtest/runtime.py`](../../src/quantleet/backtest/runtime.py)
+- [`../../src/quantleet/backtest/strategy_runtime.py`](../../src/quantleet/backtest/strategy_runtime.py)
 
 The question is therefore no longer:
 
@@ -58,7 +58,7 @@ This comparison focused on four questions:
 1. which fields and states repeatedly appear across libraries
 2. who owns order state transitions
 3. how far events are used as the control plane
-4. what `quantcraft` should copy now versus defer
+4. what `quantleet` should copy now versus defer
 
 Comparison targets:
 
@@ -128,7 +128,7 @@ Benefits:
 
 Drawbacks:
 
-- it is too heavy for `quantcraft`'s current scope
+- it is too heavy for `quantleet`'s current scope
 - without venue-style semantics, symbolic status names can outrun real meaning
 
 ### QuantConnect LEAN
@@ -149,7 +149,7 @@ Benefits:
 
 Drawbacks:
 
-- `quantcraft` does not yet have request/ack/update/cancel workflows
+- `quantleet` does not yet have request/ack/update/cancel workflows
 - copying this structure now would be premature
 
 ### backtrader
@@ -179,7 +179,7 @@ Drawbacks:
 
 - the broker loop pushes a lot of the semantics
 - trigger and transition ownership are broker-centric, which makes it a weaker
-  kernel model for `quantcraft`
+  kernel model for `quantleet`
 
 ### freqtrade
 
@@ -192,7 +192,7 @@ Benefits:
 
 Drawbacks:
 
-- farther from the shared-kernel direction `quantcraft` wants
+- farther from the shared-kernel direction `quantleet` wants
 - the system is more trade-centric than runtime-order-centric
 
 ## Who Owns State Transitions?
@@ -211,7 +211,7 @@ Even when external components compute facts or deliver events:
 still end up owned by the `Order` side.
 
 This is the strongest argument in favor of a richer runtime `Order` in
-`quantcraft`.
+`quantleet`.
 
 ### More external-authority-heavy models: LEAN and backtrader
 
@@ -226,7 +226,7 @@ Drawbacks:
 
 - order-local invariants more easily leak outside the object
 
-At the current `quantcraft` stage, a **small rich aggregate + thin
+At the current `quantleet` stage, a **small rich aggregate + thin
 orchestration** is the more convincing fit.
 
 ## Evidence About Event-Driven Decoupling
@@ -304,7 +304,7 @@ Source:
 
 The strongest contrarian view from this comparison was:
 
-> `quantcraft` already has the seam it needs. Designing more lifecycle/status
+> `quantleet` already has the seam it needs. Designing more lifecycle/status
 > machinery now risks overdesign relative to actual product pressure.
 
 That objection is legitimate.
@@ -346,7 +346,7 @@ pattern.”
 
 So the most useful conclusion is narrower:
 
-> `quantcraft` can and should lean toward a small rich aggregate, but only in
+> `quantleet` can and should lean toward a small rich aggregate, but only in
 > combination with explicit runtime orchestration and without taking on OMS
 > weight prematurely
 

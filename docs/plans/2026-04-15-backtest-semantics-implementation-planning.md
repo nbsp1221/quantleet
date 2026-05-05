@@ -83,10 +83,10 @@
 - Blockers or scope changes:
   - none
 - Source-level mismatch notes:
-  - `src/quantcraft/research/adapters/execution_model.py` currently emits four isolated synthetic prices per bar and sets `bid == ask == last == price`, which grants optimistic executable prices from bar extremes
+  - `src/quantleet/research/adapters/execution_model.py` currently emits four isolated synthetic prices per bar and sets `bid == ask == last == price`, which grants optimistic executable prices from bar extremes
   - `events_from_bars(...)` eagerly materializes the full event tuple for all bars, which blocks the promoted lazy traversal and acceleration contract
-  - `src/quantcraft/research/application/backtest.py` is structured around whole-run event precomputation instead of per-bar execution-event generation
-  - `src/quantcraft/trading/domain/matching.py` remains suitable as a generic matcher for real tick/book events and should not absorb backtest-only bar logic
+  - `src/quantleet/research/application/backtest.py` is structured around whole-run event precomputation instead of per-bar execution-event generation
+  - `src/quantleet/trading/domain/matching.py` remains suitable as a generic matcher for real tick/book events and should not absorb backtest-only bar logic
   - `tests/integration/research/test_backtest_execution_semantics.py` currently codifies optimistic synthetic-fill expectations that must be replaced during implementation
   - `tests/unit/trading/test_matching_and_state.py` is still valid for real book matching, but it is not the right place to encode backtest-path semantics
 

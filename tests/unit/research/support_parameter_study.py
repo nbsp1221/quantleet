@@ -4,11 +4,11 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any
 
-from quantcraft.backtest import BacktestEngine, BacktestResult
-from quantcraft.data import BarSeries, TimeBar
-from quantcraft.research import Strategy
-from quantcraft.trading.domain.costs import CostConfig
-from quantcraft.trading.domain.events import BarEvent
+from quantleet.backtest import BacktestEngine, BacktestResult
+from quantleet.data import BarSeries, TimeBar
+from quantleet.research import Strategy
+from quantleet.trading.domain.costs import CostConfig
+from quantleet.trading.domain.events import BarEvent
 
 
 def make_bars(*, closes: tuple[float, ...] = (100.0, 102.0, 101.0, 104.0)) -> BarSeries:

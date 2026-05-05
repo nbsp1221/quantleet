@@ -16,14 +16,14 @@ For deeper library-specific detail, use this overview together with the priority
 
 ## Purpose
 
-This report compares `quantcraft` against notable open-source Python quant, backtesting, and trading frameworks as of March 23, 2026.
+This report compares `quantleet` against notable open-source Python quant, backtesting, and trading frameworks as of March 23, 2026.
 
 It is intended to answer four questions:
 
-1. What does `quantcraft` already have today?
-2. What do popular open-source Python libraries provide that `quantcraft` does not yet provide?
-3. How does `quantcraft` differ in usability and product positioning?
-4. Which next priorities are most defensible for `quantcraft`?
+1. What does `quantleet` already have today?
+2. What do popular open-source Python libraries provide that `quantleet` does not yet provide?
+3. How does `quantleet` differ in usability and product positioning?
+4. Which next priorities are most defensible for `quantleet`?
 
 ## Scope And Method
 
@@ -31,20 +31,20 @@ This report focuses on open-source Python libraries and Python-first frameworks,
 
 Research inputs:
 
-- `quantcraft` repository docs and current implemented code
+- `quantleet` repository docs and current implemented code
 - project documentation and GitHub repositories for selected libraries
 - shallow local inspections of selected upstream repositories in `/tmp`
 - public release and maintenance signals visible on March 23, 2026
 
 Local inspection roots used in this pass:
 
-- `/tmp/quantcraft-lib-research/`
+- `/tmp/quantleet-lib-research/`
   - `backtesting.py`
   - `backtrader`
   - `bt`
   - `pybroker`
   - `vectorbt`
-- `/tmp/quantcraft-frameworks/`
+- `/tmp/quantleet-frameworks/`
   - `freqtrade`
   - `lumibot`
   - `nautilus_trader`
@@ -87,7 +87,7 @@ Selected comparison set:
 
 ## Quantcraft Current Baseline
 
-Current `quantcraft` scope is intentionally narrow.
+Current `quantleet` scope is intentionally narrow.
 
 Important scope note:
 
@@ -104,13 +104,13 @@ Canonical references:
 - [ARCHITECTURE.md](../../ARCHITECTURE.md)
 - [Backtest MVP](../product-specs/backtest-mvp.md)
 - [Research Ergonomics](../product-specs/research-ergonomics.md)
-- [BacktestEngine](../../src/quantcraft/backtest/engine.py)
-- [strategy.py](../../src/quantcraft/research/strategy.py)
-- [execution_model.py](../../src/quantcraft/backtest/execution_model.py)
-- [matching.py](../../src/quantcraft/trading/domain/matching.py)
-- [state.py](../../src/quantcraft/trading/domain/state.py)
+- [BacktestEngine](../../src/quantleet/backtest/engine.py)
+- [strategy.py](../../src/quantleet/research/strategy.py)
+- [execution_model.py](../../src/quantleet/backtest/execution_model.py)
+- [matching.py](../../src/quantleet/trading/domain/matching.py)
+- [state.py](../../src/quantleet/trading/domain/state.py)
 
-In-repo today, `quantcraft` includes an implemented backtest baseline that provides:
+In-repo today, `quantleet` includes an implemented backtest baseline that provides:
 
 - deterministic single-symbol backtesting
 - OHLCV external input format
@@ -122,7 +122,7 @@ In-repo today, `quantcraft` includes an implemented backtest baseline that provi
 - `market`, `limit`, `stop_market`, and `stop_limit` orders
 - explicit `quantity` and `qty_percent` sizing
 - conservative resource reservation for accepted active and dormant orders
-- a baseline indicator/helper surface under `quantcraft.research`
+- a baseline indicator/helper surface under `quantleet.research`
 - long-only, `1x`, spot-like state transitions
 - injected slippage and fee configuration
 - trade log, PnL, and ending equity summary
@@ -161,7 +161,7 @@ Typical properties:
 - centered on OHLCV/bar workflows
 - optimized for signal testing, parameter sweeps, and reporting
 - often simpler execution semantics than a live-parity engine
-- usually much stronger than `quantcraft` on convenience today
+- usually much stronger than `quantleet` on convenience today
 
 ### 2. Hybrid event/bar engines
 
@@ -191,7 +191,7 @@ Typical properties:
 - more realistic execution and market modeling
 - heavier operational and architectural footprint
 
-`quantcraft` already sits closer to the third camp in intent, even though its current feature surface is still much smaller than the first two camps.
+`quantleet` already sits closer to the third camp in intent, even though its current feature surface is still much smaller than the first two camps.
 
 ## Priority Dossiers
 
@@ -209,9 +209,9 @@ These dossiers hold the deeper per-library architectural notes for this research
 
 ## Comparison Matrix
 
-| Library | Core Style | Backtest | Paper/Live Story | Order Realism | Research UX | Current Breadth vs quantcraft |
+| Library | Core Style | Backtest | Paper/Live Story | Order Realism | Research UX | Current Breadth vs quantleet |
 | --- | --- | --- | --- | --- | --- | --- |
-| quantcraft | tick/event kernel with bar-facing API | implemented single-symbol baseline | not yet | moderate in current slice, stronger long-term direction than current breadth | low to moderate | baseline |
+| quantleet | tick/event kernel with bar-facing API | implemented single-symbol baseline | not yet | moderate in current slice, stronger long-term direction than current breadth | low to moderate | baseline |
 | backtesting.py | bar-native imperative | yes | no | moderate | high | much broader today |
 | Backtrader | hybrid event/bar | yes | yes | moderate to high | moderate | much broader today |
 | vectorbt | vectorized/dataframe-first | yes | limited | low to moderate | very high | much broader today |
@@ -244,7 +244,7 @@ These signals are directional, not exhaustive. They are based on docs and reposi
 
 ## Where Quantcraft Is Already Strong
 
-Relative to its size, `quantcraft` already has several unusually strong properties:
+Relative to its size, `quantleet` already has several unusually strong properties:
 
 - a documented shared-kernel direction across backtest, paper, and live
 - explicit anti-lookahead rules
@@ -293,7 +293,7 @@ Compared to the ecosystem, the biggest current gaps are straightforward.
 
 ## Usability Differences
 
-The biggest usability difference is that incumbent libraries usually optimize for immediate user convenience, while `quantcraft` currently optimizes for future semantic integrity.
+The biggest usability difference is that incumbent libraries usually optimize for immediate user convenience, while `quantleet` currently optimizes for future semantic integrity.
 
 That creates a real trade-off.
 
@@ -304,7 +304,7 @@ What incumbents often do better today:
 - charts and reports out of the box
 - more obvious portfolio/research workflows
 
-What `quantcraft` is already better positioned to do:
+What `quantleet` is already better positioned to do:
 
 - explain exactly why an order did or did not fill
 - preserve one coherent engine model as the project expands toward paper/live
@@ -313,11 +313,11 @@ What `quantcraft` is already better positioned to do:
 In short:
 
 - incumbents win on immediate UX/DX breadth
-- `quantcraft` is betting on correctness-oriented architecture and future parity
+- `quantleet` is betting on correctness-oriented architecture and future parity
 
 ## Strategic Interpretation
 
-The strongest competitive opening for `quantcraft` is not “be bigger than everyone else.”
+The strongest competitive opening for `quantleet` is not “be bigger than everyone else.”
 
 The intended differentiation is:
 
@@ -362,7 +362,7 @@ that spec governs product work.
 
 ## Practical Notes
 
-License posture in the comparison set is mixed and matters if `quantcraft` wants to borrow ideas but avoid entanglement.
+License posture in the comparison set is mixed and matters if `quantleet` wants to borrow ideas but avoid entanglement.
 
 Examples:
 
@@ -375,11 +375,11 @@ This makes architectural learning safer than direct code borrowing.
 
 ## Conclusion
 
-`quantcraft` is not feature-competitive yet with the major Python incumbents.
+`quantleet` is not feature-competitive yet with the major Python incumbents.
 
 It is already architecturally differentiated.
 
-Today, `quantcraft` should be understood as:
+Today, `quantleet` should be understood as:
 
 - weaker on breadth
 - weaker on convenience

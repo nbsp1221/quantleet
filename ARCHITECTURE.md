@@ -1,6 +1,6 @@
 # Architecture
 
-`quantcraft` is a local-first quant library and framework that is expected to
+`quantleet` is a local-first quant library and framework that is expected to
 grow from market-data utilities into research, backtesting, paper trading, live
 trading, and quant-related ML tooling.
 
@@ -11,7 +11,7 @@ architecture.
 
 That means:
 
-- the installable engine and library live under `src/quantcraft`
+- the installable engine and library live under `src/quantleet`
 - future product surfaces such as `apps/api` live outside the engine package
 - top-level package ownership is organized by capability and runtime context,
   not by a repo-wide `domain / application / adapters` skeleton
@@ -43,9 +43,9 @@ Adjacent future-only areas may be introduced later:
 
 The repository distinguishes between:
 
-- `src/quantcraft`: the installable engine and library package
+- `src/quantleet`: the installable engine and library package
 - `apps/*`: product surfaces that compose the engine package for deployment
-- `src/quantcraft/cli`: the packaged CLI surface, because it ships with the
+- `src/quantleet/cli`: the packaged CLI surface, because it ships with the
   library
 
 Do not treat product surfaces as owners of core business semantics.
@@ -90,7 +90,7 @@ exposure or move funds.
   normalized data contracts, and concrete integrations
 - `integrations` translate external systems into internal contracts; they do not
   own core trading or research semantics
-- sibling contexts should prefer public facades such as `quantcraft.<context>.api`
+- sibling contexts should prefer public facades such as `quantleet.<context>.api`
   over deep internal imports when those facades exist
 
 ## Steady-State Guidance
@@ -100,7 +100,7 @@ described here and in the linked design docs.
 
 Use the docs below when extending or policing that package structure:
 
-- [`docs/design-docs/quantcraft-architecture.md`](docs/design-docs/quantcraft-architecture.md)
+- [`docs/design-docs/quantleet-architecture.md`](docs/design-docs/quantleet-architecture.md)
 - [`docs/design-docs/package-topology-and-naming.md`](docs/design-docs/package-topology-and-naming.md)
 - [`docs/design-docs/index.md`](docs/design-docs/index.md)
 

@@ -91,9 +91,9 @@
   - First review pass found two material documentation issues:
     - The note read too much like a durable architecture recommendation for a
       `docs/plans/` artifact because sections such as "The Recommended Layered
-      Model" and "What Changes For `quantcraft`" blurred the boundary enforced
+      Model" and "What Changes For `quantleet`" blurred the boundary enforced
       by `docs/PLANS.md`.
-    - The "Current `quantcraft` Truth" section lacked concrete local evidence,
+    - The "Current `quantleet` Truth" section lacked concrete local evidence,
       which weakened its value as a durable dated research note.
   - Applied fixes:
     - tightened the non-governing framing and added a governing-context section
@@ -101,7 +101,7 @@
     - softened prescriptive section titles so the note reads as research rather
       than adopted architecture
   - A later architecture-only review against `ARCHITECTURE.md`,
-    `docs/design-docs/quantcraft-architecture.md`, and
+    `docs/design-docs/quantleet-architecture.md`, and
     `docs/design-docs/unified-strategy-runtime-design.md` found two additional
     material wording issues:
     - the note blurred `data` vs `trading` ownership by implying the shared

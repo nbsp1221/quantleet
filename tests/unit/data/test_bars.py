@@ -5,8 +5,8 @@ from typing import get_type_hints
 
 import pytest
 
-from quantcraft.data.bars import BarSeries, TimeBar
-from quantcraft.data.sources import HistoricalDataSource
+from quantleet.data.bars import BarSeries, TimeBar
+from quantleet.data.sources import HistoricalDataSource
 
 
 def _time_bar_kwargs() -> dict[str, float | int]:
@@ -25,8 +25,8 @@ def _time_bar_instance() -> TimeBar:
 
 
 def test_public_data_surface_and_root_owner_share_bar_contract_types() -> None:
-    from quantcraft.data import BarSeries as PublicBarSeries
-    from quantcraft.data import TimeBar as PublicTimeBar
+    from quantleet.data import BarSeries as PublicBarSeries
+    from quantleet.data import TimeBar as PublicTimeBar
 
     assert PublicTimeBar is TimeBar
     assert PublicBarSeries is BarSeries

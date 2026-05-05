@@ -56,8 +56,8 @@ Current shipped product scope includes:
 
 Local evidence:
 
-- [`../../src/quantcraft/trading/domain/orders.py`](../../src/quantcraft/trading/domain/orders.py)
-- [`../../src/quantcraft/trading/domain/intents.py`](../../src/quantcraft/trading/domain/intents.py)
+- [`../../src/quantleet/trading/domain/orders.py`](../../src/quantleet/trading/domain/orders.py)
+- [`../../src/quantleet/trading/domain/intents.py`](../../src/quantleet/trading/domain/intents.py)
 - [`../product-specs/backtest-mvp.md`](../product-specs/backtest-mvp.md)
 - [`../product-specs/research-ergonomics.md`](../product-specs/research-ergonomics.md)
 
@@ -86,7 +86,7 @@ kernel enum or a venue-style status ladder.
 
 What this slice does fix is smaller:
 
-- `quantcraft` should **not** adopt a large live-style taxonomy next
+- `quantleet` should **not** adopt a large live-style taxonomy next
 - future stop-family support should require explicit trigger facts
 - whatever lifecycle shape comes next must stay kernel-local rather than
   venue-shaped
@@ -167,7 +167,7 @@ stop-family, paper, and live behavior.
 
 The evidence supports one clear rule:
 
-> if `quantcraft` adds percentage-based sizing, it should not overload the
+> if `quantleet` adds percentage-based sizing, it should not overload the
 > existing `quantity` float to do it
 
 The best current direction is:

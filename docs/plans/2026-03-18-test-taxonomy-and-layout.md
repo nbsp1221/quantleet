@@ -2,7 +2,7 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** Reorganize the `quantcraft` test suite into a durable taxonomy where test purpose is obvious, default verification stays deterministic, and live/network-backed validation is separated from the default lane.
+**Goal:** Reorganize the `quantleet` test suite into a durable taxonomy where test purpose is obvious, default verification stays deterministic, and live/network-backed validation is separated from the default lane.
 
 **Architecture:** Use a type-first test tree with `unit`, `integration`, `structure`, and `smoke` at the top level. Mirror the source layout inside `unit` and `integration`, keep repository-rule checks under `structure`, and split `smoke` into `local` and `live` so external verification never pollutes the default test path.
 

@@ -2,34 +2,34 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** Add the first official historical data-ingestion surface under `quantcraft.data` with `CCXTDataSource`, `CSVDataSource`, and `DataFrameDataSource`, all normalizing into the existing backtest-compatible typed OHLCV bar sequence.
+**Goal:** Add the first official historical data-ingestion surface under `quantleet.data` with `CCXTDataSource`, `CSVDataSource`, and `DataFrameDataSource`, all normalizing into the existing backtest-compatible typed OHLCV bar sequence.
 
 **Architecture:** Keep acquisition and normalization in `data`, reuse existing market-data and backtest-compatible OHLCV shapes instead of inventing a second public bar type, and keep the first slice strictly historical-only. Prefer a small public `DataSource -> load() -> typed bars` contract over a larger feed/runtime abstraction.
 
-**Tech Stack:** Python 3.13, `uv`, `pytest`, existing `ccxt` integration in `src/quantcraft/exchange.py`, current `research` backtest path, repository structure checks.
+**Tech Stack:** Python 3.13, `uv`, `pytest`, existing `ccxt` integration in `src/quantleet/exchange.py`, current `research` backtest path, repository structure checks.
 
 ---
 
 ### Task 1: Establish the canonical data-domain bar type and public data namespace
 
 **Files:**
-- Create: `src/quantcraft/data/domain/bars.py`
-- Create: `src/quantcraft/data/domain/sources.py`
-- Modify: `src/quantcraft/data/domain/__init__.py`
-- Modify: `src/quantcraft/data/__init__.py`
+- Create: `src/quantleet/data/domain/bars.py`
+- Create: `src/quantleet/data/domain/sources.py`
+- Modify: `src/quantleet/data/domain/__init__.py`
+- Modify: `src/quantleet/data/__init__.py`
 - Test: `tests/unit/data/domain/test_bars.py`
 - Test: `tests/unit/data/domain/test_sources.py`
 
 **Step 1: Write the failing tests**
 
 Add tests that pin:
-- the canonical normalized OHLCV bar type lives under `quantcraft.data.domain`
+- the canonical normalized OHLCV bar type lives under `quantleet.data.domain`
 - the public namespace exports only the approved source names
 - the source protocol remains the minimal `load() -> typed bars` shape
 
 ```python
-from quantcraft.data import CCXTDataSource, CSVDataSource, DataFrameDataSource
-from quantcraft.data.domain import OHLCVBar
+from quantleet.data import CCXTDataSource, CSVDataSource, DataFrameDataSource
+from quantleet.data.domain import OHLCVBar
 
 
 def test_data_domain_exports_canonical_ohlcv_bar() -> None:
@@ -64,10 +64,10 @@ Expected:
 **Step 3: Write the minimal implementation**
 
 Implement:
-- a frozen `OHLCVBar` dataclass in `src/quantcraft/data/domain/bars.py`
-- a small `HistoricalDataSource` protocol or abstract base in `src/quantcraft/data/domain/sources.py`
-- domain exports in `src/quantcraft/data/domain/__init__.py`
-- public exports in `src/quantcraft/data/__init__.py`
+- a frozen `OHLCVBar` dataclass in `src/quantleet/data/domain/bars.py`
+- a small `HistoricalDataSource` protocol or abstract base in `src/quantleet/data/domain/sources.py`
+- domain exports in `src/quantleet/data/domain/__init__.py`
+- public exports in `src/quantleet/data/__init__.py`
 
 The public surface should export:
 - `OHLCVBar`
@@ -91,17 +91,17 @@ Expected:
 **Step 5: Commit**
 
 ```bash
-git add src/quantcraft/data/domain/bars.py src/quantcraft/data/domain/sources.py src/quantcraft/data/domain/__init__.py src/quantcraft/data/__init__.py tests/unit/data/domain/test_bars.py tests/unit/data/domain/test_sources.py
+git add src/quantleet/data/domain/bars.py src/quantleet/data/domain/sources.py src/quantleet/data/domain/__init__.py src/quantleet/data/__init__.py tests/unit/data/domain/test_bars.py tests/unit/data/domain/test_sources.py
 git commit -m "✨ Add data-domain OHLCV bar contract"
 ```
 
 ### Task 2: Implement CCXTDataSource on top of the existing exchange utility
 
 **Files:**
-- Create: `src/quantcraft/data/adapters/ccxt_source.py`
-- Modify: `src/quantcraft/data/__init__.py`
-- Modify: `src/quantcraft/data/adapters/__init__.py`
-- Reuse: `src/quantcraft/exchange.py`
+- Create: `src/quantleet/data/adapters/ccxt_source.py`
+- Modify: `src/quantleet/data/__init__.py`
+- Modify: `src/quantleet/data/adapters/__init__.py`
+- Reuse: `src/quantleet/exchange.py`
 - Test: `tests/unit/data/adapters/test_ccxt_source.py`
 - Migrate or replace: `tests/unit/market_data/test_exchange_fetch_ohlcv.py`
 
@@ -145,7 +145,7 @@ Expected:
 
 **Step 3: Write the minimal implementation**
 
-Implement `CCXTDataSource` in `src/quantcraft/data/adapters/ccxt_source.py` by reusing `quantcraft.exchange.Exchange` instead of duplicating `ccxt` rules.
+Implement `CCXTDataSource` in `src/quantleet/data/adapters/ccxt_source.py` by reusing `quantleet.exchange.Exchange` instead of duplicating `ccxt` rules.
 
 Map:
 - `exchange` string -> existing `Exchange(name=...)`
@@ -178,17 +178,17 @@ Expected:
 **Step 5: Commit**
 
 ```bash
-git add src/quantcraft/data/adapters/ccxt_source.py src/quantcraft/data/adapters/__init__.py src/quantcraft/data/__init__.py tests/unit/data/adapters/test_ccxt_source.py tests/unit/market_data/test_exchange_fetch_ohlcv.py
+git add src/quantleet/data/adapters/ccxt_source.py src/quantleet/data/adapters/__init__.py src/quantleet/data/__init__.py tests/unit/data/adapters/test_ccxt_source.py tests/unit/market_data/test_exchange_fetch_ohlcv.py
 git commit -m "✨ Add CCXT historical data source"
 ```
 
 ### Task 3: Implement CSVDataSource and DataFrameDataSource with the canonical schema
 
 **Files:**
-- Create: `src/quantcraft/data/adapters/csv_source.py`
-- Create: `src/quantcraft/data/adapters/dataframe_source.py`
-- Modify: `src/quantcraft/data/__init__.py`
-- Modify: `src/quantcraft/data/adapters/__init__.py`
+- Create: `src/quantleet/data/adapters/csv_source.py`
+- Create: `src/quantleet/data/adapters/dataframe_source.py`
+- Modify: `src/quantleet/data/__init__.py`
+- Modify: `src/quantleet/data/adapters/__init__.py`
 - Test: `tests/unit/data/adapters/test_csv_source.py`
 - Test: `tests/unit/data/adapters/test_dataframe_source.py`
 
@@ -259,16 +259,16 @@ Expected:
 **Step 5: Commit**
 
 ```bash
-git add src/quantcraft/data/adapters/csv_source.py src/quantcraft/data/adapters/dataframe_source.py src/quantcraft/data/adapters/__init__.py src/quantcraft/data/__init__.py tests/unit/data/adapters/test_csv_source.py tests/unit/data/adapters/test_dataframe_source.py
+git add src/quantleet/data/adapters/csv_source.py src/quantleet/data/adapters/dataframe_source.py src/quantleet/data/adapters/__init__.py src/quantleet/data/__init__.py tests/unit/data/adapters/test_csv_source.py tests/unit/data/adapters/test_dataframe_source.py
 git commit -m "✨ Add CSV and dataframe data sources"
 ```
 
 ### Task 4: Integrate the new data-domain bar contract into the current backtest path
 
 **Files:**
-- Modify: `src/quantcraft/research/adapters/synthetic_events.py`
-- Modify: `src/quantcraft/research/application/backtest.py`
-- Modify: `src/quantcraft/research/application/__init__.py`
+- Modify: `src/quantleet/research/adapters/synthetic_events.py`
+- Modify: `src/quantleet/research/application/backtest.py`
+- Modify: `src/quantleet/research/application/__init__.py`
 - Test: `tests/unit/research/adapters/test_synthetic_events.py`
 - Test: `tests/integration/research/test_backtest_runner.py`
 
@@ -314,7 +314,7 @@ Expected:
 **Step 5: Commit**
 
 ```bash
-git add src/quantcraft/research/adapters/synthetic_events.py src/quantcraft/research/application/backtest.py src/quantcraft/research/application/__init__.py tests/unit/research/adapters/test_synthetic_events.py tests/integration/research/test_backtest_runner.py
+git add src/quantleet/research/adapters/synthetic_events.py src/quantleet/research/application/backtest.py src/quantleet/research/application/__init__.py tests/unit/research/adapters/test_synthetic_events.py tests/integration/research/test_backtest_runner.py
 git commit -m "♻️ Reuse data-domain OHLCV bars in backtest path"
 ```
 
@@ -418,7 +418,7 @@ Check the finished code and docs against:
 
 Confirm:
 - no second public historical bar type was introduced
-- ingestion stayed in `quantcraft.data`
+- ingestion stayed in `quantleet.data`
 - the slice remained historical-only
 - Binance is the first documented/tested exchange-backed guarantee
 

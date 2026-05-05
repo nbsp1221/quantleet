@@ -12,7 +12,7 @@
 - Goal:
   - Build a temporary cross-validation harness outside the repository under
     `/tmp`, run three realistic stop-market strategy patterns against
-    `quantcraft` and comparator libraries on the same BTC/USDT 1h CSV dataset,
+    `quantleet` and comparator libraries on the same BTC/USDT 1h CSV dataset,
     and explain any mismatches by execution-semantics differences rather than
     expecting exact equality.
 - Governing docs:
@@ -54,7 +54,7 @@
     - Human approver: `Naki (thread user)`
     - Verification marker:
       explicit thread direction on `2026-04-23` to create a new `/tmp` project,
-      code the three realistic strategies for `quantcraft` and comparator
+      code the three realistic strategies for `quantleet` and comparator
       libraries, run the cross-validation experiment on the shared BTC/USDT 1h
       CSV, and prioritize explaining mismatches
     - Granted scope:
@@ -72,7 +72,7 @@
     the harness is built
 - Success criteria:
   - A `/tmp` cross-validation harness exists and can run the same three
-    strategy patterns across `quantcraft` and at least two comparator
+    strategy patterns across `quantleet` and at least two comparator
     libraries.
   - All engines use the same BTC/USDT 1h dataset and comparable fee/slippage
     assumptions.
@@ -81,7 +81,7 @@
   - Repository code remains unchanged in this slice unless separately approved.
 - Out of scope:
   - fixing comparator libraries
-  - changing shipped `quantcraft` code in this slice
+  - changing shipped `quantleet` code in this slice
   - proving trading alpha
 
 ## Evaluator Acceptance Contract
@@ -117,23 +117,23 @@
      locally.
   2. Create the `/tmp` `uv` experiment project and define a normalized result
      schema.
-  3. Implement the three strategy patterns for `quantcraft` and comparator
+  3. Implement the three strategy patterns for `quantleet` and comparator
      engines.
   4. Run the experiment and collect artifacts.
   5. Compare outputs and explain mismatches.
   6. Record verification evidence here and report findings to the user.
 - Notes:
-  - Comparator priority is `quantcraft`, `backtesting.py`, and `backtrader`
+  - Comparator priority is `quantleet`, `backtesting.py`, and `backtrader`
     because they are the most practical first-pass bar-based baselines.
 - Blockers or scope changes:
   - The checked-in dataset was used directly:
     - `tests/fixtures/backtest/binance_usdm_btcusdtusdt_1h_2025.csv`
   - Comparator set was finalized as:
-    - `quantcraft`
+    - `quantleet`
     - `backtesting.py`
     - `backtrader`
   - The temporary harness was created under:
-    - `/tmp/quantcraft-stop-xval`
+    - `/tmp/quantleet-stop-xval`
 
 ## Evaluator Review
 
@@ -142,25 +142,25 @@
     code unchanged.
   - Experiment findings:
     - `breakout_stop_entry`
-      - `quantcraft` and `backtrader` matched exactly on trade count and final
+      - `quantleet` and `backtrader` matched exactly on trade count and final
         equity
       - `backtesting.py` differed on exactly one trade and emitted explicit
         same-bar contingent-order ambiguity warnings
     - `pullback_limit_atr`
       - all three engines matched on trade count
-      - `quantcraft` was modestly more favorable by about `117.52`
-      - the first divergence was a stop-loss exit where `quantcraft` exited at
+      - `quantleet` was modestly more favorable by about `117.52`
+      - the first divergence was a stop-loss exit where `quantleet` exited at
         the stop trigger level while both comparator engines exited lower on
         the same bar
     - `bracket_like_market`
       - this produced the large mismatch cluster
-      - `quantcraft`: `227` trades, final equity `997,181.153571`
+      - `quantleet`: `227` trades, final equity `997,181.153571`
       - `backtesting.py`: `253` trades, final equity `981,431.982143`
       - `backtrader`: `244` trades, final equity `983,349.353571`
       - root cause is not plain stop correctness; it is child-exit lifecycle
         timing
       - comparator engines support linked contingent/bracket-style exits that
-        become active with the parent entry, while current `quantcraft`
+        become active with the parent entry, while current `quantleet`
         creates the protective stop and target from `on_bar()` and therefore
         activates them starting on the next bar
   - Overall judgment:
@@ -173,11 +173,11 @@
     - `uv run poe repo-check`
     - Result: `repository checks passed`
   - Experiment workspace:
-    - `/tmp/quantcraft-stop-xval`
+    - `/tmp/quantleet-stop-xval`
   - Experiment command:
-    - `cd /tmp/quantcraft-stop-xval && uv run python run_cross_validation.py`
+    - `cd /tmp/quantleet-stop-xval && uv run python run_cross_validation.py`
   - Generated artifacts:
-    - `/tmp/quantcraft-stop-xval/results/cross_validation_results.json`
-    - `/tmp/quantcraft-stop-xval/results/summary.md`
+    - `/tmp/quantleet-stop-xval/results/cross_validation_results.json`
+    - `/tmp/quantleet-stop-xval/results/summary.md`
 - Final disposition:
   - `accepted`

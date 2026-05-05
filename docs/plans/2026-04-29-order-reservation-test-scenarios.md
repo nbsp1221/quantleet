@@ -404,7 +404,7 @@ Partial fills may be internal-first before they are user-facing. These tests
 should be written at the smallest stable seam that can model finite liquidity.
 Trading-level tests may prove fill application and remaining quantity, but
 reservation shrink belongs to the runtime/account-control seam, not
-`quantcraft.trading.domain.Order`.
+`quantleet.trading.domain.Order`.
 
 | ID | Lane | Scenario | Expected Contract |
 | --- | --- | --- | --- |

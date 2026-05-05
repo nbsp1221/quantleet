@@ -1,6 +1,6 @@
 # Testing Reference
 
-Use this reference when adding or moving tests in `quantcraft`.
+Use this reference when adding or moving tests in `quantleet`.
 
 ## Top-Level Taxonomy
 

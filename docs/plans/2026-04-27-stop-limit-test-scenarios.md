@@ -203,7 +203,7 @@ The stop-family trigger policy is intentionally generic:
 - existing executable orders are evaluated before newly triggered stop-family
   orders at the same event point.
 
-Equality rejection is a local `quantcraft` ambiguity policy. These tests should
+Equality rejection is a local `quantleet` ambiguity policy. These tests should
 not present it as a universal exchange-conformance rule; some venues trigger
 already-met stops, while others reject orders that would trigger immediately.
 

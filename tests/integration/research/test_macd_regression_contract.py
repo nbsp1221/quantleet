@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from quantcraft.backtest import BacktestSummary, ExposureSummary
+from quantleet.backtest import BacktestSummary, ExposureSummary
 from tests.support_backtest import (
     assert_canonical_report,
     canonical_macd_trade_log_digest,

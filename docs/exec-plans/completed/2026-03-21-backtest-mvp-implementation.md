@@ -2,7 +2,7 @@
 
 > **For Codex:** REQUIRED SUB-SKILLS: use `subagent-driven-development` to execute this plan slice-by-slice, and require every worker/reviewer subagent to read `docs/references/openai-harness-engineering.md` plus the slice-relevant architecture/spec docs before touching code.
 
-**Goal:** Build the first approved `Backtest MVP` implementation slice set for `quantcraft` without violating the approved architecture, governance, or Backtest MVP product spec.
+**Goal:** Build the first approved `Backtest MVP` implementation slice set for `quantleet` without violating the approved architecture, governance, or Backtest MVP product spec.
 
 **Architecture:** The implementation must preserve the approved bounded-context split (`data / trading / research / execution`) while introducing only the minimum source skeleton and shared contracts needed for the first deterministic backtest flow. The internal engine remains tick/event-driven; MVP user experience remains `on_bar`-driven. The first implementation batch prioritizes structure, contracts, and deterministic matching semantics before broader orchestration.
 
@@ -29,7 +29,7 @@ Every worker and reviewer must read:
 
 - `AGENTS.md`
 - `docs/references/openai-harness-engineering.md`
-- `docs/design-docs/quantcraft-architecture.md`
+- `docs/design-docs/quantleet-architecture.md`
 - `docs/design-docs/architecture-governance.md`
 - `docs/product-specs/backtest-mvp.md`
 
@@ -61,18 +61,18 @@ Additionally, slices that touch shared trading semantics must also read:
 
 **Ownership:**
 
-- `src/quantcraft/data/`
-- `src/quantcraft/research/`
-- `src/quantcraft/trading/`
+- `src/quantleet/data/`
+- `src/quantleet/research/`
+- `src/quantleet/trading/`
 - `tests/structure/architecture/`
 - `tests/unit/trading/`
 
 **Files:**
 
 - Create package skeletons under:
-  - `src/quantcraft/data/`
-  - `src/quantcraft/research/`
-  - `src/quantcraft/trading/`
+  - `src/quantleet/data/`
+  - `src/quantleet/research/`
+  - `src/quantleet/trading/`
 - Create minimal typed modules for:
   - `OrderIntent`
   - `TickEvent`
@@ -98,7 +98,7 @@ Additionally, slices that touch shared trading semantics must also read:
 
 **Ownership:**
 
-- `src/quantcraft/research/`
+- `src/quantleet/research/`
 - `tests/unit/research/`
 
 **Files:**
@@ -124,8 +124,8 @@ Additionally, slices that touch shared trading semantics must also read:
 
 **Ownership:**
 
-- `src/quantcraft/research/`
-- `src/quantcraft/trading/`
+- `src/quantleet/research/`
+- `src/quantleet/trading/`
 - `tests/unit/research/`
 
 **Files:**
@@ -149,7 +149,7 @@ Additionally, slices that touch shared trading semantics must also read:
 
 **Ownership:**
 
-- `src/quantcraft/trading/`
+- `src/quantleet/trading/`
 - `tests/unit/trading/`
 
 **Files:**
@@ -179,7 +179,7 @@ Additionally, slices that touch shared trading semantics must also read:
 
 **Ownership:**
 
-- `src/quantcraft/research/`
+- `src/quantleet/research/`
 - `tests/integration/`
 
 **Files:**

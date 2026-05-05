@@ -11,9 +11,9 @@
 
 - Goal:
   - implement Stage 2 of the approved migration baseline by making
-    `src/quantcraft/backtest` the real owner of the current backtest runtime
+    `src/quantleet/backtest` the real owner of the current backtest runtime
     implementation
-  - preserve the current documented `quantcraft.research` public surface as a
+  - preserve the current documented `quantleet.research` public surface as a
     temporary compatibility layer while ownership moves
   - update only the directly coupled tests and runtime-sensitive
     documentation/checks needed to keep the repository truthful after the move
@@ -82,11 +82,11 @@
     - `uv run poe repo-check`
 - Success criteria:
   - the primary implementation of the backtest runtime lives under
-    `src/quantcraft/backtest`
-  - `quantcraft.backtest` exports the canonical runtime owner types rather than
+    `src/quantleet/backtest`
+  - `quantleet.backtest` exports the canonical runtime owner types rather than
     re-exporting research-owned implementations
-  - the existing `quantcraft.research` and
-    `quantcraft.research.application.backtest` surfaces still import cleanly as
+  - the existing `quantleet.research` and
+    `quantleet.research.application.backtest` surfaces still import cleanly as
     compatibility paths
   - runtime-sensitive docs/tests reflect the new owner wherever ownership truth
     is the point of the check
@@ -147,21 +147,21 @@
     - `Turing`: public/test compatibility impact
     - `Plato`: guardrail and verification-lane implications
   - the final Stage 2 owned file group became:
-    - `src/quantcraft/backtest/__init__.py`
-    - `src/quantcraft/backtest/engine.py`
-    - `src/quantcraft/backtest/execution_model.py`
-    - `src/quantcraft/backtest/order_activation.py`
-    - `src/quantcraft/backtest/results.py`
-    - `src/quantcraft/backtest/runtime.py`
-    - `src/quantcraft/backtest/strategy_runtime.py`
-    - `src/quantcraft/research/__init__.py`
-    - `src/quantcraft/research/application/__init__.py`
-    - `src/quantcraft/research/application/_runtime.py`
-    - `src/quantcraft/research/application/backtest.py`
-    - `src/quantcraft/research/application/engine.py`
-    - `src/quantcraft/research/application/order_activation.py`
-    - `src/quantcraft/research/adapters/execution_model.py`
-    - `src/quantcraft/_repo_tools.py`
+    - `src/quantleet/backtest/__init__.py`
+    - `src/quantleet/backtest/engine.py`
+    - `src/quantleet/backtest/execution_model.py`
+    - `src/quantleet/backtest/order_activation.py`
+    - `src/quantleet/backtest/results.py`
+    - `src/quantleet/backtest/runtime.py`
+    - `src/quantleet/backtest/strategy_runtime.py`
+    - `src/quantleet/research/__init__.py`
+    - `src/quantleet/research/application/__init__.py`
+    - `src/quantleet/research/application/_runtime.py`
+    - `src/quantleet/research/application/backtest.py`
+    - `src/quantleet/research/application/engine.py`
+    - `src/quantleet/research/application/order_activation.py`
+    - `src/quantleet/research/adapters/execution_model.py`
+    - `src/quantleet/_repo_tools.py`
     - `tests/unit/research/adapters/test_execution_model.py`
     - `tests/unit/research/application/test_order_activation_policy.py`
     - `tests/structure/architecture/test_backtest_runtime_hardening_boundaries.py`
@@ -176,10 +176,10 @@
     `backtest` as a domain
   - 2026-04-16: to restore truthful verification inside this slice, scope was
     widened narrowly to include:
-    - `src/quantcraft/_repo_tools.py`
+    - `src/quantleet/_repo_tools.py`
     - `tests/structure/architecture/test_domain_boundaries.py`
-    - `src/quantcraft/backtest/strategy_runtime.py`
-    - `src/quantcraft/research/application/_runtime.py`
+    - `src/quantleet/backtest/strategy_runtime.py`
+    - `src/quantleet/research/application/_runtime.py`
   - 2026-04-16: this widening remained inside Stage 2 because it was limited to
     direct ownership-proof and guardrail-truth work, not the broader Stage 3
     scanner expansion
@@ -188,8 +188,8 @@
 
 - Findings:
   - read-only research split converged on the same Stage 2 shape:
-    - move the real runtime owner modules under `src/quantcraft/backtest`
-    - keep `quantcraft.research` and `quantcraft.research.application.*` as
+    - move the real runtime owner modules under `src/quantleet/backtest`
+    - keep `quantleet.research` and `quantleet.research.application.*` as
       temporary compatibility surfaces
     - update runtime-sensitive docs/tests where ownership truth is the point of
       the check
@@ -203,7 +203,7 @@
     - `_repo_tools.py` now treats `backtest` as a Tier B domain and encodes the
       narrow Stage 2 allowlist needed for current architecture truth
     - `_StrategyDriver` and `_StrategyOrderState` now live under
-      `src/quantcraft/backtest/strategy_runtime.py`
+      `src/quantleet/backtest/strategy_runtime.py`
     - `research.application._runtime` now keeps `PositionView` and re-exports
       the moved runtime-driver symbols as compatibility shims
     - structure tests now assert the moved owner plus all directly touched shim

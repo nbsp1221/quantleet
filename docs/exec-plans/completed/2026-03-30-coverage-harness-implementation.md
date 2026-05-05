@@ -2,9 +2,9 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** Add a repository-enforced coverage harness so AI agents must keep `src/quantcraft` line coverage at or above 90% and `src/quantcraft/trading/domain/*` line coverage at 100%.
+**Goal:** Add a repository-enforced coverage harness so AI agents must keep `src/quantleet` line coverage at or above 90% and `src/quantleet/trading/domain/*` line coverage at 100%.
 
-**Architecture:** Treat coverage as a repo-local verification guardrail, not as a substitute for contract tests or structure checks. Measure only shipped source code under `src/quantcraft`, keep tests/scripts/notebooks out of the reported threshold, and enforce the approved risk-based policy through the same `scripts/` + `poe` command surface that already drives lint, typecheck, tests, build, and repo checks.
+**Architecture:** Treat coverage as a repo-local verification guardrail, not as a substitute for contract tests or structure checks. Measure only shipped source code under `src/quantleet`, keep tests/scripts/notebooks out of the reported threshold, and enforce the approved risk-based policy through the same `scripts/` + `poe` command surface that already drives lint, typecheck, tests, build, and repo checks.
 
 **Tech Stack:** Python 3.13, `coverage.py`, `pytest`, `poethepoet`, repo-local harness scripts under `scripts/`, structure tests under `tests/structure/`.
 
@@ -26,11 +26,11 @@
 ## Approved Policy
 
 - Global source coverage gate:
-  - target: `src/quantcraft`
+  - target: `src/quantleet`
   - metric: line coverage
   - threshold: `>= 90%`
 - Tier A core coverage gate:
-  - target: `src/quantcraft/trading/domain/*`
+  - target: `src/quantleet/trading/domain/*`
   - metric: line coverage
   - threshold: `== 100%`
 - Out of scope for this slice:
@@ -45,10 +45,10 @@
 This slice is complete only when all of the following are true:
 
 1. `coverage.py` is a repo-managed dev dependency and the repository has a documented, reproducible source-only coverage command.
-2. Coverage measurement excludes non-source code from threshold evaluation and reports on `src/quantcraft` only.
+2. Coverage measurement excludes non-source code from threshold evaluation and reports on `src/quantleet` only.
 3. A repo-local harness command fails when:
-   - global `src/quantcraft` line coverage is below `90%`, or
-   - any file under `src/quantcraft/trading/domain/` is below `100%` line coverage.
+   - global `src/quantleet` line coverage is below `90%`, or
+   - any file under `src/quantleet/trading/domain/` is below `100%` line coverage.
 4. `uv run poe verify` includes the coverage gate.
 5. Repository docs describe the coverage policy and command surface clearly enough that future agents do not need to guess how coverage is enforced.
 6. Structure tests pin the command surface and threshold policy so future drift is caught mechanically.
@@ -73,7 +73,7 @@ Add structure tests that assert:
 - the approved thresholds are represented as:
   - global source coverage `>= 90`
   - `trading/domain` file coverage `== 100`
-- the measured scope is source-only and targets `src/quantcraft`
+- the measured scope is source-only and targets `src/quantleet`
 
 Suggested test names:
 
@@ -152,7 +152,7 @@ Expected:
 **Files:**
 - Create: `scripts/coverage_check.py`
 - Modify: `pyproject.toml`
-- Reuse: `src/quantcraft/`
+- Reuse: `src/quantleet/`
 
 **Step 1: Write the failing harness test**
 
@@ -160,8 +160,8 @@ Extend `tests/structure/repo/test_coverage_harness.py` so it also asserts:
 
 - the coverage gate uses a repo-local script under `scripts/` or an equally explicit repo-local command path
 - the gate enforces:
-  - total `src/quantcraft` line coverage `>= 90%`
-  - per-file `src/quantcraft/trading/domain/*` line coverage `== 100%`
+  - total `src/quantleet` line coverage `>= 90%`
+  - per-file `src/quantleet/trading/domain/*` line coverage `== 100%`
 
 Suggested additional test names:
 
@@ -187,11 +187,11 @@ Expected:
 
 Add `scripts/coverage_check.py` that:
 
-- runs or reads `coverage.py` results for `src/quantcraft`
+- runs or reads `coverage.py` results for `src/quantleet`
 - evaluates source-only line coverage
 - fails with a clear error if:
   - total source coverage is below `90%`
-  - any `src/quantcraft/trading/domain/*.py` file is below `100%`
+  - any `src/quantleet/trading/domain/*.py` file is below `100%`
 - emits actionable remediation text for future agents
 
 Keep the script simple and repo-local. Do not add CI-specific abstractions, hosted upload integrations, or patch-coverage logic.

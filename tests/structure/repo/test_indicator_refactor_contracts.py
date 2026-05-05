@@ -1,26 +1,26 @@
 from __future__ import annotations
 
-from quantcraft.research import ta
-from quantcraft.research.series import SeriesView
+from quantleet.research import ta
+from quantleet.research.series import SeriesView
 from tests.support import ROOT
 
 
 def test_indicator_refactor_source_layout_exists() -> None:
     expected_paths = [
-        ROOT / "src/quantcraft/research/indicators/__init__.py",
-        ROOT / "src/quantcraft/research/indicators/pure/__init__.py",
-        ROOT / "src/quantcraft/research/indicators/pure/sma.py",
-        ROOT / "src/quantcraft/research/indicators/pure/ema.py",
-        ROOT / "src/quantcraft/research/indicators/pure/rsi.py",
-        ROOT / "src/quantcraft/research/indicators/pure/atr.py",
-        ROOT / "src/quantcraft/research/indicators/pure/cci.py",
-        ROOT / "src/quantcraft/research/indicators/pure/bb.py",
-        ROOT / "src/quantcraft/research/indicators/pure/macd.py",
-        ROOT / "src/quantcraft/research/indicators/runtime/__init__.py",
-        ROOT / "src/quantcraft/research/indicators/runtime/base.py",
-        ROOT / "src/quantcraft/research/indicators/runtime/views.py",
-        ROOT / "src/quantcraft/research/indicators/runtime/runtime.py",
-        ROOT / "src/quantcraft/research/indicators/runtime/factory.py",
+        ROOT / "src/quantleet/research/indicators/__init__.py",
+        ROOT / "src/quantleet/research/indicators/pure/__init__.py",
+        ROOT / "src/quantleet/research/indicators/pure/sma.py",
+        ROOT / "src/quantleet/research/indicators/pure/ema.py",
+        ROOT / "src/quantleet/research/indicators/pure/rsi.py",
+        ROOT / "src/quantleet/research/indicators/pure/atr.py",
+        ROOT / "src/quantleet/research/indicators/pure/cci.py",
+        ROOT / "src/quantleet/research/indicators/pure/bb.py",
+        ROOT / "src/quantleet/research/indicators/pure/macd.py",
+        ROOT / "src/quantleet/research/indicators/runtime/__init__.py",
+        ROOT / "src/quantleet/research/indicators/runtime/base.py",
+        ROOT / "src/quantleet/research/indicators/runtime/views.py",
+        ROOT / "src/quantleet/research/indicators/runtime/runtime.py",
+        ROOT / "src/quantleet/research/indicators/runtime/factory.py",
     ]
 
     for path in expected_paths:
@@ -48,8 +48,8 @@ def test_indicator_refactor_test_layout_exists() -> None:
 
 def test_legacy_indicator_paths_are_absent() -> None:
     legacy_paths = [
-        ROOT / "src/quantcraft/research/_indicator_kernels.py",
-        ROOT / "src/quantcraft/research/_indicator_runtime.py",
+        ROOT / "src/quantleet/research/_indicator_kernels.py",
+        ROOT / "src/quantleet/research/_indicator_runtime.py",
         ROOT / "tests/unit/research/test_indicator_runtime.py",
     ]
 
@@ -90,8 +90,8 @@ def test_current_repository_state_has_no_old_bollinger_naming() -> None:
 
 def test_indicator_layers_have_no_latest_only_talib_helpers() -> None:
     search_roots = [
-        ROOT / "src/quantcraft/research/indicators/pure",
-        ROOT / "src/quantcraft/research/ta.py",
+        ROOT / "src/quantleet/research/indicators/pure",
+        ROOT / "src/quantleet/research/ta.py",
     ]
 
     forbidden_patterns = (

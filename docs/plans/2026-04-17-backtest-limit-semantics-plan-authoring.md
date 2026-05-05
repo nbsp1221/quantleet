@@ -112,7 +112,7 @@
 
 - Findings:
   - The refreshed implementation plan now uses current source ownership under
-    `src/quantcraft/backtest/*` and no longer relies on removed
+    `src/quantleet/backtest/*` and no longer relies on removed
     `research.application` or `research.adapters` package paths.
   - The plan now explicitly preserves the architectural boundary required by
     the governing docs:
@@ -128,11 +128,11 @@
     architecture/semantics scope or testing-plan scope after the revisions.
 - Verification evidence:
   - Current-state source/test inspection:
-    - `src/quantcraft/backtest/execution_model.py`
-    - `src/quantcraft/backtest/runtime.py`
-    - `src/quantcraft/backtest/order_activation.py`
-    - `src/quantcraft/backtest/strategy_runtime.py`
-    - `src/quantcraft/trading/domain/matching.py`
+    - `src/quantleet/backtest/execution_model.py`
+    - `src/quantleet/backtest/runtime.py`
+    - `src/quantleet/backtest/order_activation.py`
+    - `src/quantleet/backtest/strategy_runtime.py`
+    - `src/quantleet/trading/domain/matching.py`
     - `tests/unit/backtest/test_execution_model.py`
     - `tests/integration/research/test_backtest_execution_semantics.py`
     - `tests/integration/research/test_backtest_result_contract.py`

@@ -8,12 +8,12 @@
 
 Related documents:
 
-- [quantcraft-architecture.md](quantcraft-architecture.md)
+- [quantleet-architecture.md](quantleet-architecture.md)
 - [../product-specs/backtest-mvp.md](../product-specs/backtest-mvp.md)
 
 ## Why This Document Exists
 
-`quantcraft` must keep one trading kernel across backtest, paper, and live
+`quantleet` must keep one trading kernel across backtest, paper, and live
 environments without letting OHLC-only backtests drift into optimistic
 fill behavior.
 

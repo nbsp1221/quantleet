@@ -10,12 +10,12 @@
 ## Planner Contract
 
 - Goal:
-  Preserve the architecture insights gathered from repo analysis, cross-library research, and design discussion in a durable dated document that can guide future `quantcraft` engine work without silently becoming governing architecture.
+  Preserve the architecture insights gathered from repo analysis, cross-library research, and design discussion in a durable dated document that can guide future `quantleet` engine work without silently becoming governing architecture.
 - Governing docs:
   - `AGENTS.md`
   - `ARCHITECTURE.md`
   - `docs/design-docs/index.md`
-  - `docs/design-docs/quantcraft-architecture.md`
+  - `docs/design-docs/quantleet-architecture.md`
   - `docs/design-docs/unified-strategy-runtime-design.md`
   - `docs/PLANS.md`
 - Why these are governing:
@@ -35,7 +35,7 @@
   - `uv run poe repo-check`
 - Success criteria:
   - The repository contains a dated document summarizing:
-    - what current `quantcraft` does and does not implement
+    - what current `quantleet` does and does not implement
     - what was learned from Nautilus, LEAN, backtrader, Zipline, and Freqtrade
     - the recommended layered model for `Strategy`, `Intent`, `Order`, `Fill`, and account state
     - the specific implementation watchpoints for shared backtest/paper/live design

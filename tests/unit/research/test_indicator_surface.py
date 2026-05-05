@@ -5,12 +5,12 @@ import math
 
 import pytest
 
-from quantcraft.backtest.strategy_runtime import _StrategyDriver
-from quantcraft.data import BarSeries, TimeBar
-from quantcraft.research import qc, ta
-from quantcraft.research.series import SeriesView
-from quantcraft.research.strategy import Strategy
-from quantcraft.trading.domain.events import BarEvent
+from quantleet.backtest.strategy_runtime import _StrategyDriver
+from quantleet.data import BarSeries, TimeBar
+from quantleet.research import qc, ta
+from quantleet.research.series import SeriesView
+from quantleet.research.strategy import Strategy
+from quantleet.trading.domain.events import BarEvent
 
 _LEGACY_BB_NAME = "bollinger" + "_bands"
 

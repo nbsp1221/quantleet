@@ -4,12 +4,12 @@ import math
 
 import pytest
 
-from quantcraft.trading.domain.costs import CostConfig
-from quantcraft.trading.domain.events import FillEvent, TickEvent
-from quantcraft.trading.domain.intents import OrderIntent
-from quantcraft.trading.domain.matching import is_order_triggered, match_order
-from quantcraft.trading.domain.orders import Order
-from quantcraft.trading.domain.state import TradingState, apply_fill
+from quantleet.trading.domain.costs import CostConfig
+from quantleet.trading.domain.events import FillEvent, TickEvent
+from quantleet.trading.domain.intents import OrderIntent
+from quantleet.trading.domain.matching import is_order_triggered, match_order
+from quantleet.trading.domain.orders import Order
+from quantleet.trading.domain.state import TradingState, apply_fill
 
 
 def test_market_buy_applies_adverse_slippage_to_best_ask() -> None:

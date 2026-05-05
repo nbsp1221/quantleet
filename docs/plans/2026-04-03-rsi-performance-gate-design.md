@@ -56,7 +56,7 @@ Sources:
 `asv` is a strong tool for historical benchmark tracking across commits and
 machines, but it is heavier than needed for a first repository-local guard on
 one canonical RSI scenario. It is better treated as a future expansion path if
-`quantcraft` grows a broader performance suite.
+`quantleet` grows a broader performance suite.
 
 Source:
 
@@ -138,7 +138,7 @@ Reasoning:
 
 Local evidence from the current benchmark dataset:
 
-- path: `/tmp/quantcraft-backtest-benchmarks/binance-usdm-btcusdtusdt-1h-2025.csv`
+- path: `/tmp/quantleet-backtest-benchmarks/binance-usdm-btcusdtusdt-1h-2025.csv`
 - shape: `8760` data rows plus header
 - size: `616043` bytes
 

@@ -16,7 +16,7 @@
   - which responsibilities belong to `Order` versus matching/runtime/event
     orchestration
   - how far event-driven decoupling should go before it becomes harmful
-  - which minimal lifecycle/status model best fits `quantcraft` now
+  - which minimal lifecycle/status model best fits `quantleet` now
   while grounding the recommendation in official docs, existing `/tmp`
   comparator source trees, and explicit contrarian evidence.
 - Governing docs:
@@ -173,7 +173,7 @@
 
 - Findings:
   - Read-only research fan-out converged on a bounded recommendation:
-    `quantcraft` should use a small runtime `Order` aggregate with explicit
+    `quantleet` should use a small runtime `Order` aggregate with explicit
     runtime orchestration, while avoiding both a fake `OrderIntent` runtime
     object and a full OMS design.
   - First review fan-out found these material issues and they were fixed:

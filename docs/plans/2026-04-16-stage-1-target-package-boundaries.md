@@ -11,7 +11,7 @@
 
 - Goal:
   - implement Stage 1 of the approved migration baseline by introducing the
-    missing target package roots under `src/quantcraft`
+    missing target package roots under `src/quantleet`
   - keep the slice additive and non-destructive: create package boundaries and
     facades without moving current behavior ownership yet
   - preserve current documented public imports while making the target topology
@@ -23,7 +23,7 @@
   - [`docs/product-specs/backtest-mvp.md`](../product-specs/backtest-mvp.md)
   - [`docs/product-specs/research-ergonomics.md`](../product-specs/research-ergonomics.md)
   - [`docs/design-docs/index.md`](../design-docs/index.md)
-  - [`docs/design-docs/quantcraft-architecture.md`](../design-docs/quantcraft-architecture.md)
+  - [`docs/design-docs/quantleet-architecture.md`](../design-docs/quantleet-architecture.md)
   - [`docs/design-docs/package-topology-and-naming.md`](../design-docs/package-topology-and-naming.md)
   - [`docs/RELIABILITY.md`](../RELIABILITY.md)
   - [`docs/SECURITY.md`](../SECURITY.md)
@@ -35,8 +35,8 @@
     research contracts, the migration baseline, verification rules, and the
     planner/generator/evaluator discipline the user explicitly asked to follow
 - In-repo scope:
-  - create `src/quantcraft/backtest/`, `src/quantcraft/execution/`, and
-    `src/quantcraft/integrations/` package roots
+  - create `src/quantleet/backtest/`, `src/quantleet/execution/`, and
+    `src/quantleet/integrations/` package roots
   - add minimal Stage 1 facades or package skeletons consistent with the target
     topology
   - add or update tests that prove the new package roots exist without breaking
@@ -75,7 +75,7 @@
   - default full lane:
     - `uv run poe verify`
 - Success criteria:
-  - `quantcraft.backtest`, `quantcraft.execution`, and `quantcraft.integrations`
+  - `quantleet.backtest`, `quantleet.execution`, and `quantleet.integrations`
     exist as importable package roots
   - Stage 1 does not move current backtest or exchange behavior ownership out of
     existing modules
@@ -135,9 +135,9 @@
     Anthropic article: explicit planner/generator/evaluator separation, written
     acceptance contract, and bounded downstream handoffs
   - the owned Stage 1 file group for this slice is:
-    - `src/quantcraft/backtest/__init__.py`
-    - `src/quantcraft/execution/__init__.py`
-    - `src/quantcraft/integrations/__init__.py`
+    - `src/quantleet/backtest/__init__.py`
+    - `src/quantleet/execution/__init__.py`
+    - `src/quantleet/integrations/__init__.py`
     - `tests/structure/architecture/test_stage1_target_package_boundaries.py`
     - `tests/smoke/local/test_public_imports.py`
     - `tests/integration/commands/test_built_artifact_imports.py`
@@ -160,16 +160,16 @@
 
 - Findings:
   - read-only research split converged on the same minimal Stage 1 design:
-    - add `quantcraft.backtest`, `quantcraft.execution`, and
-      `quantcraft.integrations` package roots
+    - add `quantleet.backtest`, `quantleet.execution`, and
+      `quantleet.integrations` package roots
     - keep `execution` and `integrations` boundary-only in this slice
     - keep current runtime ownership under `research`
     - expose only additive backtest facades from the new `backtest` package
   - implementation stayed within that slice:
-    - `quantcraft.backtest` re-exports the current research-owned
+    - `quantleet.backtest` re-exports the current research-owned
       `BacktestEngine`, `BacktestResult`, `BacktestSummary`, and
       `ExposureSummary`
-    - `quantcraft.execution` and `quantcraft.integrations` are importable empty
+    - `quantleet.execution` and `quantleet.integrations` are importable empty
       boundary roots
     - no behavior was moved out of `research` or `data`
   - one review fan-out finding identified an incomplete contract assertion for

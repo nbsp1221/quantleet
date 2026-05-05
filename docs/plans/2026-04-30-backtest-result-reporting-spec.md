@@ -11,7 +11,7 @@
 ## Planner Contract
 
 - Goal: Define what a general Python quant user must be able to learn from one
-  completed `BacktestEngine.run(...)` result before `quantcraft` can claim a
+  completed `BacktestEngine.run(...)` result before `quantleet` can claim a
   credible first beta for single-symbol backtesting.
 - Governing docs:
   - `AGENTS.md`
@@ -140,7 +140,7 @@ The benchmark expectation comes from established single-asset backtesting tools,
 especially `backtesting.py`. Its public docs make `Backtest.run()` return a
 detailed statistics object, expose equity and trade tables, support optimization
 against named statistics, and offer plotting as a natural follow-up. The first
-`quantcraft` beta does not need to copy that API, but it must satisfy the same
+`quantleet` beta does not need to copy that API, but it must satisfy the same
 basic user need: after one run, the user should understand performance, risk,
 trading activity, and comparison to holding the asset.
 
@@ -149,11 +149,11 @@ trading activity, and comparison to holding the asset.
 The target user for this slice is a general Python quant user who has:
 
 - historical OHLCV data for one tradeable asset
-- a Python strategy implemented with `quantcraft.research.Strategy`
+- a Python strategy implemented with `quantleet.research.Strategy`
 - a desire to answer whether the strategy is promising enough to inspect,
   adjust, or parameter-test
 
-The user should not need to understand `quantcraft` internals, the trading
+The user should not need to understand `quantleet` internals, the trading
 kernel, order reservations, or future paper/live architecture to interpret one
 backtest result.
 
@@ -429,7 +429,7 @@ The benchmark survey found broad agreement on the metric families:
 - `backtrader` drawdown analyzers track decline from the running peak portfolio
   value and drawdown length.
 
-`quantcraft` should adopt the common semantics, but keep formulas simple,
+`quantleet` should adopt the common semantics, but keep formulas simple,
 auditable, and compatible with the current single-symbol long-only engine.
 
 ### Unit Conventions
@@ -593,7 +593,7 @@ Buy-and-hold comparison uses the same input bar range:
 Use `TimeBar.close` for `first_close` and `last_close`.
 
 Why: `backtesting.py` uses a close-to-close buy-and-hold comparison, and this is
-the clearest beta baseline for a user-owned OHLCV range. `quantcraft` uses the
+the clearest beta baseline for a user-owned OHLCV range. `quantleet` uses the
 full input range intentionally for the first beta because the current strategy
 runtime does not define a strategy-level warmup contract. This differs from
 `backtesting.py` when indicator warmup shifts its first trading bar.
@@ -645,7 +645,7 @@ The report must state the annual risk-free rate used. The beta default is `0.0`.
 
 ### Drawdown Metrics
 
-Structured drawdown values in `quantcraft` use non-negative drawdown magnitude
+Structured drawdown values in `quantleet` use non-negative drawdown magnitude
 to preserve the current `BacktestSummary.max_drawdown` convention.
 
 For each equity point:
@@ -777,7 +777,7 @@ Edge cases:
 - flat trades count toward `closed_trade_count` but not wins or losses
 
 Why: `backtesting.py` reports trade-return expectancy, while the current
-`quantcraft` summary already reports net average win/loss and profit factor.
+`quantleet` summary already reports net average win/loss and profit factor.
 The beta report should make the distinction explicit instead of overloading one
 field name.
 
@@ -865,7 +865,7 @@ be named, deterministic, and accessible without parsing formatted text.
 
 ## Benchmark-Driven Beta Bar
 
-For beta, `quantcraft` does not need feature parity with all of `backtesting.py`.
+For beta, `quantleet` does not need feature parity with all of `backtesting.py`.
 It does need parity with the default user expectation created by that product:
 
 - a single run produces a rich enough performance summary

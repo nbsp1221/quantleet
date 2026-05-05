@@ -47,14 +47,14 @@ def test_execution_dependency_into_integrations_is_permitted() -> None:
 def test_repository_scan_rejects_research_into_execution_even_with_data_allowed(
     tmp_path: Path,
 ) -> None:
-    src_root = tmp_path / "src" / "quantcraft"
+    src_root = tmp_path / "src" / "quantleet"
     research_root = src_root / "research"
     execution_root = src_root / "execution"
     research_root.mkdir(parents=True)
     execution_root.mkdir(parents=True)
 
     (research_root / "__init__.py").write_text(
-        "from __future__ import annotations\nfrom quantcraft.execution import runtime\n",
+        "from __future__ import annotations\nfrom quantleet.execution import runtime\n",
         encoding="utf-8",
     )
     (execution_root / "__init__.py").write_text(
@@ -73,7 +73,7 @@ def test_shared_modules_are_allowed_from_any_domain() -> None:
 
 
 def test_repository_scan_rejects_removed_shared_domain_aliases(tmp_path: Path) -> None:
-    src_root = tmp_path / "src" / "quantcraft"
+    src_root = tmp_path / "src" / "quantleet"
     trading_root = src_root / "trading"
     trading_root.mkdir(parents=True)
 
@@ -84,23 +84,23 @@ def test_repository_scan_rejects_removed_shared_domain_aliases(tmp_path: Path) -
     )
     (trading_root / "__init__.py").write_text(
         "from __future__ import annotations\n"
-        "from quantcraft.telemetry import emit_metric\n"
-        "from quantcraft.validation import validate_order\n",
+        "from quantleet.telemetry import emit_metric\n"
+        "from quantleet.validation import validate_order\n",
         encoding="utf-8",
     )
 
     assert check_architecture.collect_issues(tmp_path) == [
         f"{trading_root / '__init__.py'}: "
-        "Root-level module dependency violation: trading cannot depend on quantcraft.telemetry",
+        "Root-level module dependency violation: trading cannot depend on quantleet.telemetry",
         f"{trading_root / '__init__.py'}: "
-        "Root-level module dependency violation: trading cannot depend on quantcraft.validation",
+        "Root-level module dependency violation: trading cannot depend on quantleet.validation",
     ]
 
 
 def test_repository_scan_allows_execution_into_integrations_and_integrations_into_shared(
     tmp_path: Path,
 ) -> None:
-    src_root = tmp_path / "src" / "quantcraft"
+    src_root = tmp_path / "src" / "quantleet"
     execution_root = src_root / "execution"
     integrations_root = src_root / "integrations"
     shared_root = src_root / "_shared"
@@ -109,11 +109,11 @@ def test_repository_scan_allows_execution_into_integrations_and_integrations_int
     shared_root.mkdir(parents=True)
 
     (execution_root / "__init__.py").write_text(
-        "from __future__ import annotations\nfrom quantcraft.integrations import broker\n",
+        "from __future__ import annotations\nfrom quantleet.integrations import broker\n",
         encoding="utf-8",
     )
     (integrations_root / "__init__.py").write_text(
-        "from __future__ import annotations\nfrom quantcraft._shared import mapper\n",
+        "from __future__ import annotations\nfrom quantleet._shared import mapper\n",
         encoding="utf-8",
     )
     (shared_root / "__init__.py").write_text(
@@ -125,14 +125,14 @@ def test_repository_scan_allows_execution_into_integrations_and_integrations_int
 
 
 def test_repository_scan_allows_data_into_integrations(tmp_path: Path) -> None:
-    src_root = tmp_path / "src" / "quantcraft"
+    src_root = tmp_path / "src" / "quantleet"
     data_root = src_root / "data"
     integrations_root = src_root / "integrations"
     data_root.mkdir(parents=True)
     integrations_root.mkdir(parents=True)
 
     (data_root / "__init__.py").write_text(
-        "from __future__ import annotations\nfrom quantcraft.integrations import vendor\n",
+        "from __future__ import annotations\nfrom quantleet.integrations import vendor\n",
         encoding="utf-8",
     )
     (integrations_root / "__init__.py").write_text(
@@ -144,14 +144,14 @@ def test_repository_scan_allows_data_into_integrations(tmp_path: Path) -> None:
 
 
 def test_repository_scan_rejects_research_into_integrations(tmp_path: Path) -> None:
-    src_root = tmp_path / "src" / "quantcraft"
+    src_root = tmp_path / "src" / "quantleet"
     research_root = src_root / "research"
     integrations_root = src_root / "integrations"
     research_root.mkdir(parents=True)
     integrations_root.mkdir(parents=True)
 
     (research_root / "__init__.py").write_text(
-        "from __future__ import annotations\nfrom quantcraft.integrations import binance\n",
+        "from __future__ import annotations\nfrom quantleet.integrations import binance\n",
         encoding="utf-8",
     )
     (integrations_root / "__init__.py").write_text(
@@ -170,54 +170,54 @@ def test_repository_scan_allows_current_capability_first_codebase() -> None:
 
 
 def test_repository_scan_rejects_root_level_non_domain_module_imports(tmp_path: Path) -> None:
-    src_root = tmp_path / "src" / "quantcraft"
+    src_root = tmp_path / "src" / "quantleet"
     trading_root = src_root / "trading"
     trading_root.mkdir(parents=True)
 
     (src_root / "exchange.py").write_text("from __future__ import annotations\n", encoding="utf-8")
     (trading_root / "__init__.py").write_text(
-        "from __future__ import annotations\nfrom quantcraft.exchange import Exchange\n",
+        "from __future__ import annotations\nfrom quantleet.exchange import Exchange\n",
         encoding="utf-8",
     )
 
     assert check_architecture.collect_issues(tmp_path) == [
         f"{trading_root / '__init__.py'}: "
-        "Root-level module dependency violation: trading cannot depend on quantcraft.exchange"
+        "Root-level module dependency violation: trading cannot depend on quantleet.exchange"
     ]
 
 
 def test_repository_scan_rejects_removed_root_level_allowlist_edges(tmp_path: Path) -> None:
-    src_root = tmp_path / "src" / "quantcraft"
+    src_root = tmp_path / "src" / "quantleet"
     src_root.mkdir(parents=True)
 
     (src_root / "__init__.py").write_text(
-        "from __future__ import annotations\nfrom quantcraft.exchange import Exchange\n",
+        "from __future__ import annotations\nfrom quantleet.exchange import Exchange\n",
         encoding="utf-8",
     )
     (src_root / "_repo_tools.py").write_text(
-        "from __future__ import annotations\nfrom quantcraft.exchange import Exchange\n",
+        "from __future__ import annotations\nfrom quantleet.exchange import Exchange\n",
         encoding="utf-8",
     )
     (src_root / "exchange.py").write_text("from __future__ import annotations\n", encoding="utf-8")
 
     assert check_architecture.collect_issues(tmp_path) == [
         f"{src_root / '__init__.py'}: "
-        "Root-level module dependency violation: quantcraft cannot depend on quantcraft.exchange",
+        "Root-level module dependency violation: quantleet cannot depend on quantleet.exchange",
         f"{src_root / '_repo_tools.py'}: "
         "Root-level module dependency violation: "
-        "quantcraft._repo_tools cannot depend on quantcraft.exchange",
+        "quantleet._repo_tools cannot depend on quantleet.exchange",
     ]
 
 
 def test_repository_scan_rejects_forbidden_initializer_imports(tmp_path: Path) -> None:
-    src_root = tmp_path / "src" / "quantcraft"
+    src_root = tmp_path / "src" / "quantleet"
     trading_root = src_root / "trading"
     research_root = src_root / "research"
     trading_root.mkdir(parents=True)
     research_root.mkdir(parents=True)
 
     (trading_root / "__init__.py").write_text(
-        "from __future__ import annotations\nfrom quantcraft.research import domain\n",
+        "from __future__ import annotations\nfrom quantleet.research import domain\n",
         encoding="utf-8",
     )
     (research_root / "__init__.py").write_text(
@@ -232,14 +232,14 @@ def test_repository_scan_rejects_forbidden_initializer_imports(tmp_path: Path) -
 
 
 def test_repository_scan_rejects_absolute_package_alias_imports(tmp_path: Path) -> None:
-    src_root = tmp_path / "src" / "quantcraft"
+    src_root = tmp_path / "src" / "quantleet"
     trading_root = src_root / "trading"
     research_root = src_root / "research"
     trading_root.mkdir(parents=True)
     research_root.mkdir(parents=True)
 
     (trading_root / "__init__.py").write_text(
-        "from __future__ import annotations\nfrom quantcraft import research\n",
+        "from __future__ import annotations\nfrom quantleet import research\n",
         encoding="utf-8",
     )
     (research_root / "__init__.py").write_text(
@@ -254,7 +254,7 @@ def test_repository_scan_rejects_absolute_package_alias_imports(tmp_path: Path) 
 
 
 def test_repository_scan_rejects_relative_cross_domain_imports(tmp_path: Path) -> None:
-    src_root = tmp_path / "src" / "quantcraft"
+    src_root = tmp_path / "src" / "quantleet"
     trading_root = src_root / "trading"
     research_root = src_root / "research"
     trading_root.mkdir(parents=True)

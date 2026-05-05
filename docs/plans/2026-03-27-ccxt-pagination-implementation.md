@@ -2,11 +2,11 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** Add automatic historical pagination to `quantcraft.data.CCXTDataSource` so users can fetch realistic multi-month Binance `ccxt` OHLCV ranges and feed them directly into the current backtest workflow without changing the public `load()` API.
+**Goal:** Add automatic historical pagination to `quantleet.data.CCXTDataSource` so users can fetch realistic multi-month Binance `ccxt` OHLCV ranges and feed them directly into the current backtest workflow without changing the public `load()` API.
 
-**Architecture:** Keep the public `DataSource -> load() -> typed bars` contract unchanged. Put the pagination loop inside `src/quantcraft/data/adapters/ccxt_source.py`, keep `Exchange.fetch_ohlcv(...)` as the lower-level single-call primitive, and preserve the existing `data -> research` dependency direction. Treat any exploratory notebook work as optional human validation, not as harness-critical infrastructure.
+**Architecture:** Keep the public `DataSource -> load() -> typed bars` contract unchanged. Put the pagination loop inside `src/quantleet/data/adapters/ccxt_source.py`, keep `Exchange.fetch_ohlcv(...)` as the lower-level single-call primitive, and preserve the existing `data -> research` dependency direction. Treat any exploratory notebook work as optional human validation, not as harness-critical infrastructure.
 
-**Tech Stack:** Python 3.13, `ccxt`, `pytest`, current `quantcraft.data` ingestion surface, current `quantcraft.research` backtest path, repository structure checks.
+**Tech Stack:** Python 3.13, `ccxt`, `pytest`, current `quantleet.data` ingestion surface, current `quantleet.research` backtest path, repository structure checks.
 
 ---
 
@@ -15,8 +15,8 @@
 **Files:**
 - Modify: `tests/unit/data/adapters/test_ccxt_source.py`
 - Modify: `tests/unit/market_data/test_exchange_fetch_ohlcv.py`
-- Reuse: `src/quantcraft/data/adapters/ccxt_source.py`
-- Reuse: `src/quantcraft/data/adapters/exchange_backend.py`
+- Reuse: `src/quantleet/data/adapters/ccxt_source.py`
+- Reuse: `src/quantleet/data/adapters/exchange_backend.py`
 
 **Step 1: Write the failing tests**
 
@@ -59,7 +59,7 @@ Expected:
 
 **Step 3: Write the minimal implementation**
 
-Only after the tests fail, implement the smallest private helper structure inside `src/quantcraft/data/adapters/ccxt_source.py`:
+Only after the tests fail, implement the smallest private helper structure inside `src/quantleet/data/adapters/ccxt_source.py`:
 
 - keep `CCXTDataSource` as the public type
 - keep `load()` as the only public method
@@ -87,16 +87,16 @@ Expected:
 **Step 5: Commit**
 
 ```bash
-git add src/quantcraft/data/adapters/ccxt_source.py tests/unit/data/adapters/test_ccxt_source.py tests/unit/market_data/test_exchange_fetch_ohlcv.py
+git add src/quantleet/data/adapters/ccxt_source.py tests/unit/data/adapters/test_ccxt_source.py tests/unit/market_data/test_exchange_fetch_ohlcv.py
 git commit -m "✨ Add CCXT historical pagination loop"
 ```
 
 ### Task 2: Harden paginated bar assembly correctness
 
 **Files:**
-- Modify: `src/quantcraft/data/adapters/ccxt_source.py`
+- Modify: `src/quantleet/data/adapters/ccxt_source.py`
 - Modify: `tests/unit/data/adapters/test_ccxt_source.py`
-- Reuse: `src/quantcraft/data/domain/bars.py`
+- Reuse: `src/quantleet/data/domain/bars.py`
 
 **Step 1: Write the failing tests**
 
@@ -130,7 +130,7 @@ Expected:
 
 **Step 3: Write the minimal implementation**
 
-In `src/quantcraft/data/adapters/ccxt_source.py`:
+In `src/quantleet/data/adapters/ccxt_source.py`:
 
 - normalize every raw row into `OHLCVBar`
 - trim rows outside the requested `[start, end)` range
@@ -153,7 +153,7 @@ Expected:
 **Step 5: Commit**
 
 ```bash
-git add src/quantcraft/data/adapters/ccxt_source.py tests/unit/data/adapters/test_ccxt_source.py
+git add src/quantleet/data/adapters/ccxt_source.py tests/unit/data/adapters/test_ccxt_source.py
 git commit -m "✨ Harden paginated CCXT bar assembly"
 ```
 
@@ -161,8 +161,8 @@ git commit -m "✨ Harden paginated CCXT bar assembly"
 
 **Files:**
 - Modify: `tests/integration/research/test_backtest_runner.py`
-- Reuse: `src/quantcraft/data/adapters/ccxt_source.py`
-- Reuse: `src/quantcraft/research/application/backtest.py`
+- Reuse: `src/quantleet/data/adapters/ccxt_source.py`
+- Reuse: `src/quantleet/research/application/backtest.py`
 
 **Step 1: Write the failing integration test**
 
@@ -215,7 +215,7 @@ Expected:
 **Step 5: Commit**
 
 ```bash
-git add tests/integration/research/test_backtest_runner.py src/quantcraft/data/adapters/ccxt_source.py
+git add tests/integration/research/test_backtest_runner.py src/quantleet/data/adapters/ccxt_source.py
 git commit -m "✨ Prove paginated data works with backtest"
 ```
 
@@ -339,7 +339,7 @@ Expected:
 **Step 5: Commit the verified batch**
 
 ```bash
-git add src/quantcraft/data/adapters/ccxt_source.py tests/unit/data/adapters/test_ccxt_source.py tests/unit/market_data/test_exchange_fetch_ohlcv.py tests/integration/research/test_backtest_runner.py docs/product-specs/data-ingestion.md README.md tests/structure/repo/test_repository_entrypoint_docs.py
+git add src/quantleet/data/adapters/ccxt_source.py tests/unit/data/adapters/test_ccxt_source.py tests/unit/market_data/test_exchange_fetch_ohlcv.py tests/integration/research/test_backtest_runner.py docs/product-specs/data-ingestion.md README.md tests/structure/repo/test_repository_entrypoint_docs.py
 git commit -m "✨ Add automatic CCXT historical pagination"
 ```
 

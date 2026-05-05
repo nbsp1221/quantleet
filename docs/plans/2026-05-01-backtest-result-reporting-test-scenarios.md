@@ -481,7 +481,7 @@ when that produces clearer tests.
 #### RR-UNIT-012 Drawdown Is Non-Negative Magnitude
 
 - Layer: unit
-- Intent: Structured drawdown follows the `quantcraft` convention.
+- Intent: Structured drawdown follows the `quantleet` convention.
 - Setup: equity `(1000, 900, 950, 1100)`.
 - Expected contract:
   - drawdown values are non-negative

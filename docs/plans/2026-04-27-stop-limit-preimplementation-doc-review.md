@@ -153,7 +153,7 @@
       ambiguous, become already-triggered behavior, or require an explicit
       trigger direction
     - whether existing-before-newly-triggered priority is the intended
-      deterministic `quantcraft` backtest policy
+      deterministic `quantleet` backtest policy
 - Verification evidence:
   - `uv run poe repo-check`
     - output:

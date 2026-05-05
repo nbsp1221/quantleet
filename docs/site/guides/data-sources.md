@@ -5,7 +5,7 @@ The first beta works with normalized historical OHLCV data.
 ## In-Memory Data
 
 ```python
-from quantcraft.data import DataFrameDataSource
+from quantleet.data import DataFrameDataSource
 
 source = DataFrameDataSource(
     frame=[
@@ -19,7 +19,7 @@ source = DataFrameDataSource(
 ## Materialized Series
 
 ```python
-from quantcraft.data import BarSeries, TimeBar
+from quantleet.data import BarSeries, TimeBar
 
 bars = BarSeries(
     symbol="BTC/USDT",

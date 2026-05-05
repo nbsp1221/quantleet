@@ -2,7 +2,7 @@
 
 - Date: 2026-04-16
 - Status: `approved-analysis`
-- Scope: current `src/quantcraft` package topology versus the approved
+- Scope: current `src/quantleet` package topology versus the approved
   capability-first target architecture
 - Related active plan:
   - [2026-04-16-codebase-gap-analysis-and-migration-blueprint.md](2026-04-16-codebase-gap-analysis-and-migration-blueprint.md)
@@ -13,9 +13,9 @@ This document records the concrete gap between:
 
 - the approved capability-first target defined in
   [ARCHITECTURE.md](../../ARCHITECTURE.md),
-  [quantcraft-architecture.md](../design-docs/quantcraft-architecture.md), and
+  [quantleet-architecture.md](../design-docs/quantleet-architecture.md), and
   [package-topology-and-naming.md](../design-docs/package-topology-and-naming.md)
-- the current shipped codebase under `src/quantcraft`
+- the current shipped codebase under `src/quantleet`
 
 It is not a detailed implementation plan for one refactor PR.
 It is an analysis baseline plus migration-sequencing reference that later
@@ -27,7 +27,7 @@ The current installable package contains three real top-level contexts plus a
 few root-level support or compatibility modules:
 
 ```text
-src/quantcraft/
+src/quantleet/
   __init__.py
   exchange.py
   _repo_tools.py
@@ -62,7 +62,7 @@ Notably absent today:
 The approved long-lived package topology is capability-first:
 
 ```text
-src/quantcraft/
+src/quantleet/
   data/
   trading/
   research/
@@ -82,7 +82,7 @@ Important target rules:
 
 Separately, the packaged CLI surface is expected to live under:
 
-- `src/quantcraft/cli`
+- `src/quantleet/cli`
 
 but it is a distributed product surface, not a peer bounded context.
 
@@ -94,14 +94,14 @@ This is the largest semantic mismatch.
 
 Current code:
 
-- [src/quantcraft/research/application/backtest.py](../../src/quantcraft/research/application/backtest.py)
+- [src/quantleet/research/application/backtest.py](../../src/quantleet/research/application/backtest.py)
   owns `_run_backtest`, `BacktestResult`, `BacktestSummary`, and exposure/report
   types
-- [src/quantcraft/research/application/engine.py](../../src/quantcraft/research/application/engine.py)
+- [src/quantleet/research/application/engine.py](../../src/quantleet/research/application/engine.py)
   wires `BacktestEngine` directly to that module
-- [src/quantcraft/research/adapters/execution_model.py](../../src/quantcraft/research/adapters/execution_model.py)
+- [src/quantleet/research/adapters/execution_model.py](../../src/quantleet/research/adapters/execution_model.py)
   owns the backtest execution model
-- [src/quantcraft/research/__init__.py](../../src/quantcraft/research/__init__.py)
+- [src/quantleet/research/__init__.py](../../src/quantleet/research/__init__.py)
   exports `BacktestEngine` from the research package root
 
 Why this matters:
@@ -114,18 +114,18 @@ Why this matters:
 Practical consequence:
 
 - migration cannot be only a directory move
-- it must preserve the current public `quantcraft.research` surface while
-  introducing `quantcraft.backtest`
+- it must preserve the current public `quantleet.research` surface while
+  introducing `quantleet.backtest`
 
 ### 2. External integrations are embedded in `data` and root-level shims
 
 Current code:
 
-- [src/quantcraft/data/adapters/exchange_backend.py](../../src/quantcraft/data/adapters/exchange_backend.py)
+- [src/quantleet/data/adapters/exchange_backend.py](../../src/quantleet/data/adapters/exchange_backend.py)
   imports `ccxt` directly and defines exchange-facing behavior
-- [src/quantcraft/exchange.py](../../src/quantcraft/exchange.py) re-exports
+- [src/quantleet/exchange.py](../../src/quantleet/exchange.py) re-exports
   that implementation as a root-level compatibility module
-- [src/quantcraft/__init__.py](../../src/quantcraft/__init__.py) dynamically
+- [src/quantleet/__init__.py](../../src/quantleet/__init__.py) dynamically
   exposes `Exchange`, `MarketType`, and `TimeBar`
 
 Why this matters:
@@ -141,7 +141,7 @@ Practical consequence:
 
 - introducing `integrations` is not optional if the target topology is to become
   real
-- the root `quantcraft.Exchange` compatibility surface must survive through an
+- the root `quantleet.Exchange` compatibility surface must survive through an
   intermediate stage
 
 ### 3. Context-internal layer-first skeletons still dominate the tree
@@ -149,9 +149,9 @@ Practical consequence:
 Current code still carries `domain / application / adapters` under `data`,
 `research`, and `trading`, including empty package placeholders such as:
 
-- [src/quantcraft/data/application/__init__.py](../../src/quantcraft/data/application/__init__.py)
-- [src/quantcraft/trading/application/__init__.py](../../src/quantcraft/trading/application/__init__.py)
-- [src/quantcraft/trading/adapters/__init__.py](../../src/quantcraft/trading/adapters/__init__.py)
+- [src/quantleet/data/application/__init__.py](../../src/quantleet/data/application/__init__.py)
+- [src/quantleet/trading/application/__init__.py](../../src/quantleet/trading/application/__init__.py)
+- [src/quantleet/trading/adapters/__init__.py](../../src/quantleet/trading/adapters/__init__.py)
 
 Why this matters:
 
@@ -173,22 +173,22 @@ The current shipped import surface is strongly frozen.
 Pinned today:
 
 - root exports: `Exchange`, `MarketType`, `TimeBar`
-  - [src/quantcraft/__init__.py](../../src/quantcraft/__init__.py)
+  - [src/quantleet/__init__.py](../../src/quantleet/__init__.py)
   - [tests/smoke/local/test_public_imports.py](../../tests/smoke/local/test_public_imports.py)
   - [tests/integration/commands/test_built_artifact_imports.py](../../tests/integration/commands/test_built_artifact_imports.py)
-- `quantcraft.data` exports
-  - [src/quantcraft/data/__init__.py](../../src/quantcraft/data/__init__.py)
-- `quantcraft.research` exports `BacktestEngine`, `Strategy`, `ta`, `qc`
-  - [src/quantcraft/research/__init__.py](../../src/quantcraft/research/__init__.py)
+- `quantleet.data` exports
+  - [src/quantleet/data/__init__.py](../../src/quantleet/data/__init__.py)
+- `quantleet.research` exports `BacktestEngine`, `Strategy`, `ta`, `qc`
+  - [src/quantleet/research/__init__.py](../../src/quantleet/research/__init__.py)
   - [tests/structure/architecture/test_backtest_mvp_slice1.py](../../tests/structure/architecture/test_backtest_mvp_slice1.py)
   - [tests/smoke/local/test_public_imports.py](../../tests/smoke/local/test_public_imports.py)
 
 Direct imports into transitional internals are also common:
 
-- `quantcraft.research.application.backtest`
-- `quantcraft.research.application.strategy`
-- `quantcraft.research.adapters.execution_model`
-- `quantcraft.trading.domain.*`
+- `quantleet.research.application.backtest`
+- `quantleet.research.application.strategy`
+- `quantleet.research.adapters.execution_model`
+- `quantleet.trading.domain.*`
 
 Practical consequence:
 
@@ -202,7 +202,7 @@ Current check coverage is transitional:
 - [tests/structure/architecture/test_backtest_mvp_slice1.py](../../tests/structure/architecture/test_backtest_mvp_slice1.py)
   explicitly requires `domain/application/adapters` skeletons under current
   contexts
-- [src/quantcraft/_repo_tools.py](../../src/quantcraft/_repo_tools.py) and
+- [src/quantleet/_repo_tools.py](../../src/quantleet/_repo_tools.py) and
   [scripts/check_architecture.py](../../scripts/check_architecture.py) do not
   yet model `backtest` or `integrations` as first-class domains
 - [docs/RELIABILITY.md](../RELIABILITY.md) and
@@ -251,13 +251,13 @@ Before code moves:
 
 Create the missing package entry points first:
 
-- `quantcraft.backtest`
-- `quantcraft.integrations`
-- `quantcraft.execution`
+- `quantleet.backtest`
+- `quantleet.integrations`
+- `quantleet.execution`
 
 Optional only when real package work starts:
 
-- `quantcraft.cli`
+- `quantleet.cli`
 
 At this stage:
 
@@ -277,12 +277,12 @@ old imports working temporarily.
 
 Compatibility that likely must exist during transition:
 
-- `quantcraft.research.BacktestEngine`
-- `quantcraft.research.application.BacktestEngine`
-- `quantcraft.research.application.backtest.BacktestResult`
-- `quantcraft.research.application.backtest.BacktestSummary`
-- `quantcraft.research.application.backtest.ExposureSummary`
-- `quantcraft.research.application.Strategy`
+- `quantleet.research.BacktestEngine`
+- `quantleet.research.application.BacktestEngine`
+- `quantleet.research.application.backtest.BacktestResult`
+- `quantleet.research.application.backtest.BacktestSummary`
+- `quantleet.research.application.backtest.ExposureSummary`
+- `quantleet.research.application.Strategy`
 
 Why before docs change:
 
@@ -309,13 +309,13 @@ Why here:
 
 Move provider and venue protocol code toward:
 
-- `quantcraft.integrations.venues.*`
-- future `quantcraft.integrations.data_vendors.*`
+- `quantleet.integrations.venues.*`
+- future `quantleet.integrations.data_vendors.*`
 
 During transition:
 
-- root `quantcraft.Exchange` and `quantcraft.exchange` compatibility may remain
-- `quantcraft.data` should continue exposing normalized data-facing surfaces
+- root `quantleet.Exchange` and `quantleet.exchange` compatibility may remain
+- `quantleet.data` should continue exposing normalized data-facing surfaces
 
 Why after Stage 2:
 
@@ -379,11 +379,11 @@ architecture.
 
 Examples of acceptable Stage 6 cleanup:
 
-- retiring `quantcraft.research.application.backtest` after the final
-  `quantcraft.backtest` surface is established
-- retiring root compatibility paths such as `quantcraft.exchange` if their
+- retiring `quantleet.research.application.backtest` after the final
+  `quantleet.backtest` surface is established
+- retiring root compatibility paths such as `quantleet.exchange` if their
   ownership has moved into the final package topology
-- removing compatibility aliases from `quantcraft.__init__` once the intended
+- removing compatibility aliases from `quantleet.__init__` once the intended
   root surface is explicitly narrowed
 
 Stage 6 should only begin after:
@@ -405,10 +405,10 @@ This analysis was cross-checked through read-only subagent fan-out:
   - confirmed that exchange/provider protocol code still sits in `data` plus a
     root shim
 - `Cicero`: test/public-surface dependency review
-  - confirmed that root exports, `quantcraft.data`, and
-    `quantcraft.research` are hard-pinned by smoke, built-artifact, and doc
+  - confirmed that root exports, `quantleet.data`, and
+    `quantleet.research` are hard-pinned by smoke, built-artifact, and doc
     tests
-  - confirmed that `quantcraft.research.application` remains part of the
+  - confirmed that `quantleet.research.application` remains part of the
     current shipped compatibility surface
 - `Lovelace`: structure-check and verification-lane review
   - confirmed that current architecture scanning does not know `backtest` or

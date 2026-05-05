@@ -5,7 +5,7 @@ import inspect
 import numpy as np
 import pytest
 
-from quantcraft.research.indicators.pure.macd import PureMACDResult, macd
+from quantleet.research.indicators.pure.macd import PureMACDResult, macd
 
 
 def test_macd_matches_talib_signature_and_result_shape() -> None:

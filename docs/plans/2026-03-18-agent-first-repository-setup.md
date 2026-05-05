@@ -2,7 +2,7 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** Restructure `quantcraft` into a local-first, agent-legible repository with system-of-record docs, explicit financial safety gates, and mechanical guardrails aligned with the approved design.
+**Goal:** Restructure `quantleet` into a local-first, agent-legible repository with system-of-record docs, explicit financial safety gates, and mechanical guardrails aligned with the approved design.
 
 **Architecture:** Keep the project as one Python package for now, but add a repository knowledge system, local command surface, and structural checks that enforce domain boundaries and safety tiers. Start with the smallest mechanical rules that protect future growth into backtesting, paper trading, live trading, and quant tooling without overbuilding.
 

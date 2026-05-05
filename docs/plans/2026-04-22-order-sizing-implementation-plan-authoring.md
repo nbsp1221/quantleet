@@ -130,7 +130,7 @@
      system-of-record structure tests fully
 - Revised the plan to fix those findings:
   - moved the proposed cross-runtime request contract to
-    `src/quantcraft/trading/order_requests.py` instead of a
+    `src/quantleet/trading/order_requests.py` instead of a
     `research`-local file
   - strengthened Task 1 so the plan explicitly freezes additive
     `buy` / `sell` signatures, implicit-symbol `qty_percent`, and quantity-only

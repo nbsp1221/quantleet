@@ -22,7 +22,7 @@
   - The plotting spec and test scenarios define the public plotting behavior.
   - The implementation plan owns the current plotting implementation contract.
 - In-repo scope:
-  - `quantcraft.backtest.plotting`
+  - `quantleet.backtest.plotting`
   - plotting unit/integration tests
   - plotting spec text if needed to lock the UI contract
 - Out-of-repo scope:
@@ -31,7 +31,7 @@
 - Approval record, if required: Not required.
 - Verification commands:
   - `uv run pytest tests/unit/backtest/test_plotting.py tests/integration/backtest/test_plotting.py -q`
-  - `uv run ruff check src/quantcraft/backtest/plotting.py tests/unit/backtest/test_plotting.py tests/integration/backtest/test_plotting.py`
+  - `uv run ruff check src/quantleet/backtest/plotting.py tests/unit/backtest/test_plotting.py tests/integration/backtest/test_plotting.py`
   - `uv run mypy src`
   - `uv run poe repo-check`
 - Success criteria:
@@ -74,7 +74,7 @@
   - Update spec text to record the semantic color contract.
   - Run verification and subagent review.
 - Notes:
-  - Added explicit semantic color constants to `quantcraft.backtest.plotting`.
+  - Added explicit semantic color constants to `quantleet.backtest.plotting`.
   - Price now uses a neutral dark line, equity uses blue, drawdown uses a red
     underwater line with subtle red fill, the zero baseline uses gray, buy
     markers use green upward triangles, and sell markers use red downward
@@ -104,7 +104,7 @@
 - Verification evidence:
   - `uv run pytest tests/unit/backtest/test_plotting.py tests/integration/backtest/test_plotting.py tests/unit/backtest/test_results.py tests/structure/architecture/test_backtest_plotting_boundaries.py -q`
     passed with `30 passed`.
-  - `uv run ruff check src/quantcraft/backtest/plotting.py tests/unit/backtest/test_plotting.py tests/integration/backtest/test_plotting.py tests/structure/architecture/test_backtest_plotting_boundaries.py`
+  - `uv run ruff check src/quantleet/backtest/plotting.py tests/unit/backtest/test_plotting.py tests/integration/backtest/test_plotting.py tests/structure/architecture/test_backtest_plotting_boundaries.py`
     passed.
   - `uv run mypy src` passed.
   - `uv run poe repo-check` passed with `repository checks passed`.

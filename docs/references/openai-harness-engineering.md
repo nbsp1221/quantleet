@@ -1,7 +1,7 @@
 > Repo-local note:
 > This file is a local copy of an external reference article.
 > Example directory trees and filenames inside the article are illustrative
-> external examples, not `quantcraft` repo authority.
+> external examples, not `quantleet` repo authority.
 > For repo-local truth, use `AGENTS.md`, `ARCHITECTURE.md`, and the governing
 > docs routed from `docs/design-docs/index.md` and `docs/product-specs/index.md`.
 

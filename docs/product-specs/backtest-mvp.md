@@ -8,7 +8,7 @@
 
 Related documents:
 
-- [../design-docs/quantcraft-architecture.md](../design-docs/quantcraft-architecture.md)
+- [../design-docs/quantleet-architecture.md](../design-docs/quantleet-architecture.md)
 - [../design-docs/backtest-execution-semantics.md](../design-docs/backtest-execution-semantics.md)
 - [../design-docs/trading-kernel-contract-draft.md](../design-docs/trading-kernel-contract-draft.md)
 - [../design-docs/architecture-governance.md](../design-docs/architecture-governance.md)
@@ -35,7 +35,7 @@ This MVP intentionally reduces feature scope without downgrading the core engine
 
 The current preferred user-facing backtest entry lives in the `backtest` surface:
 
-- `quantcraft.backtest.BacktestEngine`
+- `quantleet.backtest.BacktestEngine`
 
 Approved current paths:
 
@@ -53,8 +53,8 @@ by this current public entry location.
 - single timeframe
 - OHLCV as the external stored format
 - canonical public data types:
-  - `quantcraft.data.TimeBar`
-  - `quantcraft.data.BarSeries`
+  - `quantleet.data.TimeBar`
+  - `quantleet.data.BarSeries`
 - `BarSeries.rows` is `tuple[TimeBar, ...]`
 - `BarSeries.bar_type` is fixed to `"time"` in this slice
 - an OHLCV-to-synthetic-L2 adapter in the backtest path
@@ -257,7 +257,7 @@ The first user-facing strategy model should stay close to familiar Python backte
 - `backtesting.py`: `Strategy.next()` with `self.buy()` and `self.sell()`
 - `backtrader`: `Strategy.next()` with `self.buy()` and `self.sell()`
 
-That is why `quantcraft` keeps a `self`-based strategy model even while aiming for Pine-like expressive goals.
+That is why `quantleet` keeps a `self`-based strategy model even while aiming for Pine-like expressive goals.
 
 ## Acceptance Criteria
 

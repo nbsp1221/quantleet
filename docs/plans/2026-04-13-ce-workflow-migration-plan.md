@@ -5,7 +5,7 @@
 - Status: `proposed`
 - Class: `migration plan`
 - Scope: evaluate whether Compound Engineering principles should replace
-  `quantcraft`'s local workflow bureaucracy, without making the repo entry
+  `quantleet`'s local workflow bureaucracy, without making the repo entry
   contract depend on opaque external commands
 
 Related documents:
@@ -143,7 +143,7 @@ Before any authority rewrite or destructive cleanup:
 
 - use the current self-contained repo contract
 - keep current hard gates active
-- compare candidate workflow behavior on real `quantcraft` tasks
+- compare candidate workflow behavior on real `quantleet` tasks
 
 ### Candidate workflow under test
 
@@ -196,7 +196,7 @@ Exception records are useful but do **not** satisfy the evidence gate.
 
 The migration may advance only if all of the following are true:
 
-1. at least three real `quantcraft` tasks were compared
+1. at least three real `quantleet` tasks were compared
 2. no task bypassed Tier A, runtime, live, perf, or architecture controls
 3. candidate workflow planning/review produced equal or better reviewer signal
    than both comparators

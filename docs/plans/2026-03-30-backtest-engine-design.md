@@ -9,7 +9,7 @@
 Related documents:
 
 - [../../ARCHITECTURE.md](../../ARCHITECTURE.md)
-- [../design-docs/quantcraft-architecture.md](../design-docs/quantcraft-architecture.md)
+- [../design-docs/quantleet-architecture.md](../design-docs/quantleet-architecture.md)
 - [../product-specs/backtest-mvp.md](../product-specs/backtest-mvp.md)
 - [../product-specs/research-ergonomics.md](../product-specs/research-ergonomics.md)
 - [../references/openai-harness-engineering.md](../references/openai-harness-engineering.md)
@@ -25,11 +25,11 @@ Related documents:
 
 Add a user-facing `BacktestEngine` execution container so users can configure a backtest runtime once and then run strategies through a self-describing bar series dataset rather than a low-level `run_backtest(...)` free-function call.
 
-This slice improves execution ergonomics and clarifies the long-term `backtest / paper / live` runtime family without locking `quantcraft` into a source/feed contract that leaks hidden metadata assumptions.
+This slice improves execution ergonomics and clarifies the long-term `backtest / paper / live` runtime family without locking `quantleet` into a source/feed contract that leaks hidden metadata assumptions.
 
 ## Why This Slice Exists
 
-Current `quantcraft` strategy ergonomics are now credible:
+Current `quantleet` strategy ergonomics are now credible:
 
 - `Strategy`
 - `ta`
@@ -58,7 +58,7 @@ This is explicit, but it is also engine-facing and repetitive:
 - `rows` are not self-describing
 - the public surface does not yet hint at future backtest/paper/live runtime parity
 
-The previous intermediate idea was to let `BacktestEngine.run(source=...)` infer `symbol` and `timeframe` directly from the source object. That turns out to be the wrong abstraction boundary for `quantcraft`.
+The previous intermediate idea was to let `BacktestEngine.run(source=...)` infer `symbol` and `timeframe` directly from the source object. That turns out to be the wrong abstraction boundary for `quantleet`.
 
 Why it is wrong:
 
@@ -81,7 +81,7 @@ Key lessons:
 
 Do not copy directly:
 
-- `quantcraft` must not become a backtest-only convenience API that hides execution semantics
+- `quantleet` must not become a backtest-only convenience API that hides execution semantics
 
 ### Backtrader
 
@@ -94,11 +94,11 @@ Key lessons:
 
 Do not copy directly:
 
-- `quantcraft` should avoid a broad framework container before the kernel and parity story mature
+- `quantleet` should avoid a broad framework container before the kernel and parity story mature
 
 ### PyBroker and vectorbt
 
-Both are useful because they separate acquisition and execution more clearly than the current hybrid `quantcraft` attempt.
+Both are useful because they separate acquisition and execution more clearly than the current hybrid `quantleet` attempt.
 
 Key lessons:
 
@@ -199,7 +199,7 @@ This is the core contract change that resolves the current hybrid mismatch witho
 This is deliberate:
 
 - `bars=...` is the self-describing materialized dataset path
-- `source=...` remains convenient for `quantcraft.data`
+- `source=...` remains convenient for `quantleet.data`
 - the source path must materialize into `BarSeries` before execution
 
 ### Source Contract Direction
@@ -217,12 +217,12 @@ Instead:
 
 ### Public Import Surface
 
-To avoid future agent ambiguity, the new public data types are imported from `quantcraft.data`.
+To avoid future agent ambiguity, the new public data types are imported from `quantleet.data`.
 
 Approved public import paths:
 
-- `quantcraft.data.TimeBar`
-- `quantcraft.data.BarSeries`
+- `quantleet.data.TimeBar`
+- `quantleet.data.BarSeries`
 
 ### Strategy Passing
 
@@ -235,7 +235,7 @@ engine.run(source=source, strategy=MyStrategy())
 engine.run(bars=bars, strategy=MyStrategy())
 ```
 
-This preserves the current `quantcraft` strategy mental model and avoids opening constructor or optimizer contracts in this slice.
+This preserves the current `quantleet` strategy mental model and avoids opening constructor or optimizer contracts in this slice.
 
 ## Architecture Direction
 
@@ -267,7 +267,7 @@ Humans closed:
 - the `bars` or `source` dual-input contract
 - the dataset contract direction
 - the public names `TimeBar` and `BarSeries`
-- the public import surface `quantcraft.data`
+- the public import surface `quantleet.data`
 - the rule that this slice supports `time` bars only
 - the rule that source metadata must not remain implicit
 - the strategy-instance contract
@@ -317,7 +317,7 @@ The slice should prove:
 - `BacktestEngine.run(bars=..., strategy=...)` produces the same result shape as the current backtest path
 - `BacktestEngine.run(source=..., strategy=...)` materializes through the existing data-ingestion path into the dataset contract before execution
 - mixed or invalid input combinations fail clearly
-- `run_backtest(...)` is removed from the public `quantcraft.research` execution story in code, docs, and tests
+- `run_backtest(...)` is removed from the public `quantleet.research` execution story in code, docs, and tests
 - quickstart and docs use the new preferred execution surface consistently
 
 ## Success Criteria

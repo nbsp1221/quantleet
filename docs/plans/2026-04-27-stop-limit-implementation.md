@@ -174,13 +174,13 @@ verification.
 Do not add a new package or folder for stop-limit. Existing package ownership is
 already adequate:
 
-- `src/quantcraft/trading/domain/`
+- `src/quantleet/trading/domain/`
   - shared order contracts, runtime order lifecycle, matching, and state
-- `src/quantcraft/trading/`
+- `src/quantleet/trading/`
   - request normalization and sizing
-- `src/quantcraft/research/`
+- `src/quantleet/research/`
   - strategy authoring surface
-- `src/quantcraft/backtest/`
+- `src/quantleet/backtest/`
   - OHLC execution model, strategy activation, and backtest runtime
 - `tests/unit/trading/`
   - local domain/request/sizing contracts
@@ -200,14 +200,14 @@ Current call flow before this implementation:
 
 1. `Strategy.buy()` / `Strategy.sell()` accept `order_type`, `quantity`,
    `qty_percent`, `limit_price`, `stop_price`, and `tag` in
-   `src/quantcraft/research/strategy.py`.
+   `src/quantleet/research/strategy.py`.
 2. `_infer_trigger_condition()` currently only accepts `stop_market`, rejects
    `qty_percent`, rejects missing/equal stop price, and compares `stop_price`
    with the active closed bar close.
 3. `PendingOrderRequest` validates request shape in
-   `src/quantcraft/trading/order_requests.py`.
+   `src/quantleet/trading/order_requests.py`.
 4. `_StrategyDriver.activate_pending_order_requests()` resolves sizing at next
-   bar activation in `src/quantcraft/backtest/strategy_runtime.py`.
+   bar activation in `src/quantleet/backtest/strategy_runtime.py`.
 5. `OrderIntent` and `Order` carry trigger fields plus `limit_price`, but
    validations currently reserve trigger facts for `stop_market` only.
 6. `ConservativeOHLCVExecutionModel.tick_events_for_bar()` emits decisive ticks
@@ -247,7 +247,7 @@ Keep helpers local to the owning module unless shared by multiple modules.
 ### Hard Part
 
 Most of the implementation is straightforward generalization. The only
-non-trivial part is `src/quantcraft/backtest/execution_model.py`.
+non-trivial part is `src/quantleet/backtest/execution_model.py`.
 
 Current decisive events are computed from active orders at bar start. That works
 for ordinary limits and stop-market triggers. For stop-limit, a dormant order
@@ -272,49 +272,49 @@ of the canonical path.
 
 ### Source Files To Modify
 
-- `src/quantcraft/trading/domain/intents.py`
+- `src/quantleet/trading/domain/intents.py`
   - Add `stop_limit` to `OrderType`.
   - Generalize validation into stop-family branches.
   - `stop_market`: require trigger facts, reject `limit_price`.
   - `stop_limit`: require trigger facts and `limit_price`.
   - Non-stop orders: reject trigger facts and `triggered_at` remains runtime
     only on `Order`.
-- `src/quantcraft/trading/domain/orders.py`
+- `src/quantleet/trading/domain/orders.py`
   - Mirror `OrderIntent` validation.
   - Dormant `stop_market` and dormant `stop_limit` are non-executable.
   - Triggered `stop_market` has executable type `market`.
   - Triggered `stop_limit` has executable type `limit`.
   - Trigger preserves order id, order type, trigger facts, limit price, tag, and
     filled quantity.
-- `src/quantcraft/trading/domain/matching.py`
+- `src/quantleet/trading/domain/matching.py`
   - `is_order_triggered()` recognizes untriggered stop-family orders.
   - `match_order()` should not need stop-limit-specific fill logic.
-- `src/quantcraft/trading/order_requests.py`
+- `src/quantleet/trading/order_requests.py`
   - `stop_limit` requires `stop_price`, inferred `trigger_condition`, and
     `limit_price`.
   - `qty_percent + stop_limit` is rejected.
   - `stop_price` and `trigger_condition` are valid for stop-family orders only.
   - `trigger_type="last"` is assigned for stop-family order types.
-- `src/quantcraft/trading/sizing.py`
+- `src/quantleet/trading/sizing.py`
   - Explicit quantity `stop_limit` buy requests do not reserve ordinary cash
     before trigger in the first slice.
   - Dormant active buy `stop_limit` orders do not reduce ordinary percent-buy
     budget.
   - Triggered buy `stop_limit` orders reserve cash like ordinary buy limits.
-- `src/quantcraft/research/strategy.py`
+- `src/quantleet/research/strategy.py`
   - Infer trigger condition for `stop_market` and `stop_limit`.
   - Preserve current public API; no new parameters.
   - Reject `qty_percent` for stop-family first-slice orders.
   - Error text should say "stop-family" or name the concrete order type when it
     helps users.
-- `src/quantcraft/backtest/execution_model.py`
+- `src/quantleet/backtest/execution_model.py`
   - Extend crossing-price discovery to stop-limit causal tail cases.
   - Keep `trading` bar-unaware.
-- `src/quantcraft/backtest/strategy_runtime.py`
+- `src/quantleet/backtest/strategy_runtime.py`
   - Generalize flat sell no-op from `stop_market` to stop-family where needed.
   - Existing runtime processing should mostly work after order/matching
     generalization.
-- `src/quantcraft/backtest/runtime.py`
+- `src/quantleet/backtest/runtime.py`
   - Keep same-event priority semantics.
   - Only change if tests show triggered-but-unfilled stop-limits are not carried
     forward correctly.
@@ -368,9 +368,9 @@ of the canonical path.
 - Modify: `tests/unit/trading/test_contracts.py`
 - Modify: `tests/unit/trading/test_orders.py`
 - Modify: `tests/unit/research/test_strategy_surface.py`
-- Modify: `src/quantcraft/trading/domain/intents.py`
-- Modify: `src/quantcraft/trading/order_requests.py`
-- Modify: `src/quantcraft/research/strategy.py`
+- Modify: `src/quantleet/trading/domain/intents.py`
+- Modify: `src/quantleet/trading/order_requests.py`
+- Modify: `src/quantleet/research/strategy.py`
 
 **Step 1: Write failing tests**
 
@@ -453,8 +453,8 @@ The repo does not require per-task commits in this session.
 **Files:**
 
 - Modify: `tests/unit/trading/test_orders.py`
-- Modify: `src/quantcraft/trading/domain/intents.py`
-- Modify: `src/quantcraft/trading/domain/orders.py`
+- Modify: `src/quantleet/trading/domain/intents.py`
+- Modify: `src/quantleet/trading/domain/orders.py`
 
 **Step 1: Write failing tests**
 
@@ -498,8 +498,8 @@ Expected: pass.
 **Files:**
 
 - Modify: `tests/unit/trading/test_matching_and_state.py`
-- Modify: `src/quantcraft/trading/domain/matching.py`
-- Modify: `src/quantcraft/trading/domain/orders.py` only if Task 2 missed a
+- Modify: `src/quantleet/trading/domain/matching.py`
+- Modify: `src/quantleet/trading/domain/orders.py` only if Task 2 missed a
   lifecycle helper.
 
 **Step 1: Write failing tests**
@@ -542,8 +542,8 @@ Expected: pass.
 
 - Modify: `tests/unit/trading/test_sizing.py`
 - Modify: `tests/unit/backtest/test_order_sizing_activation.py`
-- Modify: `src/quantcraft/trading/sizing.py`
-- Modify: `src/quantcraft/backtest/strategy_runtime.py`
+- Modify: `src/quantleet/trading/sizing.py`
+- Modify: `src/quantleet/backtest/strategy_runtime.py`
 
 **Step 1: Write failing tests**
 
@@ -584,7 +584,7 @@ Expected: pass.
 **Files:**
 
 - Modify: `tests/unit/backtest/test_execution_model.py`
-- Modify: `src/quantcraft/backtest/execution_model.py`
+- Modify: `src/quantleet/backtest/execution_model.py`
 
 **Step 1: Write failing tests**
 
@@ -654,7 +654,7 @@ Expected: pass.
 
 - Add: `tests/integration/research/test_stop_limit_execution_semantics.py`
 - Modify: `tests/integration/research/support_backtest_runner.py`
-- Modify: `src/quantcraft/backtest/runtime.py` only if needed.
+- Modify: `src/quantleet/backtest/runtime.py` only if needed.
 - Modify: previous source files only if integration exposes a lower-layer gap.
 
 **Step 1: Write failing tests**

@@ -4,7 +4,7 @@
 
 - Status: `draft evidence note`
 - Class: `experiment result`
-- Scope: compare `quantcraft` limit-order backtest outputs against external libraries before freezing new canonical limit regressions
+- Scope: compare `quantleet` limit-order backtest outputs against external libraries before freezing new canonical limit regressions
 
 Related documents:
 
@@ -14,13 +14,13 @@ Related documents:
 ## Purpose
 
 The point of this experiment was to avoid freezing new limit-order golden
-results from `quantcraft` without an external comparison baseline.
+results from `quantleet` without an external comparison baseline.
 
 The working question was:
 
 - if the same dataset and the same high-level strategy rules are run in several
   well-known backtesting libraries, do the resulting trade counts, fill prices,
-  and ending equity agree closely enough that `quantcraft` can be trusted as a
+  and ending equity agree closely enough that `quantleet` can be trusted as a
   source of canonical limit-order regression values?
 
 ## Dataset And Shared Experiment Rules
@@ -32,7 +32,7 @@ The working question was:
   - fee rate: `0.04%`
   - slippage: `1 tick`
 - engines:
-  - `quantcraft`
+  - `quantleet`
   - `backtrader`
   - `pyalgotrade`
   - `nautilus_trader`
@@ -78,24 +78,24 @@ engine-specific open-position accounting behavior.
 ### Zero-Cost Baseline
 
 The first baseline run used zero fees and zero slippage and already showed
-`quantcraft` diverging from the conservative external-engine cluster. That run
+`quantleet` diverging from the conservative external-engine cluster. That run
 remains useful as exploratory context only.
 
 ### Cost Run: EMA Pullback Buy-Limit With Market Exit
 
 | Engine | Closed Trades | Fill Count | Final Equity |
 | --- | --- | --- | --- |
-| `quantcraft` | 29 | 58 | `1_010_378.0082` |
+| `quantleet` | 29 | 58 | `1_010_378.0082` |
 | `backtrader` | 29 | 58 | `1_000_226.3763` |
 | `pyalgotrade` | 28 | 56 | `1_000_302.1064` |
 | `nautilus_trader` | 29 | 58 | `1_010_371.2110` |
 
 Interpretation:
 
-- `quantcraft` and `nautilus_trader` were extremely close
+- `quantleet` and `nautilus_trader` were extremely close
 - `backtrader` and `pyalgotrade` formed a tighter conservative cluster below
-  the `quantcraft` / `nautilus_trader` pair
-- this supports the idea that `quantcraft` may be philosophically closer to an
+  the `quantleet` / `nautilus_trader` pair
+- this supports the idea that `quantleet` may be philosophically closer to an
   execution-engine style optimistic fill model than to a conservative
   bar-backtester model
 
@@ -103,7 +103,7 @@ Interpretation:
 
 | Engine | Closed Trades | Fill Count | Final Equity |
 | --- | --- | --- | --- |
-| `quantcraft` | 14 | 29 | `1_003_881.3978` |
+| `quantleet` | 14 | 29 | `1_003_881.3978` |
 | `backtrader` | 14 | 29 | `998_389.9213` |
 | `pyalgotrade` | 14 | 29 | `998_389.9213` |
 | `nautilus_trader` | 1 | 2 | `993_388.0978` |
@@ -111,7 +111,7 @@ Interpretation:
 Interpretation:
 
 - `backtrader` and `pyalgotrade` still matched exactly
-- `quantcraft` remained materially more favorable than the conservative pair
+- `quantleet` remained materially more favorable than the conservative pair
 - the current Nautilus port for this strategy did not produce a comparable
   sequence of repeated take-profit fills, so it is not yet a reliable
   apples-to-apples comparator for this strategy family
@@ -120,7 +120,7 @@ Interpretation:
 
 | Engine | Closed Trades | Fill Count | Final Equity |
 | --- | --- | --- | --- |
-| `quantcraft` | 27 | 55 | `1_006_367.1218` |
+| `quantleet` | 27 | 55 | `1_006_367.1218` |
 | `backtrader` | 27 | 55 | `994_482.0805` |
 | `pyalgotrade` | 27 | 55 | `994_484.8816` |
 | `nautilus_trader` | 1 | 2 | `991_259.5468` |
@@ -128,7 +128,7 @@ Interpretation:
 Interpretation:
 
 - `backtrader` and `pyalgotrade` again formed a tight conservative cluster
-- `quantcraft` remained materially more optimistic
+- `quantleet` remained materially more optimistic
 - the current Nautilus port again failed to generate repeated comparable
   passive-limit exits, so it cannot yet be treated as a finalized comparator
   for this strategy family
@@ -136,16 +136,16 @@ Interpretation:
 ## Main Finding
 
 The cost-adjusted experiment still does **not** support immediately freezing
-`quantcraft` limit strategy outputs as canonical real-data regression values.
+`quantleet` limit strategy outputs as canonical real-data regression values.
 
 Instead, it supports the narrower conclusion:
 
-- `quantcraft` currently uses a materially different limit-order fill semantic
+- `quantleet` currently uses a materially different limit-order fill semantic
   from the `backtrader` / `pyalgotrade` cluster
-- `nautilus_trader` appears philosophically closer to `quantcraft` for the EMA
+- `nautilus_trader` appears philosophically closer to `quantleet` for the EMA
   pullback strategy under a custom market-only one-tick slippage fill model
 
-The most likely reason is that `quantcraft` treats limit orders as filling at
+The most likely reason is that `quantleet` treats limit orders as filling at
 the best actually executable synthetic tick price once the limit condition is
 met, while the conservative bar-based engines used here mostly behave as if a
 triggered limit fills at the limit price itself.
@@ -163,14 +163,14 @@ Do **not** freeze real-data canonical limit-order golden results yet.
 Before doing that, the repository needs an explicit decision on which semantic
 contract it wants:
 
-1. `quantcraft` semantics are intentional
+1. `quantleet` semantics are intentional
    - keep them
    - document them clearly
    - add synthetic tests that defend the chosen behavior
    - only then freeze real-data golden results
 
 2. external-engine consensus semantics are preferred
-   - change `quantcraft`
+   - change `quantleet`
    - re-run the comparison
    - only then freeze real-data golden results
 

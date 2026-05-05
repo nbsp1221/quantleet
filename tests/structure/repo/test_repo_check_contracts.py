@@ -22,7 +22,7 @@ def test_check_docs_flags_missing_required_doc(tmp_path: Path) -> None:
 def test_check_docs_flags_placeholder_project_metadata(tmp_path: Path) -> None:
     write_minimal_repo_docs(tmp_path)
     (tmp_path / "README.md").write_text(
-        "# quantcraft\n\n## Setup\n\nAdd your description here\n",
+        "# quantleet\n\n## Setup\n\nAdd your description here\n",
         encoding="utf-8",
     )
 
@@ -40,7 +40,7 @@ def test_check_docs_does_not_fail_on_untracked_indexed_artifact_when_head_exists
     (tmp_path / "pyproject.toml").write_text(
         """
 [project]
-name = "quantcraft"
+name = "quantleet"
 version = "0.1.0"
 
 [dependency-groups]
@@ -128,7 +128,7 @@ def test_check_docs_flags_unindexed_golden_principles_doc(tmp_path: Path) -> Non
     (tmp_path / "pyproject.toml").write_text(
         """
 [project]
-name = "quantcraft"
+name = "quantleet"
 version = "0.1.0"
 
 [dependency-groups]
@@ -190,7 +190,7 @@ def test_repo_check_accepts_minimal_active_contract_without_legacy_harness_artif
     (tmp_path / "pyproject.toml").write_text(
         """
 [project]
-name = "quantcraft"
+name = "quantleet"
 version = "0.1.0"
 
 [dependency-groups]
@@ -220,7 +220,7 @@ verify = ["lint", "typecheck", "test", "coverage", "build", "repo-check", "noteb
 """.strip(),
         encoding="utf-8",
     )
-    package_root = tmp_path / "src" / "quantcraft"
+    package_root = tmp_path / "src" / "quantleet"
     package_root.mkdir(parents=True)
     (package_root / "__init__.py").write_text("", encoding="utf-8")
 

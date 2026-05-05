@@ -1,6 +1,6 @@
 import pytest
 
-from quantcraft._repo_tools import run_live_smoke
+from quantleet._repo_tools import run_live_smoke
 
 pytestmark = pytest.mark.live
 

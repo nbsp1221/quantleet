@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import pytest
 
-from quantcraft.backtest import BacktestEngine, BacktestSummary, ExposureSummary
-from quantcraft.data import TimeBar
-from quantcraft.research import Strategy, qc, ta
-from quantcraft.trading.domain.costs import CostConfig
+from quantleet.backtest import BacktestEngine, BacktestSummary, ExposureSummary
+from quantleet.data import TimeBar
+from quantleet.research import Strategy, qc, ta
+from quantleet.trading.domain.costs import CostConfig
 from tests.integration.research.support_backtest_runner import make_bar_series, run_engine_backtest
 from tests.support_backtest import (
     canonical_trade_log_digest,

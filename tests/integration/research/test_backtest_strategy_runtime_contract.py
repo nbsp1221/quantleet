@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from quantcraft.data import TimeBar
-from quantcraft.trading.domain.costs import CostConfig
+from quantleet.data import TimeBar
+from quantleet.trading.domain.costs import CostConfig
 from tests.integration.research.support_backtest_runner import (
     PositionViewProbeStrategy,
     ReusedStrategyInstanceProbe,

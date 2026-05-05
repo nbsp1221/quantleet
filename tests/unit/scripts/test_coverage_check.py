@@ -24,7 +24,7 @@ def test_coverage_check_passes_when_thresholds_are_met(
                     {
                         "totals": {"percent_covered": 90.5},
                         "files": {
-                            "src/quantcraft/trading/domain/matching.py": {
+                            "src/quantleet/trading/domain/matching.py": {
                                 "summary": {"percent_covered": 100.0}
                             }
                         },
@@ -57,7 +57,7 @@ def test_coverage_check_fails_when_thresholds_are_below_policy(
                     {
                         "totals": {"percent_covered": 89.0},
                         "files": {
-                            "src/quantcraft/trading/domain/matching.py": {
+                            "src/quantleet/trading/domain/matching.py": {
                                 "summary": {"percent_covered": 99.0}
                             }
                         },

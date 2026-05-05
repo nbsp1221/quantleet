@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import pytest
 
-import quantcraft.integrations.venues.ccxt.market_data as exchange_backend
-from quantcraft.backtest import BacktestEngine, BacktestResult
-from quantcraft.data import CCXTDataSource, DataFrameDataSource
-from quantcraft.trading.domain.costs import CostConfig
+import quantleet.integrations.venues.ccxt.market_data as exchange_backend
+from quantleet.backtest import BacktestEngine, BacktestResult
+from quantleet.data import CCXTDataSource, DataFrameDataSource
+from quantleet.trading.domain.costs import CostConfig
 from tests.integration.research.support_backtest_runner import (
     DeterministicEntryExitStrategy,
     FakeExchangeClient,

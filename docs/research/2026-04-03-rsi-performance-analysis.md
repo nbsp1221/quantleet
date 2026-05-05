@@ -64,10 +64,10 @@ should be read as hotspot evidence, not as the throughput baseline itself.
 
 Top cumulative hotspots:
 
-- `src/quantcraft/research/ta.py:_compute_rsi` about `60.68s`
-- `src/quantcraft/research/ta.py:_series_values` about `17.97s`
-- `src/quantcraft/research/domain/series.py:SeriesView.__getitem__` about `9.06s`
-- `src/quantcraft/research/domain/series.py:_SeriesBuffer.append` about `1.00s`
+- `src/quantleet/research/ta.py:_compute_rsi` about `60.68s`
+- `src/quantleet/research/ta.py:_series_values` about `17.97s`
+- `src/quantleet/research/domain/series.py:SeriesView.__getitem__` about `9.06s`
+- `src/quantleet/research/domain/series.py:_SeriesBuffer.append` about `1.00s`
 
 Interpretation:
 
@@ -86,7 +86,7 @@ Evidence in the current code:
 
 - `sma`, `ema`, `rsi`, `atr`, and `cci` all return `_ComputedSeriesView`
   instances keyed by `len(...)` or length tuples in
-  [ta.py](/home/retn0/repositories/nbsp1221/quantcraft/src/quantcraft/research/ta.py)
+  [ta.py](/home/retn0/repositories/nbsp1221/quantleet/src/quantleet/research/ta.py)
 - `bb` and `macd` also use memoized full-series bundles that
   invalidate on the same append-driven version changes
 - all of those paths depend on `_series_values(...)`, which rebuilds visible
@@ -227,10 +227,10 @@ Why this shape is the closest fit:
 So the benchmark remained RSI, but the optimization target was the generic
 indicator runtime, and the intended code shape is:
 
-- public facade: `src/quantcraft/research/ta.py`
-- shared runtime: `src/quantcraft/research/indicators/runtime/`
+- public facade: `src/quantleet/research/ta.py`
+- shared runtime: `src/quantleet/research/indicators/runtime/`
 - indicator wrappers/state adapters:
-  `src/quantcraft/research/indicators/pure/`
+  `src/quantleet/research/indicators/pure/`
 
 Under that structure:
 

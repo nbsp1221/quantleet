@@ -139,13 +139,13 @@
     unless they are explicitly modified here as part of shipping the feature.
 - Read-only architecture review synthesis:
   - Safe writer-owned code files:
-    - `src/quantcraft/research/strategy.py`
-    - `src/quantcraft/backtest/strategy_runtime.py`
-    - `src/quantcraft/backtest/runtime.py`
+    - `src/quantleet/research/strategy.py`
+    - `src/quantleet/backtest/strategy_runtime.py`
+    - `src/quantleet/backtest/runtime.py`
     - new neutral support files outside `trading.domain`, as already approved by
       the implementation plan:
-      `src/quantcraft/trading/order_requests.py`
-      `src/quantcraft/trading/sizing.py`
+      `src/quantleet/trading/order_requests.py`
+      `src/quantleet/trading/sizing.py`
   - Safe writer-owned test/doc files:
     - `tests/unit/research/test_strategy_surface.py`
     - `tests/unit/trading/test_contracts.py`
@@ -155,9 +155,9 @@
     - `tests/integration/research/test_order_sizing_contract.py`
     - shipped product-spec routing/docs touched by this slice
   - Do not widen `trading.domain`:
-    - `src/quantcraft/trading/domain/intents.py:10-16` is the current
+    - `src/quantleet/trading/domain/intents.py:10-16` is the current
       quantity-only `OrderIntent` minimum contract and should stay unchanged
-    - `src/quantcraft/trading/domain/orders.py:9-40` is the runtime quantity-only
+    - `src/quantleet/trading/domain/orders.py:9-40` is the runtime quantity-only
       `Order` contract and should stay unchanged
   - Evidence:
     - `docs/product-specs/order-sizing.md:142-167` requires raw `qty_percent`
@@ -167,12 +167,12 @@
       assigns intake validation to `research`, activation timing to `backtest`,
       and keeps the neutral request seam plus sizing policy outside
       `trading.domain`
-    - `src/quantcraft/research/strategy.py:41-116` currently stores pending
+    - `src/quantleet/research/strategy.py:41-116` currently stores pending
       `OrderIntent` directly and therefore owns the public intake change
-    - `src/quantcraft/backtest/strategy_runtime.py:13-132` currently activates
+    - `src/quantleet/backtest/strategy_runtime.py:13-132` currently activates
       pending `OrderIntent` objects directly into runtime `Order` and therefore
       owns the runtime-resolution seam
-    - `src/quantcraft/backtest/runtime.py:39-105` currently activates pending
+    - `src/quantleet/backtest/runtime.py:39-105` currently activates pending
       orders before each bar and therefore owns same-bar timing preservation
 - Read-only runtime semantics review synthesis:
   - Minimal runtime data required by the shared sizing resolver:
@@ -185,32 +185,32 @@
     - buy-side anchor: one executable buy reference price supplied by the
       current runtime
   - Source evidence:
-    - `src/quantcraft/trading/domain/state.py:9-15` defines the current
+    - `src/quantleet/trading/domain/state.py:9-15` defines the current
       state fields; `cash` and `position_quantity` are the only current runtime
       resource bases for spot-like long-only sizing
-    - `src/quantcraft/trading/domain/state.py:27-45` enforces buy affordability
+    - `src/quantleet/trading/domain/state.py:27-45` enforces buy affordability
       as `price * quantity + fee <= cash` and sell closability as
       `quantity <= position_quantity`
-    - `src/quantcraft/trading/domain/orders.py:42-48` exposes unresolved
+    - `src/quantleet/trading/domain/orders.py:42-48` exposes unresolved
       `remaining_quantity`, which is the existing canonical reservation unit
-    - `src/quantcraft/trading/domain/matching.py:30-45` derives fill price and
+    - `src/quantleet/trading/domain/matching.py:30-45` derives fill price and
       fee from order side, order type, and `CostConfig`
-    - `src/quantcraft/trading/domain/costs.py:7-19` defines the current fee
+    - `src/quantleet/trading/domain/costs.py:7-19` defines the current fee
       and slippage inputs available to the runtime
-    - `src/quantcraft/backtest/execution_model.py:45-72` emits the executable
+    - `src/quantleet/backtest/execution_model.py:45-72` emits the executable
       per-bar tick path beginning at bar open, which is the correct market-buy
       affordability anchor in the current backtest model
-    - `src/quantcraft/backtest/execution_model.py:102-140` shows limit orders
+    - `src/quantleet/backtest/execution_model.py:102-140` shows limit orders
       are evaluated against their own `limit_price` crossings, which supports
       using submitted `limit_price` as the conservative limit-buy anchor
-    - `src/quantcraft/backtest/runtime.py:43-49` activates pending orders
+    - `src/quantleet/backtest/runtime.py:43-49` activates pending orders
       before each bar and builds the executable tick path from the full active
       order tuple, so same-cycle percent requests must resolve serially against
       evolving reservations
-    - `src/quantcraft/backtest/runtime.py:51-91` replaces active orders after
+    - `src/quantleet/backtest/runtime.py:51-91` replaces active orders after
       fills, meaning reservation-aware sell sizing should key off unresolved
       active exits rather than original order size
-    - `src/quantcraft/backtest/strategy_runtime.py:63-70` is the activation
+    - `src/quantleet/backtest/strategy_runtime.py:63-70` is the activation
       seam where pending requests must stop being raw strategy intake and start
       becoming quantity-only runtime orders
 - Blockers or scope changes:
@@ -218,7 +218,7 @@
     percent buys were reserving the pre-rounding requested budget instead of
     the actual resolved order budget, which could under-size later same-cycle
     percent buys when quantity increments were coarse.
-  - Fixed in `src/quantcraft/trading/sizing.py` and locked by
+  - Fixed in `src/quantleet/trading/sizing.py` and locked by
     `tests/unit/trading/test_sizing.py`.
 
 ## Evaluator Review
@@ -231,9 +231,9 @@
     instead of the pre-rounding requested budget, keeping same-cycle percent
     buys aligned with the documented unresolved-remainder reservation rule.
   - Read-only review synthesis confirmed:
-    - raw `qty_percent` does not appear in `src/quantcraft/trading/domain/*`
-    - strategy-facing `%` intake stays in `src/quantcraft/research/strategy.py`
-    - activation-time resolution stays in `src/quantcraft/backtest/strategy_runtime.py`
+    - raw `qty_percent` does not appear in `src/quantleet/trading/domain/*`
+    - strategy-facing `%` intake stays in `src/quantleet/research/strategy.py`
+    - activation-time resolution stays in `src/quantleet/backtest/strategy_runtime.py`
     - shipped product-spec routing now promotes `docs/product-specs/order-sizing.md`
       to governing current scope
 - Verification evidence:

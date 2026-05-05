@@ -19,7 +19,7 @@
   - `ARCHITECTURE.md`
   - `docs/design-docs/index.md`
   - `docs/design-docs/core-beliefs.md`
-  - `docs/design-docs/quantcraft-architecture.md`
+  - `docs/design-docs/quantleet-architecture.md`
   - `docs/design-docs/architecture-governance.md`
   - `docs/product-specs/index.md`
   - `docs/RELIABILITY.md`
@@ -48,7 +48,7 @@
 - Success criteria:
   - the governing docs state the capability-first v0 architecture clearly and without contradiction
   - `backtest` is documented as a peer runtime context rather than a `research` sub-layer target
-  - product surfaces such as `apps/api` are distinguished from `src/quantcraft` engine/package boundaries
+  - product surfaces such as `apps/api` are distinguished from `src/quantleet` engine/package boundaries
   - terminology guidance covers `integrations`, `_shared`, asset-neutral naming, and facade/public API intent
   - design-doc indexes route readers to the new authority
   - repo/document checks pass
@@ -91,7 +91,7 @@
 
 - Findings:
   - `AGENTS.md` now explicitly treats itself as a map and routes package-topology questions to long-lived design docs instead of duplicating architecture detail
-  - `ARCHITECTURE.md` and `docs/design-docs/quantcraft-architecture.md` now agree on the same capability-first v0 baseline:
+  - `ARCHITECTURE.md` and `docs/design-docs/quantleet-architecture.md` now agree on the same capability-first v0 baseline:
     - `data`
     - `trading`
     - `research`

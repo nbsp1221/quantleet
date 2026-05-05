@@ -12,11 +12,11 @@ from typing import Any
 
 import pytest
 
-from quantcraft.backtest import BacktestEngine, BacktestReport
-from quantcraft.data import BarSeries, DataFrameDataSource, TimeBar
-from quantcraft.research import Strategy, qc, ta
-from quantcraft.trading.domain.costs import CostConfig
-from quantcraft.trading.domain.events import FillEvent
+from quantleet.backtest import BacktestEngine, BacktestReport
+from quantleet.data import BarSeries, DataFrameDataSource, TimeBar
+from quantleet.research import Strategy, qc, ta
+from quantleet.trading.domain.costs import CostConfig
+from quantleet.trading.domain.events import FillEvent
 
 CANONICAL_BACKTEST_FIXTURE_PATH = (
     Path(__file__).resolve().parent

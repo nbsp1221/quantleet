@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from quantcraft.backtest.order_activation import OrderActivationPolicy
+from quantleet.backtest.order_activation import OrderActivationPolicy
 
 
 def test_policy_activates_only_on_new_tick_timestamp() -> None:

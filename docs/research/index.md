@@ -1,6 +1,6 @@
 # Research
 
-Use this directory for time-scoped competitive research, ecosystem scans, and comparative studies that inform `quantcraft` planning.
+Use this directory for time-scoped competitive research, ecosystem scans, and comparative studies that inform `quantleet` planning.
 
 ## Metadata
 
@@ -21,7 +21,7 @@ Use this directory for time-scoped competitive research, ecosystem scans, and co
 
 | Document | Status | Canonical | Applicability | Read When | Notes |
 | --- | --- | --- | --- | --- | --- |
-| [`libraries/backtesting-py.md`](libraries/backtesting-py.md) | current | no | library-specific research | Before copying the ergonomics or reporting patterns of `backtesting.py` into `quantcraft`. | Advisory dossier for the bar-native, single-asset research tool with a strong imperative strategy API. |
+| [`libraries/backtesting-py.md`](libraries/backtesting-py.md) | current | no | library-specific research | Before copying the ergonomics or reporting patterns of `backtesting.py` into `quantleet`. | Advisory dossier for the bar-native, single-asset research tool with a strong imperative strategy API. |
 | [`libraries/backtrader.md`](libraries/backtrader.md) | current | no | library-specific research | Before evaluating multi-data, multi-timeframe, analyzer, or broker-adapter surface ideas. | Advisory dossier for the broad classic Python backtesting framework. |
 | [`libraries/vectorbt.md`](libraries/vectorbt.md) | current | no | library-specific research | Before planning vectorized research UX, parameter sweeps, or notebook-first analytics. | Advisory dossier for the dataframe- and portfolio-centric research stack. |
 | [`libraries/nautilustrader.md`](libraries/nautilustrader.md) | current | no | library-specific research | Before planning shared-kernel backtest, paper, and live parity or higher-realism execution semantics. | Advisory dossier for the closest current architectural north-star in the comparison set. |

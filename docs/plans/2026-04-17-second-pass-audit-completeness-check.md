@@ -107,7 +107,7 @@
   - no `git add`; staging remains human-only
 - Blockers or scope changes:
   - 2026-04-17: second-pass synthesis accepted one newly omitted material
-    finding around the breadth of the `quantcraft.integrations.venues.ccxt`
+    finding around the breadth of the `quantleet.integrations.venues.ccxt`
     public surface.
   - 2026-04-17: no additional new critical correctness hole was found beyond
     the two already recorded in the first-pass audit.
@@ -116,7 +116,7 @@
 
 - Findings:
   - New medium-severity omitted finding:
-    - [src/quantcraft/integrations/venues/ccxt/__init__.py](../../src/quantcraft/integrations/venues/ccxt/__init__.py)
+    - [src/quantleet/integrations/venues/ccxt/__init__.py](../../src/quantleet/integrations/venues/ccxt/__init__.py)
       currently exports a wider surface than the intended stable facade.
     - It re-exports private helpers and raw third-party dependency symbols in
       `__all__`, including:
@@ -165,7 +165,7 @@
 - Final disposition:
   - `The first-pass audit was not fully complete.`
   - It missed one additional medium-severity issue:
-    - the `quantcraft.integrations.venues.ccxt` package currently exports a
+    - the `quantleet.integrations.venues.ccxt` package currently exports a
       broader public surface than intended, and current smoke/build tests do
       not constrain that leak
   - Updated honest status:
@@ -174,6 +174,6 @@
       2. negative `CostConfig` semantic-validation bug
       3. transitional governing-doc incompleteness
       4. migration-history / legacy-control-plane residue in active checks
-      5. overly broad `quantcraft.integrations.venues.ccxt` public facade
+      5. overly broad `quantleet.integrations.venues.ccxt` public facade
   - Beyond that updated set, the second pass did not find another material
     omission.

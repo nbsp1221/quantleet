@@ -18,7 +18,7 @@ Related research docs:
 
 ## Purpose
 
-Capture the most relevant lessons from `NautilusTrader` for `quantcraft`, especially around one-kernel parity, explicit time and venue semantics, and the trade-off between realism and product weight.
+Capture the most relevant lessons from `NautilusTrader` for `quantleet`, especially around one-kernel parity, explicit time and venue semantics, and the trade-off between realism and product weight.
 
 ## Project Snapshot
 
@@ -29,7 +29,7 @@ Capture the most relevant lessons from `NautilusTrader` for `quantcraft`, especi
 
 ## Core Architecture
 
-This is the closest architectural match to `quantcraft`'s intended direction in the current comparison set. The public design centers on a compiled core, explicit adapters, a message bus, cache, deterministic time, and one event-driven runtime shared across backtesting and live trading.
+This is the closest architectural match to `quantleet`'s intended direction in the current comparison set. The public design centers on a compiled core, explicit adapters, a message bus, cache, deterministic time, and one event-driven runtime shared across backtesting and live trading.
 
 ## Strategy API Shape
 
@@ -37,7 +37,7 @@ The public positioning emphasizes Python strategy logic and orchestration on top
 
 ## Data And Execution Model
 
-The README explicitly calls out multiple venues, instruments, strategies, quote ticks, trade ticks, bars, order books, and nanosecond-resolution backtesting. That is materially beyond current `quantcraft` scope, but it is still the clearest example here of treating market data and execution as first-class runtime concerns rather than as convenience-layer inputs.
+The README explicitly calls out multiple venues, instruments, strategies, quote ticks, trade ticks, bars, order books, and nanosecond-resolution backtesting. That is materially beyond current `quantleet` scope, but it is still the clearest example here of treating market data and execution as first-class runtime concerns rather than as convenience-layer inputs.
 
 ## Order And Fill Model
 
@@ -63,9 +63,9 @@ The public docs strongly emphasize research-to-live parity. The same execution s
 
 ## Weaknesses
 
-- heavier operational and conceptual footprint than current `quantcraft`
+- heavier operational and conceptual footprint than current `quantleet`
 - likely steeper learning curve for users who want a lightweight research notebook tool
-- too much of its surface would be premature for the current `quantcraft` slice
+- too much of its surface would be premature for the current `quantleet` slice
 
 ## What Quantcraft Should Learn
 

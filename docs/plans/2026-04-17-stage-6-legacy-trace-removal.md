@@ -29,7 +29,7 @@
   - [`docs/product-specs/backtest-mvp.md`](../product-specs/backtest-mvp.md)
   - [`docs/product-specs/research-ergonomics.md`](../product-specs/research-ergonomics.md)
   - [`docs/design-docs/index.md`](../design-docs/index.md)
-  - [`docs/design-docs/quantcraft-architecture.md`](../design-docs/quantcraft-architecture.md)
+  - [`docs/design-docs/quantleet-architecture.md`](../design-docs/quantleet-architecture.md)
   - [`docs/design-docs/package-topology-and-naming.md`](../design-docs/package-topology-and-naming.md)
   - [`docs/RELIABILITY.md`](../RELIABILITY.md)
   - [`docs/SECURITY.md`](../SECURITY.md)
@@ -48,15 +48,15 @@
 - In-repo scope:
   - remove migration-only root and package shim paths that still preserve the
     pre-migration layout, including:
-    - `quantcraft` root lazy exports for `Exchange`, `MarketType`, and `TimeBar`
-    - `src/quantcraft/exchange.py`
-    - `src/quantcraft/data/domain/*`
-    - `src/quantcraft/research/domain/*`
-    - `src/quantcraft/research/application/*` compatibility shims that only
+    - `quantleet` root lazy exports for `Exchange`, `MarketType`, and `TimeBar`
+    - `src/quantleet/exchange.py`
+    - `src/quantleet/data/domain/*`
+    - `src/quantleet/research/domain/*`
+    - `src/quantleet/research/application/*` compatibility shims that only
       forward to `backtest` or older `Strategy` locations
-    - `src/quantcraft/research/adapters/execution_model.py`
+    - `src/quantleet/research/adapters/execution_model.py`
   - move any remaining canonical research surface needed for the final topology
-    to shallow owner paths under `src/quantcraft/research`
+    to shallow owner paths under `src/quantleet/research`
   - repoint internal code, tests, and documentation to the final owner paths
   - update structure, smoke, built-artifact, and runtime tests so they prove
     that legacy paths are gone rather than merely still compatible
@@ -103,12 +103,12 @@
   - migration-only compatibility imports removed by this slice fail cleanly
     instead of silently re-exporting current owners
   - final public surface is capability-first:
-    - `quantcraft.data` for data contracts and data sources
-    - `quantcraft.backtest` for backtest runtime and result surface
-    - `quantcraft.research` for strategy and indicator ergonomics
-    - `quantcraft.integrations.*` for exchange/provider protocol code
+    - `quantleet.data` for data contracts and data sources
+    - `quantleet.backtest` for backtest runtime and result surface
+    - `quantleet.research` for strategy and indicator ergonomics
+    - `quantleet.integrations.*` for exchange/provider protocol code
   - `Strategy` no longer requires the legacy
-    `quantcraft.research.application.strategy` owner path
+    `quantleet.research.application.strategy` owner path
   - docs and tests no longer describe or prove the removed legacy paths as
     supported imports
   - read-only research split and review fan-out both complete with evidence and
@@ -176,21 +176,21 @@
     - `Bernoulli`: remaining shim inventory and canonical owner mapping
     - `Carson`: guardrail, verification, and Tier A caution
   - final Stage 6 owned file group became:
-    - `src/quantcraft/__init__.py`
-    - `src/quantcraft/_repo_tools.py`
-    - `src/quantcraft/research/__init__.py`
-    - `src/quantcraft/research/strategy.py`
+    - `src/quantleet/__init__.py`
+    - `src/quantleet/_repo_tools.py`
+    - `src/quantleet/research/__init__.py`
+    - `src/quantleet/research/strategy.py`
     - removal of:
-      - `src/quantcraft/exchange.py`
-      - `src/quantcraft/data/domain/`
-      - `src/quantcraft/data/adapters/exchange_backend.py`
-      - `src/quantcraft/research/domain/`
-      - `src/quantcraft/research/application/`
-      - `src/quantcraft/research/adapters/`
+      - `src/quantleet/exchange.py`
+      - `src/quantleet/data/domain/`
+      - `src/quantleet/data/adapters/exchange_backend.py`
+      - `src/quantleet/research/domain/`
+      - `src/quantleet/research/application/`
+      - `src/quantleet/research/adapters/`
     - direct doc updates:
       - `README.md`
       - `ARCHITECTURE.md`
-      - `docs/design-docs/quantcraft-architecture.md`
+      - `docs/design-docs/quantleet-architecture.md`
       - `docs/RELIABILITY.md`
       - `docs/references/testing.md`
       - `docs/product-specs/market-data.md`
@@ -209,7 +209,7 @@
     justified local layering; Stage 6 intentionally did not flatten Tier A
     trading ownership
   - 2026-04-17: the parent chose to include
-    `src/quantcraft/data/adapters/exchange_backend.py` in Stage 6 rather than
+    `src/quantleet/data/adapters/exchange_backend.py` in Stage 6 rather than
     defer it, so that all exchange-era compatibility shims could be removed in
     one breaking-cleanup pass
   - 2026-04-17: the parent also expanded Stage 6 to relocate active tests from
@@ -221,31 +221,31 @@
     - stale transitional wording in architecture docs
     - runtime-verification trigger lists missing the final owner files
     - smoke/build/structure proofs not asserting absence of
-      `quantcraft.research.adapters` itself
+      `quantleet.research.adapters` itself
   - 2026-04-17: all blockers were resolved inside the slice before final
     verification:
     - docs were rewritten to reflect the post-Stage-6 package shape
     - `docs/RELIABILITY.md` and the matching repo test now include
-      `src/quantcraft/backtest/strategy_runtime.py` and
-      `src/quantcraft/research/strategy.py`
-    - smoke/build/structure proofs now assert `quantcraft.research.adapters`
+      `src/quantleet/backtest/strategy_runtime.py` and
+      `src/quantleet/research/strategy.py`
+    - smoke/build/structure proofs now assert `quantleet.research.adapters`
       and other removed legacy roots fail cleanly
 
 ## Evaluator Review
 
 - Findings:
   - read-only research split converged on a bounded final surface:
-    - keep `quantcraft.data` as the public data contract and source namespace
-    - keep `quantcraft.backtest` as the public backtest runtime and result
+    - keep `quantleet.data` as the public data contract and source namespace
+    - keep `quantleet.backtest` as the public backtest runtime and result
       namespace
-    - keep `quantcraft.research` as the public strategy and indicator
+    - keep `quantleet.research` as the public strategy and indicator
       ergonomics namespace
-    - keep `quantcraft.integrations.venues.ccxt` as the current exchange
+    - keep `quantleet.integrations.venues.ccxt` as the current exchange
       protocol surface
-    - remove root `quantcraft` symbol exports and all migration-only shim
+    - remove root `quantleet` symbol exports and all migration-only shim
       namespaces under `data` and `research`
   - the implementation matches that final Stage 6 shape:
-    - `Strategy` now lives at `src/quantcraft/research/strategy.py`
+    - `Strategy` now lives at `src/quantleet/research/strategy.py`
     - `PositionView` was folded into the same owner instead of leaving
       `research.application._runtime` behind
     - all research-side backtest compatibility modules were removed
@@ -254,7 +254,7 @@
   - review fan-out produced three blocker rounds before final approval:
     - stale architecture wording still described pre-Stage-6 placements
     - runtime-verification triggers missed the final owner files
-    - smoke/build/structure proofs missed `quantcraft.research.adapters` and
+    - smoke/build/structure proofs missed `quantleet.research.adapters` and
       active test paths still encoded the removed topology
   - all reviewer blockers were resolved inside the slice:
     - architecture and package-topology docs now describe the current tree

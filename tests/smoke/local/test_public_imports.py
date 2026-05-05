@@ -2,11 +2,11 @@ import importlib
 
 import pytest
 
-import quantcraft
+import quantleet
 
 
 def test_data_public_import_surface_exposes_time_bar_and_bar_series() -> None:
-    data_module = importlib.import_module("quantcraft.data")
+    data_module = importlib.import_module("quantleet.data")
 
     assert getattr(data_module, "TimeBar", None) is not None
     assert getattr(data_module, "BarSeries", None) is not None
@@ -18,11 +18,11 @@ def test_data_public_import_surface_exposes_time_bar_and_bar_series() -> None:
 def test_root_package_exports_no_legacy_public_symbols() -> None:
     for name in ("Exchange", "MarketType", "TimeBar", "BacktestEngine"):
         with pytest.raises(AttributeError, match="has no attribute"):
-            getattr(quantcraft, name)
+            getattr(quantleet, name)
 
 
 def test_research_public_import_surface_exposes_strategy_and_parameter_study() -> None:
-    research_module = importlib.import_module("quantcraft.research")
+    research_module = importlib.import_module("quantleet.research")
 
     assert getattr(research_module, "Strategy", None) is not None
     assert getattr(research_module, "ParameterStudy", None) is not None
@@ -35,11 +35,11 @@ def test_research_public_import_surface_exposes_strategy_and_parameter_study() -
 
 
 def test_capability_public_surfaces_import_cleanly() -> None:
-    research_module = importlib.import_module("quantcraft.research")
-    backtest_module = importlib.import_module("quantcraft.backtest")
-    execution_module = importlib.import_module("quantcraft.execution")
-    integrations_module = importlib.import_module("quantcraft.integrations")
-    ccxt_module = importlib.import_module("quantcraft.integrations.venues.ccxt")
+    research_module = importlib.import_module("quantleet.research")
+    backtest_module = importlib.import_module("quantleet.backtest")
+    execution_module = importlib.import_module("quantleet.execution")
+    integrations_module = importlib.import_module("quantleet.integrations")
+    ccxt_module = importlib.import_module("quantleet.integrations.venues.ccxt")
 
     assert getattr(backtest_module, "BacktestEngine", None) is not None
     assert getattr(backtest_module, "CostConfig", None) is not None
@@ -77,24 +77,24 @@ def test_capability_public_surfaces_import_cleanly() -> None:
 
 def test_removed_legacy_paths_no_longer_import() -> None:
     for module_name in (
-        "quantcraft.exchange",
-        "quantcraft.data.adapters.exchange_backend",
-        "quantcraft.data.domain",
-        "quantcraft.data.domain.bars",
-        "quantcraft.data.domain.sources",
-        "quantcraft.research.domain",
-        "quantcraft.research.domain.series",
-        "quantcraft.research.application",
-        "quantcraft.research.application.backtest",
-        "quantcraft.research.application.engine",
-        "quantcraft.research.application.order_activation",
-        "quantcraft.research.application.strategy",
-        "quantcraft.research.application._runtime",
-        "quantcraft.research.adapters",
-        "quantcraft.research.adapters.execution_model",
-        "quantcraft.data.application",
-        "quantcraft.trading.application",
-        "quantcraft.trading.adapters",
+        "quantleet.exchange",
+        "quantleet.data.adapters.exchange_backend",
+        "quantleet.data.domain",
+        "quantleet.data.domain.bars",
+        "quantleet.data.domain.sources",
+        "quantleet.research.domain",
+        "quantleet.research.domain.series",
+        "quantleet.research.application",
+        "quantleet.research.application.backtest",
+        "quantleet.research.application.engine",
+        "quantleet.research.application.order_activation",
+        "quantleet.research.application.strategy",
+        "quantleet.research.application._runtime",
+        "quantleet.research.adapters",
+        "quantleet.research.adapters.execution_model",
+        "quantleet.data.application",
+        "quantleet.trading.application",
+        "quantleet.trading.adapters",
     ):
         with pytest.raises(ModuleNotFoundError):
             importlib.import_module(module_name)

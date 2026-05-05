@@ -18,7 +18,7 @@ Related research docs:
 
 ## Purpose
 
-Capture the most relevant lessons from `Freqtrade` for `quantcraft`, especially around exchange-operator workflows, anti-bias tooling, and the strengths and limits of a crypto-first product surface.
+Capture the most relevant lessons from `Freqtrade` for `quantleet`, especially around exchange-operator workflows, anti-bias tooling, and the strengths and limits of a crypto-first product surface.
 
 ## Project Snapshot
 
@@ -33,7 +33,7 @@ Capture the most relevant lessons from `Freqtrade` for `quantcraft`, especially 
 
 ## Strategy API Shape
 
-The docs expose a strategy-class model with standard customization points and optional advanced callback methods. The public guidance encourages users to start with templates and only implement callbacks they actually need. This is a pragmatic reference for extensible strategy APIs, even if the overall product identity is more operator-focused than `quantcraft`.
+The docs expose a strategy-class model with standard customization points and optional advanced callback methods. The public guidance encourages users to start with templates and only implement callbacks they actually need. This is a pragmatic reference for extensible strategy APIs, even if the overall product identity is more operator-focused than `quantleet`.
 
 ## Data And Execution Model
 
@@ -41,7 +41,7 @@ The system is heavily exchange- and candle-data-oriented. Backtesting, dry-run, 
 
 ## Order And Fill Model
 
-Relative to research-only tools, `Freqtrade` has a stronger operational story because it actually runs bots against exchanges. At the same time, the backtesting model still appears more candle-native than the explicit event-kernel direction `quantcraft` is pursuing, so it should not be treated as a strict kernel-semantics reference.
+Relative to research-only tools, `Freqtrade` has a stronger operational story because it actually runs bots against exchanges. At the same time, the backtesting model still appears more candle-native than the explicit event-kernel direction `quantleet` is pursuing, so it should not be treated as a strict kernel-semantics reference.
 
 ## Backtest vs Live Story
 
@@ -65,7 +65,7 @@ Relative to research-only tools, `Freqtrade` has a stronger operational story be
 
 - identity is tightly coupled to crypto exchange operation
 - candle-native assumptions remain stronger than in an event-first kernel
-- product breadth is much larger than current `quantcraft` scope
+- product breadth is much larger than current `quantleet` scope
 
 ## What Quantcraft Should Learn
 

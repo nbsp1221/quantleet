@@ -63,7 +63,7 @@ def test_release_facing_repository_docs_cover_public_beta_workflow() -> None:
 def test_readme_has_project_description_and_installation_section() -> None:
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
 
-    assert "quantcraft" in readme.lower()
+    assert "quantleet" in readme.lower()
     assert "## installation" in readme.lower()
 
 
@@ -73,9 +73,9 @@ def test_readme_presents_public_beta_docs_surface() -> None:
     for marker in [
         "single-symbol",
         "Python 3.13",
-        "from quantcraft.backtest import BacktestEngine, CostConfig",
-        "from quantcraft.data import DataFrameDataSource",
-        "from quantcraft.research import Strategy, qc, ta",
+        "from quantleet.backtest import BacktestEngine, CostConfig",
+        "from quantleet.data import DataFrameDataSource",
+        "from quantleet.research import Strategy, qc, ta",
         "result.report",
         "result.plot()",
         "SMA crossover quickstart",
@@ -103,8 +103,8 @@ def test_readme_presents_public_beta_docs_surface() -> None:
         "docs/product-specs",
         "docs/design-docs",
         "docs/research",
-        "from quantcraft import BacktestEngine",
-        "from quantcraft.trading.domain.costs import CostConfig",
+        "from quantleet import BacktestEngine",
+        "from quantleet.trading.domain.costs import CostConfig",
         "TimeInForce",
     ]:
         assert forbidden not in readme
@@ -167,10 +167,10 @@ def test_current_docs_describe_summary_terms_and_engine_surface() -> None:
     assert "superficially passing but still bad" in research_spec
     assert "`BacktestEngine(...).run(bars=..., strategy=...)`" in backtest_spec
     assert "`BacktestEngine(...).run(source=..., strategy=...)`" in backtest_spec
-    assert "`quantcraft.data.TimeBar`" in research_spec
-    assert "`quantcraft.data.BarSeries`" in research_spec
-    assert "`quantcraft.data.TimeBar`" in backtest_spec
-    assert "`quantcraft.data.BarSeries`" in backtest_spec
+    assert "`quantleet.data.TimeBar`" in research_spec
+    assert "`quantleet.data.BarSeries`" in research_spec
+    assert "`quantleet.data.TimeBar`" in backtest_spec
+    assert "`quantleet.data.BarSeries`" in backtest_spec
     assert "`run_backtest(...)` remains available as a compatibility surface" not in research_spec
     assert "`run_backtest(...)` remains available as a compatibility surface" not in backtest_spec
     assert "source.load() returns `BarSeries`" in data_ingestion_spec
@@ -181,13 +181,13 @@ def test_current_docs_describe_summary_terms_and_engine_surface() -> None:
     assert '`BarSeries.bar_type` is fixed to `"time"`' in data_ingestion_spec
     assert 'self.buy(quantity=1, tag="rsi-entry")' in data_ingestion_spec
     assert 'self.sell(quantity=1, tag="rsi-exit")' in data_ingestion_spec
-    assert "from quantcraft.backtest import BacktestEngine" in quickstart
-    assert "from quantcraft.research import ParameterStudy, Strategy, ta, qc" in quickstart
+    assert "from quantleet.backtest import BacktestEngine" in quickstart
+    assert "from quantleet.research import ParameterStudy, Strategy, ta, qc" in quickstart
     assert (
-        "from quantcraft.research import BacktestEngine, Strategy, ta, qc, run_backtest"
+        "from quantleet.research import BacktestEngine, Strategy, ta, qc, run_backtest"
         not in quickstart
     )
-    assert "from quantcraft.data import BarSeries, DataFrameDataSource, TimeBar" in quickstart
+    assert "from quantleet.data import BarSeries, DataFrameDataSource, TimeBar" in quickstart
     assert "run(bars=" in quickstart
     assert "run(source=" in quickstart
     assert "canonical strategy pair" in reliability

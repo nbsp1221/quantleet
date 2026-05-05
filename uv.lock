@@ -1634,7 +1634,7 @@ wheels = [
 ]
 
 [[package]]
-name = "quantcraft"
+name = "quantleet"
 version = "0.1.0b1"
 source = { editable = "." }
 dependencies = [

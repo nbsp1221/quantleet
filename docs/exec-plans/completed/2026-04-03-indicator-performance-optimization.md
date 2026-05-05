@@ -16,7 +16,7 @@ canonical RSI result shape changes or if adding a new indicator would require
 changing the runtime architecture again.
 
 **Tech Stack:** Python 3.13, `uv`, `pytest-benchmark`, repo-local `poe`,
-`quantcraft.research`, `quantcraft.data`
+`quantleet.research`, `quantleet.data`
 
 ## Lifecycle
 
@@ -50,11 +50,11 @@ Current profile evidence from the canonical perf fixture shows:
 
 - total runtime is dominated by `BacktestEngine.run(...)`, not fixture load
 - the hot path is overwhelmingly inside:
-  - `src/quantcraft/research/ta.py:_compute_rsi`
-  - `src/quantcraft/research/ta.py:_series_values`
-  - `src/quantcraft/research/domain/series.py:SeriesView.__getitem__`
+  - `src/quantleet/research/ta.py:_compute_rsi`
+  - `src/quantleet/research/ta.py:_series_values`
+  - `src/quantleet/research/domain/series.py:SeriesView.__getitem__`
 - append cost also exists in:
-  - `src/quantcraft/research/domain/series.py:_SeriesBuffer.append`
+  - `src/quantleet/research/domain/series.py:_SeriesBuffer.append`
 
 High-signal current profile facts:
 
@@ -125,7 +125,7 @@ Reference implementation files worth reading before coding:
 - `/tmp/pybroker_repo/src/pybroker/indicator.py`
 - `/tmp/pybroker_repo/src/pybroker/vect.py`
 
-General best-practice takeaways for `quantcraft`:
+General best-practice takeaways for `quantleet`:
 
 - keep one shared indicator execution model rather than special-casing a single
   indicator
@@ -146,17 +146,17 @@ seen in mature comparator libraries.
 
 Required module roles:
 
-- `src/quantcraft/research/ta.py`
+- `src/quantleet/research/ta.py`
   - public facade only
   - parameter validation
   - public function names and return types
   - thin wiring into internal runtime/kernels
-- `src/quantcraft/research/_indicator_runtime.py`
+- `src/quantleet/research/_indicator_runtime.py`
   - shared private runtime layer
   - append-aware state progression
   - rebuild fallback policy
   - computed-view materialization and cache invalidation policy
-- `src/quantcraft/research/_indicator_kernels.py`
+- `src/quantleet/research/_indicator_kernels.py`
   - indicator-specific formula/state definitions
   - no public API surface
   - no strategy/backtest orchestration logic
@@ -164,8 +164,8 @@ Required module roles:
 Forbidden implementation shape:
 
 - do not place new runtime state machines, cache policies, rebuild logic, or
-  indicator execution abstractions back into `src/quantcraft/research/ta.py`
-- do not let `src/quantcraft/research/_indicator_runtime.py` become a grab-bag
+  indicator execution abstractions back into `src/quantleet/research/ta.py`
+- do not let `src/quantleet/research/_indicator_runtime.py` become a grab-bag
   for indicator formulas or public API helpers
 - do not couple runtime internals to `BacktestEngine` or strategy lifecycle code
 
@@ -198,9 +198,9 @@ one file or one test layer.
 
 Target files:
 
-- `src/quantcraft/research/_indicator_runtime.py`
-- `src/quantcraft/research/_indicator_kernels.py`
-- `src/quantcraft/research/ta.py`
+- `src/quantleet/research/_indicator_runtime.py`
+- `src/quantleet/research/_indicator_kernels.py`
+- `src/quantleet/research/ta.py`
 - `tests/unit/research/test_indicator_surface.py`
 - `tests/unit/research/test_indicator_runtime.py`
 - `tests/perf/test_rsi_backtest_benchmark.py`
@@ -221,10 +221,10 @@ Intent:
 Implementation shape:
 
 - add a shared internal indicator-view/cache abstraction or execution boundary
-  in `src/quantcraft/research/_indicator_runtime.py`
+  in `src/quantleet/research/_indicator_runtime.py`
 - keep indicator-specific recurrence or formula details in
-  `src/quantcraft/research/_indicator_kernels.py`
-- reduce `src/quantcraft/research/ta.py` to a thin public facade
+  `src/quantleet/research/_indicator_kernels.py`
+- reduce `src/quantleet/research/ta.py` to a thin public facade
   - allowed changes there are limited to imports, parameter validation, return
     wiring, and public result-object assembly
 - add an append-aware fast path for indicators that can update from prior state
@@ -243,9 +243,9 @@ Implementation shape:
 
 Target files:
 
-- `src/quantcraft/research/_indicator_runtime.py`
-- `src/quantcraft/research/_indicator_kernels.py`
-- `src/quantcraft/research/ta.py`
+- `src/quantleet/research/_indicator_runtime.py`
+- `src/quantleet/research/_indicator_kernels.py`
+- `src/quantleet/research/ta.py`
 - `tests/unit/research/test_indicator_surface.py`
 - `tests/unit/research/test_indicator_runtime.py`
 - `tests/perf/test_rsi_backtest_benchmark.py`
@@ -275,8 +275,8 @@ Minimum generic-proof scope:
 
 Target files:
 
-- `src/quantcraft/research/domain/series.py`
-- `src/quantcraft/research/application/_runtime.py`
+- `src/quantleet/research/domain/series.py`
+- `src/quantleet/research/application/_runtime.py`
 - `tests/unit/research/domain/test_series.py`
 
 Intent:
@@ -305,7 +305,7 @@ Only if the gate is still red after Slices 1 through 3:
 
 Do not change:
 
-- `quantcraft.research.BacktestEngine` entrypoints
+- `quantleet.research.BacktestEngine` entrypoints
 - `HistoricalDataSource.load() -> BarSeries`
 - `Strategy` lifecycle or signal semantics
 - `SeriesView` read-only public behavior
@@ -329,9 +329,9 @@ This slice is only successful when all of the following are true:
 This batch completed with the intended generic runtime shape:
 
 - `ta.py` is now a thin public facade
-- shared indicator execution lives in `src/quantcraft/research/_indicator_runtime.py`
+- shared indicator execution lives in `src/quantleet/research/_indicator_runtime.py`
 - indicator-specific state and formula logic live in
-  `src/quantcraft/research/_indicator_kernels.py`
+  `src/quantleet/research/_indicator_kernels.py`
 - built-in indicators now share the runtime boundary rather than carrying
   per-indicator recomputation wiring
 - `SeriesView` public semantics remain unchanged, but private buffer append
