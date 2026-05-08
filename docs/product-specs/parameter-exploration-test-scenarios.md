@@ -580,9 +580,10 @@ Required assertions:
 
 Required assertions:
 
-- `from quantleet.research import ParameterStudy, Strategy, ta` works
+- `from quantleet.research import ParameterStudy, ta` works
+- `from quantleet.strategy import Strategy` works
 - `ParameterStudy` is not promoted from `quantleet.backtest`
-- public docs use the research import path
+- public docs use `quantleet.strategy` for the canonical `Strategy` import
 
 ### S2: Package Boundary
 

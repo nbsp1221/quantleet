@@ -6,10 +6,14 @@ This quickstart is the canonical first-run path for the current implemented `Res
 
 ```python
 from quantleet.backtest import BacktestEngine
-from quantleet.research import ParameterStudy, Strategy, ta, qc
+from quantleet.research import ParameterStudy, ta, qc
+from quantleet.strategy import Strategy
 ```
 
-The public research API for this slice is the `quantleet.research` import above. The lower-layer imports below are current supporting setup types used to construct backtest inputs; they are not part of the research public surface.
+The public research API for this slice is the `quantleet.research` import above.
+The canonical strategy authoring base lives in `quantleet.strategy`. The
+lower-layer imports below are current supporting setup types used to construct
+backtest inputs; they are not part of the research public surface.
 
 In the current single-symbol `on_bar()` workflow, common `buy()` and `sell()`
 calls may omit `symbol`. Explicit `symbol=...` remains supported, but in the
@@ -56,7 +60,8 @@ They are not automatically all strict merge gates.
 
 ```python
 from quantleet.backtest import BacktestEngine
-from quantleet.research import ParameterStudy, Strategy, ta, qc
+from quantleet.research import ParameterStudy, ta, qc
+from quantleet.strategy import Strategy
 from quantleet.data import BarSeries, DataFrameDataSource, TimeBar
 from quantleet.trading.domain.costs import CostConfig
 import matplotlib.pyplot as plt

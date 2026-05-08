@@ -20,13 +20,17 @@ This curated reference lists the first-beta imports users should prefer.
 
 ## Research
 
-- `quantleet.research.Strategy`
+- `quantleet.strategy.Strategy`
+- `quantleet.strategy.StrategyConfig`
 - `Strategy.buy(...)`
 - `Strategy.sell(...)`
 - `quantleet.research.ParameterStudy`
 - `ParameterStudy.grid_search(...)`
 - `quantleet.research.ta`
 - `quantleet.research.qc`
+
+`quantleet.research.Strategy` remains available as a migration-compatible
+re-export.
 
 Lower-level trading-domain objects are supporting implementation contracts, not
 the primary first-beta import surface for user documentation.

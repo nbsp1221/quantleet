@@ -225,7 +225,8 @@ The first-beta workflow starts by materializing historical data once:
 ```python
 from quantleet.backtest import BacktestEngine
 from quantleet.data import DataFrameDataSource
-from quantleet.research import ParameterStudy, Strategy, ta
+from quantleet.research import ParameterStudy, ta
+from quantleet.strategy import Strategy
 
 
 class SmaCross(Strategy):
@@ -811,7 +812,10 @@ A user wants to run exploration from a historical data source. The user calls
 Parameter exploration depends on, and must not redefine, these existing
 contracts:
 
-- `quantleet.research.Strategy` is the user-facing strategy subclass surface.
+- `quantleet.strategy.Strategy` is the canonical user-facing strategy subclass
+  surface.
+- `quantleet.research.Strategy` remains a compatibility re-export until the
+  migration path is removed by a later spec.
 - `Strategy.display_name` and `Strategy.parameters()` are explicit strategy
   metadata hooks.
 - `BacktestEngine.run(...)` is the current historical execution entry point.

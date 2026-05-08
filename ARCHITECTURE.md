@@ -27,6 +27,7 @@ The approved engine-package contexts are:
 - `data`
 - `trading`
 - `research`
+- `strategy`
 - `backtest`
 - `execution`
 - `integrations`
@@ -54,7 +55,7 @@ They compose the engine package; they do not redefine it.
 ## Safety Tiers
 
 - Tier A: `trading`, `execution`
-- Tier B: `data`, `research`, `backtest`
+- Tier B: `data`, `research`, `strategy`, `backtest`
 - Tier C: `ml`, notebooks, generated docs
 
 `integrations` inherit the safety expectations of the context they serve.
@@ -81,13 +82,16 @@ exposure or move funds.
   `integrations`, `cli`, or `apps/*`
 - `data` owns normalized market and macro data contracts and must not absorb
   strategy or trading-state semantics
+- `strategy` owns the shared strategy authoring and configuration contract
+  used by research, backtest, and future execution workflows; it may depend on
+  `trading` but must not depend on `research`, `backtest`, or `execution`
 - `backtest` owns historical execution runtime concerns and may depend on
-  `data` and `trading`
+  `data`, `trading`, and `strategy`
 - `research` owns strategy authoring, indicators, analytics, and alpha-search
-  ergonomics; it may depend on `data`, `trading`, and the public `backtest`
-  surface
+  ergonomics; it may depend on `data`, `trading`, `strategy`, and the public
+  `backtest` surface
 - `execution` owns paper/live runtime control and may depend on `trading`,
-  normalized data contracts, and concrete integrations
+  normalized data contracts, `strategy`, and concrete integrations
 - `integrations` translate external systems into internal contracts; they do not
   own core trading or research semantics
 - sibling contexts should prefer public facades such as `quantleet.<context>.api`

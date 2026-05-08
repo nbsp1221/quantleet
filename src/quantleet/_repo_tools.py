@@ -60,7 +60,7 @@ PLACEHOLDER_TOKENS = ("Add your description here",)
 SUPPORTED_TEST_DIRS = ("unit", "integration", "structure", "smoke")
 
 TIER_A = {"trading", "execution"}
-TIER_B = {"data", "research", "backtest"}
+TIER_B = {"data", "research", "backtest", "strategy"}
 TIER_C = {"ml"}
 INTEGRATION_DOMAINS = {"integrations"}
 SHARED_DOMAINS = {"_shared"}
@@ -74,9 +74,13 @@ ALLOWED_CROSS_DOMAIN_DEPENDENCIES = {
     ("research", "data"),
     ("research", "trading"),
     ("research", "backtest"),
+    ("research", "strategy"),
+    ("backtest", "strategy"),
     ("execution", "trading"),
+    ("execution", "strategy"),
     ("integrations", "data"),
     ("integrations", "trading"),
+    ("strategy", "trading"),
 }
 ALLOWED_ROOT_MODULE_DEPENDENCIES: set[tuple[str, str]] = set()
 

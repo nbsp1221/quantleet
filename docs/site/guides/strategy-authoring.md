@@ -1,9 +1,10 @@
 # Strategy Authoring
 
-Strategies subclass `quantleet.research.Strategy`.
+Strategies subclass `quantleet.strategy.Strategy`.
 
 ```python
-from quantleet.research import Strategy, qc, ta
+from quantleet.research import qc, ta
+from quantleet.strategy import Strategy
 
 
 class SmaCrossStrategy(Strategy):

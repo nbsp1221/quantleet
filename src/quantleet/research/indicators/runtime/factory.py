@@ -9,7 +9,7 @@ import numpy as np
 from quantleet.research.indicators.runtime.base import IndicatorKernel, IndicatorState, SeriesLike
 from quantleet.research.indicators.runtime.runtime import IndicatorRuntime
 from quantleet.research.indicators.runtime.views import IndicatorSeriesView
-from quantleet.research.series import SeriesView
+from quantleet.strategy.series import SeriesView
 
 _KernelState = TypeVar("_KernelState", bound=IndicatorState)
 _ResultT = TypeVar("_ResultT")

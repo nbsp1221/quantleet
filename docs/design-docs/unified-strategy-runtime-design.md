@@ -199,9 +199,10 @@ separate engines.
 
 Current compatibility note:
 
-- the currently shipped public base class remains
-  `quantleet.research.Strategy`
-- this document does not declare that class renamed or removed
+- the currently shipped canonical public base class is
+  `quantleet.strategy.Strategy`
+- `quantleet.research.Strategy` remains a compatibility re-export until a later
+  migration removes it
 - if `SingleAssetStrategy` is introduced later, it should land through an
   explicit compatibility-preserving migration plan rather than as an immediate
   replacement of the shipped surface
@@ -520,7 +521,8 @@ this draft alone.
 
 The immediate task is to define a migration path such as:
 
-- keep `quantleet.research.Strategy` as the shipped surface for now
+- keep `quantleet.strategy.Strategy` as the shared shipped surface
+- keep `quantleet.research.Strategy` only as a compatibility re-export
 - optionally introduce a future `SingleAssetStrategy` as an additive alias or
   sibling
 - preserve compatibility until product specs, examples, and runtime

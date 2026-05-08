@@ -1,0 +1,263 @@
+# WFA Prerequisite Roadmap
+
+## Status
+
+- Status: `draft`
+- Class: `product-roadmap`
+- Scope: ordered prerequisite product-spec sequence before walk-forward analysis
+  implementation resumes
+
+Related documents:
+
+- [strategy-configuration-contract.md](strategy-configuration-contract.md)
+- [walk-forward-analysis.md](walk-forward-analysis.md)
+- [walk-forward-analysis-readiness.md](walk-forward-analysis-readiness.md)
+- [research-ergonomics.md](research-ergonomics.md)
+- [parameter-exploration.md](parameter-exploration.md)
+- [backtest-mvp.md](backtest-mvp.md)
+- [../design-docs/unified-strategy-runtime-design.md](../design-docs/unified-strategy-runtime-design.md)
+- [../design-docs/package-topology-and-naming.md](../design-docs/package-topology-and-naming.md)
+
+This document is not an implementation plan and not the product spec for
+`StrategyConfig`. It records the agreed prerequisite sequence so that the
+project can discuss the next product spec without losing the larger path back to
+walk-forward analysis.
+
+## Decision
+
+Walk-forward analysis remains paused.
+
+The next product-spec focus is not WFA itself. The next product-spec focus is
+the strategy configuration contract that WFA, `ParameterStudy`, reporting, paper
+trading, and future live trading should be able to share.
+
+The agreed sequence is:
+
+1. Unified Strategy Configuration Contract
+2. ParameterStudy Strategy API Migration
+3. Reporting Config Source Of Truth
+4. WFA Resume Spec
+
+This sequence is a product-planning dependency chain, not a commitment to
+implement all four slices in one batch.
+
+## Why This Roadmap Exists
+
+WFA was paused because implementing it now would likely harden the current
+`strategy_factory`-centered research API into a larger public contract. The
+actual blocker is not the walk-forward algorithm. The actual blocker is the
+absence of a canonical strategy configuration contract shared by backtesting,
+research, paper trading, and future live trading.
+
+The risk is easy to miss during the first prerequisite slice. If the project
+only focuses on the first `StrategyConfig` discussion, it may forget why that
+work was started:
+
+- WFA needs fresh strategy creation for train candidates and selected test runs.
+- `ParameterStudy` currently teaches `strategy_factory` as the canonical public
+  path.
+- `BacktestReport.run.strategy_parameters` currently depends on
+  `Strategy.parameters()`, not on a framework-owned execution config snapshot.
+- The long-lived runtime direction wants one strategy codebase to move through
+  research, backtest, paper, and live workflows.
+
+This roadmap keeps those dependencies visible while still letting each next
+spec stay small.
+
+## Roadmap Stage 1: Unified Strategy Configuration Contract
+
+Governing product spec:
+
+- [strategy-configuration-contract.md](strategy-configuration-contract.md)
+
+Purpose:
+
+- Define the long-lived public contract for declaring strategy configuration and
+  creating fresh strategy instances from selected config values.
+
+Primary questions:
+
+- Should Quantleet expose a separate `StrategyConfig` class, class-level
+  strategy parameters, descriptor-based parameters, or another minimal contract?
+- What is the relationship between `Strategy` and the config object?
+- What values are true strategy config values versus runtime dependencies or
+  environment settings?
+- How does the framework create a fresh strategy instance for one run?
+- Should `strategy_factory` remain an advanced escape hatch, and if so what is
+  its precise role?
+
+Required product outcome:
+
+- A product spec that defines the canonical user-facing strategy configuration
+  model.
+- A clear source of truth for default config values and valid config fields.
+- A decision on whether study-level search spaces stay separate from strategy
+  config schema.
+- A clear statement that this stage does not implement WFA.
+
+Non-goals for this stage:
+
+- WFA implementation.
+- Full paper/live runner design.
+- A general dependency-injection container.
+- Objective alias policy.
+- OOS summary/report semantics.
+
+## Roadmap Stage 2: ParameterStudy Strategy API Migration
+
+Purpose:
+
+- Align `ParameterStudy` with the canonical strategy configuration contract so
+  WFA and existing parameter exploration do not teach different strategy
+  construction models.
+
+Primary questions:
+
+- Should `ParameterStudy(..., strategy=StrategyClass)` become the canonical
+  public path?
+- How long should `strategy_factory=...` remain supported?
+- Is `strategy_factory` documented as compatibility, advanced escape hatch, or
+  internal adapter?
+- How should error messages guide users from old factory examples to the new
+  canonical path?
+- What tests and public docs must change to keep the first-beta research story
+  coherent?
+
+Required product outcome:
+
+- A migration product spec that defines the new `ParameterStudy` public input
+  surface.
+- A compatibility policy for existing `strategy_factory` workflows.
+- A decision on whether this migration is additive, deprecating, or breaking.
+- A clear preservation rule for fresh strategy instance guarantees.
+
+Non-goals for this stage:
+
+- New optimization algorithms.
+- WFA fold generation.
+- Paper/live execution.
+- Changing backtest matching or trading semantics.
+
+## Roadmap Stage 3: Reporting Config Source Of Truth
+
+Purpose:
+
+- Ensure report metadata records the actual config used for a run rather than
+  relying on strategy-authored metadata that may drift from execution inputs.
+
+Primary questions:
+
+- Should `BacktestReport.run.strategy_parameters` come from the framework-owned
+  config snapshot?
+- What role remains for `Strategy.parameters()` after the config contract exists?
+- How should selected study values, default config values, and non-optimizable
+  runtime settings be represented?
+- How should fold-level selected parameters later line up with per-run reports?
+- What values must be portable enough for JSON/CSV-style record output?
+
+Required product outcome:
+
+- A reporting product spec that defines config snapshot ownership.
+- A rule that selected parameters and report metadata cannot silently disagree.
+- A compatibility position for current `Strategy.parameters()` behavior.
+- A record/export expectation that future WFA fold results can reuse.
+
+Non-goals for this stage:
+
+- Full WFA result model.
+- Continuous OOS account semantics.
+- New report metrics unrelated to config provenance.
+
+## Roadmap Stage 4: WFA Resume Spec
+
+Purpose:
+
+- Resume walk-forward analysis product planning on top of the resolved strategy
+  configuration and reporting contracts.
+
+Primary questions:
+
+- What exact public constructor does `WalkForwardStudy` use after the strategy
+  config migration?
+- How does each fold create train candidate strategies and selected test
+  strategies?
+- Which output concepts are first-slice required: `oos_summary`, fold records,
+  selected parameters by fold, parameter stability, diagnostics?
+- Which WFA readiness blockers remain after the prior stages?
+- Which deferred items remain outside the first WFA implementation slice?
+
+Required product outcome:
+
+- An updated WFA product spec or resume addendum.
+- Confirmation that WFA no longer hardens a transitional strategy construction
+  API.
+- A technical implementation plan can then be written from the resumed product
+  spec.
+
+Non-goals for this stage:
+
+- Reopening the decision that WFA is a Validation Study.
+- Centering the result UX on `best_params`.
+- Treating `oos_report` as continuous-account output unless those semantics are
+  explicitly designed.
+
+## Dependency Rules
+
+- Stage 1 must happen before Stage 2.
+- Stage 2 must happen before WFA implementation resumes.
+- Stage 3 may be specified after Stage 2 or in parallel with late Stage 2
+  planning, but WFA cannot depend on ambiguous report metadata.
+- Stage 4 must not start until the project has either completed the relevant
+  prior specs or explicitly records why a prior stage no longer blocks WFA.
+
+The roadmap allows later human decisions to reorder or merge stages, but only
+through an explicit update to this document or a superseding product spec. Silent
+scope drift is not acceptable.
+
+## Current Priority Read
+
+| Stage | Urgency | Impact | Delay Cost | Current Priority |
+| --- | --- | --- | --- | --- |
+| Unified Strategy Configuration Contract | high | high | high | P0 |
+| ParameterStudy Strategy API Migration | high | high | high | P0 |
+| Reporting Config Source Of Truth | medium | high | medium-high | P1 |
+| WFA Resume Spec | medium | high | high after prerequisites | Blocked |
+
+## Guardrails
+
+- Do not treat this roadmap as permission to implement WFA.
+- Do not use this roadmap to skip the dedicated product spec for Stage 1.
+- Do not solve Stage 1 by preserving the current `strategy_factory` path merely
+  because it is already implemented.
+- Do not solve Stage 1 by overbuilding paper/live infrastructure before the
+  strategy config contract is clear.
+- Do not let `StrategyConfig` absorb study-specific search spaces unless the
+  Stage 1 product spec deliberately chooses that model.
+- Do not let report metadata continue to rely on user-authored duplication if a
+  framework-owned config snapshot exists.
+
+## Success Conditions
+
+This roadmap is successful when:
+
+- future work on `StrategyConfig` can point to the larger WFA-unblocking
+  sequence
+- the project can discuss Stage 1 without forgetting Stages 2 through 4
+- the WFA pause reason remains explicit
+- product-spec routing sends WFA-unblocking work through this roadmap
+- implementation plans for any stage can cite which stage they are executing and
+  which later stages remain unresolved
+
+## Open Questions
+
+- Should Stage 1 use the title `Unified Strategy Configuration Contract` or
+  `Strategy Configuration Contract`?
+- Should Stage 2 and Stage 3 be separate product specs, or can they be combined
+  if Stage 1 makes their scope small?
+- Should `strategy_factory` be deprecated immediately after Stage 2, kept as a
+  documented advanced escape hatch, or hidden from canonical docs while still
+  supported?
+- Should the reporting config snapshot be added to `BacktestEngine.run(...)`, to
+  strategy construction normalization, or to a separate run manifest builder?
+- What is the earliest point at which WFA can safely resume without creating
+  public API debt?

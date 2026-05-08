@@ -102,6 +102,8 @@ def test_public_api_reference_uses_current_public_imports_only() -> None:
         "quantleet.backtest.BacktestResult",
         "BacktestResult.report",
         "BacktestResult.plot()",
+        "quantleet.strategy.Strategy",
+        "quantleet.strategy.StrategyConfig",
         "quantleet.research.Strategy",
         "Strategy.buy(...)",
         "Strategy.sell(...)",

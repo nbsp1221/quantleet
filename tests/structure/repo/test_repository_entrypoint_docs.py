@@ -75,7 +75,8 @@ def test_readme_presents_public_beta_docs_surface() -> None:
         "Python 3.13",
         "from quantleet.backtest import BacktestEngine, CostConfig",
         "from quantleet.data import DataFrameDataSource",
-        "from quantleet.research import Strategy, qc, ta",
+        "from quantleet.research import qc, ta",
+        "from quantleet.strategy import Strategy",
         "result.report",
         "result.plot()",
         "SMA crossover quickstart",
@@ -182,7 +183,8 @@ def test_current_docs_describe_summary_terms_and_engine_surface() -> None:
     assert 'self.buy(quantity=1, tag="rsi-entry")' in data_ingestion_spec
     assert 'self.sell(quantity=1, tag="rsi-exit")' in data_ingestion_spec
     assert "from quantleet.backtest import BacktestEngine" in quickstart
-    assert "from quantleet.research import ParameterStudy, Strategy, ta, qc" in quickstart
+    assert "from quantleet.research import ParameterStudy, ta, qc" in quickstart
+    assert "from quantleet.strategy import Strategy" in quickstart
     assert (
         "from quantleet.research import BacktestEngine, Strategy, ta, qc, run_backtest"
         not in quickstart

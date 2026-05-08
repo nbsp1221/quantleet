@@ -85,19 +85,21 @@ trading stay outside the first beta.
 ## Official Import Surface
 
 The official user-facing research ergonomics surface lives under `quantleet.research`.
+The canonical strategy authoring base lives under `quantleet.strategy`.
 The canonical backtest runtime surface lives under `quantleet.backtest`.
 
 Recommended import:
 
 ```python
 from quantleet.backtest import BacktestEngine
-from quantleet.research import ParameterStudy, Strategy, ta, qc
+from quantleet.research import ParameterStudy, ta, qc
+from quantleet.strategy import Strategy
 ```
 
 This slice does not promote:
 
 - root-level kitchen-sink imports such as `from quantleet import ta, qc`
-- a fragmented public surface spread across many submodules
+- root-level `Strategy` imports
 
 ### Backtest Entry Surface
 
@@ -161,6 +163,7 @@ They are reference workflows, not automatically all strict merge gates.
 ### Strategy Type
 
 The user-facing strategy surface is an abstract base class named `Strategy`.
+Its canonical import path is `quantleet.strategy.Strategy`.
 
 Users define strategies by subclassing `Strategy`.
 

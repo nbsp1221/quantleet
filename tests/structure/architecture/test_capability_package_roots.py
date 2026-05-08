@@ -8,6 +8,7 @@ def test_capability_package_roots_exist() -> None:
         Path("src/quantleet/backtest/__init__.py"),
         Path("src/quantleet/execution/__init__.py"),
         Path("src/quantleet/integrations/__init__.py"),
+        Path("src/quantleet/strategy/__init__.py"),
     )
 
     for relative_path in expected_paths:

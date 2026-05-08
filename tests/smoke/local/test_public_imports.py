@@ -34,8 +34,22 @@ def test_research_public_import_surface_exposes_strategy_and_parameter_study() -
     assert not hasattr(research_module, "BacktestEngine")
 
 
+def test_strategy_public_import_surface_exposes_strategy_config_contract() -> None:
+    strategy_module = importlib.import_module("quantleet.strategy")
+    research_module = importlib.import_module("quantleet.research")
+
+    assert getattr(strategy_module, "Strategy", None) is not None
+    assert getattr(strategy_module, "StrategyConfig", None) is not None
+    assert getattr(strategy_module, "StrategyConfigError", None) is not None
+    assert getattr(strategy_module, "StrategyConfigDeclarationError", None) is not None
+    assert getattr(strategy_module, "StrategyConfigValidationError", None) is not None
+    assert getattr(strategy_module, "StrategyConfigMutationError", None) is not None
+    assert getattr(research_module, "Strategy") is getattr(strategy_module, "Strategy")
+
+
 def test_capability_public_surfaces_import_cleanly() -> None:
     research_module = importlib.import_module("quantleet.research")
+    strategy_module = importlib.import_module("quantleet.strategy")
     backtest_module = importlib.import_module("quantleet.backtest")
     execution_module = importlib.import_module("quantleet.execution")
     integrations_module = importlib.import_module("quantleet.integrations")
@@ -57,6 +71,8 @@ def test_capability_public_surfaces_import_cleanly() -> None:
     assert getattr(backtest_module, "BacktestResult", None) is not None
     assert getattr(backtest_module, "BacktestSummary", None) is not None
     assert getattr(backtest_module, "ExposureSummary", None) is not None
+    assert getattr(strategy_module, "Strategy", None) is not None
+    assert getattr(strategy_module, "StrategyConfig", None) is not None
     assert getattr(research_module, "Strategy", None) is not None
     assert getattr(research_module, "ParameterStudy", None) is not None
     assert getattr(ccxt_module, "Exchange", None) is not None

@@ -7,7 +7,7 @@ __all__ = ["GridSearchResult", "GridSearchRow", "ParameterStudy", "Strategy", "q
 
 def __getattr__(name: str) -> object:
     if name == "Strategy":
-        return getattr(import_module("quantleet.research.strategy"), name)
+        return getattr(import_module("quantleet.strategy"), name)
     if name in {"GridSearchResult", "GridSearchRow", "ParameterStudy"}:
         return getattr(import_module("quantleet.research.parameter_exploration"), name)
     if name in {"qc", "ta"}:

@@ -49,6 +49,10 @@ Within `src/quantleet`, use the capability contexts defined in
 This document governs how those contexts should be named and packaged, not
 their business ownership.
 
+`quantleet.strategy` is the shared strategy authoring and configuration
+capability. It is not owned by `research`; research, backtest, and future
+execution workflows compose it through the engine package boundary.
+
 Rules:
 
 - top-level package names should express capabilities or runtime contexts

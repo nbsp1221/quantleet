@@ -36,8 +36,26 @@ def test_backtest_is_a_tier_b_domain() -> None:
     assert "backtest" not in check_architecture.TIER_A
 
 
+def test_strategy_is_a_tier_b_domain() -> None:
+    assert "strategy" not in check_architecture.TIER_A
+
+
 def test_research_dependency_into_backtest_is_permitted() -> None:
     assert check_architecture.validate_domain_dependency("research", "backtest") is None
+
+
+def test_shared_strategy_dependency_edges_are_permitted() -> None:
+    assert check_architecture.validate_domain_dependency("strategy", "trading") is None
+    assert check_architecture.validate_domain_dependency("research", "strategy") is None
+    assert check_architecture.validate_domain_dependency("backtest", "strategy") is None
+    assert check_architecture.validate_domain_dependency("execution", "strategy") is None
+
+
+def test_strategy_dependency_into_runtime_contexts_is_rejected() -> None:
+    assert check_architecture.validate_domain_dependency("strategy", "research") is not None
+    assert check_architecture.validate_domain_dependency("strategy", "backtest") is not None
+    assert check_architecture.validate_domain_dependency("strategy", "execution") is not None
+    assert check_architecture.validate_domain_dependency("strategy", "integrations") is not None
 
 
 def test_execution_dependency_into_integrations_is_permitted() -> None:

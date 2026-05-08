@@ -255,7 +255,8 @@ from datetime import UTC, datetime, timedelta
 from quantleet.data import CCXTDataSource
 from quantleet.trading.domain.costs import CostConfig
 from quantleet.backtest import BacktestEngine
-from quantleet.research import Strategy, ta, qc
+from quantleet.research import ta, qc
+from quantleet.strategy import Strategy
 
 
 class RsiStrategy(Strategy):

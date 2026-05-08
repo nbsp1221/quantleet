@@ -70,7 +70,8 @@ explicitly when needed.
 ```python
 from quantleet.backtest import BacktestEngine, CostConfig
 from quantleet.data import DataFrameDataSource
-from quantleet.research import Strategy, qc, ta
+from quantleet.research import qc, ta
+from quantleet.strategy import Strategy
 
 
 class SmaCrossStrategy(Strategy):

@@ -21,7 +21,8 @@ def test_research_ergonomics_quickstart_doc_covers_canonical_usage_path() -> Non
     )
 
     assert "from quantleet.backtest import BacktestEngine" in quickstart_doc
-    assert "from quantleet.research import ParameterStudy, Strategy, ta, qc" in quickstart_doc
+    assert "from quantleet.research import ParameterStudy, ta, qc" in quickstart_doc
+    assert "from quantleet.strategy import Strategy" in quickstart_doc
     assert "from quantleet.data import BarSeries, DataFrameDataSource, TimeBar" in quickstart_doc
     assert "quantity=1" in quickstart_doc
     assert "SMA crossover" in quickstart_doc
@@ -71,7 +72,8 @@ def test_research_ergonomics_quickstart_notebook_uses_canonical_import_path() ->
     notebook_source = "\n".join("".join(cell.get("source", [])) for cell in notebook["cells"])
 
     assert "from quantleet.backtest import BacktestEngine" in notebook_source
-    assert "from quantleet.research import Strategy, qc, ta" in notebook_source
+    assert "from quantleet.research import qc, ta" in notebook_source
+    assert "from quantleet.strategy import Strategy" in notebook_source
     assert "from quantleet.data import BarSeries, DataFrameDataSource, TimeBar" in notebook_source
     assert "source = DataFrameDataSource(" in notebook_source
     assert "bars = source.load()" in notebook_source

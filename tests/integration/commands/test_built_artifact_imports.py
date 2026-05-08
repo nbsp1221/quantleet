@@ -61,11 +61,19 @@ def test_built_wheel_exposes_documented_public_imports() -> None:
         assert getattr(data_module, "DataFrameDataSource", None) is not None
 
         research_module = importlib.import_module("quantleet.research")
+        strategy_module = importlib.import_module("quantleet.strategy")
         backtest_module = importlib.import_module("quantleet.backtest")
         execution_module = importlib.import_module("quantleet.execution")
         integrations_module = importlib.import_module("quantleet.integrations")
         ccxt_module = importlib.import_module("quantleet.integrations.venues.ccxt")
+        assert getattr(strategy_module, "Strategy", None) is not None
+        assert getattr(strategy_module, "StrategyConfig", None) is not None
+        assert getattr(strategy_module, "StrategyConfigError", None) is not None
+        assert getattr(strategy_module, "StrategyConfigDeclarationError", None) is not None
+        assert getattr(strategy_module, "StrategyConfigValidationError", None) is not None
+        assert getattr(strategy_module, "StrategyConfigMutationError", None) is not None
         assert getattr(research_module, "Strategy", None) is not None
+        assert getattr(research_module, "Strategy") is getattr(strategy_module, "Strategy")
         assert getattr(research_module, "ParameterStudy", None) is not None
         assert getattr(research_module, "GridSearchResult", None) is not None
         assert getattr(research_module, "GridSearchRow", None) is not None

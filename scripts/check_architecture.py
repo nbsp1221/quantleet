@@ -4,11 +4,12 @@ from pathlib import Path
 
 from quantleet._repo_tools import (
     TIER_A,
+    TIER_B,
     collect_architecture_issues,
     validate_domain_dependency,
 )
 
-__all__ = ["TIER_A", "collect_issues", "main", "validate_domain_dependency"]
+__all__ = ["TIER_A", "TIER_B", "collect_issues", "main", "validate_domain_dependency"]
 
 
 def collect_issues(root: Path) -> list[str]:

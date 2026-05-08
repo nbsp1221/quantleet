@@ -6,7 +6,8 @@ materialized series.
 ```python
 from collections.abc import Mapping
 
-from quantleet.research import ParameterStudy, Strategy, qc, ta
+from quantleet.research import ParameterStudy, qc, ta
+from quantleet.strategy import Strategy
 
 
 class ParameterizedSmaStrategy(Strategy):
