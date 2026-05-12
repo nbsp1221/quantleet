@@ -8,7 +8,7 @@ from datetime import UTC, datetime
 from functools import cache
 from math import isinf, isnan
 from pathlib import Path
-from typing import Any
+from typing import Any, ClassVar
 
 import pytest
 
@@ -231,16 +231,13 @@ class CanonicalLimitMixedStrategy(Strategy):
 
 class _CanonicalStopMarketSignalStrategy(Strategy):
     prefix: str
-
-    def __init__(self, signal_rows: dict[int, dict[str, float]]) -> None:
-        super().__init__()
-        self._signal_rows = signal_rows
+    signal_rows: ClassVar[dict[int, dict[str, float]]] = {}
 
     def init(self) -> None:
         self._entry_pending = False
 
     def on_bar(self, bar) -> None:
-        row = self._signal_rows.get(bar.timestamp, {})
+        row = self.signal_rows.get(bar.timestamp, {})
         if self.position.is_open:
             self._entry_pending = False
             if row.get(f"{self.prefix}_exit") is not None:
@@ -277,11 +274,8 @@ class CanonicalStopMarketInsideBarBreakoutStrategy(_CanonicalStopMarketSignalStr
 
 class _CanonicalStopLimitSignalStrategy(Strategy):
     signal_name: str
-
-    def __init__(self, rows: tuple[TimeBar, ...]) -> None:
-        super().__init__()
-        self._rows = rows
-        self._signals = _canonical_stop_limit_signals(self.signal_name, rows)
+    rows: ClassVar[tuple[TimeBar, ...]] = ()
+    signals: ClassVar[dict[int, tuple[float, float]]] = {}
 
     def init(self) -> None:
         self._entry_pending = False
@@ -301,7 +295,7 @@ class _CanonicalStopLimitSignalStrategy(Strategy):
         if self._entry_pending:
             return
 
-        signal = self._signals.get(self._rows[bar_index].timestamp)
+        signal = self.signals.get(self.rows[bar_index].timestamp)
         if signal is None:
             return
         stop_price, limit_price = signal
@@ -400,74 +394,104 @@ def _canonical_backtest_engine() -> BacktestEngine:
     )
 
 
-def _run_canonical_backtest(bars: BarSeries, strategy: Strategy):
+def _run_canonical_backtest(bars: BarSeries, strategy: type[Strategy]):
     return _canonical_backtest_engine().run(bars=bars, strategy=strategy)
 
 
 def run_canonical_rsi_backtest(bars: BarSeries):
-    return _run_canonical_backtest(bars, CanonicalRsi3070Strategy())
+    return _run_canonical_backtest(bars, CanonicalRsi3070Strategy)
 
 
 def run_canonical_ema_backtest(bars: BarSeries):
-    return _run_canonical_backtest(bars, CanonicalEmaCrossStrategy())
+    return _run_canonical_backtest(bars, CanonicalEmaCrossStrategy)
 
 
 def run_canonical_macd_backtest(bars: BarSeries):
-    return _run_canonical_backtest(bars, CanonicalMacdCrossStrategy())
+    return _run_canonical_backtest(bars, CanonicalMacdCrossStrategy)
 
 
 def run_canonical_limit_entry_backtest(bars: BarSeries):
-    return _run_canonical_backtest(bars, CanonicalLimitEntryStrategy())
+    return _run_canonical_backtest(bars, CanonicalLimitEntryStrategy)
 
 
 def run_canonical_limit_exit_backtest(bars: BarSeries):
-    return _run_canonical_backtest(bars, CanonicalLimitExitStrategy())
+    return _run_canonical_backtest(bars, CanonicalLimitExitStrategy)
 
 
 def run_canonical_limit_mixed_backtest(bars: BarSeries):
-    return _run_canonical_backtest(bars, CanonicalLimitMixedStrategy())
+    return _run_canonical_backtest(bars, CanonicalLimitMixedStrategy)
 
 
 def run_canonical_stop_market_opening_range_backtest(bars: BarSeries):
     return _run_canonical_backtest(
         bars,
-        CanonicalStopMarketOpeningRangeBreakoutStrategy(_canonical_stop_market_signals(bars)),
+        _canonical_stop_market_strategy(CanonicalStopMarketOpeningRangeBreakoutStrategy, bars),
     )
 
 
 def run_canonical_stop_market_donchian_backtest(bars: BarSeries):
     return _run_canonical_backtest(
         bars,
-        CanonicalStopMarketDonchianBreakoutStrategy(_canonical_stop_market_signals(bars)),
+        _canonical_stop_market_strategy(CanonicalStopMarketDonchianBreakoutStrategy, bars),
     )
 
 
 def run_canonical_stop_market_inside_bar_backtest(bars: BarSeries):
     return _run_canonical_backtest(
         bars,
-        CanonicalStopMarketInsideBarBreakoutStrategy(_canonical_stop_market_signals(bars)),
+        _canonical_stop_market_strategy(CanonicalStopMarketInsideBarBreakoutStrategy, bars),
     )
 
 
 def run_canonical_stop_limit_opening_range_backtest(bars: BarSeries):
     return _run_canonical_backtest(
         bars,
-        CanonicalStopLimitOpeningRangeBreakoutStrategy(bars.rows),
+        _canonical_stop_limit_strategy(CanonicalStopLimitOpeningRangeBreakoutStrategy, bars),
     )
 
 
 def run_canonical_stop_limit_donchian_backtest(bars: BarSeries):
     return _run_canonical_backtest(
         bars,
-        CanonicalStopLimitDonchianBreakoutStrategy(bars.rows),
+        _canonical_stop_limit_strategy(CanonicalStopLimitDonchianBreakoutStrategy, bars),
     )
 
 
 def run_canonical_stop_limit_inside_bar_backtest(bars: BarSeries):
     return _run_canonical_backtest(
         bars,
-        CanonicalStopLimitInsideBarBreakoutStrategy(bars.rows),
+        _canonical_stop_limit_strategy(CanonicalStopLimitInsideBarBreakoutStrategy, bars),
     )
+
+
+def _canonical_stop_market_strategy(
+    strategy: type[_CanonicalStopMarketSignalStrategy],
+    bars: BarSeries,
+) -> type[_CanonicalStopMarketSignalStrategy]:
+    signals = _canonical_stop_market_signals(bars)
+
+    class RunStrategy(strategy):
+        signal_rows = signals
+
+    RunStrategy.__name__ = strategy.__name__
+    RunStrategy.__qualname__ = strategy.__qualname__
+    return RunStrategy
+
+
+def _canonical_stop_limit_strategy(
+    strategy: type[_CanonicalStopLimitSignalStrategy],
+    bars: BarSeries,
+) -> type[_CanonicalStopLimitSignalStrategy]:
+    run_rows = bars.rows
+    run_signals = _canonical_stop_limit_signals(strategy.signal_name, run_rows)
+
+    class RunStrategy(strategy):
+        rows = run_rows
+        signals = run_signals
+
+    RunStrategy.__name__ = strategy.__name__
+    RunStrategy.__qualname__ = strategy.__qualname__
+    return RunStrategy
 
 
 def canonical_trade_log_samples(

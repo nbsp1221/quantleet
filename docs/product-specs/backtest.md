@@ -22,4 +22,7 @@ The current implemented backtest baseline is tracked in:
 
 That canonical spec currently defines the shipped single-symbol, long-only, deterministic backtest baseline that the `research` ergonomics surface builds on. Broader backtest expansion should start from this implemented baseline rather than treating it as an upcoming slice.
 
-The current preferred user-facing execution entry is documented in the research ergonomics layer as `BacktestEngine` with the canonical paths `run(bars=..., strategy=...)` and `run(source=..., strategy=...)`.
+The current preferred user-facing execution entry is documented in the research
+ergonomics layer as `BacktestEngine` with the canonical paths
+`run(bars=..., strategy=StrategyClass, config=...)` and
+`run(source=..., strategy=StrategyClass, config=...)`.

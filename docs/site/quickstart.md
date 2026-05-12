@@ -41,7 +41,7 @@ engine = BacktestEngine(
     costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
 )
 
-result = engine.run(source=source, strategy=SmaCrossStrategy(), label="sma-cross")
+result = engine.run(source=source, strategy=SmaCrossStrategy, label="sma-cross")
 
 print(result.report)
 figure = result.plot()

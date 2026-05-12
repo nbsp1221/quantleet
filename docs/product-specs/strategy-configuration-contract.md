@@ -39,7 +39,8 @@ Functional requirements in this document have two roles:
 Quantleet currently has a useful first-beta research loop:
 
 - users subclass `Strategy`
-- `BacktestEngine.run(...)` executes an already constructed strategy instance
+- `BacktestEngine.run(...)` executes a `Strategy` class with an optional
+  `StrategyConfig` instance after Stage 3.5 alignment
 - `ParameterStudy(...).grid_search(...)` runs finite parameter grids through a
   user-provided legacy callable construction API
 - `BacktestReport.run.strategy_parameters` is populated from
@@ -510,19 +511,14 @@ Study APIs must use the canonical strategy class plus materialized config path
 because they need repeatable fresh strategy construction, parameter validation,
 selected-config reporting, and future WFA/paper/live portability.
 
-`BacktestEngine.run(strategy_instance)` may remain as a low-level direct-run
-path. Instance-based runs are useful for debugging, tests, and advanced manual
-wiring, but they do not define the canonical research/study contract.
-
-A future BacktestEngine API may add or promote class+config execution:
+Stage 3.5 promotes direct class+config execution:
 
 ```python
 engine.run(bars=bars, strategy=StrategyClass, config=StrategyConfig(...))
 ```
 
-Whether instance-based runs can attach an explicit config snapshot, and whether
-class+config becomes the primary BacktestEngine API, should be decided in a
-later Backtest API spec or implementation plan.
+Stage 3.5 decides the direct BacktestEngine API: direct runs use
+`strategy=StrategyClass` plus optional `config=StrategyConfig(...)`.
 
 ## Non-Functional Requirements
 
@@ -658,10 +654,10 @@ Stage 3:
 - report-facing config snapshots are plain mappings
 - reporting uses `strategy_config`, not `strategy_parameters`
 
-Low-level backtest boundary:
+Direct backtest boundary:
 
-- `BacktestEngine.run(strategy_instance)` remains a low-level direct-run path
-  unless a later backtest API spec changes it
+- `BacktestEngine.run(strategy=StrategyClass, config=...)` is the direct
+  backtest construction path after Stage 3.5.
 
 ## Stage Boundaries
 
@@ -758,9 +754,10 @@ This product spec is successful when:
   parameter declarations?
 - Should `search_space` become an alias for study-level `parameters` after the
   current migration is stable?
-- Should direct instance runs later accept an explicit config snapshot for
-  reporting?
-- Should `BacktestEngine.run(strategy=StrategyClass, config=...)` become the
-  primary direct backtest API in a future backtest API spec?
+- Stage 3.5 resolved that direct instance runs are not the current public
+  direct-backtest API.
+- Stage 3.5 resolved that
+  `BacktestEngine.run(strategy=StrategyClass, config=...)` is the primary
+  direct backtest API.
 - What migration wording should docs use if external pre-release readers saw
   old callable construction examples before the public beta?

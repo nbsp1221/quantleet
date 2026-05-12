@@ -11,6 +11,7 @@ Related documents:
 
 - [walk-forward-analysis.md](walk-forward-analysis.md)
 - [wfa-prerequisite-roadmap.md](wfa-prerequisite-roadmap.md)
+- [direct-backtest-class-config-api.md](direct-backtest-class-config-api.md)
 - [research-ergonomics.md](research-ergonomics.md)
 - [parameter-exploration.md](parameter-exploration.md)
 - [parameter-exploration-test-scenarios.md](parameter-exploration-test-scenarios.md)
@@ -52,13 +53,13 @@ accidental long-lived API.
 
 - `Strategy` is already the public strategy authoring base class for the
   research layer.
-- `BacktestEngine.run(...)` currently receives an already constructed strategy
-  object.
+- `BacktestEngine.run(...)` now receives a `Strategy` class plus optional
+  `StrategyConfig` instance after Stage 3.5 alignment.
 - `ParameterStudy(...).grid_search(...)` receives a `Strategy` class,
   materializes `StrategyConfig` snapshots, and constructs a fresh strategy
   instance for each admissible candidate.
-- `BacktestResult.report` records strategy identity and public strategy
-  parameters through the strategy metadata/reporting surface.
+- `BacktestResult.report` records the framework-owned
+  `run.strategy_config` snapshot, not strategy-authored parameter metadata.
 - The current beta parameter exploration contract is implemented and
   documented; it is not automatically wrong, but it may be transitional.
 - The longer-lived runtime direction aims for one strategy codebase to move
@@ -163,6 +164,43 @@ Initial assessment:
 - Impact: high
 - Reversibility: medium
 - Suggested priority: P1 candidate
+
+### B4.5. Direct Backtest Class+Config API Alignment
+
+Question:
+
+- Should direct `BacktestEngine.run(...)` accept and teach
+  `strategy=StrategyClass` plus `config=StrategyConfig(...)` before WFA
+  planning resumes?
+
+Why it matters for WFA:
+
+- WFA will need fresh configured strategy instances for train candidates and
+  selected test runs.
+- `ParameterStudy` already uses a strategy class plus materialized
+  `StrategyConfig` snapshots.
+- Direct backtests now use the same strategy class plus materialized
+  `StrategyConfig` model.
+- This removes the mismatch that would otherwise force WFA to invent or expose
+  separate adapter rules instead of composing a settled public backtest
+  contract.
+
+Current planning position:
+
+- Treat this as Stage 3.5, after Stage 3 reporting provenance cleanup and
+  before Stage 4 WFA Resume Spec.
+- The Stage 3.5 product decision is closed in
+  [direct-backtest-class-config-api.md](direct-backtest-class-config-api.md):
+  direct backtests use `strategy=StrategyClass` plus optional
+  `config=StrategyConfig(...)`, direct strategy instances are removed from the
+  current public API, and `ParameterStudy` should use the same direct API.
+
+Initial assessment:
+
+- Urgency: medium-high
+- Impact: high
+- Reversibility: medium
+- Suggested priority: P0/P1 bridge before WFA resume
 
 ### B5. Fresh Strategy State And Dependency Injection
 
@@ -337,7 +375,10 @@ WFA pause.
    product concepts.
 3. Analyze how `ParameterStudy` can migrate or adapt without breaking the
    implemented beta surface unnecessarily.
-4. Revisit WFA only after the selected prerequisite slice has a product spec.
+4. Close the reporting config source-of-truth stage.
+5. Decide the direct backtest class-plus-config API alignment slice.
+6. Revisit WFA only after Stage 3.5 is completed or explicitly deferred by a
+   human decision.
 
 The next document should be a product spec for the first roadmap stage:
 `Unified Strategy Configuration Contract`. That spec should stay focused on the
@@ -345,7 +386,8 @@ strategy configuration contract itself while preserving the later roadmap stages
 
 1. `ParameterStudy` Strategy API Migration.
 2. Reporting Config Source Of Truth.
-3. WFA Resume Spec.
+3. Direct Backtest Class+Config API Alignment.
+4. WFA Resume Spec.
 
 This readiness document should not be used to skip the dedicated roadmap or the
 dedicated product spec for the selected prerequisite.
@@ -356,10 +398,18 @@ dedicated product spec for the selected prerequisite.
   descriptor-based parameter declarations?
 - Should the first config contract use plain dataclasses, a custom base class,
   or another validation approach?
-- Stage 2 resolved that `ParameterStudy` uses `strategy=StrategyClass` only.
 - WFA must not preserve or reintroduce the old callable construction path.
 - Which strategy settings are true optimizable parameters versus environment,
   dependency, or runtime settings?
 - How should selected config values be reflected in `BacktestResult.report`?
 - How should examples teach strategy parameters without making users write
   lambda factories for common cases?
+
+Resolved since this readiness review was first written:
+
+- Stage 1 selected the explicit `StrategyConfig` model.
+- Stage 2 resolved that `ParameterStudy` uses `strategy=StrategyClass` only.
+- Stage 3 resolved that reports expose the framework-owned
+  `run.strategy_config` snapshot.
+- Stage 3.5 resolves that direct backtests teach strategy classes plus optional
+  explicit configs before WFA resumes.

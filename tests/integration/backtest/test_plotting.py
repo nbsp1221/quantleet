@@ -64,7 +64,7 @@ class CountingSource(HistoricalDataSource):
 def test_engine_bars_result_plots_price_fills_equity_and_drawdown() -> None:
     result = _engine().run(
         bars=_bars((100.0, 110.0, 120.0, 115.0)),
-        strategy=EntryExitStrategy(),
+        strategy=EntryExitStrategy,
     )
 
     fig = result.plot()
@@ -79,7 +79,7 @@ def test_engine_bars_result_plots_price_fills_equity_and_drawdown() -> None:
 
 def test_engine_source_result_plots_without_reloading_source() -> None:
     source = CountingSource(_bars((100.0, 102.0, 101.0)))
-    result = _engine().run(source=source, strategy=NoTradeStrategy())
+    result = _engine().run(source=source, strategy=NoTradeStrategy)
 
     fig = result.plot()
 
@@ -89,7 +89,7 @@ def test_engine_source_result_plots_without_reloading_source() -> None:
 
 def test_plot_uses_snapshot_from_run_instead_of_current_source_state() -> None:
     source = CountingSource(_bars((100.0, 101.0, 102.0)))
-    result = _engine().run(source=source, strategy=NoTradeStrategy())
+    result = _engine().run(source=source, strategy=NoTradeStrategy)
     source.bars = _bars((900.0, 901.0, 902.0))
 
     fig = result.plot()
@@ -110,7 +110,7 @@ def test_plot_uses_snapshot_from_run_instead_of_mutated_user_records() -> None:
             symbol="BTC/USDT",
             timeframe="1m",
         ),
-        strategy=NoTradeStrategy(),
+        strategy=NoTradeStrategy,
     )
     records[1] = _record(timestamp=2, close=999.0)
 
@@ -122,7 +122,7 @@ def test_plot_uses_snapshot_from_run_instead_of_mutated_user_records() -> None:
 def test_drawdown_plot_matches_engine_result_drawdown_curve() -> None:
     result = _engine().run(
         bars=_bars((100.0, 120.0, 80.0, 90.0)),
-        strategy=LongBeforeDropStrategy(),
+        strategy=LongBeforeDropStrategy,
     )
 
     fig = result.plot()

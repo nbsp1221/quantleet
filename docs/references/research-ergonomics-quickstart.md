@@ -46,7 +46,9 @@ They are not automatically all strict merge gates.
 
 - starting state: user-created `TimeBar` and `BarSeries`
 - user intent: run a backtest from explicit materialized historical bars
-- success artifact: `BacktestEngine.run(bars=..., strategy=...)` works with the documented canonical types
+- success artifact:
+  `BacktestEngine.run(bars=..., strategy=StrategyClass, config=...)` works with
+  the documented canonical types
 - superficially passing but still bad: the path only works because docs or code silently rely on lower-layer internals
 
 ### Journey 4: Exchange-Backed Historical Research Flow
@@ -125,7 +127,7 @@ engine = BacktestEngine(
 
 result = engine.run(
     source=source,
-    strategy=SmaCrossStrategy(),
+    strategy=SmaCrossStrategy,
     label="sma-cross",
 )
 
@@ -135,7 +137,7 @@ fig.savefig("sma-cross.png")
 
 materialized_result = engine.run(
     bars=bars,
-    strategy=SmaCrossStrategy(),
+    strategy=SmaCrossStrategy,
 )
 ```
 

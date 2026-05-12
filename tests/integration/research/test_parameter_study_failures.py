@@ -155,10 +155,11 @@ class MetricExtractionFailingEngine:
         self,
         *,
         strategy: object,
+        config: object | None = None,
         bars: BarSeries,
         label: str | None = None,
     ) -> object:
-        del strategy, bars, label
+        del strategy, config, bars, label
         return metric_extraction_failure_result()
 
 

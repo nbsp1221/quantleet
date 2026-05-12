@@ -22,8 +22,8 @@ class MetadataConfig(StrategyConfig):
 
 
 class MetadataStrategy(Strategy[MetadataConfig]):
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, config: MetadataConfig | None = None) -> None:
+        super().__init__(config)
         self.public_cache = "must not be introspected"
 
     @property
@@ -50,7 +50,7 @@ class RaisingParametersStrategy(MetadataStrategy):
 def test_report_is_directly_reachable_from_engine_result() -> None:
     result = run_engine_backtest(
         bars=fixture_bar_series(),
-        strategy=DeterministicEntryExitStrategy(),
+        strategy=DeterministicEntryExitStrategy,
     )
 
     assert result.report.run.symbol == "BTC/USDT"
@@ -67,7 +67,7 @@ def test_report_is_directly_reachable_from_engine_result() -> None:
 def test_report_captures_strategy_identity_and_config_snapshot() -> None:
     result = _engine().run(
         bars=fixture_bar_series(),
-        strategy=MetadataStrategy(),
+        strategy=MetadataStrategy,
         label="sma-20-50",
     )
 
@@ -91,7 +91,7 @@ def test_report_uses_strategy_config_even_when_parameters_method_conflicts() -> 
     ConflictingParametersStrategy.parameters_call_count = 0
     result = _engine().run(
         bars=fixture_bar_series(),
-        strategy=ConflictingParametersStrategy(),
+        strategy=ConflictingParametersStrategy,
     )
 
     assert result.report.run.strategy_config["fast"] == 20
@@ -102,7 +102,7 @@ def test_report_uses_strategy_config_even_when_parameters_method_conflicts() -> 
 def test_report_does_not_call_raising_parameters_method() -> None:
     result = _engine().run(
         bars=fixture_bar_series(),
-        strategy=RaisingParametersStrategy(),
+        strategy=RaisingParametersStrategy,
     )
 
     assert result.report.run.strategy_config["fast"] == 20
@@ -112,7 +112,7 @@ def test_report_does_not_call_raising_parameters_method() -> None:
 def test_config_less_strategy_reports_empty_config() -> None:
     result = _engine().run(
         bars=fixture_bar_series(),
-        strategy=DeterministicEntryExitStrategy(),
+        strategy=DeterministicEntryExitStrategy,
     )
 
     assert result.report.run.strategy_config == {}
@@ -123,7 +123,7 @@ def test_report_exposes_structured_execution_assumptions() -> None:
     costs = CostConfig(tick_size=0.5, slippage_ticks=2.0, fee_rate=0.002)
     result = run_engine_backtest(
         bars=fixture_bar_series(),
-        strategy=DeterministicEntryExitStrategy(),
+        strategy=DeterministicEntryExitStrategy,
         costs=costs,
     )
 
@@ -143,7 +143,7 @@ def test_report_exposes_structured_execution_assumptions() -> None:
 def test_human_readable_report_is_grouped_and_scan_friendly() -> None:
     result = run_engine_backtest(
         bars=fixture_bar_series(),
-        strategy=DeterministicEntryExitStrategy(),
+        strategy=DeterministicEntryExitStrategy,
     )
 
     text = result.report.to_text()

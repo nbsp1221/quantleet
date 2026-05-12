@@ -438,7 +438,7 @@ rejected = results.rejected()
 - `ParameterStudy` is constructed with an existing `BacktestEngine`,
   materialized `BarSeries`, and a `Strategy` class.
 - Each admissible combination runs through the existing historical
-  `BacktestEngine.run(bars=..., strategy=...)` behavior.
+  `BacktestEngine.run(bars=..., strategy=StrategyClass, config=...)` behavior.
 - Reusing the same `BacktestEngine` object across a study must not leak
   per-run broker, order, strategy, report, or account state across candidate
   runs. The study may rely on `BacktestEngine.run(...)` only if that public run

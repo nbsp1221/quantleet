@@ -12,6 +12,7 @@ Related documents:
 
 - [strategy-configuration-contract.md](strategy-configuration-contract.md)
 - [strategy-configuration-contract-test-scenarios.md](strategy-configuration-contract-test-scenarios.md)
+- [direct-backtest-class-config-api.md](direct-backtest-class-config-api.md)
 - [wfa-prerequisite-roadmap.md](wfa-prerequisite-roadmap.md)
 - [parameter-exploration.md](parameter-exploration.md)
 - [parameter-exploration-test-scenarios.md](parameter-exploration-test-scenarios.md)
@@ -95,9 +96,8 @@ This stage does not define or require:
 - walk-forward analysis implementation
 - a WFA result model
 - paper trading or live trading behavior
-- `BacktestEngine.run(strategy=StrategyClass, config=...)`
-- a new direct-backtest class-plus-config API
-- removal or redesign of `BacktestEngine.run(...)` instance-based execution
+- WFA-specific usage of `BacktestEngine.run(strategy=StrategyClass,
+  config=...)`
 - arbitrary custom report metadata such as `metadata={...}`
 - a replacement for run `label` or `Strategy.display_name`
 - new strategy performance metrics
@@ -216,8 +216,8 @@ its current-contract language must be updated.
 
 ### Direct Backtest Reporting
 
-Given a constructed strategy instance with a materialized config, a direct
-backtest report exposes the full config snapshot in `report.run.strategy_config`.
+Given a strategy class plus materialized config, a direct backtest report
+exposes the full config snapshot in `report.run.strategy_config`.
 
 Example expected product shape:
 
@@ -231,7 +231,7 @@ class SmaStrategy(Strategy[SmaConfig]):
     ...
 
 
-result = engine.run(bars=bars, strategy=SmaStrategy(SmaConfig(fast=10)))
+result = engine.run(bars=bars, strategy=SmaStrategy, config=SmaConfig(fast=10))
 
 result.report.run.strategy_config
 # {"fast": 10, "slow": 20}
@@ -440,14 +440,15 @@ spec. The following adjacent decisions are resolved for planning continuity:
 
 - Stage 3 completion should have a dedicated product-test spec before
   implementation planning.
-- The later direct-backtest API alignment phase should make
+- Stage 3.5 direct-backtest API alignment makes
   `BacktestEngine.run(strategy=StrategyClass, config=...)` the primary direct
   backtest API.
-- The existing instance-based `BacktestEngine.run(strategy=...)` path should
-  become an advanced or transition path in that later phase, not an equal
-  canonical API.
+- The existing instance-based `BacktestEngine.run(strategy=...)` path is
+  removed from the current public direct-backtest surface in Stage 3.5.
 - Direct-backtest class-plus-config API alignment should be treated as a WFA
-  prerequisite immediately after Stage 3, not as general future cleanup.
+  prerequisite immediately after Stage 3, not as general future cleanup. This
+  follow-on is tracked as Stage 3.5 in
+  [direct-backtest-class-config-api.md](direct-backtest-class-config-api.md).
 - Arbitrary run metadata remains out of scope. Quantleet should not add a
   distinct metadata bag until a concrete user need justifies the API,
   serialization, and safety policy.

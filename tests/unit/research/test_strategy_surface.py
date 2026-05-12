@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import inspect
 from abc import ABC
+from typing import ClassVar
 
 import pytest
 
@@ -208,12 +209,15 @@ class OrdersFromInitStrategy(Strategy):
 
 
 class RecordsInitCallsStrategy(Strategy):
-    def __init__(self) -> None:
-        super().__init__()
+    init_call_history: ClassVar[list[int]] = []
+
+    def __init__(self, config=None) -> None:
+        super().__init__(config)
         self.init_calls = 0
 
     def init(self) -> None:
         self.init_calls += 1
+        type(self).init_call_history.append(self.init_calls)
 
     def on_bar(self, bar: BarEvent) -> None:
         return None
@@ -697,7 +701,7 @@ def test_init_cannot_create_orders() -> None:
 
 
 def test_backtest_engine_calls_init_once_before_processing() -> None:
-    strategy = RecordsInitCallsStrategy()
+    RecordsInitCallsStrategy.init_call_history = []
 
     engine = BacktestEngine(
         initial_cash=1_000.0,
@@ -716,14 +720,14 @@ def test_backtest_engine_calls_init_once_before_processing() -> None:
                 ),
             )
         ),
-        strategy=strategy,
+        strategy=RecordsInitCallsStrategy,
     )
 
-    assert strategy.init_calls == 1
+    assert RecordsInitCallsStrategy.init_call_history == [1]
 
 
-def test_backtest_engine_calls_init_for_each_run_on_reused_strategy_instance() -> None:
-    strategy = RecordsInitCallsStrategy()
+def test_backtest_engine_constructs_fresh_instance_and_calls_init_for_each_run() -> None:
+    RecordsInitCallsStrategy.init_call_history = []
     engine = BacktestEngine(
         initial_cash=1_000.0,
         costs=CostConfig(tick_size=0.1, slippage_ticks=1.0, fee_rate=0.001),
@@ -743,14 +747,14 @@ def test_backtest_engine_calls_init_for_each_run_on_reused_strategy_instance() -
 
     engine.run(
         bars=bars,
-        strategy=strategy,
+        strategy=RecordsInitCallsStrategy,
     )
     engine.run(
         bars=bars,
-        strategy=strategy,
+        strategy=RecordsInitCallsStrategy,
     )
 
-    assert strategy.init_calls == 2
+    assert RecordsInitCallsStrategy.init_call_history == [1, 1]
 
 
 def test_order_intents_from_on_bar_become_effective_on_the_next_bar() -> None:
@@ -1327,7 +1331,7 @@ def test_sell_is_the_current_long_exit_surface() -> None:
                 ),
             )
         ),
-        strategy=SellWhileFlatInLongOnlyScopeStrategy(),
+        strategy=SellWhileFlatInLongOnlyScopeStrategy,
     )
 
     assert result.trade_log == ()
@@ -1364,7 +1368,7 @@ def test_percent_sell_is_the_current_long_exit_surface() -> None:
                 ),
             )
         ),
-        strategy=PercentSellWhileFlatInLongOnlyScopeStrategy(),
+        strategy=PercentSellWhileFlatInLongOnlyScopeStrategy,
     )
 
     assert result.trade_log == ()

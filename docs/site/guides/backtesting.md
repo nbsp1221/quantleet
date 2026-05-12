@@ -14,13 +14,13 @@ engine = BacktestEngine(
 Run from a data source:
 
 ```python
-result = engine.run(source=source, strategy=strategy, label="research-run")
+result = engine.run(source=source, strategy=StrategyClass, label="research-run")
 ```
 
 Run from a materialized series:
 
 ```python
-result = engine.run(bars=bars, strategy=strategy)
+result = engine.run(bars=bars, strategy=StrategyClass, config=StrategyConfigInstance)
 ```
 
 Each run returns a `BacktestResult` with `summary`, `trade_log`,

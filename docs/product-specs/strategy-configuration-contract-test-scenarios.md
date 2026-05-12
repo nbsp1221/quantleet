@@ -454,8 +454,9 @@ Flow:
 3. assert the effective config snapshot is `{}`
 4. assert no empty config class is required from the user
 
-If this crosses into `BacktestEngine.run(strategy_instance)`, keep the assertion
-limited to the config contract and do not assert unrelated backtest metrics.
+If this crosses into `BacktestEngine.run(strategy=StrategyClass, config=...)`,
+keep the assertion limited to the config contract and do not assert unrelated
+backtest metrics.
 
 ## Downstream Stage 2 Test Hooks
 
@@ -574,15 +575,17 @@ Expected future canonical behavior:
 - strategy-authored self-reporting cannot silently disagree with execution
   config
 
-### S3-2: Low-Level Instance Run Without Framework-Owned Config
+### S3-2: Direct Backtest Class Plus Config Reports Framework-Owned Config
 
 Expected future canonical behavior:
 
-- low-level direct instance runs without a framework-owned config snapshot report
-  `strategy_config == {}`
+- direct backtests run through `strategy=StrategyClass` plus optional
+  `config=StrategyConfig(...)`
+- omitted config materializes the strategy config type default
+- config-less strategies report `strategy_config == {}`
 
-This is a deliberate product trade-off from the Stage 1 spec. If a later spec
-adds explicit config attachment for direct instance runs, update this scenario.
+Stage 3.5 resolves the old direct-instance ambiguity. See
+[direct-backtest-class-config-api-test-scenarios.md](direct-backtest-class-config-api-test-scenarios.md).
 
 ## Contract, Regression, And Documentation Tests
 
@@ -662,8 +665,6 @@ Assertions after relevant stages:
 - future base-config override behavior
 - `search_space` alias
 - descriptor/range validation
-- direct instance explicit config attachment
-- BacktestEngine class+config direct API
 - WFA `selected_config` fold tests
 
 ## Success Conditions

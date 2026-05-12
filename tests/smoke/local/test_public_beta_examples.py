@@ -39,7 +39,7 @@ def test_public_sma_crossover_quickstart_example_runs() -> None:
         timeframe="1m",
     )
 
-    result = _engine().run(source=source, strategy=SmaCrossStrategy(), label="sma-cross")
+    result = _engine().run(source=source, strategy=SmaCrossStrategy, label="sma-cross")
 
     assert result.report.run.run_label == "sma-cross"
     assert "Return" in str(result.report)
@@ -79,7 +79,7 @@ def test_public_orders_and_sizing_example_runs() -> None:
 
     result = _engine().run(
         bars=_bars((100.0, 101.0, 96.0, 94.0, 93.0)),
-        strategy=OrdersAndSizingStrategy(),
+        strategy=OrdersAndSizingStrategy,
         label="orders-and-sizing",
     )
 

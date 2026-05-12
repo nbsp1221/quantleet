@@ -11,6 +11,7 @@ Related documents:
 
 - [research-ergonomics.md](research-ergonomics.md)
 - [parameter-exploration.md](parameter-exploration.md)
+- [direct-backtest-class-config-api.md](direct-backtest-class-config-api.md)
 - [walk-forward-analysis-readiness.md](walk-forward-analysis-readiness.md)
 - [backtest-mvp.md](backtest-mvp.md)
 - [backtest-plotting.md](backtest-plotting.md)
@@ -119,6 +120,8 @@ Resume criteria:
   that WFA can safely proceed without it.
 - Any chosen prerequisite product spec has been written before technical
   implementation planning begins.
+- Stage 3.5 direct-backtest class-plus-config API alignment has been completed
+  or explicitly deferred by a human decision.
 
 ## Goals
 

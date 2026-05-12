@@ -21,7 +21,7 @@ def test_canonical_stop_market_gap_above_entry_matches_public_result_contract() 
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=StopMarketGapAboveBuyStrategy(),
+        strategy=StopMarketGapAboveBuyStrategy,
         costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
     )
 
@@ -59,7 +59,7 @@ def test_canonical_stop_market_gap_below_exit_matches_public_result_contract() -
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=StopMarketGapBelowSellStrategy(),
+        strategy=StopMarketGapBelowSellStrategy,
         costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
     )
 

@@ -10,6 +10,8 @@
 Related documents:
 
 - [strategy-configuration-contract.md](strategy-configuration-contract.md)
+- [direct-backtest-class-config-api.md](direct-backtest-class-config-api.md)
+- [direct-backtest-class-config-api-test-scenarios.md](direct-backtest-class-config-api-test-scenarios.md)
 - [walk-forward-analysis.md](walk-forward-analysis.md)
 - [walk-forward-analysis-readiness.md](walk-forward-analysis-readiness.md)
 - [research-ergonomics.md](research-ergonomics.md)
@@ -36,10 +38,11 @@ The agreed sequence is:
 1. Unified Strategy Configuration Contract
 2. ParameterStudy Strategy API Migration
 3. Reporting Config Source Of Truth
+3.5. Direct Backtest Class+Config API Alignment
 4. WFA Resume Spec
 
 This sequence is a product-planning dependency chain, not a commitment to
-implement all four slices in one batch.
+implement every slice in one batch.
 
 ## Why This Roadmap Exists
 
@@ -59,6 +62,8 @@ work was started:
 - Stage 3 replaced report-authored `strategy_parameters` with
   `BacktestReport.run.strategy_config`, using the framework-owned execution
   config snapshot.
+- Direct `BacktestEngine.run(...)` now uses `strategy=StrategyClass` plus
+  `config=StrategyConfig(...)`, matching the construction model WFA will need.
 - The long-lived runtime direction wants one strategy codebase to move through
   research, backtest, paper, and live workflows.
 
@@ -172,12 +177,67 @@ Non-goals for this stage:
 - Continuous OOS account semantics.
 - New report metrics unrelated to config provenance.
 
+## Roadmap Stage 3.5: Direct Backtest Class+Config API Alignment
+
+Governing product spec:
+
+- [direct-backtest-class-config-api.md](direct-backtest-class-config-api.md)
+- [direct-backtest-class-config-api-test-scenarios.md](direct-backtest-class-config-api-test-scenarios.md)
+
+Purpose:
+
+- Track the Stage 3.5 decision that direct `BacktestEngine.run(...)` accepts a
+  strategy class and optional `StrategyConfig` before WFA resumes.
+- Align normal direct backtests with the strategy-construction model already
+  used by `ParameterStudy`.
+- Prevent WFA from becoming the first public surface that must bridge direct
+  strategy instances and framework-created configured strategy instances.
+
+Plain-language summary:
+
+- Direct backtests receive a strategy class and optional config.
+- `ParameterStudy` already receives a strategy class and creates fresh
+  configured strategy instances for each run.
+- WFA will need the same fresh-instance behavior many times across folds.
+- Stage 3.5 makes direct backtests teach `strategy=StrategyClass` plus
+  `config=...`.
+
+Resolved product decisions:
+
+- `BacktestEngine.run(strategy=StrategyClass, config=...)` is the primary
+  direct-backtest API.
+- Direct strategy instances are removed from the current public API rather than
+  preserved as a compatibility path.
+- `config` accepts `StrategyConfig` instances only; plain dict config input is
+  rejected.
+- Omitted `config` means the engine materializes `StrategyClass.config_type()`.
+- `ParameterStudy` should call the direct class-plus-config API instead of
+  constructing strategy instances internally.
+
+Required product outcome:
+
+- A product spec that closes the direct-backtest class-plus-config API decision.
+- A separate test-scenarios spec that defines the verification target before
+  implementation planning.
+- A clear documentation policy for the primary direct-backtest example style.
+- A test-scenario target for strategy class, config, instance, report snapshot,
+  and error-message behavior.
+- Confirmation that WFA can rely on one framework-owned fresh strategy
+  construction model.
+
+Non-goals for this stage:
+
+- WFA implementation.
+- Fold generation, OOS summary, or WFA result-model decisions.
+- Paper/live execution design.
+- Changes to trading or execution semantics.
+
 ## Roadmap Stage 4: WFA Resume Spec
 
 Purpose:
 
 - Resume walk-forward analysis product planning on top of the resolved strategy
-  configuration and reporting contracts.
+  configuration, reporting, and direct-backtest construction contracts.
 
 Primary questions:
 
@@ -185,6 +245,8 @@ Primary questions:
   config migration?
 - How does each fold create train candidate strategies and selected test
   strategies?
+- How does WFA compose the Stage 3.5 direct-backtest API without teaching a
+  separate construction model?
 - Which output concepts are first-slice required: `oos_summary`, fold records,
   selected parameters by fold, parameter stability, diagnostics?
 - Which WFA readiness blockers remain after the prior stages?
@@ -211,6 +273,9 @@ Non-goals for this stage:
 - Stage 2 must happen before WFA implementation resumes.
 - Stage 3 may be specified after Stage 2 or in parallel with late Stage 2
   planning, but WFA cannot depend on ambiguous report metadata.
+- Stage 3.5 must happen after Stage 3 and before Stage 4 unless a human
+  decision explicitly records why direct-backtest class-plus-config API
+  alignment no longer blocks WFA planning.
 - Stage 4 must not start until the project has either completed the relevant
   prior specs or explicitly records why a prior stage no longer blocks WFA.
 
@@ -225,7 +290,8 @@ scope drift is not acceptable.
 | Unified Strategy Configuration Contract | high | high | high | P0 |
 | ParameterStudy Strategy API Migration | high | high | high | P0 |
 | Reporting Config Source Of Truth | medium | high | medium-high | Completed |
-| WFA Resume Spec | medium | high | high after prerequisites | Next blocked on resume-spec review |
+| Direct Backtest Class+Config API Alignment | medium-high | high | high | Spec decisions closed; implementation planning next |
+| WFA Resume Spec | medium | high | high after prerequisites | Blocked on Stage 3.5 completion |
 
 ## Guardrails
 
@@ -256,11 +322,11 @@ This roadmap is successful when:
 
 - Should Stage 1 use the title `Unified Strategy Configuration Contract` or
   `Strategy Configuration Contract`?
-- Should Stage 2 and Stage 3 be separate product specs, or can they be combined
-  if Stage 1 makes their scope small?
 - Stage 2 resolved that the old callable construction path is removed from
   active code, tests, examples, and public docs.
-- Should the reporting config snapshot be added to `BacktestEngine.run(...)`, to
-  strategy construction normalization, or to a separate run manifest builder?
-- What is the earliest point at which WFA can safely resume without creating
-  public API debt?
+- Stage 3 resolved that report metadata records
+  `BacktestReport.run.strategy_config`.
+- Stage 3.5 resolves that direct backtests use strategy classes plus optional
+  `StrategyConfig` objects.
+- WFA can safely resume product planning after Stage 3.5 is implemented or
+  explicitly deferred by a human decision.

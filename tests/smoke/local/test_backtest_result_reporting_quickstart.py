@@ -47,7 +47,7 @@ def test_dataframe_quickstart_produces_direct_result_report() -> None:
     result = BacktestEngine(
         initial_cash=1_000.0,
         costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
-    ).run(source=source, strategy=QuickstartStrategy(), label="quickstart")
+    ).run(source=source, strategy=QuickstartStrategy, label="quickstart")
 
     assert result.report.run.run_label == "quickstart"
     assert result.report.run.symbol == "BTC/USDT"

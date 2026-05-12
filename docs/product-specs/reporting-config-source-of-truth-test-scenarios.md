@@ -102,14 +102,15 @@ Operational rules:
    docs.
 6. Keep tests small, named by behavior, and explicit about input config and
    expected snapshot.
-7. Treat failures from invalid custom strategy-like objects as visible contract
-   failures, not as prompts to invent fallback metadata behavior.
+7. Treat failures from invalid direct backtest strategy/config inputs as visible
+   contract failures, not as prompts to invent fallback metadata behavior.
 
 ## Test Scope And Non-Scope
 
 In scope:
 
-- direct backtest report config snapshots for configured strategy instances
+- direct backtest report config snapshots for strategy classes plus explicit
+  config objects
 - direct backtest report config snapshots for config-less strategies
 - removal of `strategy_parameters` from report-facing current contracts
 - negative guardrails proving `Strategy.parameters()` cannot affect reports
@@ -118,7 +119,7 @@ In scope:
 - distinction between `strategy_config`, `candidate_parameters`,
   `display_name`, and run `label`
 - `ParameterStudy` row/report alignment for successful rows
-- visible failure for invalid strategy-like config metadata at the reporting
+- visible failure for invalid direct strategy/config input at the reporting
   boundary
 - current managed docs, examples, notebooks, fixtures, and canonical report
   snapshots using the new contract
@@ -132,10 +133,8 @@ Out of scope:
 - a new arbitrary `metadata={...}` report feature
 - new strategy performance metrics
 - descriptor/range DSL tests for strategy parameters
-- direct `BacktestEngine.run(strategy=StrategyClass, config=...)` tests for
-  the later API-alignment phase
-- removal or redesign tests for the existing instance-based
-  `BacktestEngine.run(...)` execution path
+- WFA-specific `BacktestEngine.run(strategy=StrategyClass, config=...)` tests
+  for a later WFA phase
 - tests that require changelog or release-note rewriting
 - tests that require public migration notes for pre-release
   `Strategy.parameters()` examples
@@ -146,8 +145,8 @@ Out of scope:
 | --- | --- | --- |
 | Unit | `tests/unit/backtest/test_report_strategy_config_contract.py` | Report run-manifest shape, plain mapping snapshots, absence of `strategy_parameters`, and metadata-boundary behavior that can be observed without running a full strategy workflow. |
 | Unit | `tests/unit/backtest/test_report_strategy_config_snapshot.py` | Snapshot timing: defaults plus overrides are copied at run start and do not change because strategy runtime state mutates later. |
-| Unit | `tests/unit/backtest/test_strategy_like_report_config_validation.py` | Invalid custom strategy-like config metadata fails visibly instead of silently reporting `{}`. |
-| Integration | `tests/integration/backtest/test_backtest_report_strategy_config.py` | Real `BacktestEngine.run(...)` with configured and config-less strategy instances produces the expected report contract. |
+| Unit | `tests/unit/backtest/test_direct_class_config_api.py` | Invalid direct strategy/config inputs fail visibly instead of silently reporting `{}`. |
+| Integration | `tests/integration/backtest/test_backtest_report_strategy_config.py` | Real `BacktestEngine.run(...)` with configured and config-less strategy classes produces the expected report contract. |
 | Integration | `tests/integration/research/test_parameter_study_report_strategy_config.py` | Real `ParameterStudy` successful rows and retained backtest reports expose identical full `strategy_config` snapshots while preserving partial `candidate_parameters`. |
 | Regression | `tests/regression/backtest/test_strategy_parameters_removed_from_reports.py` | A strategy that still defines `parameters()` cannot influence reports, and stale `strategy_parameters` access is absent from current report objects/records. |
 | Structure | `tests/structure/docs/test_reporting_config_source_of_truth_docs.py` | Current docs, examples, notebooks, and canonical snapshots do not teach or serialize the old current contract. |
@@ -258,7 +257,7 @@ Scenario:
 1. Define a tiny `StrategyConfig` with public JSON-scalar fields and defaults.
 2. Define a `Strategy[Config]` that uses `self.config` during a deterministic
    backtest.
-3. Run `BacktestEngine.run(bars=..., strategy=ConfiguredStrategy(config))`.
+3. Run `BacktestEngine.run(bars=..., strategy=ConfiguredStrategy, config=config)`.
 4. Inspect `result.report.run.strategy_config`.
 
 Expected behavior:

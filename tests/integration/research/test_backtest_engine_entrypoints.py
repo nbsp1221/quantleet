@@ -24,7 +24,7 @@ def test_backtest_engine_runs_materialized_bar_series() -> None:
         costs=CostConfig(tick_size=1.0, slippage_ticks=1.0, fee_rate=0.001),
     ).run(
         bars=fixture_bar_series(),
-        strategy=DeterministicEntryExitStrategy(),
+        strategy=DeterministicEntryExitStrategy,
     )
 
     assert isinstance(result, BacktestResult)
@@ -34,7 +34,7 @@ def test_backtest_engine_runs_materialized_bar_series() -> None:
 def test_backtest_engine_runs_source_that_loads_bar_series() -> None:
     result = run_engine_backtest_from_source(
         source=InMemoryBarSeriesSource(),
-        strategy=DeterministicEntryExitStrategy(),
+        strategy=DeterministicEntryExitStrategy,
     )
 
     assert isinstance(result, BacktestResult)
@@ -50,7 +50,7 @@ def test_backtest_engine_runs_dataframe_source_quickstart_path() -> None:
 
     result = run_engine_backtest_from_source(
         source=source,
-        strategy=DeterministicEntryExitStrategy(),
+        strategy=DeterministicEntryExitStrategy,
     )
 
     assert isinstance(result, BacktestResult)
@@ -65,13 +65,13 @@ def test_backtest_engine_rejects_missing_and_duplicate_inputs() -> None:
     )
 
     with pytest.raises(ValueError, match="provide exactly one of bars or source"):
-        engine.run(strategy=DeterministicEntryExitStrategy())
+        engine.run(strategy=DeterministicEntryExitStrategy)
 
     with pytest.raises(ValueError, match="provide exactly one of bars or source"):
         engine.run(
             bars=fixture_bar_series(),
             source=InMemoryBarSeriesSource(),
-            strategy=DeterministicEntryExitStrategy(),
+            strategy=DeterministicEntryExitStrategy,
         )
 
 
@@ -84,7 +84,7 @@ def test_backtest_engine_rejects_non_bar_series_bars_input() -> None:
     with pytest.raises(ValueError, match="bars must be a BarSeries instance"):
         engine.run(
             bars=("not", "a", "bar-series"),  # type: ignore[arg-type]
-            strategy=DeterministicEntryExitStrategy(),
+            strategy=DeterministicEntryExitStrategy,
         )
 
 
@@ -97,7 +97,7 @@ def test_backtest_engine_rejects_source_results_that_are_not_bar_series() -> Non
     with pytest.raises(ValueError, match="bars must be a BarSeries instance"):
         engine.run(
             source=InMemoryDuckTypedSource(),
-            strategy=DeterministicEntryExitStrategy(),
+            strategy=DeterministicEntryExitStrategy,
         )
 
 
@@ -130,7 +130,7 @@ def test_backtest_runner_accepts_paginated_ccxt_source_rows(
 
     result = run_engine_backtest(
         bars=bars,
-        strategy=DeterministicEntryExitStrategy(),
+        strategy=DeterministicEntryExitStrategy,
     )
 
     assert tuple(row.timestamp for row in bars.rows) == (60_000, 120_000, 180_000)
@@ -168,7 +168,7 @@ def test_backtest_engine_runs_exchange_backed_source_path(
 
     result = run_engine_backtest_from_source(
         source=source,
-        strategy=DeterministicEntryExitStrategy(),
+        strategy=DeterministicEntryExitStrategy,
     )
 
     assert isinstance(result, BacktestResult)

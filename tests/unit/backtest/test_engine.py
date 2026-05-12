@@ -71,7 +71,7 @@ def test_backtest_engine_rejects_empty_label() -> None:
                     ),
                 ),
             ),
-            strategy=NoTradeStrategy(),
+            strategy=NoTradeStrategy,
             label="",
         )
 
@@ -85,5 +85,5 @@ def test_backtest_engine_rejects_empty_bar_series_before_reporting() -> None:
     with pytest.raises(ValueError, match="at least one TimeBar"):
         engine.run(
             bars=BarSeries(symbol="BTC/USDT", timeframe="1m", bar_type="time", rows=()),
-            strategy=NoTradeStrategy(),
+            strategy=NoTradeStrategy,
         )

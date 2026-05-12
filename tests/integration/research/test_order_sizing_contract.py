@@ -112,7 +112,7 @@ class CanonicalPercentLimitExitStrategy(Strategy):
             self.buy(qty_percent=50.0)
 
 
-def _run_canonical_percent_backtest(strategy: Strategy):
+def _run_canonical_percent_backtest(strategy: type[Strategy]):
     engine = BacktestEngine(
         initial_cash=1_000_000.0,
         costs=CostConfig(tick_size=0.1, slippage_ticks=1.0, fee_rate=0.0004),
@@ -128,7 +128,7 @@ def test_backtest_buy_qty_percent_preserves_requested_budget_when_affordable() -
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=BuyHalfBudgetStrategy(),
+        strategy=BuyHalfBudgetStrategy,
         initial_cash=80.0,
         costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.01),
     )
@@ -146,7 +146,7 @@ def test_backtest_buy_qty_percent_clamps_when_full_budget_plus_fees_is_unafforda
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=BuyAllAffordableBudgetStrategy(),
+        strategy=BuyAllAffordableBudgetStrategy,
         initial_cash=80.0,
         costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.01),
     )
@@ -164,7 +164,7 @@ def test_backtest_sell_qty_percent_scales_out_of_current_position() -> None:
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=BuyThenScaleOutStrategy(),
+        strategy=BuyThenScaleOutStrategy,
         initial_cash=100.0,
         costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
     )
@@ -184,7 +184,7 @@ def test_backtest_same_cycle_percent_entries_resolve_sequentially() -> None:
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=SequentialPercentEntriesStrategy(),
+        strategy=SequentialPercentEntriesStrategy,
         initial_cash=100.0,
         costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
     )
@@ -206,7 +206,7 @@ def test_limit_buy_qty_percent_uses_limit_price_as_affordability_anchor() -> Non
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=LimitPercentBudgetStrategy(),
+        strategy=LimitPercentBudgetStrategy,
         initial_cash=100.0,
         costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
     )
@@ -217,7 +217,7 @@ def test_limit_buy_qty_percent_uses_limit_price_as_affordability_anchor() -> Non
 
 
 def test_canonical_percent_market_backtest_matches_btc_fixture_result_contract() -> None:
-    result = _run_canonical_percent_backtest(CanonicalPercentMarketStrategy())
+    result = _run_canonical_percent_backtest(CanonicalPercentMarketStrategy)
 
     assert result.summary == BacktestSummary(
         total_trades=34,
@@ -321,7 +321,7 @@ def test_canonical_percent_market_backtest_matches_btc_fixture_result_contract()
 
 
 def test_canonical_percent_limit_entry_backtest_matches_btc_fixture_result_contract() -> None:
-    result = _run_canonical_percent_backtest(CanonicalPercentLimitEntryStrategy())
+    result = _run_canonical_percent_backtest(CanonicalPercentLimitEntryStrategy)
 
     assert result.summary == BacktestSummary(
         total_trades=29,
@@ -425,7 +425,7 @@ def test_canonical_percent_limit_entry_backtest_matches_btc_fixture_result_contr
 
 
 def test_canonical_percent_limit_exit_backtest_matches_btc_fixture_result_contract() -> None:
-    result = _run_canonical_percent_backtest(CanonicalPercentLimitExitStrategy())
+    result = _run_canonical_percent_backtest(CanonicalPercentLimitExitStrategy)
 
     assert result.summary == BacktestSummary(
         total_trades=13,

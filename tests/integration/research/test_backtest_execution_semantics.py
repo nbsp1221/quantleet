@@ -36,7 +36,7 @@ from tests.integration.research.support_backtest_runner import (
 def test_backtest_runner_uses_tick_path_not_bar_only_fills() -> None:
     result = run_engine_backtest(
         bars=fixture_bar_series(),
-        strategy=DeterministicEntryExitStrategy(),
+        strategy=DeterministicEntryExitStrategy,
     )
 
     assert tuple(fill.timestamp for fill in result.trade_log) == (120, 180)
@@ -46,7 +46,7 @@ def test_backtest_runner_uses_tick_path_not_bar_only_fills() -> None:
 def test_backtest_runner_activates_bar_orders_on_the_next_bar() -> None:
     result = run_engine_backtest(
         bars=fixture_bar_series(),
-        strategy=BuyAndHoldStrategy(),
+        strategy=BuyAndHoldStrategy,
     )
 
     assert tuple(fill.timestamp for fill in result.trade_log) == (120,)
@@ -62,7 +62,7 @@ def test_backtest_runner_activates_bar_orders_on_the_next_bar() -> None:
 def test_backtest_runner_supports_symbol_free_entry_within_single_symbol_on_bar() -> None:
     result = run_engine_backtest(
         bars=fixture_bar_series(),
-        strategy=BuyAndHoldStrategy(),
+        strategy=BuyAndHoldStrategy,
     )
 
     assert tuple(fill.timestamp for fill in result.trade_log) == (120,)
@@ -74,7 +74,7 @@ def test_backtest_runner_supports_symbol_free_entry_within_single_symbol_on_bar(
 def test_backtest_runner_supports_symbol_free_exit_within_single_symbol_on_bar() -> None:
     result = run_engine_backtest(
         bars=fixture_bar_series(),
-        strategy=BuyThenImplicitSellStrategy(),
+        strategy=BuyThenImplicitSellStrategy,
     )
 
     assert tuple((fill.side, fill.symbol, fill.timestamp) for fill in result.trade_log) == (
@@ -86,11 +86,11 @@ def test_backtest_runner_supports_symbol_free_exit_within_single_symbol_on_bar()
 
 
 def test_unfilled_limit_order_carries_without_creating_trade_log_entries() -> None:
-    strategy = NeverFilledLimitStrategy()
+    NeverFilledLimitStrategy.placed_history = []
 
     result = run_engine_backtest(
         bars=fixture_bar_series(),
-        strategy=strategy,
+        strategy=NeverFilledLimitStrategy,
     )
 
     assert result.trade_log == ()
@@ -102,7 +102,7 @@ def test_unfilled_limit_order_carries_without_creating_trade_log_entries() -> No
         unrealized_pnl=0.0,
         equity=1_000.0,
     )
-    assert strategy._placed is True
+    assert NeverFilledLimitStrategy.placed_history[-1] is True
 
 
 def test_backtest_runner_fills_gap_crossed_buy_limit_at_open() -> None:
@@ -113,7 +113,7 @@ def test_backtest_runner_fills_gap_crossed_buy_limit_at_open() -> None:
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=GapCrossedBuyLimitStrategy(),
+        strategy=GapCrossedBuyLimitStrategy,
     )
 
     assert tuple((fill.side, fill.price, fill.timestamp) for fill in result.trade_log) == (
@@ -129,7 +129,7 @@ def test_backtest_runner_fills_intrabar_touched_buy_limit_at_limit_price() -> No
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=IntrabarTouchedBuyLimitStrategy(),
+        strategy=IntrabarTouchedBuyLimitStrategy,
     )
 
     assert tuple((fill.side, fill.price, fill.timestamp) for fill in result.trade_log) == (
@@ -145,7 +145,7 @@ def test_backtest_runner_fills_marketable_buy_limit_at_open() -> None:
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=MarketableBuyLimitStrategy(),
+        strategy=MarketableBuyLimitStrategy,
     )
 
     assert tuple((fill.side, fill.price, fill.timestamp) for fill in result.trade_log) == (
@@ -161,7 +161,7 @@ def test_backtest_runner_fills_gap_above_buy_stop_market_at_first_executable_poi
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=StopMarketGapAboveBuyStrategy(),
+        strategy=StopMarketGapAboveBuyStrategy,
         costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
     )
 
@@ -178,7 +178,7 @@ def test_backtest_runner_fills_gap_below_buy_stop_market_at_first_executable_poi
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=StopMarketGapBelowBuyStrategy(),
+        strategy=StopMarketGapBelowBuyStrategy,
         costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
     )
 
@@ -195,7 +195,7 @@ def test_backtest_runner_fills_intrabar_above_buy_stop_market_on_same_point() ->
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=StopMarketIntrabarAboveBuyStrategy(),
+        strategy=StopMarketIntrabarAboveBuyStrategy,
         costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
     )
 
@@ -212,7 +212,7 @@ def test_backtest_runner_fills_intrabar_below_buy_stop_market_on_same_point() ->
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=StopMarketIntrabarBelowBuyStrategy(),
+        strategy=StopMarketIntrabarBelowBuyStrategy,
         costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
     )
 
@@ -230,7 +230,7 @@ def test_backtest_runner_fills_gap_above_sell_stop_market_at_first_executable_po
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=StopMarketGapAboveSellStrategy(),
+        strategy=StopMarketGapAboveSellStrategy,
         costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
     )
 
@@ -249,7 +249,7 @@ def test_backtest_runner_fills_gap_below_sell_stop_market_at_first_executable_po
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=StopMarketGapBelowSellStrategy(),
+        strategy=StopMarketGapBelowSellStrategy,
         costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
     )
 
@@ -268,7 +268,7 @@ def test_backtest_runner_fills_intrabar_above_sell_stop_market_on_same_point() -
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=StopMarketIntrabarAboveSellStrategy(),
+        strategy=StopMarketIntrabarAboveSellStrategy,
         costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
     )
 
@@ -287,7 +287,7 @@ def test_backtest_runner_fills_intrabar_below_sell_stop_market_on_same_point() -
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=StopMarketIntrabarBelowSellStrategy(),
+        strategy=StopMarketIntrabarBelowSellStrategy,
         costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
     )
 
@@ -307,7 +307,7 @@ def test_backtest_runner_preserves_older_active_intents_ahead_of_newly_activated
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=OlderLimitThenNewerMarketExitStrategy(),
+        strategy=OlderLimitThenNewerMarketExitStrategy,
     )
 
     assert tuple((fill.side, fill.price, fill.timestamp) for fill in result.trade_log) == (
@@ -327,7 +327,7 @@ def test_backtest_runner_preserves_older_active_orders_ahead_of_newly_triggered_
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=OlderLimitThenTriggeredStopExitStrategy(),
+        strategy=OlderLimitThenTriggeredStopExitStrategy,
         costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
     )
 
@@ -346,7 +346,7 @@ def test_backtest_runner_preserves_multiple_stop_trigger_ordering_within_same_se
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=MultipleStopMarketEntriesStrategy(),
+        strategy=MultipleStopMarketEntriesStrategy,
         costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
     )
 
@@ -375,7 +375,7 @@ def test_backtest_runner_ignores_exit_signals_while_flat() -> None:
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=SellWhileFlatStrategy(),
+        strategy=SellWhileFlatStrategy,
     )
 
     assert result.trade_log == ()
@@ -403,7 +403,7 @@ def test_backtest_runner_ignores_stop_market_exit_signals_while_flat() -> None:
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=StopMarketSellWhileFlatStrategy(),
+        strategy=StopMarketSellWhileFlatStrategy,
         costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
     )
 
@@ -434,7 +434,7 @@ def test_backtest_runner_handles_unguarded_exit_signals_before_and_after_entry()
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=RepeatedExitSignalsStrategy(),
+        strategy=RepeatedExitSignalsStrategy,
     )
 
     assert tuple((fill.side, fill.timestamp) for fill in result.trade_log) == (
@@ -455,5 +455,5 @@ def test_backtest_runner_rejects_out_of_order_bars_before_matching() -> None:
     with pytest.raises(ValueError, match="out-of-order time bars"):
         run_engine_backtest(
             bars=make_bar_series(rows),
-            strategy=BuyAndHoldStrategy(),
+            strategy=BuyAndHoldStrategy,
         )

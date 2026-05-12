@@ -298,7 +298,7 @@ engine = BacktestEngine(
 
 result = engine.run(
     bars=bars,
-    strategy=RsiStrategy(),
+    strategy=RsiStrategy,
 )
 ```
 

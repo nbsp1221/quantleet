@@ -430,8 +430,8 @@ The current implementation slice includes:
 - `quantity` and `qty_percent` sizing
 - `Strategy.buy(..., order_type="stop_limit", stop_price=..., limit_price=...)`
 - `Strategy.sell(..., order_type="stop_limit", stop_price=..., limit_price=...)`
-- public `BacktestEngine.run(bars=..., strategy=...)`
-- public `BacktestEngine.run(source=..., strategy=...)`
+- public `BacktestEngine.run(bars=..., strategy=StrategyClass, config=...)`
+- public `BacktestEngine.run(source=..., strategy=StrategyClass, config=...)`
 - dormant trigger state
 - triggered working-limit state
 - conservative OHLC backtest gap and intrabar semantics

@@ -3,10 +3,12 @@ from __future__ import annotations
 import json
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import ClassVar
 
 from quantleet.backtest import BacktestEngine, BacktestResult
 from quantleet.data import BarSeries, TimeBar
 from quantleet.research import Strategy
+from quantleet.strategy import StrategyConfig
 from quantleet.trading.domain.costs import CostConfig
 
 
@@ -52,9 +54,7 @@ class BuyThenImplicitSellStrategy(Strategy):
 
 
 class NeverFilledLimitStrategy(Strategy):
-    def __init__(self) -> None:
-        super().__init__()
-        self._placed = False
+    placed_history: ClassVar[list[bool]] = []
 
     def init(self) -> None:
         self._placed = False
@@ -68,6 +68,7 @@ class NeverFilledLimitStrategy(Strategy):
                 limit_price=96.0,
                 tag="never-fill",
             )
+        type(self).placed_history.append(self._placed)
 
 
 class GapCrossedBuyLimitStrategy(Strategy):
@@ -253,11 +254,12 @@ class StopMarketSellWhileFlatStrategy(Strategy):
         )
 
 
-class BuyStopLimitStrategy(Strategy):
-    def __init__(self, *, stop_price: float, limit_price: float) -> None:
-        super().__init__()
-        self._stop_price = stop_price
-        self._limit_price = limit_price
+class StopLimitConfig(StrategyConfig):
+    stop_price: float = 105.0
+    limit_price: float = 106.0
+
+
+class BuyStopLimitStrategy(Strategy[StopLimitConfig]):
 
     def init(self) -> None:
         self._placed = False
@@ -268,18 +270,13 @@ class BuyStopLimitStrategy(Strategy):
             self.buy(
                 quantity=1.0,
                 order_type="stop_limit",
-                stop_price=self._stop_price,
-                limit_price=self._limit_price,
+                stop_price=self.config.stop_price,
+                limit_price=self.config.limit_price,
                 tag="stop-limit-entry",
             )
 
 
-class SellStopLimitStrategy(Strategy):
-    def __init__(self, *, stop_price: float, limit_price: float) -> None:
-        super().__init__()
-        self._stop_price = stop_price
-        self._limit_price = limit_price
-
+class SellStopLimitStrategy(Strategy[StopLimitConfig]):
     def init(self) -> None:
         self._seen_bars = 0
 
@@ -291,8 +288,8 @@ class SellStopLimitStrategy(Strategy):
             self.sell(
                 quantity=1.0,
                 order_type="stop_limit",
-                stop_price=self._stop_price,
-                limit_price=self._limit_price,
+                stop_price=self.config.stop_price,
+                limit_price=self.config.limit_price,
                 tag="stop-limit-exit",
             )
 
@@ -381,17 +378,15 @@ class SellWhileFlatStrategy(Strategy):
 
 
 class PositionViewProbeStrategy(Strategy):
-    def __init__(self) -> None:
-        super().__init__()
-        self.position_snapshots: list[tuple[bool, float, float]] = []
+    position_snapshots: ClassVar[list[tuple[bool, float, float]]] = []
 
     def init(self) -> None:
         self._seen_bars = 0
-        self.position_snapshots.clear()
+        type(self).position_snapshots.clear()
 
     def on_bar(self, bar) -> None:
         self._seen_bars += 1
-        self.position_snapshots.append(
+        type(self).position_snapshots.append(
             (
                 self.position.is_open,
                 self.position.quantity,
@@ -495,7 +490,8 @@ def fixture_dataframe_records() -> list[dict[str, object]]:
 def run_engine_backtest(
     *,
     bars: BarSeries,
-    strategy: Strategy,
+    strategy: type[Strategy[StrategyConfig]],
+    config: StrategyConfig | None = None,
     initial_cash: float = 1_000.0,
     costs: CostConfig | None = None,
 ) -> BacktestResult:
@@ -503,13 +499,15 @@ def run_engine_backtest(
     return BacktestEngine(initial_cash=initial_cash, costs=used_costs).run(
         bars=bars,
         strategy=strategy,
+        config=config,
     )
 
 
 def run_engine_backtest_from_source(
     *,
     source: object,
-    strategy: Strategy,
+    strategy: type[Strategy[StrategyConfig]],
+    config: StrategyConfig | None = None,
     initial_cash: float = 1_000.0,
     costs: CostConfig | None = None,
 ) -> BacktestResult:
@@ -517,4 +515,5 @@ def run_engine_backtest_from_source(
     return BacktestEngine(initial_cash=initial_cash, costs=used_costs).run(
         source=source,
         strategy=strategy,
+        config=config,
     )

@@ -49,10 +49,12 @@ class RoundTripConfig(StrategyConfig):
 
 class ParameterizedRoundTripStrategy(Strategy[RoundTripConfig]):
     instance_ids: ClassVar[list[int] | None] = None
+    instances: ClassVar[list[ParameterizedRoundTripStrategy]] = []
     constructed_configs: ClassVar[list[dict[str, object]]] = []
 
     def __init__(self, config: RoundTripConfig | None = None) -> None:
         super().__init__(config)
+        type(self).instances.append(self)
         type(self).constructed_configs.append(self.config.to_mapping())
         if type(self).instance_ids is not None:
             type(self).instance_ids.append(id(self))
@@ -111,6 +113,7 @@ def test_canonical_small_grid_search_uses_real_backtest_engine() -> None:
 def test_strategy_class_constructs_once_per_admissible_candidate_with_fresh_instances() -> None:
     instance_ids: list[int] = []
     ParameterizedRoundTripStrategy.instance_ids = instance_ids
+    ParameterizedRoundTripStrategy.instances = []
     ParameterizedRoundTripStrategy.constructed_configs = []
 
     try:

@@ -92,7 +92,7 @@ In scope:
 - raw cartesian candidate counting and `max_candidates` behavior
 - constraint filtering, constraint failures, and all-rejected grids
 - strategy class construction behavior and fresh strategy state per admissible run
-- composition with real `BacktestEngine.run(bars=..., strategy=...)`
+- composition with real `BacktestEngine.run(bars=..., strategy=StrategyClass, config=...)`
 - rejected, successful, and failed row contracts
 - single-objective validation, ranking, ties, `best()`, and `top(n)`
 - undefined, `NaN`, and meaningful infinity metric handling

@@ -39,8 +39,8 @@ The current preferred user-facing backtest entry lives in the `backtest` surface
 
 Approved current paths:
 
-- `BacktestEngine(...).run(bars=..., strategy=...)`
-- `BacktestEngine(...).run(source=..., strategy=...)`
+- `BacktestEngine(...).run(bars=..., strategy=StrategyClass, config=...)`
+- `BacktestEngine(...).run(source=..., strategy=StrategyClass, config=...)`
 
 `run_backtest(...)` is not part of the public surface in this slice.
 

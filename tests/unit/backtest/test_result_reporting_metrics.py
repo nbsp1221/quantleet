@@ -82,7 +82,7 @@ def test_decimal_timeframes_are_not_fixed_duration_beta_tokens() -> None:
 def test_report_return_and_risk_metrics_are_hand_computable() -> None:
     result = run_engine_backtest(
         bars=_bars((100.0, 110.0, 121.0)),
-        strategy=NoTradeStrategy(),
+        strategy=NoTradeStrategy,
         initial_cash=1_000.0,
         costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
     )
@@ -104,7 +104,7 @@ def test_report_return_and_risk_metrics_are_hand_computable() -> None:
 def test_report_risk_metrics_include_first_return_and_are_annualized() -> None:
     result = run_engine_backtest(
         bars=_bars((100.0, 110.0, 121.0, 110.0), timeframe="1d"),
-        strategy=BuyFirstBarStrategy(),
+        strategy=BuyFirstBarStrategy,
         initial_cash=1_000.0,
         costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
     )
@@ -122,7 +122,7 @@ def test_report_risk_metrics_include_first_return_and_are_annualized() -> None:
 def test_total_loss_annualized_return_is_complete_loss() -> None:
     result = run_engine_backtest(
         bars=_bars((100.0, 100.0, 0.0), timeframe="1d"),
-        strategy=BuyFirstBarStrategy(),
+        strategy=BuyFirstBarStrategy,
         initial_cash=100.0,
         costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
     )
@@ -134,7 +134,7 @@ def test_total_loss_annualized_return_is_complete_loss() -> None:
 def test_report_uses_none_not_nan_for_undefined_metrics() -> None:
     result = run_engine_backtest(
         bars=_bars((100.0, 100.0)),
-        strategy=NoTradeStrategy(),
+        strategy=NoTradeStrategy,
         costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
     )
 

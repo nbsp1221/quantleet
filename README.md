@@ -17,8 +17,8 @@ Current first-beta scope:
 - `DataFrameDataSource`, `CSVDataSource`, `CCXTDataSource`, `TimeBar`, and
   `BarSeries`
 - `Strategy`, `ta`, `qc`, and `ParameterStudy`
-- `BacktestEngine.run(source=..., strategy=...)`
-- `BacktestEngine.run(bars=..., strategy=...)`
+- `BacktestEngine.run(source=..., strategy=StrategyClass, config=...)`
+- `BacktestEngine.run(bars=..., strategy=StrategyClass, config=...)`
 - market, limit, stop-market, and stop-limit orders
 - fixed quantity and `qty_percent` sizing
 - conservative reservation, fills, positions, reporting, plotting, and finite
@@ -105,7 +105,7 @@ engine = BacktestEngine(
     costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
 )
 
-result = engine.run(source=source, strategy=SmaCrossStrategy(), label="sma-cross")
+result = engine.run(source=source, strategy=SmaCrossStrategy, label="sma-cross")
 
 print(result.report)
 figure = result.plot()

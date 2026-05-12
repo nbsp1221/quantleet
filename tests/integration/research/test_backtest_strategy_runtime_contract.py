@@ -29,16 +29,14 @@ def test_backtest_runner_exposes_position_view_during_on_bar() -> None:
             (300, 140.0),
         )
     )
-    strategy = PositionViewProbeStrategy()
-
     run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=strategy,
+        strategy=PositionViewProbeStrategy,
         initial_cash=10_000.0,
         costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
     )
 
-    assert strategy.position_snapshots == [
+    assert PositionViewProbeStrategy.position_snapshots == [
         (False, 0.0, 0.0),
         (True, 2.0, 110.0),
         (True, 3.0, 113.333333333333),
@@ -47,17 +45,16 @@ def test_backtest_runner_exposes_position_view_during_on_bar() -> None:
     ]
 
 
-def test_backtest_engine_reuses_strategy_instance_without_cross_run_state_leakage() -> None:
-    strategy = ReusedStrategyInstanceProbe()
+def test_backtest_engine_constructs_fresh_instances_without_cross_run_state_leakage() -> None:
     bars = fixture_bar_series()
 
     first_result = run_engine_backtest(
         bars=bars,
-        strategy=strategy,
+        strategy=ReusedStrategyInstanceProbe,
     )
     second_result = run_engine_backtest(
         bars=bars,
-        strategy=strategy,
+        strategy=ReusedStrategyInstanceProbe,
     )
 
     assert second_result.trade_log == first_result.trade_log

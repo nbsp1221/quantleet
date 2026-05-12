@@ -36,7 +36,7 @@ def test_backtest_result_plot_handles_ten_thousand_bars_within_threshold() -> No
         costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
     ).run(
         bars=_bars(PLOT_BAR_COUNT),
-        strategy=NoTradeStrategy(),
+        strategy=NoTradeStrategy,
     )
 
     fig = result.plot()

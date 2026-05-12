@@ -109,8 +109,8 @@ The preferred public execution entry for the current research workflow is:
 
 Approved execution paths:
 
-- `BacktestEngine(...).run(bars=..., strategy=...)`
-- `BacktestEngine(...).run(source=..., strategy=...)`
+- `BacktestEngine(...).run(bars=..., strategy=StrategyClass, config=...)`
+- `BacktestEngine(...).run(source=..., strategy=StrategyClass, config=...)`
 
 Current rules:
 
@@ -148,7 +148,7 @@ They are reference workflows, not automatically all strict merge gates.
 
 - starting state: user-created `TimeBar` and `BarSeries`
 - user intent: run the engine from explicit materialized historical bars
-- success artifact: `BacktestEngine.run(bars=..., strategy=...)` works with the documented canonical types
+- success artifact: `BacktestEngine.run(bars=..., strategy=StrategyClass, config=...)` works with the documented canonical types
 - superficially passing but still bad: the path only works because docs or code silently rely on lower-layer internals
 
 #### 4. Exchange-Backed Historical Research Flow

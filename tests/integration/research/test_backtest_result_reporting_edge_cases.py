@@ -40,7 +40,7 @@ def test_report_exposure_counts_intrabar_position_even_when_flat_at_close() -> N
         costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
     ).run(
         bars=_bars(),
-        strategy=BuyThenExitStrategy(),
+        strategy=BuyThenExitStrategy,
     )
 
     assert result.final_state.position_quantity == 0.0
@@ -58,7 +58,7 @@ def test_report_exposes_order_rejections_separately_from_fills() -> None:
         costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
     ).run(
         bars=_bars(),
-        strategy=UnaffordableBuyStrategy(),
+        strategy=UnaffordableBuyStrategy,
     )
 
     assert result.trade_log == ()

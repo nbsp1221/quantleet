@@ -250,7 +250,7 @@ def test_constraint_rejections_are_rows_not_failures() -> None:
         {"fast": 20, "slow": 10}
     ]
     assert result.rejected()[0].rejection_stage == "constraint"
-    assert [call["strategy"].config.to_mapping() for call in engine.calls] == [
+    assert [call["config"].to_mapping() for call in engine.calls] == [
         {
             "x": 1,
             "fast": 5,

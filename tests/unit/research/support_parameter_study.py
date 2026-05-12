@@ -86,10 +86,13 @@ class CountingEngine:
     def run(
         self,
         *,
-        strategy: Strategy,
+        strategy: type[Strategy[StrategyConfig]],
+        config: StrategyConfig | None = None,
         bars: BarSeries | None = None,
         source: object | None = None,
         label: str | None = None,
     ) -> BacktestResult:
-        self.calls.append({"strategy": strategy, "bars": bars, "source": source, "label": label})
-        return self._engine.run(strategy=strategy, bars=bars, label=label)
+        self.calls.append(
+            {"strategy": strategy, "config": config, "bars": bars, "source": source, "label": label}
+        )
+        return self._engine.run(strategy=strategy, config=config, bars=bars, label=label)

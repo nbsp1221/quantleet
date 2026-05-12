@@ -22,7 +22,7 @@ from tests.integration.research.support_backtest_runner import (
 def test_backtest_runner_produces_deterministic_trade_log_and_summary() -> None:
     result = run_engine_backtest(
         bars=fixture_bar_series(),
-        strategy=DeterministicEntryExitStrategy(),
+        strategy=DeterministicEntryExitStrategy,
     )
 
     assert result == BacktestResult(
@@ -84,7 +84,7 @@ def test_backtest_runner_produces_deterministic_trade_log_and_summary() -> None:
 def test_backtest_runner_exposes_expanded_research_result_surface() -> None:
     result = run_engine_backtest(
         bars=fixture_bar_series(),
-        strategy=DeterministicEntryExitStrategy(),
+        strategy=DeterministicEntryExitStrategy,
     )
 
     assert result.execution_model_name == "conservative_ohlcv"
@@ -150,7 +150,7 @@ def test_backtest_result_preserves_legacy_positional_execution_model_name() -> N
 def test_backtest_runner_trade_statistics_are_net_of_fees() -> None:
     result = run_engine_backtest(
         bars=fixture_bar_series(),
-        strategy=DeterministicEntryExitStrategy(),
+        strategy=DeterministicEntryExitStrategy,
     )
 
     assert result.summary.realized_pnl == 3.0
@@ -166,7 +166,7 @@ def test_backtest_runner_trade_statistics_are_net_of_fees() -> None:
 def test_backtest_runner_net_trade_stats_handle_partial_closes() -> None:
     result = run_engine_backtest(
         bars=fixture_bar_series(),
-        strategy=OlderLimitThenNewerMarketExitStrategy(),
+        strategy=OlderLimitThenNewerMarketExitStrategy,
     )
 
     assert len(result.trade_log) == 2
@@ -183,7 +183,7 @@ def test_backtest_runner_net_trade_stats_handle_partial_closes() -> None:
 def test_backtest_runner_marks_open_positions_to_latest_market_state() -> None:
     result = run_engine_backtest(
         bars=fixture_bar_series(),
-        strategy=BuyAndHoldStrategy(),
+        strategy=BuyAndHoldStrategy,
     )
 
     assert result.final_state == TradingState(

@@ -56,17 +56,18 @@ def _source() -> DataFrameDataSource:
 
 
 def test_backtest_runtime_preserves_configured_strategy_construction() -> None:
-    strategy = ConfiguredEntryStrategy(EntryConfig(threshold=11.0, tag="entry"))
-
     result = BacktestEngine(
         initial_cash=1_000.0,
         costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
-    ).run(source=_source(), strategy=strategy)
+    ).run(
+        source=_source(),
+        strategy=ConfiguredEntryStrategy,
+        config=EntryConfig(threshold=11.0, tag="entry"),
+    )
 
-    assert strategy.threshold_seen_in_init == 11.0
     assert result.report.trades.fill_count == 1
     assert result.report.fills[0].tag == "entry"
-    assert strategy.config.to_mapping() == {"threshold": 11.0, "tag": "entry"}
+    assert result.report.run.strategy_config == {"threshold": 11.0, "tag": "entry"}
 
 
 def test_backtest_runtime_rejects_config_mutation_before_orders_are_emitted() -> None:
@@ -79,4 +80,4 @@ def test_backtest_runtime_rejects_config_mutation_before_orders_are_emitted() ->
         BacktestEngine(
             initial_cash=1_000.0,
             costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
-        ).run(source=_source(), strategy=MutatingStrategy())
+        ).run(source=_source(), strategy=MutatingStrategy)

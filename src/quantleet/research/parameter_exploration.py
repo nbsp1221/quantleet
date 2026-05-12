@@ -8,6 +8,7 @@ from types import MappingProxyType
 from typing import Literal, TypeAlias
 
 from quantleet.backtest import BacktestResult
+from quantleet.backtest.engine import _BacktestStrategyConstructionError
 from quantleet.data import BarSeries
 from quantleet.strategy import Strategy, StrategyConfig, StrategyConfigValidationError
 
@@ -359,25 +360,23 @@ class ParameterStudy:
                 continue
 
             try:
-                strategy = self.strategy(prepared.config)
-            except Exception as error:
+                backtest = self.engine.run(
+                    bars=self.bars,
+                    strategy=self.strategy,
+                    config=prepared.config,
+                    label=f"grid-search-{prepared.run_index}",
+                )
+            except _BacktestStrategyConstructionError as error:
                 _raise_or_record(
                     rows=rows,
                     fail_fast=fail_fast,
-                    error=error,
+                    error=error.original,
                     stage="strategy_construction",
                     run_index=prepared.run_index,
                     candidate_parameters=prepared.candidate_parameters,
                     strategy_config=prepared.strategy_config,
                 )
                 continue
-
-            try:
-                backtest = self.engine.run(
-                    bars=self.bars,
-                    strategy=strategy,
-                    label=f"grid-search-{prepared.run_index}",
-                )
             except Exception as error:
                 _raise_or_record(
                     rows=rows,

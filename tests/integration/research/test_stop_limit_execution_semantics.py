@@ -6,6 +6,7 @@ from quantleet.trading.domain.costs import CostConfig
 from tests.integration.research.support_backtest_runner import (
     BuyStopLimitStrategy,
     SellStopLimitStrategy,
+    StopLimitConfig,
     make_bar_series,
     run_engine_backtest,
     run_engine_backtest_from_source,
@@ -60,7 +61,8 @@ def test_buy_stop_limit_gap_through_beyond_limit_triggers_without_trade_log_fill
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=BuyStopLimitStrategy(stop_price=105.0, limit_price=106.0),
+        strategy=BuyStopLimitStrategy,
+        config=StopLimitConfig(stop_price=105.0, limit_price=106.0),
         costs=_ZERO_COSTS,
     )
 
@@ -76,7 +78,8 @@ def test_buy_stop_limit_same_point_trigger_and_fill_uses_trigger_tick() -> None:
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=BuyStopLimitStrategy(stop_price=105.0, limit_price=106.0),
+        strategy=BuyStopLimitStrategy,
+        config=StopLimitConfig(stop_price=105.0, limit_price=106.0),
         costs=_ZERO_COSTS,
     )
 
@@ -94,7 +97,8 @@ def test_buy_stop_limit_does_not_reuse_pre_trigger_low() -> None:
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=BuyStopLimitStrategy(stop_price=105.0, limit_price=95.0),
+        strategy=BuyStopLimitStrategy,
+        config=StopLimitConfig(stop_price=105.0, limit_price=95.0),
         costs=_ZERO_COSTS,
     )
 
@@ -110,7 +114,8 @@ def test_buy_stop_limit_post_trigger_tail_fills_at_limit_crossing() -> None:
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=BuyStopLimitStrategy(stop_price=105.0, limit_price=95.0),
+        strategy=BuyStopLimitStrategy,
+        config=StopLimitConfig(stop_price=105.0, limit_price=95.0),
         costs=_ZERO_COSTS,
     )
 
@@ -128,7 +133,8 @@ def test_buy_stop_limit_triggered_unfilled_order_can_fill_on_later_bar() -> None
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=BuyStopLimitStrategy(stop_price=105.0, limit_price=106.0),
+        strategy=BuyStopLimitStrategy,
+        config=StopLimitConfig(stop_price=105.0, limit_price=106.0),
         costs=_ZERO_COSTS,
     )
 
@@ -146,7 +152,8 @@ def test_sell_stop_limit_gap_through_beyond_limit_triggers_without_trade_log_fil
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=SellStopLimitStrategy(stop_price=95.0, limit_price=94.0),
+        strategy=SellStopLimitStrategy,
+        config=StopLimitConfig(stop_price=95.0, limit_price=94.0),
         costs=_ZERO_COSTS,
     )
 
@@ -165,7 +172,8 @@ def test_sell_stop_limit_same_point_trigger_and_fill_uses_trigger_tick() -> None
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=SellStopLimitStrategy(stop_price=95.0, limit_price=94.0),
+        strategy=SellStopLimitStrategy,
+        config=StopLimitConfig(stop_price=95.0, limit_price=94.0),
         costs=_ZERO_COSTS,
     )
 
@@ -185,7 +193,8 @@ def test_sell_stop_limit_does_not_reuse_pre_trigger_high() -> None:
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=SellStopLimitStrategy(stop_price=95.0, limit_price=105.0),
+        strategy=SellStopLimitStrategy,
+        config=StopLimitConfig(stop_price=95.0, limit_price=105.0),
         costs=_ZERO_COSTS,
     )
 
@@ -204,7 +213,8 @@ def test_sell_stop_limit_post_trigger_tail_fills_at_limit_crossing() -> None:
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=SellStopLimitStrategy(stop_price=95.0, limit_price=105.0),
+        strategy=SellStopLimitStrategy,
+        config=StopLimitConfig(stop_price=95.0, limit_price=105.0),
         costs=_ZERO_COSTS,
     )
 
@@ -223,7 +233,7 @@ def test_existing_executable_order_fills_before_newly_triggered_stop_limit_at_sa
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=PriorityExitStrategy(),
+        strategy=PriorityExitStrategy,
         costs=_ZERO_COSTS,
     )
 
@@ -244,7 +254,7 @@ def test_flat_sell_stop_limit_does_not_become_short_entry() -> None:
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=FlatSellStopLimitStrategy(),
+        strategy=FlatSellStopLimitStrategy,
         costs=_ZERO_COSTS,
     )
 
@@ -262,12 +272,14 @@ def test_source_based_run_path_matches_bars_based_stop_limit_semantics() -> None
 
     bars_result = run_engine_backtest(
         bars=bars,
-        strategy=BuyStopLimitStrategy(stop_price=105.0, limit_price=106.0),
+        strategy=BuyStopLimitStrategy,
+        config=StopLimitConfig(stop_price=105.0, limit_price=106.0),
         costs=_ZERO_COSTS,
     )
     source_result = run_engine_backtest_from_source(
         source=InMemorySource(bars),
-        strategy=BuyStopLimitStrategy(stop_price=105.0, limit_price=106.0),
+        strategy=BuyStopLimitStrategy,
+        config=StopLimitConfig(stop_price=105.0, limit_price=106.0),
         costs=_ZERO_COSTS,
     )
 

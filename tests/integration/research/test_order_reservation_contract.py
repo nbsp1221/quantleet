@@ -58,7 +58,7 @@ def test_stop_market_gap_overspend_rejects_without_negative_cash_or_fill() -> No
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=PercentStopMarketGapEntryStrategy(),
+        strategy=PercentStopMarketGapEntryStrategy,
         initial_cash=100.0,
         costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
     )
@@ -89,7 +89,7 @@ def test_stop_market_gap_overspend_cannot_consume_other_order_reservation() -> N
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=StopMarketAndCompetingLimitStrategy(),
+        strategy=StopMarketAndCompetingLimitStrategy,
         initial_cash=200.0,
         costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
     )
@@ -118,7 +118,7 @@ def test_dormant_stop_limit_reservation_reduces_later_same_cycle_percent_buy() -
 
     result = run_engine_backtest(
         bars=make_bar_series(rows),
-        strategy=DormantStopThenMarketEntryStrategy(),
+        strategy=DormantStopThenMarketEntryStrategy,
         initial_cash=100.0,
         costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
     )

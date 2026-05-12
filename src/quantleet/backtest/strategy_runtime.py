@@ -244,16 +244,8 @@ def _rejection_reason(reason: str | None) -> OrderRejectionReason:
     return cast(OrderRejectionReason, reason)
 
 
-def validate_strategy_like_config(strategy: object) -> StrategyConfig:
-    config = getattr(strategy, "config", None)
-    if not isinstance(config, StrategyConfig):
-        raise ValueError("strategy must expose StrategyConfig config metadata")
-    return config
-
-
 __all__ = [
     "StrategyLike",
     "_StrategyDriver",
     "_StrategyOrderState",
-    "validate_strategy_like_config",
 ]

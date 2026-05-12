@@ -5,6 +5,7 @@ from quantleet.trading.domain.costs import CostConfig
 from tests.integration.research.support_backtest_runner import (
     BuyStopLimitStrategy,
     SellStopLimitStrategy,
+    StopLimitConfig,
     make_bar_series,
     run_engine_backtest,
 )
@@ -20,7 +21,8 @@ def test_canonical_buy_stop_limit_trigger_and_fill_public_outcome() -> None:
                 TimeBar(timestamp=120, open=100.0, high=106.0, low=99.0, close=104.0, volume=12.0),
             )
         ),
-        strategy=BuyStopLimitStrategy(stop_price=105.0, limit_price=106.0),
+        strategy=BuyStopLimitStrategy,
+        config=StopLimitConfig(stop_price=105.0, limit_price=106.0),
         costs=_ZERO_COSTS,
     )
 
@@ -39,7 +41,8 @@ def test_canonical_buy_stop_limit_trigger_without_fill_public_outcome() -> None:
                 TimeBar(timestamp=120, open=110.0, high=112.0, low=108.0, close=111.0, volume=12.0),
             )
         ),
-        strategy=BuyStopLimitStrategy(stop_price=105.0, limit_price=106.0),
+        strategy=BuyStopLimitStrategy,
+        config=StopLimitConfig(stop_price=105.0, limit_price=106.0),
         costs=_ZERO_COSTS,
     )
 
@@ -57,7 +60,8 @@ def test_canonical_sell_stop_limit_trigger_and_fill_public_outcome() -> None:
                 TimeBar(timestamp=180, open=100.0, high=101.0, low=94.0, close=96.0, volume=14.0),
             )
         ),
-        strategy=SellStopLimitStrategy(stop_price=95.0, limit_price=94.0),
+        strategy=SellStopLimitStrategy,
+        config=StopLimitConfig(stop_price=95.0, limit_price=94.0),
         costs=_ZERO_COSTS,
     )
 
@@ -80,7 +84,8 @@ def test_canonical_sell_stop_limit_trigger_without_fill_public_outcome() -> None
                 TimeBar(timestamp=180, open=90.0, high=92.0, low=88.0, close=91.0, volume=14.0),
             )
         ),
-        strategy=SellStopLimitStrategy(stop_price=95.0, limit_price=94.0),
+        strategy=SellStopLimitStrategy,
+        config=StopLimitConfig(stop_price=95.0, limit_price=94.0),
         costs=_ZERO_COSTS,
     )
 

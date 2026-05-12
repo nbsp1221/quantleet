@@ -15,7 +15,7 @@ from tests.integration.research.support_backtest_runner import (
 def test_reporting_fill_rows_preserve_order_provenance_without_mutating_fill_event() -> None:
     result = run_engine_backtest(
         bars=fixture_bar_series(),
-        strategy=DeterministicEntryExitStrategy(),
+        strategy=DeterministicEntryExitStrategy,
     )
 
     assert result.trade_log == (
@@ -48,7 +48,7 @@ def test_reporting_fill_rows_preserve_order_provenance_without_mutating_fill_eve
 def test_closed_trade_rows_include_weighted_average_fee_and_tag_details() -> None:
     result = run_engine_backtest(
         bars=fixture_bar_series(),
-        strategy=DeterministicEntryExitStrategy(),
+        strategy=DeterministicEntryExitStrategy,
     )
 
     assert len(result.report.closed_trades) == 1
@@ -78,7 +78,7 @@ def test_closed_trade_rows_include_weighted_average_fee_and_tag_details() -> Non
 def test_partial_closes_allocate_entry_fees_and_leave_open_inventory() -> None:
     result = run_engine_backtest(
         bars=fixture_bar_series(),
-        strategy=OlderLimitThenNewerMarketExitStrategy(),
+        strategy=OlderLimitThenNewerMarketExitStrategy,
     )
 
     trades = result.report.closed_trades
@@ -98,7 +98,7 @@ def test_partial_closes_allocate_entry_fees_and_leave_open_inventory() -> None:
 def test_fee_drag_uses_closed_trade_gross_absolute_pnl_denominator() -> None:
     result = run_engine_backtest(
         bars=make_bar_series(fixture_rows()[:3]),
-        strategy=DeterministicEntryExitStrategy(),
+        strategy=DeterministicEntryExitStrategy,
         costs=CostConfig(tick_size=1.0, slippage_ticks=1.0, fee_rate=0.001),
     )
 

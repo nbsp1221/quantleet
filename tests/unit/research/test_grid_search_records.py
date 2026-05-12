@@ -47,7 +47,8 @@ EXPECTED_METRIC_KEYS = {
 def test_to_records_uses_stable_shape_for_success_rejected_and_failed_rows() -> None:
     success_result = make_engine().run(
         bars=make_bars(),
-        strategy=NoTradeStrategy(NoTradeConfig(x=1)),
+        strategy=NoTradeStrategy,
+        config=NoTradeConfig(x=1),
         label="grid-search-0",
     )
     result = GridSearchResult(
