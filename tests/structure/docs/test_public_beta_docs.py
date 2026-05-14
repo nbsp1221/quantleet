@@ -13,6 +13,7 @@ REQUIRED_PUBLIC_DOCS = [
     "docs/site/guides/data-sources.md",
     "docs/site/guides/orders-and-sizing.md",
     "docs/site/guides/parameter-exploration.md",
+    "docs/site/guides/walk-forward-analysis.md",
     "docs/site/concepts/beta-scope.md",
     "docs/site/reference/public-api.md",
 ]
@@ -109,6 +110,13 @@ def test_public_api_reference_uses_current_public_imports_only() -> None:
         "Strategy.sell(...)",
         "quantleet.research.ParameterStudy",
         "ParameterStudy.grid_search(...)",
+        "quantleet.research.WalkForwardStudy",
+        "WalkForwardStudy.run(...)",
+        "quantleet.research.WalkForwardResult",
+        "quantleet.research.WalkForwardFold",
+        "quantleet.research.WalkForwardDiagnostic",
+        "quantleet.research.WalkForwardOosSummary",
+        "quantleet.research.WalkForwardExecutionScale",
         "quantleet.research.ta",
         "quantleet.research.qc",
     ]:
@@ -129,6 +137,30 @@ def test_public_quickstart_uses_no_live_exchange_or_hidden_files() -> None:
     assert "DataFrameDataSource" in quickstart
     for forbidden in ["CCXTDataSource(", "apiKey", "secret", "read_csv(", "open("]:
         assert forbidden not in quickstart
+
+
+def test_public_walk_forward_docs_describe_validation_not_trading_claims() -> None:
+    guide = (ROOT / "docs/site/guides/walk-forward-analysis.md").read_text(encoding="utf-8")
+    guide_lower = guide.lower()
+
+    for marker in [
+        "WalkForwardStudy",
+        "validation evidence",
+        "not an optimizer guarantee",
+        "paper-trading loop",
+        "live-trading loop",
+        "one materialized `BarSeries`",
+        "rolling only",
+        "independent test folds",
+        "Do not read `oos_summary` as a stitched portfolio",
+    ]:
+        assert marker.lower() in guide_lower
+
+    for forbidden in [
+        "guarantees future",
+        "recommend a trade",
+    ]:
+        assert forbidden not in guide_lower
 
 
 def _public_doc_paths() -> list[Path]:

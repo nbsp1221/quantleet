@@ -100,7 +100,7 @@ folds. If direct backtesting continues to teach strategy instances while
 research studies teach strategy classes, WFA has to bridge two public
 construction models.
 
-Stage 3.5 removes that mismatch before WFA resumes.
+Stage 3.5 removed that mismatch before the Stage 4 WFA first slice resumed.
 
 Market practice supports this direction:
 

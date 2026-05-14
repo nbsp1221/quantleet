@@ -5,8 +5,9 @@ polished first-beta single-symbol historical backtesting workflow.
 
 The first public beta target is `0.1.0b1`. It is built for users who want to
 load OHLCV history, author a compact strategy, run a deterministic backtest,
-inspect `result.report`, visualize `result.plot()`, and compare a small finite
-parameter grid without learning the internal repository workflow first.
+inspect `result.report`, visualize `result.plot()`, compare a small finite
+parameter grid, and run rolling walk-forward validation without learning the
+internal repository workflow first.
 
 ## Beta Scope
 
@@ -16,13 +17,13 @@ Current first-beta scope:
 - long-or-flat strategy workflows
 - `DataFrameDataSource`, `CSVDataSource`, `CCXTDataSource`, `TimeBar`, and
   `BarSeries`
-- `Strategy`, `ta`, `qc`, and `ParameterStudy`
+- `Strategy`, `ta`, `qc`, `ParameterStudy`, and `WalkForwardStudy`
 - `BacktestEngine.run(source=..., strategy=StrategyClass, config=...)`
 - `BacktestEngine.run(bars=..., strategy=StrategyClass, config=...)`
 - market, limit, stop-market, and stop-limit orders
 - fixed quantity and `qty_percent` sizing
-- conservative reservation, fills, positions, reporting, plotting, and finite
-  grid parameter exploration
+- conservative reservation, fills, positions, reporting, plotting, finite grid
+  parameter exploration, and rolling walk-forward validation
 
 Unsupported in the first public beta:
 
@@ -133,6 +134,7 @@ with:
 - [Installation](docs/site/installation.md)
 - [Quickstart](docs/site/quickstart.md)
 - [Examples](docs/site/examples.md)
+- [Walk-forward analysis](docs/site/guides/walk-forward-analysis.md)
 - [Beta scope](docs/site/concepts/beta-scope.md)
 - [Public API reference](docs/site/reference/public-api.md)
 

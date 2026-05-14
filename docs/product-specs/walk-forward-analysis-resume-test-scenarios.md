@@ -2,7 +2,7 @@
 
 ## Status
 
-- Status: `draft`
+- Status: `implemented`
 - Class: `product-test-scenarios`
 - Scope: Stage 4 first-slice WFA test target after WFA resume product
   contract

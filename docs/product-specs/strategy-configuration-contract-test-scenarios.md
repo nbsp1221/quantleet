@@ -163,7 +163,7 @@ Out of scope:
 | Unit | `tests/unit/strategy/test_strategy_surface.py` | Strategy authoring DX: `self.config` availability, no required `__init__`, config-less strategy behavior, enforced config immutability. |
 | Integration | `tests/integration/strategy/test_strategy_config_construction.py` | Fresh canonical strategy construction with real `Strategy` subclasses and a contract-shaped execution harness. |
 | Structure | `tests/structure/architecture/test_strategy_config_boundaries.py` | The shared strategy config surface is not owned by a product surface and does not force future `execution` to depend on `research`. |
-| Docs | `tests/structure/docs/test_strategy_configuration_contract_docs.py` | Product docs route strategy config work to the product spec and test spec, and WFA remains paused. |
+| Docs | `tests/structure/docs/test_strategy_configuration_contract_docs.py` | Product docs route strategy config work to the product spec and test spec, and WFA does not resume on the old callable construction path. |
 | Downstream integration | later Stage 2 `tests/integration/research/test_parameter_study_strategy_config_migration.py` | `ParameterStudy(strategy=...)`, `candidate_parameters`, row-level `strategy_config`, and empty-search-space behavior. |
 | Downstream integration | later Stage 3 reporting tests | `report.run.strategy_config`, removal of `strategy_parameters`, and config snapshot source-of-truth. |
 

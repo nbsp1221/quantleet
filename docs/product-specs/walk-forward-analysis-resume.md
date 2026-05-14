@@ -2,7 +2,7 @@
 
 ## Status
 
-- Status: `draft`
+- Status: `implemented`
 - Class: `product-spec`
 - Scope: Stage 4 product contract for resuming the first single-symbol
   walk-forward validation slice after WFA prerequisites

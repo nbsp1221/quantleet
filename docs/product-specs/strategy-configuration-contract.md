@@ -716,9 +716,11 @@ Stage 3 should specify and implement the reporting source-of-truth change:
 
 ### Downstream Stage 4 Requirement
 
-WFA remains paused until the relevant prior stages are completed or explicitly
-superseded. WFA must not resume on a public contract that hardens
-the old callable construction path as the canonical research-study path.
+WFA must not resume on a public contract that hardens the old callable
+construction path as the canonical research-study path. The implemented Stage 4
+first slice resumed only after the relevant prior stages introduced
+`StrategyConfig`, report config snapshots, and direct class-plus-config
+backtests.
 
 ## Success Conditions
 

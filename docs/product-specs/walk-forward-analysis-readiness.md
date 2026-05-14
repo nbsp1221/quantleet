@@ -2,10 +2,10 @@
 
 ## Status
 
-- Status: `draft`
+- Status: `superseded`
 - Class: `product-readiness-analysis`
-- Scope: blockers, risks, and prioritization inputs that must be reviewed
-  before resuming WFA implementation
+- Scope: historical blockers, risks, and prioritization inputs reviewed before
+  the Stage 4 WFA implementation resumed
 
 Related documents:
 
@@ -20,9 +20,11 @@ Related documents:
 - [../design-docs/package-topology-and-naming.md](../design-docs/package-topology-and-naming.md)
 
 This document is not a refactoring spec and not an implementation plan. It is
-the analysis queue created when WFA planning exposed deeper product-contract
-questions. Its job is to list the issues that may block or distort WFA, then
-provide a way to prioritize which prerequisite problem should be solved first.
+the historical analysis queue created when WFA planning exposed deeper
+product-contract questions. Its job was to list the issues that could block or
+distort WFA, then provide a way to prioritize which prerequisite problem should
+be solved first. Current implemented WFA behavior is governed by
+[walk-forward-analysis-resume.md](walk-forward-analysis-resume.md).
 
 The ordered prerequisite sequence is recorded separately in
 [wfa-prerequisite-roadmap.md](wfa-prerequisite-roadmap.md). Read that roadmap
@@ -46,8 +48,9 @@ parameter contract that must not harden ad hoc construction. Stage 2 resolves
 the active parameter exploration surface around `strategy=StrategyClass` plus
 `StrategyConfig`, which is the contract future WFA work should build on.
 
-Pausing WFA prevents an expedient implementation path from becoming an
-accidental long-lived API.
+Pausing WFA prevented an expedient implementation path from becoming an
+accidental long-lived API. That pause has been superseded for the implemented
+Stage 4 first slice.
 
 ## Current Known Facts
 
@@ -378,7 +381,8 @@ WFA pause.
 4. Close the reporting config source-of-truth stage.
 5. Decide the direct backtest class-plus-config API alignment slice.
 6. Revisit WFA only after Stage 3.5 is completed or explicitly deferred by a
-   human decision.
+   human decision. This condition was satisfied for the implemented Stage 4
+   first slice.
 
 The next document should be a product spec for the first roadmap stage:
 `Unified Strategy Configuration Contract`. That spec should stay focused on the
@@ -411,5 +415,5 @@ Resolved since this readiness review was first written:
 - Stage 2 resolved that `ParameterStudy` uses `strategy=StrategyClass` only.
 - Stage 3 resolved that reports expose the framework-owned
   `run.strategy_config` snapshot.
-- Stage 3.5 resolves that direct backtests teach strategy classes plus optional
-  explicit configs before WFA resumes.
+- Stage 3.5 resolved that direct backtests teach strategy classes plus optional
+  explicit configs before Stage 4 WFA resumed.

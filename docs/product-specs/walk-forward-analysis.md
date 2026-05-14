@@ -2,10 +2,10 @@
 
 ## Status
 
-- Status: `paused`
+- Status: `superseded`
 - Class: `product-spec`
-- Scope: paused product target for a future single-symbol walk-forward
-  validation-study workflow
+- Scope: superseded baseline product target for the single-symbol
+  walk-forward validation-study workflow
 
 Related documents:
 
@@ -24,27 +24,30 @@ Related documents:
 - [../research/libraries/vectorbt.md](../research/libraries/vectorbt.md)
 - [../research/libraries/pybroker.md](../research/libraries/pybroker.md)
 
-This document records the product target and accepted decisions for Quantleet
-walk-forward analysis research workflows. It is currently paused and must not
-be treated as authorization to implement WFA.
+This document records the earlier product target and accepted decisions for
+Quantleet walk-forward analysis research workflows. It is superseded for the
+implemented Stage 4 first slice by
+[walk-forward-analysis-resume.md](walk-forward-analysis-resume.md).
 
-The pause is intentional. WFA remains a desired validation-study workflow, but
-design discussion exposed a deeper product-contract risk: the current
-legacy callable construction API-centered parameter-study surface may be an implementation
-adapter rather than the long-lived user-facing strategy configuration contract
-needed by research, backtest, paper trading, and live trading. Implementing WFA
-directly on top of that transitional surface could harden the wrong public API
-and create refactoring debt across later validation and execution workflows.
+The earlier pause was intentional. WFA remained a desired validation-study
+workflow, but design discussion exposed a deeper product-contract risk: the
+legacy callable construction API-centered parameter-study surface was an
+implementation adapter rather than the long-lived user-facing strategy
+configuration contract needed by research, backtest, paper trading, and live
+trading. Implementing WFA directly on top of that transitional surface could
+have hardened the wrong public API and created refactoring debt across later
+validation and execution workflows.
 
-Before WFA implementation resumes, Quantleet must complete a readiness analysis
-of the blockers listed in
-[walk-forward-analysis-readiness.md](walk-forward-analysis-readiness.md) and
-choose the next refactoring slice deliberately.
+WFA implementation resumed after the prerequisite strategy configuration,
+reporting provenance, and direct class-plus-config backtest API slices. Current
+WFA behavior is governed by
+[walk-forward-analysis-resume.md](walk-forward-analysis-resume.md).
 
-This product spec therefore defines what must be preserved when WFA is
-resumed: user intent, result semantics, naming decisions, and validation-study
-positioning. It intentionally leaves lower-level module layout, helper names,
-test mechanics, and prerequisite refactoring scope to later documents.
+This historical product spec therefore defines the decisions that had to be
+preserved when WFA resumed: user intent, result semantics, naming decisions,
+and validation-study positioning. It intentionally leaves lower-level module
+layout, helper names, test mechanics, and prerequisite refactoring scope to
+later documents.
 
 For the Stage 4 resumed first-slice product contract, read
 [walk-forward-analysis-resume.md](walk-forward-analysis-resume.md). That
@@ -92,9 +95,10 @@ is robust enough to deserve further investigation. That value does not justify
 shipping WFA on top of a strategy-parameter contract that the project already
 believes may need to change.
 
-## Pause Decision
+## Superseded Pause Decision
 
-Implementation of WFA is paused.
+Implementation of WFA was paused until the prerequisite sequence was completed.
+That pause is superseded for the implemented Stage 4 first slice.
 
 Accepted decisions that remain valid:
 
@@ -108,7 +112,7 @@ Accepted decisions that remain valid:
 - Splitter and cross-validation toolkit concepts should remain internal or
   advanced until the primary user workflow is stable.
 
-Reason for pausing:
+Original reason for pausing:
 
 - WFA would exercise the strategy parameter contract harder than the current
   single-slice `ParameterStudy`.
@@ -119,7 +123,7 @@ Reason for pausing:
 - Choosing the WFA implementation path before resolving that contract would
   likely turn an expedient API into a long-lived product promise.
 
-Resume criteria:
+Resume criteria that were later satisfied for Stage 4:
 
 - Known blockers in `walk-forward-analysis-readiness.md` have been analyzed.
 - The project has selected the next refactoring slice or explicitly decided

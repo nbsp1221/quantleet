@@ -185,6 +185,7 @@ The first beta public docs must cover:
 - result reporting guide
 - plotting guide
 - parameter exploration guide
+- walk-forward analysis guide
 - order sizing guide
 - stop-order guide
 - beta safety/scope notes
@@ -363,6 +364,9 @@ are expected to import or interact with directly, including:
 - `result.plot()`
 - `ParameterStudy`
 - `ParameterStudy.grid_search`
+- `WalkForwardStudy`
+- `WalkForwardResult`
+- walk-forward fold, diagnostic, summary, and execution-scale objects
 - public data loading helpers or built-in data source entry points
 - public `ta` helpers
 - public `qc` helpers
@@ -533,6 +537,9 @@ The public beta documentation product is ready when:
 - Public docs include exactly three canonical examples: SMA crossover
   quickstart, orders and sizing, and parameter exploration.
 - Public docs include a canonical constrained-grid `ParameterStudy` example.
+- Public docs describe `WalkForwardStudy` as rolling out-of-sample research
+  validation evidence, not as an optimizer guarantee, recommendation engine,
+  paper/live workflow, or continuous-account report.
 - Public docs include explicit fixed `qty`, `qty_percent`, reservation, fills,
   positions, and stop-family examples.
 - Public docs state unsupported beta scope plainly.

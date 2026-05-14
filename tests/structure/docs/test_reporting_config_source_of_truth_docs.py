@@ -15,7 +15,7 @@ def test_product_index_routes_reporting_config_source_of_truth_specs() -> None:
     assert "reporting-config-source-of-truth.md" in index
     assert "reporting-config-source-of-truth-test-scenarios.md" in index
     assert "report.run.strategy_config" in index
-    assert "WFA implementation is paused" in index
+    assert "current implemented Stage 4 first-slice WFA contract" in index
 
 
 def test_public_docs_do_not_teach_strategy_parameters_reporting_hook() -> None:

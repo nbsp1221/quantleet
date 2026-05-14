@@ -12,6 +12,7 @@ The first public beta supports:
 - fixed quantity and `qty_percent` sizing
 - conservative reservation, fills, positions, reports, and plots
 - finite grid parameter exploration
+- rolling walk-forward validation on one materialized `BarSeries`
 
 ## Unsupported
 
@@ -25,5 +26,6 @@ The first public beta does not support:
 - multi-timeframe strategies
 - optimizer guarantees
 - trading recommendation claims
+- continuous walk-forward account reports
 
 Unsupported items may be planned later, but they are not current beta behavior.

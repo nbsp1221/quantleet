@@ -5,7 +5,8 @@ polished first-beta single-symbol historical backtesting workflow.
 
 The first public beta, `0.1.0b1`, is for users who want to load OHLCV history,
 write a compact strategy, run a deterministic backtest, inspect a report, plot
-the result, and compare a small finite parameter grid.
+the result, compare a small finite parameter grid, and run rolling
+walk-forward validation.
 
 ## Start Here
 
@@ -23,6 +24,7 @@ the result, and compare a small finite parameter grid.
 - [Data sources](guides/data-sources.md)
 - [Orders and sizing](guides/orders-and-sizing.md)
 - [Parameter exploration](guides/parameter-exploration.md)
+- [Walk-forward analysis](guides/walk-forward-analysis.md)
 
 ## Financial Disclaimer
 

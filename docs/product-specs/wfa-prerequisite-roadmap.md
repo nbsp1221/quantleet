@@ -2,10 +2,10 @@
 
 ## Status
 
-- Status: `draft`
+- Status: `superseded`
 - Class: `product-roadmap`
-- Scope: ordered prerequisite product-spec sequence before walk-forward analysis
-  implementation resumes
+- Scope: historical ordered prerequisite product-spec sequence before
+  walk-forward analysis implementation resumed
 
 Related documents:
 
@@ -23,13 +23,14 @@ Related documents:
 - [../design-docs/package-topology-and-naming.md](../design-docs/package-topology-and-naming.md)
 
 This document is not an implementation plan and not the product spec for
-`StrategyConfig`. It records the agreed prerequisite sequence so that the
-project can discuss the next product spec without losing the larger path back to
-walk-forward analysis.
+`StrategyConfig`. It records the agreed prerequisite sequence that unblocked
+the Stage 4 WFA implementation. Current implemented WFA behavior is governed by
+[walk-forward-analysis-resume.md](walk-forward-analysis-resume.md).
 
 ## Decision
 
-Walk-forward analysis remains paused.
+Walk-forward analysis was paused until the prerequisite sequence below closed
+enough of the strategy construction and reporting contract risk.
 
 The next product-spec focus is not WFA itself. The next product-spec focus is
 the strategy configuration contract that WFA, `ParameterStudy`, reporting, paper
@@ -43,7 +44,7 @@ The agreed sequence is:
 3.5. Direct Backtest Class+Config API Alignment
 4. WFA Resume Spec
 
-This sequence is a product-planning dependency chain, not a commitment to
+This sequence was a product-planning dependency chain, not a commitment to
 implement every slice in one batch.
 
 ## Why This Roadmap Exists
@@ -189,7 +190,7 @@ Governing product spec:
 Purpose:
 
 - Track the Stage 3.5 decision that direct `BacktestEngine.run(...)` accepts a
-  strategy class and optional `StrategyConfig` before WFA resumes.
+  strategy class and optional `StrategyConfig` before Stage 4 WFA resumed.
 - Align normal direct backtests with the strategy-construction model already
   used by `ParameterStudy`.
 - Prevent WFA from becoming the first public surface that must bridge direct
@@ -272,7 +273,7 @@ Non-goals for this stage:
 ## Dependency Rules
 
 - Stage 1 must happen before Stage 2.
-- Stage 2 must happen before WFA implementation resumes.
+- Stage 2 had to happen before WFA implementation resumed.
 - Stage 3 may be specified after Stage 2 or in parallel with late Stage 2
   planning, but WFA cannot depend on ambiguous report metadata.
 - Stage 3.5 must happen after Stage 3 and before Stage 4 unless a human
@@ -280,6 +281,7 @@ Non-goals for this stage:
   alignment no longer blocks WFA planning.
 - Stage 4 must not start until the project has either completed the relevant
   prior specs or explicitly records why a prior stage no longer blocks WFA.
+  That condition was satisfied for the implemented Stage 4 first slice.
 
 The roadmap allows later human decisions to reorder or merge stages, but only
 through an explicit update to this document or a superseding product spec. Silent
@@ -293,11 +295,12 @@ scope drift is not acceptable.
 | ParameterStudy Strategy API Migration | high | high | high | P0 |
 | Reporting Config Source Of Truth | medium | high | medium-high | Completed |
 | Direct Backtest Class+Config API Alignment | medium-high | high | high | Spec decisions closed; implementation planning next |
-| WFA Resume Spec | medium | high | high after prerequisites | Blocked on Stage 3.5 completion |
+| WFA Resume Spec | medium | high | high after prerequisites | Implemented first slice |
 
 ## Guardrails
 
-- Do not treat this roadmap as permission to implement WFA.
+- Do not treat this historical roadmap as permission to expand WFA beyond the
+  implemented Stage 4 contract.
 - Do not use this roadmap to skip the dedicated product spec for Stage 1.
 - Do not solve Stage 1 by preserving the current legacy callable construction API path merely
   because it is already implemented.
@@ -330,5 +333,4 @@ This roadmap is successful when:
   `BacktestReport.run.strategy_config`.
 - Stage 3.5 resolves that direct backtests use strategy classes plus optional
   `StrategyConfig` objects.
-- WFA can safely resume product planning after Stage 3.5 is implemented or
-  explicitly deferred by a human decision.
+- WFA resumed product planning after Stage 3.5 was implemented.
