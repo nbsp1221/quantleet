@@ -66,8 +66,9 @@ def test_wfa_real_data_focused_sma_rsi_contract_matches_golden_slice() -> None:
             "rsi_exit": [40, 45],
         },
         objective=("returns.total_return", "max"),
-        constraint=lambda config: config["fast"] < config["slow"]
-        and config["rsi_exit"] < config["rsi_entry"],
+        constraint=lambda config: (
+            config["fast"] < config["slow"] and config["rsi_exit"] < config["rsi_entry"]
+        ),
         train_size=_TRAIN_SIZE,
         test_size=_TEST_SIZE,
         step_size=_STEP_SIZE,

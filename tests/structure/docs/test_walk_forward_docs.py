@@ -12,7 +12,7 @@ def test_walk_forward_resume_docs_avoid_deferred_public_patterns() -> None:
 
     forbidden = [
         "source=",
-        "objective=\"sharpe\"",
+        'objective="sharpe"',
         "oos_report",
         "stitched OOS equity",
         "paper trading",

@@ -260,7 +260,6 @@ class StopLimitConfig(StrategyConfig):
 
 
 class BuyStopLimitStrategy(Strategy[StopLimitConfig]):
-
     def init(self) -> None:
         self._placed = False
 

@@ -151,12 +151,10 @@ def test_current_docs_describe_summary_terms_and_engine_surface() -> None:
     assert "should still match the active series" in quickstart
     assert "`BacktestEngine`" in research_spec
     assert (
-        "`BacktestEngine(...).run(bars=..., strategy=StrategyClass, config=...)`"
-        in research_spec
+        "`BacktestEngine(...).run(bars=..., strategy=StrategyClass, config=...)`" in research_spec
     )
     assert (
-        "`BacktestEngine(...).run(source=..., strategy=StrategyClass, config=...)`"
-        in research_spec
+        "`BacktestEngine(...).run(source=..., strategy=StrategyClass, config=...)`" in research_spec
     )
     assert "### Initial Canonical User Journeys" in research_spec
     for journey_marker in [
@@ -168,12 +166,10 @@ def test_current_docs_describe_summary_terms_and_engine_surface() -> None:
         assert journey_marker in research_spec
     assert "superficially passing but still bad" in research_spec
     assert (
-        "`BacktestEngine(...).run(bars=..., strategy=StrategyClass, config=...)`"
-        in backtest_spec
+        "`BacktestEngine(...).run(bars=..., strategy=StrategyClass, config=...)`" in backtest_spec
     )
     assert (
-        "`BacktestEngine(...).run(source=..., strategy=StrategyClass, config=...)`"
-        in backtest_spec
+        "`BacktestEngine(...).run(source=..., strategy=StrategyClass, config=...)`" in backtest_spec
     )
     assert "`quantleet.data.TimeBar`" in research_spec
     assert "`quantleet.data.BarSeries`" in research_spec

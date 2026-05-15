@@ -57,6 +57,4 @@ def test_oos_summary_excludes_failed_folds_from_numeric_aggregates() -> None:
     assert result.oos_summary.failed_fold_count == 1
     assert result.oos_summary.objective_metric_state_counts == {"defined": 1}
     assert result.oos_summary.metric_summaries["returns.total_return"]["count"] == 1
-    assert result.oos_summary.objective_mean == result.folds[1].test_metrics[
-        "returns.total_return"
-    ]
+    assert result.oos_summary.objective_mean == result.folds[1].test_metrics["returns.total_return"]

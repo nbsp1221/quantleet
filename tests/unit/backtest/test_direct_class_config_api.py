@@ -39,13 +39,13 @@ class ConfigLessStrategy(Strategy):
 
 
 class CountingStrategy(Strategy):
-    instance_ids: ClassVar[list[int]] = []
+    instances: ClassVar[list[CountingStrategy]] = []
     handled_counts: ClassVar[list[int]] = []
 
     def __init__(self, config: StrategyConfig | None = None) -> None:
         super().__init__(config)
         self._handled_count = 0
-        type(self).instance_ids.append(id(self))
+        type(self).instances.append(self)
 
     def on_bar(self, bar: BarEvent) -> None:
         self._handled_count += 1
@@ -187,14 +187,14 @@ def test_strategy_construction_failure_fails_before_source_load() -> None:
 
 
 def test_every_run_uses_fresh_strategy_instance() -> None:
-    CountingStrategy.instance_ids = []
+    CountingStrategy.instances = []
     CountingStrategy.handled_counts = []
 
     _engine().run(bars=_bars(), strategy=CountingStrategy)
     _engine().run(bars=_bars(), strategy=CountingStrategy)
 
-    assert len(CountingStrategy.instance_ids) == 2
-    assert len(set(CountingStrategy.instance_ids)) == 2
+    assert len(CountingStrategy.instances) == 2
+    assert CountingStrategy.instances[0] is not CountingStrategy.instances[1]
     assert CountingStrategy.handled_counts == [1, 2, 1, 2]
 
 

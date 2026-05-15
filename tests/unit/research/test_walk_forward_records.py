@@ -56,7 +56,5 @@ def test_candidate_records_reuse_grid_search_records_with_fold_metadata() -> Non
     candidate_records = result.to_candidate_records()
 
     assert {record["fold_index"] for record in candidate_records} == {0, 1}
-    assert {"run_index", "candidate_parameters", "strategy_config"}.issubset(
-        candidate_records[0]
-    )
+    assert {"run_index", "candidate_parameters", "strategy_config"}.issubset(candidate_records[0])
     json.dumps(candidate_records, allow_nan=False)

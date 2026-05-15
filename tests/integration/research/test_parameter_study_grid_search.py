@@ -48,7 +48,6 @@ class RoundTripConfig(StrategyConfig):
 
 
 class ParameterizedRoundTripStrategy(Strategy[RoundTripConfig]):
-    instance_ids: ClassVar[list[int] | None] = None
     instances: ClassVar[list[ParameterizedRoundTripStrategy]] = []
     constructed_configs: ClassVar[list[dict[str, object]]] = []
 
@@ -56,8 +55,6 @@ class ParameterizedRoundTripStrategy(Strategy[RoundTripConfig]):
         super().__init__(config)
         type(self).instances.append(self)
         type(self).constructed_configs.append(self.config.to_mapping())
-        if type(self).instance_ids is not None:
-            type(self).instance_ids.append(id(self))
 
     @property
     def display_name(self) -> str:
@@ -111,22 +108,17 @@ def test_canonical_small_grid_search_uses_real_backtest_engine() -> None:
 
 
 def test_strategy_class_constructs_once_per_admissible_candidate_with_fresh_instances() -> None:
-    instance_ids: list[int] = []
-    ParameterizedRoundTripStrategy.instance_ids = instance_ids
     ParameterizedRoundTripStrategy.instances = []
     ParameterizedRoundTripStrategy.constructed_configs = []
 
-    try:
-        result = ParameterStudy(
-            engine=engine(),
-            bars=crossing_bars(),
-            strategy=ParameterizedRoundTripStrategy,
-        ).grid_search(
-            parameters={"fast": [5, 20], "slow": [10, 30]},
-            constraint=lambda parameters: parameters["fast"] < parameters["slow"],
-        )
-    finally:
-        ParameterizedRoundTripStrategy.instance_ids = None
+    result = ParameterStudy(
+        engine=engine(),
+        bars=crossing_bars(),
+        strategy=ParameterizedRoundTripStrategy,
+    ).grid_search(
+        parameters={"fast": [5, 20], "slow": [10, 30]},
+        constraint=lambda parameters: parameters["fast"] < parameters["slow"],
+    )
 
     assert result.successful_count == 3
     assert result.rejected_count == 1
@@ -135,4 +127,5 @@ def test_strategy_class_constructs_once_per_admissible_candidate_with_fresh_inst
         {"fast": 5, "slow": 30, "enabled": False},
         {"fast": 20, "slow": 30, "enabled": False},
     ]
-    assert len(instance_ids) == len(set(instance_ids)) == 3
+    assert len(ParameterizedRoundTripStrategy.instances) == 3
+    assert len({id(instance) for instance in ParameterizedRoundTripStrategy.instances}) == 3

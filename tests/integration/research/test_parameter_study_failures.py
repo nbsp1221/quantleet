@@ -18,7 +18,6 @@ class FailureConfig(StrategyConfig):
 
 
 class MixedFailureStrategy(Strategy[FailureConfig]):
-
     def __init__(self, config: FailureConfig | None = None) -> None:
         if config is not None and config.case == "construction":
             raise ValueError("construction exploded")
@@ -67,12 +66,10 @@ def test_fail_fast_reraises_original_exception_with_stage_and_config_context() -
 
     assert any(note == "stage=strategy_construction" for note in exc_info.value.__notes__)
     assert any(
-        "candidate_parameters={'case': 'construction'}" in note
-        for note in exc_info.value.__notes__
+        "candidate_parameters={'case': 'construction'}" in note for note in exc_info.value.__notes__
     )
     assert any(
-        "strategy_config={'case': 'construction'}" in note
-        for note in exc_info.value.__notes__
+        "strategy_config={'case': 'construction'}" in note for note in exc_info.value.__notes__
     )
 
 

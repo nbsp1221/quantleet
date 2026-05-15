@@ -46,7 +46,6 @@ class ExperimentSmaCrossConfig(StrategyConfig):
 
 
 class ExperimentSmaCross(Strategy[ExperimentSmaCrossConfig]):
-
     @property
     def display_name(self) -> str:
         return "Experiment SMA Cross"
@@ -72,7 +71,6 @@ class ExperimentRsiMeanReversionConfig(StrategyConfig):
 
 
 class ExperimentRsiMeanReversion(Strategy[ExperimentRsiMeanReversionConfig]):
-
     @property
     def display_name(self) -> str:
         return "Experiment RSI Mean Reversion"
@@ -94,7 +92,6 @@ class ExperimentDonchianBreakoutConfig(StrategyConfig):
 
 
 class ExperimentDonchianBreakout(Strategy[ExperimentDonchianBreakoutConfig]):
-
     @property
     def display_name(self) -> str:
         return "Experiment Donchian Breakout"
