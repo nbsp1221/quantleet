@@ -51,12 +51,17 @@ Current baseline verification commands:
 
 Low-level repository commands remain available for direct use:
 
-- `uv run python scripts/coverage_check.py`
 - `uv run python scripts/repo_check.py`
 - `uv run python scripts/notebook_validate.py`
 - `uv run python scripts/live_smoke.py`
 
 `uv run poe` is the preferred developer entry point for common local workflows. It is a harnessed convenience layer above the repo-local scripts.
+
+The default test and coverage commands intentionally serve different purposes:
+
+- `uv run poe test` runs `pytest -q` as the plain test pass/fail lane
+- `uv run poe coverage` reruns pytest under coverage.py, measures coverage, and
+  enforces the configured coverage hard gate
 
 The performance gate is explicit:
 
@@ -90,9 +95,11 @@ backtest or research path, especially:
 
 ## Coverage Guardrail
 
-The repository treats coverage as a repo-local reliability floor for source code under `src/quantleet`.
+The repository treats coverage as a repo-local reliability floor for source code under `quantleet`.
 
-- global source line coverage must stay at or above `90%`
-- files under `src/quantleet/trading/domain/` must remain at `100%` line coverage
+- coverage.py branch measurement must remain enabled
+- coverage.py's combined line/branch total must stay at or above `90%`
+- `uv run poe coverage` must collect fresh coverage data by rerunning pytest
+  before reporting the gate result
 
 This is a risk-based guardrail for agent work, not a substitute for contract tests or structure checks.

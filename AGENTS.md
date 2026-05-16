@@ -91,7 +91,6 @@ The repo-local harness commands remain valid:
 - `uv run pytest -q`
 - `uv run ruff check .`
 - `uv run mypy src`
-- `uv run python scripts/coverage_check.py`
 - `uv run python scripts/repo_check.py`
 - `uv run python scripts/notebook_validate.py`
 - `uv run python scripts/live_smoke.py`

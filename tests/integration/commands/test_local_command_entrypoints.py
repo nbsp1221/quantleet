@@ -3,7 +3,6 @@ from tests.support import ROOT
 
 def test_local_command_wrappers_exist() -> None:
     for relative_path in [
-        "scripts/coverage_check.py",
         "scripts/repo_check.py",
         "scripts/notebook_validate.py",
         "scripts/live_smoke.py",
@@ -21,7 +20,6 @@ def test_agents_doc_references_repo_local_harness_commands() -> None:
     agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
 
     for command in [
-        "uv run python scripts/coverage_check.py",
         "uv run python scripts/repo_check.py",
         "uv run python scripts/notebook_validate.py",
         "uv run python scripts/live_smoke.py",

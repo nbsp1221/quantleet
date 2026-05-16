@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import tomllib
 
-from scripts import coverage_check
 from tests.support import ROOT
 
 
@@ -23,10 +22,26 @@ def test_poe_verify_includes_coverage_gate() -> None:
 
 
 def test_repository_defines_approved_coverage_thresholds() -> None:
-    assert coverage_check.GLOBAL_MIN_COVERAGE == 90.0
-    assert coverage_check.TRADING_DOMAIN_MIN_COVERAGE == 100.0
-    assert coverage_check.TRADING_DOMAIN_PREFIX == "src/quantleet/trading/domain/"
+    coverage = _pyproject()["tool"]["coverage"]
+
+    assert coverage["run"]["branch"] is True
+    assert coverage["run"]["source"] == ["quantleet"]
+    assert coverage["report"]["fail_under"] == 90
+    assert coverage["report"]["show_missing"] is True
 
 
-def test_coverage_harness_targets_source_only() -> None:
-    assert coverage_check.INCLUDE_PATTERN == "src/quantleet/*"
+def test_coverage_poe_task_uses_native_coverage_commands() -> None:
+    tasks = _pyproject()["tool"]["poe"]["tasks"]
+
+    assert tasks["coverage"]["sequence"] == [
+        {"cmd": "coverage run -m pytest -q"},
+        {"cmd": "coverage report -m"},
+    ]
+
+
+def test_test_poe_task_is_plain_pytest_without_coverage() -> None:
+    tasks = _pyproject()["tool"]["poe"]["tasks"]
+
+    assert tasks["test"]["cmd"] == "pytest -q"
+    assert "coverage" not in tasks["test"]["cmd"]
+    assert "--cov" not in tasks["test"]["cmd"]

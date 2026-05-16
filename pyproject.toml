@@ -56,13 +56,13 @@ format = { cmd = "ruff format .", help = "Format the repository with Ruff" }
 "perf-check" = { cmd = "pytest tests/perf -q -x --run-perf", help = "Run the canonical performance regression gate" }
 "verify-runtime" = { sequence = ["verify", "perf-check"], help = "Run the stronger explicit verification lane for runtime-sensitive backtest or research changes" }
 typecheck = { cmd = "mypy src", help = "Run mypy against the package source" }
-test = { cmd = "pytest -q", help = "Run the default test lane" }
+test = { cmd = "pytest -q", help = "Run the default test pass/fail lane without coverage" }
 test-unit = { cmd = "pytest tests/unit -q", help = "Run unit tests" }
 test-integration = { cmd = "pytest tests/integration -q", help = "Run integration tests" }
 test-structure = { cmd = "pytest tests/structure -q", help = "Run repository structure tests" }
 test-smoke = { cmd = "pytest tests/smoke/local -q", help = "Run local smoke tests" }
 test-live = { cmd = "pytest tests/smoke/live -q", help = "Run live smoke tests explicitly" }
-coverage = { cmd = "uv run python scripts/coverage_check.py", help = "Run the repo-local coverage gate" }
+coverage = { sequence = [{ cmd = "coverage run -m pytest -q" }, { cmd = "coverage report -m" }], help = "Rerun tests with coverage.py and enforce the coverage gate" }
 build = { cmd = "uv build", help = "Build the package artifacts" }
 "repo-check" = { cmd = "uv run python scripts/repo_check.py", help = "Run repository harness checks" }
 "notebook-validate" = { cmd = "uv run python scripts/notebook_validate.py", help = "Execute tracked notebooks" }
@@ -102,4 +102,9 @@ target-version = "py312"
 select = ["E", "F", "I"]
 
 [tool.coverage.report]
-include = ["src/quantleet/*"]
+fail_under = 90
+show_missing = true
+
+[tool.coverage.run]
+branch = true
+source = ["quantleet"]

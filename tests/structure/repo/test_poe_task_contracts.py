@@ -70,7 +70,6 @@ def write_minimal_repo_docs(tmp_path) -> None:
             "uv run poe repo-check\n"
             "repo-local harness commands\n"
             "uv run pytest -q\n"
-            "uv run python scripts/coverage_check.py\n"
             "uv run python scripts/repo_check.py\n"
             "uv run python scripts/notebook_validate.py\n"
             "uv run python scripts/live_smoke.py\n"
@@ -316,7 +315,6 @@ def test_poe_task_surface_is_documented() -> None:
         assert command in agents
     assert "project.scripts" not in agents
     for command in [
-        "uv run python scripts/coverage_check.py",
         "uv run python scripts/repo_check.py",
         "uv run python scripts/notebook_validate.py",
         "uv run python scripts/live_smoke.py",
@@ -375,7 +373,7 @@ test-integration = "pytest tests/integration -q"
 test-structure = "pytest tests/structure -q"
 test-smoke = "pytest tests/smoke/local -q"
 test-live = "pytest tests/smoke/live -q"
-coverage = "uv run python scripts/coverage_check.py"
+coverage = [{ cmd = "coverage run -m pytest -q" }, { cmd = "coverage report -m" }]
 build = "uv build"
 repo-check = "uv run python scripts/repo_check.py"
 notebook-validate = "uv run python scripts/notebook_validate.py"

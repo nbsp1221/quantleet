@@ -18,6 +18,15 @@ Use this reference when adding or moving tests in `quantleet`.
 - Put repository, docs, and architecture rules in `tests/structure`
 - Put sanity checks in `tests/smoke`
 
+## Command Lanes
+
+- `uv run poe test` runs the default pytest pass/fail lane without coverage
+  collection
+- `uv run poe coverage` reruns the default pytest lane under coverage.py and
+  then enforces the configured coverage report gate
+- use `coverage` when the question is whether test coverage still satisfies the
+  repository reliability floor, not only whether tests pass
+
 ## Source Mirroring
 
 Mirror the source layout inside these areas once a matching source package path exists:
