@@ -110,6 +110,8 @@ REQUIRED_POE_TASKS = (
     "test-smoke",
     "test-live",
     "coverage",
+    "coverage-diff",
+    "coverage-gates",
     "build",
     "repo-check",
     "notebook-validate",

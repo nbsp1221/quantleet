@@ -17,6 +17,8 @@ REQUIRED_POE_TASKS = [
     "test-smoke",
     "test-live",
     "coverage",
+    "coverage-diff",
+    "coverage-gates",
     "build",
     "repo-check",
     "notebook-validate",
@@ -66,6 +68,8 @@ def write_minimal_repo_docs(tmp_path) -> None:
             "uv run poe perf-check\n"
             "uv run poe verify-runtime\n"
             "uv run poe coverage\n"
+            "uv run poe coverage-diff\n"
+            "uv run poe coverage-gates\n"
             "uv run poe test-live\n"
             "uv run poe repo-check\n"
             "repo-local harness commands\n"
@@ -285,8 +289,7 @@ def test_poe_verify_sequence_matches_default_local_verification_bundle() -> None
     assert verify["sequence"] == [
         "lint",
         "typecheck",
-        "test",
-        "coverage",
+        "coverage-gates",
         "build",
         "repo-check",
         "notebook-validate",
@@ -309,6 +312,8 @@ def test_poe_task_surface_is_documented() -> None:
         "uv run poe perf-check",
         "uv run poe verify-runtime",
         "uv run poe coverage",
+        "uv run poe coverage-diff",
+        "uv run poe coverage-gates",
         "uv run poe format",
         "uv run poe test-live",
     ]:
@@ -374,11 +379,31 @@ test-structure = "pytest tests/structure -q"
 test-smoke = "pytest tests/smoke/local -q"
 test-live = "pytest tests/smoke/live -q"
 coverage = [{ cmd = "coverage run -m pytest -q" }, { cmd = "coverage report -m" }]
+coverage-diff = [
+    { cmd = "coverage erase" },
+    { cmd = "coverage run -m pytest -q" },
+    { cmd = "coverage xml -o coverage.xml --fail-under=0" },
+    { cmd = "diff-cover coverage.xml --compare-branch HEAD --include-untracked --fail-under 80" },
+]
+coverage-gates = [
+    { cmd = "coverage erase" },
+    { cmd = "coverage run -m pytest -q" },
+    { cmd = "coverage report -m" },
+    { cmd = "coverage xml -o coverage.xml --fail-under=0" },
+    { cmd = "diff-cover coverage.xml --compare-branch HEAD --include-untracked --fail-under 80" },
+]
 build = "uv build"
 repo-check = "uv run python scripts/repo_check.py"
 notebook-validate = "uv run python scripts/notebook_validate.py"
 live-smoke = "uv run python scripts/live_smoke.py"
-verify = ["lint", "typecheck", "test", "coverage", "build", "repo-check", "notebook-validate"]
+verify = [
+    "lint",
+    "typecheck",
+    "coverage-gates",
+    "build",
+    "repo-check",
+    "notebook-validate",
+]
 """.strip(),
         encoding="utf-8",
     )

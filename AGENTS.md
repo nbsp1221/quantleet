@@ -81,6 +81,8 @@ package-level CLI shims.
 - default verification: `uv run poe verify`
 - formatting: `uv run poe format`
 - coverage-only check: `uv run poe coverage`
+- changed-lines coverage check: `uv run poe coverage-diff`
+- combined coverage gates: `uv run poe coverage-gates`
 - runtime-sensitive backtest or research changes: `uv run poe verify-runtime`
 - live checks: `uv run poe test-live`
 - performance checks: `uv run poe perf-check`

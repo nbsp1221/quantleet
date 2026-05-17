@@ -24,6 +24,12 @@ Use this reference when adding or moving tests in `quantleet`.
   collection
 - `uv run poe coverage` reruns the default pytest lane under coverage.py and
   then enforces the configured coverage report gate
+- `uv run poe coverage-diff` reruns the default pytest lane under coverage.py
+  and enforces the changed-line coverage gate for the current diff against
+  `HEAD`
+- `uv run poe coverage-gates` runs pytest once under coverage.py and then
+  enforces both the full-project coverage gate and the changed-line coverage
+  gate
 - use `coverage` when the question is whether test coverage still satisfies the
   repository reliability floor, not only whether tests pass
 

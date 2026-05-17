@@ -42,6 +42,8 @@ Current baseline verification commands:
 - `uv run poe verify`
 - `uv run poe verify-runtime`
 - `uv run poe coverage`
+- `uv run poe coverage-diff`
+- `uv run poe coverage-gates`
 - `uv run poe format`
 - `uv run poe test-live`
 - `uv run pytest -q`
@@ -62,10 +64,17 @@ The default test and coverage commands intentionally serve different purposes:
 - `uv run poe test` runs `pytest -q` as the plain test pass/fail lane
 - `uv run poe coverage` reruns pytest under coverage.py, measures coverage, and
   enforces the configured coverage hard gate
+- `uv run poe coverage-diff` reruns pytest under coverage.py, writes
+  `coverage.xml`, and uses diff-cover to enforce changed-line coverage for the
+  current diff
+- `uv run poe coverage-gates` runs pytest once under coverage.py, then enforces
+  both the full-project coverage gate and the changed-lines coverage gate from
+  the same fresh coverage data
 
 The performance gate is explicit:
 
-- `uv run poe verify` remains the correctness lane
+- `uv run poe verify` remains the correctness lane and uses `coverage-gates`
+  instead of running separate `test`, `coverage`, and `coverage-diff` tasks
 - `uv run poe perf-check` is the canonical RSI performance-regression lane
 - `uv run poe verify-runtime` is the stronger explicit lane for runtime-sensitive backtest or research changes
 - the default integration lane keeps a canonical strategy pair:
@@ -101,5 +110,15 @@ The repository treats coverage as a repo-local reliability floor for source code
 - coverage.py's combined line/branch total must stay at or above `90%`
 - `uv run poe coverage` must collect fresh coverage data by rerunning pytest
   before reporting the gate result
+- `uv run poe coverage-diff` must collect fresh coverage data by rerunning
+  pytest, compare the local working tree against `HEAD`, include staged,
+  unstaged, and untracked source changes with diff-cover's
+  `--include-untracked` option, and fail when changed-line coverage is below
+  `80%`
+- `uv run poe coverage-diff` may pass with no changed source lines that have
+  coverage information in the diff
+- `uv run poe coverage-gates` is the default `verify` coverage lane; it must
+  reuse one fresh coverage run for the full-project `90%` gate and the
+  changed-lines `80%` gate
 
 This is a risk-based guardrail for agent work, not a substitute for contract tests or structure checks.
