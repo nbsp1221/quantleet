@@ -14,6 +14,8 @@ def test_pyproject_defines_coverage_poe_task() -> None:
 
     assert "coverage" in tasks
     assert "coverage-diff" in tasks
+    assert "coverage-baseline" in tasks
+    assert "coverage-baseline-update" in tasks
     assert "coverage-gates" in tasks
 
 
@@ -83,7 +85,27 @@ def test_coverage_gates_poe_task_reuses_one_pytest_run_for_both_gates() -> None:
                 "diff-cover coverage.xml --compare-branch HEAD --include-untracked --fail-under 80"
             ),
         },
+        "coverage-baseline",
     ]
+    assert tasks["coverage-gates"]["help"] == (
+        "Run tests once and enforce full-project, changed-lines, and regression coverage gates"
+    )
+
+
+def test_coverage_baseline_poe_tasks_use_repo_local_script() -> None:
+    tasks = _pyproject()["tool"]["poe"]["tasks"]
+
+    assert tasks["coverage-baseline"]["cmd"] == (
+        "uv run python scripts/coverage_baseline.py check "
+        "--baseline .coverage-baseline.json "
+        "--allowed-drop 0.25 "
+        "--current-json coverage-baseline-current.json"
+    )
+    assert tasks["coverage-baseline-update"]["cmd"] == (
+        "uv run python scripts/coverage_baseline.py update "
+        "--baseline .coverage-baseline.json "
+        "--current-json coverage-baseline-current.json"
+    )
 
 
 def test_test_poe_task_is_plain_pytest_without_coverage() -> None:

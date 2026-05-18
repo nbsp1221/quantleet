@@ -69,12 +69,24 @@ coverage-diff = [
     { cmd = "coverage xml -o coverage.xml --fail-under=0" },
     { cmd = "diff-cover coverage.xml --compare-branch HEAD --include-untracked --fail-under 80" },
 ]
+coverage-baseline = { cmd = '''
+uv run python scripts/coverage_baseline.py check
+--baseline .coverage-baseline.json
+--allowed-drop 0.25
+--current-json coverage-baseline-current.json
+''' }
+coverage-baseline-update = { cmd = '''
+uv run python scripts/coverage_baseline.py update
+--baseline .coverage-baseline.json
+--current-json coverage-baseline-current.json
+''' }
 coverage-gates = [
     { cmd = "coverage erase" },
     { cmd = "coverage run -m pytest -q" },
     { cmd = "coverage report -m" },
     { cmd = "coverage xml -o coverage.xml --fail-under=0" },
     { cmd = "diff-cover coverage.xml --compare-branch HEAD --include-untracked --fail-under 80" },
+    "coverage-baseline",
 ]
 build = "uv build"
 twine-check = "uvx twine check --strict dist/*.whl dist/*.tar.gz"
@@ -181,12 +193,24 @@ coverage-diff = [
     { cmd = "coverage xml -o coverage.xml --fail-under=0" },
     { cmd = "diff-cover coverage.xml --compare-branch HEAD --include-untracked --fail-under 80" },
 ]
+coverage-baseline = { cmd = '''
+uv run python scripts/coverage_baseline.py check
+--baseline .coverage-baseline.json
+--allowed-drop 0.25
+--current-json coverage-baseline-current.json
+''' }
+coverage-baseline-update = { cmd = '''
+uv run python scripts/coverage_baseline.py update
+--baseline .coverage-baseline.json
+--current-json coverage-baseline-current.json
+''' }
 coverage-gates = [
     { cmd = "coverage erase" },
     { cmd = "coverage run -m pytest -q" },
     { cmd = "coverage report -m" },
     { cmd = "coverage xml -o coverage.xml --fail-under=0" },
     { cmd = "diff-cover coverage.xml --compare-branch HEAD --include-untracked --fail-under 80" },
+    "coverage-baseline",
 ]
 build = "uv build"
 twine-check = "uvx twine check --strict dist/*.whl dist/*.tar.gz"
@@ -267,12 +291,24 @@ coverage-diff = [
     { cmd = "coverage xml -o coverage.xml --fail-under=0" },
     { cmd = "diff-cover coverage.xml --compare-branch HEAD --include-untracked --fail-under 80" },
 ]
+coverage-baseline = { cmd = '''
+uv run python scripts/coverage_baseline.py check
+--baseline .coverage-baseline.json
+--allowed-drop 0.25
+--current-json coverage-baseline-current.json
+''' }
+coverage-baseline-update = { cmd = '''
+uv run python scripts/coverage_baseline.py update
+--baseline .coverage-baseline.json
+--current-json coverage-baseline-current.json
+''' }
 coverage-gates = [
     { cmd = "coverage erase" },
     { cmd = "coverage run -m pytest -q" },
     { cmd = "coverage report -m" },
     { cmd = "coverage xml -o coverage.xml --fail-under=0" },
     { cmd = "diff-cover coverage.xml --compare-branch HEAD --include-untracked --fail-under 80" },
+    "coverage-baseline",
 ]
 build = "uv build"
 twine-check = "uvx twine check --strict dist/*.whl dist/*.tar.gz"

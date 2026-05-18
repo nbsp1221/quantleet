@@ -112,6 +112,8 @@ REQUIRED_POE_TASKS = (
     "test-live",
     "coverage",
     "coverage-diff",
+    "coverage-baseline",
+    "coverage-baseline-update",
     "coverage-gates",
     "build",
     "twine-check",
@@ -123,6 +125,20 @@ REQUIRED_POE_TASKS = (
 FORBIDDEN_POE_TASKS = (
     "verify",
     "verify-runtime",
+)
+EXPECTED_COVERAGE_BASELINE_CMD = (
+    "uv run python scripts/coverage_baseline.py check "
+    "--baseline .coverage-baseline.json "
+    "--allowed-drop 0.25 "
+    "--current-json coverage-baseline-current.json"
+)
+EXPECTED_COVERAGE_BASELINE_UPDATE_CMD = (
+    "uv run python scripts/coverage_baseline.py update "
+    "--baseline .coverage-baseline.json "
+    "--current-json coverage-baseline-current.json"
+)
+EXPECTED_DIFF_COVER_CMD = (
+    "diff-cover coverage.xml --compare-branch HEAD --include-untracked --fail-under 80"
 )
 
 
@@ -188,6 +204,64 @@ def poe_executor_type(pyproject: dict[str, object]) -> str | None:
         return executor_type if isinstance(executor_type, str) else None
 
     return None
+
+
+def normalize_command(command: str) -> str:
+    return " ".join(command.split())
+
+
+def poe_task_command(task: object) -> str | None:
+    if isinstance(task, str):
+        return normalize_command(task)
+    if isinstance(task, dict):
+        command = task.get("cmd")
+        if isinstance(command, str):
+            return normalize_command(command)
+    return None
+
+
+def poe_task_sequence(task: object) -> list[str]:
+    if isinstance(task, list):
+        sequence = task
+    elif isinstance(task, dict):
+        raw_sequence = task.get("sequence")
+        sequence = raw_sequence if isinstance(raw_sequence, list) else []
+    else:
+        sequence = []
+
+    commands: list[str] = []
+    for item in sequence:
+        if isinstance(item, str):
+            commands.append(normalize_command(item))
+        elif isinstance(item, dict):
+            command = item.get("cmd")
+            if isinstance(command, str):
+                commands.append(normalize_command(command))
+    return commands
+
+
+def collect_poe_task_contract_issues(poe_tasks: object) -> list[str]:
+    if not isinstance(poe_tasks, dict):
+        return ["pyproject.toml is missing Poe task configuration"]
+
+    issues: list[str] = []
+    coverage_baseline = poe_task_command(poe_tasks.get("coverage-baseline"))
+    if coverage_baseline != EXPECTED_COVERAGE_BASELINE_CMD:
+        issues.append("Poe task coverage-baseline does not match the approved command")
+
+    coverage_baseline_update = poe_task_command(poe_tasks.get("coverage-baseline-update"))
+    if coverage_baseline_update != EXPECTED_COVERAGE_BASELINE_UPDATE_CMD:
+        issues.append("Poe task coverage-baseline-update does not match the approved command")
+
+    coverage_gates = poe_task_sequence(poe_tasks.get("coverage-gates"))
+    if coverage_gates.count("coverage run -m pytest -q") != 1:
+        issues.append("Poe task coverage-gates must run pytest under coverage exactly once")
+    if EXPECTED_DIFF_COVER_CMD not in coverage_gates:
+        issues.append("Poe task coverage-gates is missing the changed-lines coverage gate")
+    if coverage_gates[-1:] != ["coverage-baseline"]:
+        issues.append("Poe task coverage-gates must end with coverage-baseline")
+
+    return issues
 
 
 def markdown_section(content: str, title: str) -> str | None:
@@ -380,6 +454,7 @@ def collect_doc_issues(root: Path) -> list[str]:
         for task_name in FORBIDDEN_POE_TASKS:
             if task_name in poe_tasks:
                 issues.append(f"Forbidden Poe task alias: {task_name}")
+        issues.extend(collect_poe_task_contract_issues(poe_tasks))
 
     indexed_doc_dirs = (
         (

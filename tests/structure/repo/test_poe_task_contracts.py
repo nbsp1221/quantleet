@@ -1,6 +1,6 @@
 import tomllib
 
-from quantleet._repo_tools import poe_executor_type
+from quantleet._repo_tools import collect_poe_task_contract_issues, poe_executor_type
 from scripts import check_docs
 from tests.support import ROOT
 
@@ -19,6 +19,8 @@ REQUIRED_POE_TASKS = [
     "test-live",
     "coverage",
     "coverage-diff",
+    "coverage-baseline",
+    "coverage-baseline-update",
     "coverage-gates",
     "build",
     "twine-check",
@@ -71,6 +73,8 @@ def write_minimal_repo_docs(tmp_path) -> None:
             "uv run poe check-runtime\n"
             "uv run poe coverage\n"
             "uv run poe coverage-diff\n"
+            "uv run poe coverage-baseline\n"
+            "uv run poe coverage-baseline-update\n"
             "uv run poe coverage-gates\n"
             "uv run poe test-live\n"
             "uv run poe repo-check\n"
@@ -319,6 +323,8 @@ def test_poe_task_surface_is_documented() -> None:
         "uv run poe check-runtime",
         "uv run poe coverage",
         "uv run poe coverage-diff",
+        "uv run poe coverage-baseline",
+        "uv run poe coverage-baseline-update",
         "uv run poe coverage-gates",
         "uv run poe format",
         "uv run poe test-live",
@@ -387,12 +393,24 @@ test-smoke = "pytest tests/smoke -q"
 test-live = "pytest tests/live -q"
 coverage = "coverage run -m pytest -q"
 coverage-diff = "diff-cover coverage.xml --compare-branch HEAD --include-untracked --fail-under 80"
+coverage-baseline = { cmd = '''
+uv run python scripts/coverage_baseline.py check
+--baseline .coverage-baseline.json
+--allowed-drop 0.25
+--current-json coverage-baseline-current.json
+''' }
+coverage-baseline-update = { cmd = '''
+uv run python scripts/coverage_baseline.py update
+--baseline .coverage-baseline.json
+--current-json coverage-baseline-current.json
+''' }
 coverage-gates = [
     "coverage erase",
     "coverage run -m pytest -q",
     "coverage report -m",
     "coverage xml -o coverage.xml --fail-under=0",
     "diff-cover coverage.xml --compare-branch HEAD --include-untracked --fail-under 80",
+    "coverage-baseline",
 ]
 build = "uv build"
 twine-check = "uvx twine check --strict dist/*.whl dist/*.tar.gz"
@@ -419,6 +437,80 @@ verify-runtime = ["check-runtime"]
 
     assert any("Forbidden Poe task alias: verify" in issue for issue in issues)
     assert any("Forbidden Poe task alias: verify-runtime" in issue for issue in issues)
+
+
+def test_repo_check_flags_wrong_coverage_baseline_command() -> None:
+    issues = collect_poe_task_contract_issues(
+        {
+            "coverage-baseline": {"cmd": "coverage baseline"},
+            "coverage-baseline-update": {"cmd": "coverage baseline update"},
+            "coverage-gates": [
+                {"cmd": "coverage erase"},
+                {"cmd": "coverage run -m pytest -q"},
+                {
+                    "cmd": (
+                        "diff-cover coverage.xml --compare-branch HEAD "
+                        "--include-untracked --fail-under 80"
+                    ),
+                },
+                "coverage-baseline",
+            ],
+        },
+    )
+
+    assert "Poe task coverage-baseline does not match the approved command" in issues
+    assert "Poe task coverage-baseline-update does not match the approved command" in issues
+
+
+def test_repo_check_flags_invalid_coverage_gates_contract() -> None:
+    valid_task_commands = {
+        "coverage-baseline": {
+            "cmd": (
+                "uv run python scripts/coverage_baseline.py check "
+                "--baseline .coverage-baseline.json "
+                "--allowed-drop 0.25 "
+                "--current-json coverage-baseline-current.json"
+            ),
+        },
+        "coverage-baseline-update": {
+            "cmd": (
+                "uv run python scripts/coverage_baseline.py update "
+                "--baseline .coverage-baseline.json "
+                "--current-json coverage-baseline-current.json"
+            ),
+        },
+    }
+
+    issues = collect_poe_task_contract_issues(
+        {
+            **valid_task_commands,
+            "coverage-gates": [
+                {"cmd": "coverage erase"},
+                {"cmd": "coverage run -m pytest -q"},
+                {"cmd": "coverage run -m pytest -q"},
+                "coverage-baseline",
+            ],
+        },
+    )
+    assert "Poe task coverage-gates must run pytest under coverage exactly once" in issues
+    assert "Poe task coverage-gates is missing the changed-lines coverage gate" in issues
+
+    issues = collect_poe_task_contract_issues(
+        {
+            **valid_task_commands,
+            "coverage-gates": [
+                {"cmd": "coverage erase"},
+                {"cmd": "coverage run -m pytest -q"},
+                {
+                    "cmd": (
+                        "diff-cover coverage.xml --compare-branch HEAD "
+                        "--include-untracked --fail-under 80"
+                    ),
+                },
+            ],
+        },
+    )
+    assert "Poe task coverage-gates must end with coverage-baseline" in issues
 
 
 def test_repo_check_accepts_table_form_poe_executor(tmp_path) -> None:
@@ -455,12 +547,24 @@ coverage-diff = [
     { cmd = "coverage xml -o coverage.xml --fail-under=0" },
     { cmd = "diff-cover coverage.xml --compare-branch HEAD --include-untracked --fail-under 80" },
 ]
+coverage-baseline = { cmd = '''
+uv run python scripts/coverage_baseline.py check
+--baseline .coverage-baseline.json
+--allowed-drop 0.25
+--current-json coverage-baseline-current.json
+''' }
+coverage-baseline-update = { cmd = '''
+uv run python scripts/coverage_baseline.py update
+--baseline .coverage-baseline.json
+--current-json coverage-baseline-current.json
+''' }
 coverage-gates = [
     { cmd = "coverage erase" },
     { cmd = "coverage run -m pytest -q" },
     { cmd = "coverage report -m" },
     { cmd = "coverage xml -o coverage.xml --fail-under=0" },
     { cmd = "diff-cover coverage.xml --compare-branch HEAD --include-untracked --fail-under 80" },
+    "coverage-baseline",
 ]
 build = "uv build"
 twine-check = "uvx twine check --strict dist/*.whl dist/*.tar.gz"

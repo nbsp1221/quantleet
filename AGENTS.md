@@ -82,6 +82,8 @@ package-level CLI shims.
 - formatting: `uv run poe format`
 - coverage-only check: `uv run poe coverage`
 - changed-lines coverage check: `uv run poe coverage-diff`
+- baseline-relative coverage check: `uv run poe coverage-baseline`
+- bootstrap or explicitly raise coverage baseline: `uv run poe coverage-baseline-update`
 - combined coverage gates: `uv run poe coverage-gates`
 - runtime-sensitive backtest or research changes: `uv run poe check-runtime`
 - live checks: `uv run poe test-live`

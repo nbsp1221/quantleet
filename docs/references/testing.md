@@ -28,8 +28,13 @@ Use this reference when adding or moving tests in `quantleet`.
   and enforces the changed-line coverage gate for the current diff against
   `HEAD`
 - `uv run poe coverage-gates` runs pytest once under coverage.py and then
-  enforces both the full-project coverage gate and the changed-line coverage
-  gate
+  enforces the full-project coverage gate, the changed-line coverage gate, and
+  the baseline-relative coverage regression gate
+- `uv run poe coverage-baseline` reuses existing `.coverage` data, compares the
+  current coverage.py total against `.coverage-baseline.json`, and raises that
+  baseline automatically when coverage improves
+- `uv run poe coverage-baseline-update` creates or explicitly raises the
+  committed coverage baseline without lowering it
 - use `coverage` when the question is whether test coverage still satisfies the
   repository reliability floor, not only whether tests pass
 

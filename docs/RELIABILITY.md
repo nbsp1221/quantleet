@@ -43,6 +43,8 @@ Current baseline check commands:
 - `uv run poe check-runtime`
 - `uv run poe coverage`
 - `uv run poe coverage-diff`
+- `uv run poe coverage-baseline`
+- `uv run poe coverage-baseline-update`
 - `uv run poe coverage-gates`
 - `uv run poe format`
 - `uv run poe test-live`
@@ -69,8 +71,8 @@ The default test and coverage commands intentionally serve different purposes:
   `coverage.xml`, and uses diff-cover to enforce changed-line coverage for the
   current diff
 - `uv run poe coverage-gates` runs pytest once under coverage.py, then enforces
-  both the full-project coverage gate and the changed-lines coverage gate from
-  the same fresh coverage data
+  the full-project coverage gate, the changed-lines coverage gate, and the
+  baseline-relative regression gate from the same fresh coverage data
 
 The performance gate is explicit:
 
@@ -122,5 +124,13 @@ The repository treats coverage as a repo-local reliability floor for source code
 - `uv run poe coverage-gates` is the default `check` coverage lane; it must
   reuse one fresh coverage run for the full-project `90%` gate and the
   changed-lines `80%` gate
+- `uv run poe coverage-baseline` must reuse the `.coverage` data produced by
+  `coverage-gates`, compare the coverage.py total against
+  `.coverage-baseline.json`, fail when coverage drops by more than `0.25`
+  percentage points, and automatically raise `.coverage-baseline.json` when
+  current coverage improves
+- `uv run poe coverage-baseline-update` exists for bootstrap or explicit
+  maintenance; it may create or raise `.coverage-baseline.json`, but must not
+  lower an existing baseline
 
 This is a risk-based guardrail for agent work, not a substitute for contract tests or structure checks.

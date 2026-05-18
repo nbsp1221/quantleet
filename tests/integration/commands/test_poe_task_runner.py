@@ -22,6 +22,8 @@ def test_poe_help_lists_required_tasks() -> None:
         "test",
         "test-live",
         "coverage",
+        "coverage-baseline",
+        "coverage-baseline-update",
         "check",
         "check-runtime",
     ]:
