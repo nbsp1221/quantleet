@@ -35,6 +35,9 @@ Use this reference when adding or moving tests in `quantleet`.
   baseline automatically when coverage improves
 - `uv run poe coverage-baseline-update` creates or explicitly raises the
   committed coverage baseline without lowering it
+- `uv run poe mutation-trading` runs targeted mutation testing for
+  `src/quantleet/trading` using the unit trading test lane; it is a manual audit
+  command and is not part of the default `check` lane
 - use `coverage` when the question is whether test coverage still satisfies the
   repository reliability floor, not only whether tests pass
 

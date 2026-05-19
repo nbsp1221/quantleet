@@ -34,6 +34,7 @@ dev = [
     "coverage>=7.11.0",
     "diff-cover>=10.2.0",
     "ipykernel>=7.2.0",
+    "mutmut>=3.5.0",
     "mypy>=1.19.1",
     "nbclient>=0.10.4",
     "nbformat>=5.10.4",
@@ -68,6 +69,7 @@ coverage = { sequence = [{ cmd = "coverage run -m pytest -q" }, { cmd = "coverag
 "coverage-baseline" = { cmd = "uv run python scripts/coverage_baseline.py check --baseline .coverage-baseline.json --allowed-drop 0.25 --current-json coverage-baseline-current.json", help = "Fail on coverage regression and automatically raise the committed baseline on improvement" }
 "coverage-baseline-update" = { cmd = "uv run python scripts/coverage_baseline.py update --baseline .coverage-baseline.json --current-json coverage-baseline-current.json", help = "Bootstrap or explicitly raise the committed coverage baseline" }
 "coverage-gates" = { sequence = [{ cmd = "coverage erase" }, { cmd = "coverage run -m pytest -q" }, { cmd = "coverage report -m" }, { cmd = "coverage xml -o coverage.xml --fail-under=0" }, { cmd = "diff-cover coverage.xml --compare-branch HEAD --include-untracked --fail-under 80" }, "coverage-baseline"], help = "Run tests once and enforce full-project, changed-lines, and regression coverage gates" }
+"mutation-trading" = { sequence = [{ cmd = "mutmut run --max-children 4" }, { cmd = "mutmut results" }], help = "Run targeted mutation testing for the trading kernel" }
 build = { cmd = "uv build", help = "Build the package artifacts" }
 "twine-check" = { cmd = "uvx twine check --strict dist/*.whl dist/*.tar.gz", help = "Check built package artifacts with Twine" }
 "repo-check" = { cmd = "uv run python scripts/repo_check.py", help = "Run repository harness checks" }
@@ -114,3 +116,8 @@ show_missing = true
 [tool.coverage.run]
 branch = true
 source = ["quantleet"]
+
+[tool.mutmut]
+paths_to_mutate = ["src/quantleet/trading"]
+pytest_add_cli_args_test_selection = ["tests/unit/trading"]
+mutate_only_covered_lines = true

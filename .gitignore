@@ -41,6 +41,9 @@ htmlcov/
 .ruff_cache/
 .tox/
 
+# Mutation testing
+/mutants/
+
 # Jupyter
 .ipynb_checkpoints/
 

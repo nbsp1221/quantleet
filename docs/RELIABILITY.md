@@ -46,6 +46,7 @@ Current baseline check commands:
 - `uv run poe coverage-baseline`
 - `uv run poe coverage-baseline-update`
 - `uv run poe coverage-gates`
+- `uv run poe mutation-trading`
 - `uv run poe format`
 - `uv run poe test-live`
 - `uv run pytest -q`
@@ -79,6 +80,8 @@ The performance gate is explicit:
 - `uv run poe check` remains the correctness lane and uses `coverage-gates`
   instead of running separate `test`, `coverage`, and `coverage-diff` tasks;
   it also validates built package artifacts with Twine after `uv build`
+- `uv run poe mutation-trading` is an explicit manual audit lane for the
+  `trading` kernel and is not part of the default `check` lane
 - `uv run poe perf-check` is the canonical RSI performance-regression lane
 - `uv run poe check-runtime` is the stronger explicit lane for runtime-sensitive backtest or research changes
 - the default integration lane keeps a canonical strategy pair:

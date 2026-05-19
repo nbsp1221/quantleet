@@ -22,6 +22,7 @@ REQUIRED_POE_TASKS = [
     "coverage-baseline",
     "coverage-baseline-update",
     "coverage-gates",
+    "mutation-trading",
     "build",
     "twine-check",
     "repo-check",
@@ -304,6 +305,29 @@ def test_poe_check_sequence_matches_default_local_quality_gate() -> None:
         "repo-check",
         "notebook-validate",
     ]
+
+
+def test_mutation_trading_task_is_manual_and_scoped_to_trading() -> None:
+    pyproject = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    tasks = pyproject["tool"]["poe"]["tasks"]
+
+    assert tasks["mutation-trading"]["sequence"] == [
+        {"cmd": "mutmut run --max-children 4"},
+        {"cmd": "mutmut results"},
+    ]
+    assert tasks["mutation-trading"]["help"] == (
+        "Run targeted mutation testing for the trading kernel"
+    )
+    assert "mutation-trading" not in tasks["check"]["sequence"]
+
+
+def test_mutmut_configuration_targets_trading_unit_tests() -> None:
+    pyproject = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    mutmut = pyproject["tool"]["mutmut"]
+
+    assert mutmut["paths_to_mutate"] == ["src/quantleet/trading"]
+    assert mutmut["pytest_add_cli_args_test_selection"] == ["tests/unit/trading"]
+    assert mutmut["mutate_only_covered_lines"] is True
 
 
 def test_default_test_tasks_use_plain_pytest_commands() -> None:

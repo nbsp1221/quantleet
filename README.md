@@ -60,6 +60,7 @@ Useful targeted checks:
 
 ```bash
 uv run poe repo-check
+uv run poe mutation-trading
 uv run pytest tests/smoke/local -q
 ```
 
