@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+import math
 from dataclasses import MISSING, Field, fields
 from typing import Callable, Literal, get_args, get_type_hints
+
+import pytest
 
 from quantleet.trading.domain import __all__ as trading_domain_exports
 from quantleet.trading.domain import events as trading_events
@@ -155,6 +158,94 @@ def test_pending_order_request_accepts_qty_percent_stop_limit_shape() -> None:
         trigger_type="last",
         limit_price=106.0,
     )
+
+
+def test_pending_order_request_rejects_ambiguous_or_missing_sizing_mode() -> None:
+    with pytest.raises(ValueError, match="exactly one sizing mode"):
+        PendingOrderRequest(
+            symbol="BTC/USDT",
+            side="buy",
+            order_type="market",
+        )
+    with pytest.raises(ValueError, match="exactly one sizing mode"):
+        PendingOrderRequest(
+            symbol="BTC/USDT",
+            side="buy",
+            quantity=1.0,
+            qty_percent=50.0,
+            order_type="market",
+        )
+
+
+@pytest.mark.parametrize("quantity", (0.0, -1.0, math.inf, math.nan, True))
+def test_pending_order_request_rejects_invalid_fixed_quantities(quantity: float) -> None:
+    with pytest.raises(ValueError, match="quantity must be a positive finite float"):
+        PendingOrderRequest(
+            symbol="BTC/USDT",
+            side="buy",
+            quantity=quantity,
+            order_type="market",
+        )
+
+
+@pytest.mark.parametrize("qty_percent", (0.0, -1.0, 100.1, math.inf, math.nan, True))
+def test_pending_order_request_rejects_invalid_qty_percent_values(qty_percent: float) -> None:
+    with pytest.raises(ValueError, match="qty_percent"):
+        PendingOrderRequest(
+            symbol="BTC/USDT",
+            side="buy",
+            qty_percent=qty_percent,
+            order_type="market",
+        )
+
+
+@pytest.mark.parametrize(
+    ("kwargs", "message"),
+    (
+        ({"order_type": "limit"}, "limit orders require a limit_price"),
+        (
+            {"order_type": "market", "stop_price": 105.0},
+            "stop_price is only valid for stop-family orders",
+        ),
+        (
+            {"order_type": "market", "trigger_condition": "crosses_above"},
+            "trigger_condition is only valid for stop-family orders",
+        ),
+        ({"order_type": "stop_market"}, "stop_market orders require a stop_price"),
+        (
+            {"order_type": "stop_market", "stop_price": 105.0},
+            "stop_market orders require a trigger_condition",
+        ),
+        (
+            {
+                "order_type": "stop_market",
+                "stop_price": 105.0,
+                "trigger_condition": "crosses_above",
+                "limit_price": 106.0,
+            },
+            "stop_market orders cannot specify a limit_price",
+        ),
+        (
+            {
+                "order_type": "stop_limit",
+                "stop_price": 105.0,
+                "trigger_condition": "crosses_above",
+            },
+            "stop_limit orders require a limit_price",
+        ),
+    ),
+)
+def test_pending_order_request_rejects_invalid_price_shape(
+    kwargs: dict[str, object],
+    message: str,
+) -> None:
+    with pytest.raises(ValueError, match=message):
+        PendingOrderRequest(
+            symbol="BTC/USDT",
+            side="buy",
+            quantity=1.0,
+            **kwargs,
+        )
 
 
 def test_runtime_order_exposes_trigger_aware_runtime_fields() -> None:

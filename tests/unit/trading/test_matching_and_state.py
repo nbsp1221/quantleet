@@ -714,6 +714,147 @@ def test_apply_fill_updates_long_only_state_deterministically() -> None:
     )
 
 
+def test_apply_fill_updates_weighted_average_and_mark_to_market_state() -> None:
+    opened = apply_fill(
+        TradingState(cash=1_000.0),
+        FillEvent(
+            symbol="BTC/USDT",
+            side="buy",
+            quantity=2.0,
+            price=100.0,
+            timestamp=60,
+            fee=1.0,
+        ),
+        mark_price=115.0,
+    )
+    increased = apply_fill(
+        opened,
+        FillEvent(
+            symbol="BTC/USDT",
+            side="buy",
+            quantity=3.0,
+            price=120.0,
+            timestamp=120,
+            fee=1.8,
+        ),
+        mark_price=130.0,
+    )
+
+    assert opened == TradingState(
+        cash=799.0,
+        position_quantity=2.0,
+        average_entry_price=100.0,
+        realized_pnl=0.0,
+        unrealized_pnl=30.0,
+        equity=1_029.0,
+    )
+    assert increased == TradingState(
+        cash=437.2,
+        position_quantity=5.0,
+        average_entry_price=112.0,
+        realized_pnl=0.0,
+        unrealized_pnl=90.0,
+        equity=1_087.2,
+    )
+
+
+def test_apply_fill_allows_buy_that_exactly_spends_available_cash() -> None:
+    state = apply_fill(
+        TradingState(cash=101.0),
+        FillEvent(
+            symbol="BTC/USDT",
+            side="buy",
+            quantity=1.0,
+            price=100.0,
+            timestamp=60,
+            fee=1.0,
+        ),
+        mark_price=100.0,
+    )
+
+    assert state == TradingState(
+        cash=0.0,
+        position_quantity=1.0,
+        average_entry_price=100.0,
+        realized_pnl=0.0,
+        unrealized_pnl=0.0,
+        equity=100.0,
+    )
+
+
+def test_apply_fill_accumulates_realized_pnl_and_resets_on_full_close() -> None:
+    state = TradingState(
+        cash=437.2,
+        position_quantity=5.0,
+        average_entry_price=112.0,
+        realized_pnl=0.0,
+        unrealized_pnl=90.0,
+        equity=1_087.2,
+    )
+
+    profitable_partial = apply_fill(
+        state,
+        FillEvent(
+            symbol="BTC/USDT",
+            side="sell",
+            quantity=2.0,
+            price=130.0,
+            timestamp=180,
+            fee=0.26,
+        ),
+        mark_price=125.0,
+    )
+    losing_partial = apply_fill(
+        profitable_partial,
+        FillEvent(
+            symbol="BTC/USDT",
+            side="sell",
+            quantity=1.0,
+            price=90.0,
+            timestamp=240,
+            fee=0.09,
+        ),
+        mark_price=95.0,
+    )
+    closed = apply_fill(
+        losing_partial,
+        FillEvent(
+            symbol="BTC/USDT",
+            side="sell",
+            quantity=2.0,
+            price=110.0,
+            timestamp=300,
+            fee=0.22,
+        ),
+        mark_price=200.0,
+    )
+
+    assert profitable_partial == TradingState(
+        cash=696.94,
+        position_quantity=3.0,
+        average_entry_price=112.0,
+        realized_pnl=36.0,
+        unrealized_pnl=39.0,
+        equity=1_071.94,
+    )
+    assert losing_partial == TradingState(
+        cash=786.85,
+        position_quantity=2.0,
+        average_entry_price=112.0,
+        realized_pnl=14.0,
+        unrealized_pnl=-34.0,
+        equity=976.85,
+    )
+    assert closed == TradingState(
+        cash=1_006.63,
+        position_quantity=0.0,
+        average_entry_price=0.0,
+        realized_pnl=10.0,
+        unrealized_pnl=0.0,
+        equity=1_006.63,
+    )
+
+
 def test_apply_fill_rejects_non_positive_quantities() -> None:
     with pytest.raises(ValueError, match="positive quantity"):
         apply_fill(
