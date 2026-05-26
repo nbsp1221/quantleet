@@ -178,7 +178,7 @@ def test_pending_order_request_rejects_ambiguous_or_missing_sizing_mode() -> Non
         )
 
 
-@pytest.mark.parametrize("quantity", (0.0, -1.0, math.inf, math.nan, True))
+@pytest.mark.parametrize("quantity", [0.0, -1.0, math.inf, math.nan, True])
 def test_pending_order_request_rejects_invalid_fixed_quantities(quantity: float) -> None:
     with pytest.raises(ValueError, match="quantity must be a positive finite float"):
         PendingOrderRequest(
@@ -189,7 +189,7 @@ def test_pending_order_request_rejects_invalid_fixed_quantities(quantity: float)
         )
 
 
-@pytest.mark.parametrize("qty_percent", (0.0, -1.0, 100.1, math.inf, math.nan, True))
+@pytest.mark.parametrize("qty_percent", [0.0, -1.0, 100.1, math.inf, math.nan, True])
 def test_pending_order_request_rejects_invalid_qty_percent_values(qty_percent: float) -> None:
     with pytest.raises(ValueError, match="qty_percent"):
         PendingOrderRequest(
@@ -202,7 +202,7 @@ def test_pending_order_request_rejects_invalid_qty_percent_values(qty_percent: f
 
 @pytest.mark.parametrize(
     ("kwargs", "message"),
-    (
+    [
         ({"order_type": "limit"}, "limit orders require a limit_price"),
         (
             {"order_type": "market", "stop_price": 105.0},
@@ -234,7 +234,7 @@ def test_pending_order_request_rejects_invalid_qty_percent_values(qty_percent: f
             },
             "stop_limit orders require a limit_price",
         ),
-    ),
+    ],
 )
 def test_pending_order_request_rejects_invalid_price_shape(
     kwargs: dict[str, object],

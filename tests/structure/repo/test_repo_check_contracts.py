@@ -1,7 +1,7 @@
 import subprocess
 from pathlib import Path
 
-from scripts import check_docs, repo_check  # noqa: E402
+from scripts import check_docs, repo_check
 from tests.structure.repo.test_poe_task_contracts import write_minimal_repo_docs
 from tests.support import ROOT
 

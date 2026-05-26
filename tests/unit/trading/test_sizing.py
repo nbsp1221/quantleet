@@ -434,7 +434,7 @@ def test_explicit_quantity_market_buy_records_budget_and_fee_cash_consumption() 
 
 @pytest.mark.parametrize(
     ("order_request", "expected_budget"),
-    (
+    [
         (
             PendingOrderRequest(
                 symbol="BTC/USDT",
@@ -468,7 +468,7 @@ def test_explicit_quantity_market_buy_records_budget_and_fee_cash_consumption() 
             ),
             52.0,
         ),
-    ),
+    ],
 )
 def test_explicit_quantity_buy_uses_order_type_anchor_without_resizing(
     order_request: PendingOrderRequest,
@@ -793,7 +793,7 @@ def test_sell_percent_subminimum_after_rounding_reports_below_minimum_size() -> 
 
 @pytest.mark.parametrize(
     ("active_order", "expected_available_cash"),
-    (
+    [
         (
             Order.from_intent(
                 order_id=21,
@@ -866,7 +866,7 @@ def test_sell_percent_subminimum_after_rounding_reports_below_minimum_size() -> 
             ).trigger(timestamp=120),
             64.8,
         ),
-    ),
+    ],
 )
 def test_active_buy_reservation_matrix_uses_order_type_price_anchor(
     active_order: Order,

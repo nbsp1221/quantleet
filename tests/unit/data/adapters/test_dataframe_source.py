@@ -56,7 +56,7 @@ def test_dataframe_source_rejects_naive_timestamps() -> None:
         frame=FakeDataFrame(
             [
                 {
-                    "timestamp": datetime(2026, 1, 1, 0, 0),
+                    "timestamp": datetime(2026, 1, 1, 0, 0),  # noqa: DTZ001
                     "open": 1.0,
                     "high": 2.0,
                     "low": 0.5,

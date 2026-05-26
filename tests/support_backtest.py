@@ -602,7 +602,8 @@ def _assert_report_value(path: str, actual: object, expected: object) -> None:
     if isinstance(expected, float):
         assert isinstance(actual, float | int), f"{path} expected a numeric value"
         if isinf(expected):
-            assert isinf(float(actual)) and (actual > 0.0) == (expected > 0.0), path
+            assert isinf(float(actual)), path
+            assert (actual > 0.0) == (expected > 0.0), path
             return
         assert actual == pytest.approx(expected), path
         return

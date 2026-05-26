@@ -467,7 +467,7 @@ def test_order_direct_construction_rejects_malformed_stop_market_shape() -> None
         )
 
 
-@pytest.mark.parametrize("quantity", (0.0, -1.0, math.inf, math.nan))
+@pytest.mark.parametrize("quantity", [0.0, -1.0, math.inf, math.nan])
 def test_order_intent_rejects_non_positive_or_non_finite_quantity(quantity: float) -> None:
     with pytest.raises(ValueError, match="positive finite quantity"):
         OrderIntent(
@@ -478,7 +478,7 @@ def test_order_intent_rejects_non_positive_or_non_finite_quantity(quantity: floa
         )
 
 
-@pytest.mark.parametrize("quantity", (0.0, -1.0, math.inf, math.nan))
+@pytest.mark.parametrize("quantity", [0.0, -1.0, math.inf, math.nan])
 def test_order_rejects_non_positive_or_non_finite_quantity(quantity: float) -> None:
     with pytest.raises(ValueError, match="positive finite quantity"):
         Order(

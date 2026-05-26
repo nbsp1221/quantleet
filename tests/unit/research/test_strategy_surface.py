@@ -391,7 +391,7 @@ def test_order_intake_requires_exactly_one_sizing_mode() -> None:
         )
 
 
-@pytest.mark.parametrize("invalid_percent", (0.0, -5.0, 120.0))
+@pytest.mark.parametrize("invalid_percent", [0.0, -5.0, 120.0])
 def test_qty_percent_validation_rejects_out_of_range_values(invalid_percent: float) -> None:
     class InvalidPercentStrategy(Strategy):
         def on_bar(self, bar: BarEvent) -> None:
@@ -604,7 +604,7 @@ def test_explicit_symbol_sell_mismatch_is_rejected_in_single_symbol_workflow() -
 
 @pytest.mark.parametrize(
     ("strategy", "expected_request"),
-    (
+    [
         (
             PercentStopMarketAboveCloseBuyStrategy(),
             PendingOrderRequest(
@@ -651,7 +651,7 @@ def test_explicit_symbol_sell_mismatch_is_rejected_in_single_symbol_workflow() -
                 limit_price=89.0,
             ),
         ),
-    ),
+    ],
 )
 def test_qty_percent_is_accepted_for_stop_family_orders(
     strategy: Strategy,
@@ -984,13 +984,13 @@ def test_stop_limit_below_close_infers_trigger_condition_independent_of_limit_an
 
 @pytest.mark.parametrize(
     ("side", "stop_price", "limit_price", "expected_trigger_condition"),
-    (
+    [
         ("buy", 90.0, 120.0, "crosses_below"),
         ("buy", 90.0, 80.0, "crosses_below"),
         ("sell", 90.0, 120.0, "crosses_below"),
         ("sell", 90.0, 80.0, "crosses_below"),
         ("sell", 120.0, 119.0, "crosses_above"),
-    ),
+    ],
 )
 def test_stop_limit_trigger_inference_uses_stop_price_not_side_or_limit_price(
     side: str,

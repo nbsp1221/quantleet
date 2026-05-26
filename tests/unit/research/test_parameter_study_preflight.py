@@ -42,10 +42,10 @@ def test_parameter_study_requires_materialized_bars_and_strategy_class() -> None
     with pytest.raises(TypeError, match="strategy"):
         ParameterStudy(engine=engine, bars=make_bars(), strategy=object)  # type: ignore[arg-type]
 
+    legacy_kwargs = {
+        "strategy" + "_factory": lambda parameters: NoTradeStrategy(),
+    }
     with pytest.raises(TypeError):
-        legacy_kwargs = {
-            "strategy" + "_factory": lambda parameters: NoTradeStrategy(),
-        }
         ParameterStudy(
             engine=engine,
             bars=make_bars(),

@@ -74,7 +74,7 @@ METRIC_EXTRACTORS: dict[str, Callable[[BacktestResult], MetricValue]] = {
 
 METRIC_KEYS = tuple(METRIC_EXTRACTORS)
 UNDEFINED_METRIC_STATES: Mapping[str, MetricState] = MappingProxyType(
-    {key: "undefined" for key in METRIC_KEYS}
+    dict.fromkeys(METRIC_KEYS, "undefined")
 )
 
 

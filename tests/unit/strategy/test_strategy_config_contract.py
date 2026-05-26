@@ -63,7 +63,7 @@ def test_missing_default_raises_declaration_error() -> None:
 
 
 @pytest.mark.parametrize(
-    "annotation, default",
+    ("annotation", "default"),
     [
         (list[int], [1, 2]),
         (dict[str, int], {"x": 1}),

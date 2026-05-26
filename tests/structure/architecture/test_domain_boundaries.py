@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from scripts import check_architecture  # noqa: E402
+from scripts import check_architecture
 from tests.support import ROOT
 
 
