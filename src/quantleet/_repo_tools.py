@@ -104,6 +104,7 @@ REQUIRED_POE_TASKS = (
     "format",
     "format-check",
     "dead-code",
+    "dependency-check",
     "perf-check",
     "check-runtime",
     "typecheck",

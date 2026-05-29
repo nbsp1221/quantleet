@@ -54,6 +54,7 @@ lint = "ruff check ."
 format = "ruff format ."
 format-check = "ruff format --check ."
 dead-code = "vulture"
+dependency-check = "deptry src"
 perf-check = "pytest tests/perf -q -x --run-perf"
 check-runtime = ["check", "perf-check"]
 typecheck = "mypy src"
@@ -98,6 +99,7 @@ check = [
     "format-check",
     "lint",
     "dead-code",
+    "dependency-check",
     "typecheck",
     "coverage-gates",
     "build",
@@ -180,6 +182,7 @@ lint = "ruff check ."
 format = "ruff format ."
 format-check = "ruff format --check ."
 dead-code = "vulture"
+dependency-check = "deptry src"
 perf-check = "pytest tests/perf -q -x --run-perf"
 check-runtime = ["check", "perf-check"]
 typecheck = "mypy src"
@@ -224,6 +227,7 @@ check = [
     "format-check",
     "lint",
     "dead-code",
+    "dependency-check",
     "typecheck",
     "coverage-gates",
     "build",
@@ -280,6 +284,7 @@ lint = "ruff check ."
 format = "ruff format ."
 format-check = "ruff format --check ."
 dead-code = "vulture"
+dependency-check = "deptry src"
 perf-check = "pytest tests/perf -q -x --run-perf"
 check-runtime = ["check", "perf-check"]
 typecheck = "mypy src"
@@ -324,6 +329,7 @@ check = [
     "format-check",
     "lint",
     "dead-code",
+    "dependency-check",
     "typecheck",
     "coverage-gates",
     "build",

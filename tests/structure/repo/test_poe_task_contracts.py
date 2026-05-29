@@ -9,6 +9,7 @@ REQUIRED_POE_TASKS = [
     "format",
     "format-check",
     "dead-code",
+    "dependency-check",
     "perf-check",
     "check-runtime",
     "typecheck",
@@ -300,6 +301,7 @@ def test_poe_check_sequence_matches_default_local_quality_gate() -> None:
         "format-check",
         "lint",
         "dead-code",
+        "dependency-check",
         "typecheck",
         "coverage-gates",
         "build",
@@ -351,6 +353,17 @@ def test_dead_code_task_uses_vulture_pyproject_configuration() -> None:
     assert vulture["sort_by_size"] is True
 
 
+def test_dependency_check_task_uses_deptry_pyproject_configuration() -> None:
+    pyproject = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    tasks = pyproject["tool"]["poe"]["tasks"]
+    deptry = pyproject["tool"]["deptry"]
+
+    assert tasks["dependency-check"]["cmd"] == "deptry src"
+    assert deptry["known_first_party"] == ["quantleet"]
+    assert deptry["ignore_notebooks"] is True
+    assert deptry["package_module_name_map"] == {"ta-lib": "talib"}
+
+
 def test_poe_task_surface_is_documented() -> None:
     agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
 
@@ -364,6 +377,7 @@ def test_poe_task_surface_is_documented() -> None:
         "uv run poe coverage-baseline-update",
         "uv run poe coverage-gates",
         "uv run poe dead-code",
+        "uv run poe dependency-check",
         "uv run poe format",
         "uv run poe test-live",
     ]:
@@ -421,6 +435,7 @@ lint = "ruff check ."
 format = "ruff format ."
 format-check = "ruff format --check ."
 dead-code = "vulture"
+dependency-check = "deptry src"
 perf-check = "pytest tests/perf -q"
 check-runtime = ["check", "perf-check"]
 typecheck = "mypy src"
@@ -460,6 +475,7 @@ check = [
     "format-check",
     "lint",
     "dead-code",
+    "dependency-check",
     "typecheck",
     "coverage-gates",
     "build",
@@ -572,6 +588,7 @@ lint = "ruff check ."
 format = "ruff format ."
 format-check = "ruff format --check ."
 dead-code = "vulture"
+dependency-check = "deptry src"
 perf-check = "pytest tests/perf -q"
 check-runtime = ["check", "perf-check"]
 typecheck = "mypy src"
@@ -616,6 +633,7 @@ check = [
     "format-check",
     "lint",
     "dead-code",
+    "dependency-check",
     "typecheck",
     "coverage-gates",
     "build",
