@@ -10,6 +10,7 @@ treated as the current source of truth.
 | Task Area | Document | Role | Scope | Read When |
 | --- | --- | --- | --- | --- |
 | Repository workflow and operating norms | [`core-beliefs.md`](core-beliefs.md) | Governing | all agent work | Before changing repository workflow, entry-contract docs, or operating norms. |
+| Agentic quality-gate priorities | [`agentic-quality-gates.md`](agentic-quality-gates.md) | Draft | AI-agent-led test-quality and architecture-fitness gate planning | Before evaluating or promoting new checks for AI-generated test quality, architecture drift, mutation baselines, or agent-specific quality risks. |
 | Cleanup and promotion defaults | [`golden-principles.md`](golden-principles.md) | Governing | repository cleanup and promotion work | Before promoting repeated review findings into docs or checks, or deleting workflow bureaucracy. |
 | Cleanup loops and doc upkeep | [`doc-gardening.md`](doc-gardening.md) | Governing | harness maintenance | Before changing cleanup loops, doc upkeep, or maintenance triggers. |
 | Architecture and bounded contexts | [`quantleet-architecture.md`](quantleet-architecture.md) | Governing | architecture and bounded-context work | Before changing top-level contexts, dependency rules, or package ownership. |

@@ -25,7 +25,7 @@ REQUIRED_POE_TASKS = [
     "coverage-baseline",
     "coverage-baseline-update",
     "coverage-gates",
-    "mutation-trading",
+    "mutation-gates",
     "build",
     "twine-check",
     "repo-check",
@@ -306,6 +306,7 @@ def test_poe_check_sequence_matches_default_local_quality_gate() -> None:
         "dependency-check",
         "typecheck",
         "coverage-gates",
+        "mutation-gates",
         "build",
         "twine-check",
         "repo-check",
@@ -313,27 +314,52 @@ def test_poe_check_sequence_matches_default_local_quality_gate() -> None:
     ]
 
 
-def test_mutation_trading_task_is_manual_and_scoped_to_trading() -> None:
+def test_mutation_gates_task_uses_direct_mutmut_cli_and_thin_score_checker() -> None:
     pyproject = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
     tasks = pyproject["tool"]["poe"]["tasks"]
 
-    assert tasks["mutation-trading"]["sequence"] == [
+    assert "mutation-trading" not in tasks
+    assert "mutation-backtest" not in tasks
+    assert tasks["mutation-gates"]["sequence"] == [
         {"cmd": "mutmut run --max-children 4"},
         {"cmd": "mutmut results"},
+        {"cmd": "mutmut export-cicd-stats"},
+        {"cmd": "python scripts/check_mutation_score.py"},
     ]
-    assert tasks["mutation-trading"]["help"] == (
-        "Run targeted mutation testing for the trading kernel"
-    )
-    assert "mutation-trading" not in tasks["check"]["sequence"]
+    assert tasks["mutation-gates"]["help"] == "Run the default aggregate mutation score gate"
+    assert "mutation-gates" in tasks["check"]["sequence"]
 
 
-def test_mutmut_configuration_targets_trading_unit_tests() -> None:
+def test_mutation_score_checker_does_not_wrap_mutmut_execution() -> None:
+    script = (ROOT / "scripts" / "check_mutation_score.py").read_text(encoding="utf-8")
+
+    assert "subprocess" not in script
+    assert "PYPROJECT.write_text" not in script
+    assert "mutmut-cicd-stats.json" in script
+    assert 'failures["no_tests"] = no_tests' in script
+
+
+def test_mutmut_configuration_targets_aggregate_contract_tests() -> None:
     pyproject = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
     mutmut = pyproject["tool"]["mutmut"]
+    mutation_score = pyproject["tool"]["mutation_score"]
 
-    assert mutmut["paths_to_mutate"] == ["src/quantleet/trading"]
-    assert mutmut["pytest_add_cli_args_test_selection"] == ["tests/unit/trading"]
-    assert mutmut["mutate_only_covered_lines"] is True
+    assert mutmut["paths_to_mutate"] == ["src/quantleet/trading", "src/quantleet/backtest"]
+    assert mutmut["also_copy"] == ["src/quantleet"]
+    assert mutmut["pytest_add_cli_args_test_selection"] == [
+        "tests/unit/trading",
+        "tests/unit/backtest",
+        "tests/integration/research/test_backtest_result_contract.py",
+        "tests/integration/research/test_backtest_result_reporting_contract.py",
+        "tests/integration/research/test_backtest_result_reporting_edge_cases.py",
+        "tests/integration/research/test_backtest_execution_semantics.py",
+        "tests/integration/research/test_backtest_strategy_runtime_contract.py",
+        "tests/integration/research/test_order_reservation_contract.py",
+        "tests/integration/research/test_order_sizing_contract.py",
+        "tests/integration/backtest/test_plotting.py",
+    ]
+    assert mutmut["mutate_only_covered_lines"] is False
+    assert mutation_score["fail_under"] == 80
 
 
 def test_default_test_tasks_use_plain_pytest_commands() -> None:

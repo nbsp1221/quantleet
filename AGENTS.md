@@ -88,7 +88,7 @@ package-level CLI shims.
 - dead-code check: `uv run poe dead-code`
 - duplicate-code check: `uv run poe duplicate-code`
 - dependency declaration check: `uv run poe dependency-check`
-- targeted trading mutation check: `uv run poe mutation-trading`
+- default aggregate mutation score gate: `uv run poe mutation-gates`
 - runtime-sensitive backtest or research changes: `uv run poe check-runtime`
 - live checks: `uv run poe test-live`
 - performance checks: `uv run poe perf-check`

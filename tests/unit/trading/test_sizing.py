@@ -198,6 +198,88 @@ def test_subminimum_or_flat_percent_requests_resolve_to_explicit_noop() -> None:
     assert flat_sell.reason == "no_closable_position"
 
 
+@pytest.mark.parametrize(
+    ("side", "quantity", "qty_percent"),
+    [
+        ("buy", 0.5, None),
+        ("buy", None, 10.0),
+        ("sell", 0.5, None),
+        ("sell", None, 10.0),
+    ],
+)
+def test_positive_but_subminimum_sizing_requests_are_rejected(
+    side: str,
+    quantity: float | None,
+    qty_percent: float | None,
+) -> None:
+    result = resolve_pending_order_request(
+        request=PendingOrderRequest(
+            symbol="BTC/USDT",
+            side=side,
+            quantity=quantity,
+            qty_percent=qty_percent,
+            order_type="market",
+        ),
+        state=TradingState(
+            cash=100.0,
+            equity=100.0,
+            position_quantity=10.0,
+            average_entry_price=10.0,
+        ),
+        active_orders=(),
+        market_buy_price=10.0,
+        costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
+        constraints=SizingConstraints(quantity_increment=0.1, min_quantity=2.0),
+    )
+
+    assert result.quantity is None
+    assert result.reason == "below_minimum_size"
+    assert result.position_budget == 0.0
+    assert result.cash_consumption == 0.0
+    assert result.sell_quantity_reservation == 0.0
+
+
+def test_buy_percent_with_positive_cash_but_zero_affordable_budget_reports_unaffordable() -> None:
+    result = resolve_pending_order_request(
+        request=PendingOrderRequest(
+            symbol="BTC/USDT",
+            side="buy",
+            qty_percent=50.0,
+            order_type="market",
+        ),
+        state=TradingState(cash=1.0, equity=1.0),
+        active_orders=(),
+        market_buy_price=10.0,
+        costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=10_000_000_000_000.0),
+        constraints=SizingConstraints(),
+    )
+
+    assert result.quantity is None
+    assert result.reason == "buy_budget_unaffordable"
+    assert result.position_budget == 0.0
+    assert result.cash_consumption == 0.0
+
+
+def test_explicit_sell_from_flat_position_rejects_even_when_quantity_is_below_one() -> None:
+    result = resolve_pending_order_request(
+        request=PendingOrderRequest(
+            symbol="BTC/USDT",
+            side="sell",
+            quantity=0.5,
+            order_type="market",
+        ),
+        state=TradingState(cash=100.0, equity=100.0, position_quantity=0.0),
+        active_orders=(),
+        market_buy_price=10.0,
+        costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
+        constraints=SizingConstraints(quantity_increment=0.1),
+    )
+
+    assert result.quantity is None
+    assert result.reason == "insufficient_position"
+    assert result.sell_quantity_reservation == 0.0
+
+
 def test_buy_percent_serial_reservation_uses_resolved_order_budget_after_rounding() -> None:
     first = resolve_pending_order_request(
         request=PendingOrderRequest(
@@ -891,6 +973,35 @@ def test_active_buy_reservation_matrix_uses_order_type_price_anchor(
     assert result.cash_consumption == pytest.approx(expected_available_cash)
 
 
+def test_explicit_quantity_buy_counts_active_market_buy_at_current_market_anchor() -> None:
+    active_market_buy = Order.from_intent(
+        order_id=30,
+        intent=OrderIntent(
+            symbol="BTC/USDT",
+            side="buy",
+            quantity=6.0,
+            order_type="market",
+        ),
+    )
+
+    rejected = resolve_pending_order_request(
+        request=PendingOrderRequest(
+            symbol="BTC/USDT",
+            side="buy",
+            quantity=5.0,
+            order_type="market",
+        ),
+        state=TradingState(cash=100.0, equity=100.0),
+        active_orders=(active_market_buy,),
+        market_buy_price=10.0,
+        costs=CostConfig(tick_size=1.0, slippage_ticks=1.0, fee_rate=0.0),
+        constraints=SizingConstraints(),
+    )
+
+    assert rejected.quantity is None
+    assert rejected.reason == "insufficient_cash"
+
+
 def test_partially_filled_and_closed_buy_orders_reserve_only_open_remaining_quantity() -> None:
     partially_filled = Order.from_intent(
         order_id=31,
@@ -1020,6 +1131,25 @@ def test_explicit_quantity_buy_exceeding_unreserved_cash_rejects_without_resize(
 
     assert result.quantity is None
     assert result.reason == "insufficient_cash"
+
+
+def test_buy_percent_rejects_zero_quantity_after_increment_rounding() -> None:
+    result = resolve_pending_order_request(
+        request=PendingOrderRequest(
+            symbol="BTC/USDT",
+            side="buy",
+            qty_percent=100.0,
+            order_type="market",
+        ),
+        state=TradingState(cash=0.5, equity=0.5),
+        active_orders=(),
+        market_buy_price=10.0,
+        costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
+        constraints=SizingConstraints(quantity_increment=1.0),
+    )
+
+    assert result.quantity is None
+    assert result.reason == "below_minimum_size"
 
 
 def test_explicit_quantity_sell_exceeding_unreserved_position_rejects_without_shorting() -> None:

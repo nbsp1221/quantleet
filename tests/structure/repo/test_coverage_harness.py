@@ -30,6 +30,7 @@ def test_poe_check_includes_quality_and_coverage_gates() -> None:
         "dependency-check",
         "typecheck",
         "coverage-gates",
+        "mutation-gates",
         "build",
         "twine-check",
         "repo-check",

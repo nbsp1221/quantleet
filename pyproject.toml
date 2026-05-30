@@ -75,13 +75,21 @@ coverage = { sequence = [{ cmd = "coverage run -m pytest -q" }, { cmd = "coverag
 "coverage-baseline" = { cmd = "uv run python scripts/coverage_baseline.py check --baseline .coverage-baseline.json --allowed-drop 0.25 --current-json coverage-baseline-current.json", help = "Fail on coverage regression and automatically raise the committed baseline on improvement" }
 "coverage-baseline-update" = { cmd = "uv run python scripts/coverage_baseline.py update --baseline .coverage-baseline.json --current-json coverage-baseline-current.json", help = "Bootstrap or explicitly raise the committed coverage baseline" }
 "coverage-gates" = { sequence = [{ cmd = "coverage erase" }, { cmd = "coverage run -m pytest -q" }, { cmd = "coverage report -m" }, { cmd = "coverage xml -o coverage.xml --fail-under=0" }, { cmd = "diff-cover coverage.xml --compare-branch HEAD --include-untracked --fail-under 80" }, "coverage-baseline"], help = "Run tests once and enforce full-project, changed-lines, and regression coverage gates" }
-"mutation-trading" = { sequence = [{ cmd = "mutmut run --max-children 4" }, { cmd = "mutmut results" }], help = "Run targeted mutation testing for the trading kernel" }
 build = { cmd = "uv build", help = "Build the package artifacts" }
 "twine-check" = { cmd = "uvx twine check --strict dist/*.whl dist/*.tar.gz", help = "Check built package artifacts with Twine" }
 "repo-check" = { cmd = "uv run python scripts/repo_check.py", help = "Run repository harness checks" }
 "notebook-validate" = { cmd = "uv run python scripts/notebook_validate.py", help = "Execute tracked notebooks" }
 "live-smoke" = { cmd = "uv run python scripts/live_smoke.py", help = "Run the live smoke harness script" }
-check = { sequence = ["format-check", "lint", "dead-code", "duplicate-code", "dependency-check", "typecheck", "coverage-gates", "build", "twine-check", "repo-check", "notebook-validate"], help = "Run the default local quality gate" }
+check = { sequence = ["format-check", "lint", "dead-code", "duplicate-code", "dependency-check", "typecheck", "coverage-gates", "mutation-gates", "build", "twine-check", "repo-check", "notebook-validate"], help = "Run the default local quality gate" }
+
+[tool.poe.tasks."mutation-gates"]
+help = "Run the default aggregate mutation score gate"
+sequence = [
+    { cmd = "mutmut run --max-children 4" },
+    { cmd = "mutmut results" },
+    { cmd = "mutmut export-cicd-stats" },
+    { cmd = "python scripts/check_mutation_score.py" },
+]
 
 [tool.pytest.ini_options]
 addopts = ["--import-mode=importlib"]
@@ -134,6 +142,21 @@ branch = true
 source = ["quantleet"]
 
 [tool.mutmut]
-paths_to_mutate = ["src/quantleet/trading"]
-pytest_add_cli_args_test_selection = ["tests/unit/trading"]
-mutate_only_covered_lines = true
+paths_to_mutate = ["src/quantleet/trading", "src/quantleet/backtest"]
+also_copy = ["src/quantleet"]
+pytest_add_cli_args_test_selection = [
+    "tests/unit/trading",
+    "tests/unit/backtest",
+    "tests/integration/research/test_backtest_result_contract.py",
+    "tests/integration/research/test_backtest_result_reporting_contract.py",
+    "tests/integration/research/test_backtest_result_reporting_edge_cases.py",
+    "tests/integration/research/test_backtest_execution_semantics.py",
+    "tests/integration/research/test_backtest_strategy_runtime_contract.py",
+    "tests/integration/research/test_order_reservation_contract.py",
+    "tests/integration/research/test_order_sizing_contract.py",
+    "tests/integration/backtest/test_plotting.py",
+]
+mutate_only_covered_lines = false
+
+[tool.mutation_score]
+fail_under = 80
