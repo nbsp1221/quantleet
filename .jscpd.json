@@ -1,0 +1,20 @@
+{
+  "$schema": "https://raw.githubusercontent.com/kucherenko/jscpd/master/schemas/jscpd-schema.json",
+  "path": ["src", "tests", "scripts"],
+  "format": ["python"],
+  "minLines": 10,
+  "minTokens": 100,
+  "threshold": 0.5,
+  "mode": "mild",
+  "reporters": ["console"],
+  "gitignore": true,
+  "ignore": [
+    "**/__pycache__/**",
+    "**/.pytest_cache/**",
+    "**/.mypy_cache/**",
+    "**/.ruff_cache/**",
+    "coverage.xml",
+    "dist/**",
+    "mutants/**"
+  ]
+}

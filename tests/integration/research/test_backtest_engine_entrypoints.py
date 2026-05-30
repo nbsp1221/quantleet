@@ -18,6 +18,37 @@ from tests.integration.research.support_backtest_runner import (
 )
 
 
+def _install_paginated_exchange(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(exchange_backend, "_DEFAULT_PAGINATION_LIMIT", 2)
+    monkeypatch.setattr(
+        exchange_backend,
+        "_make_ccxt_exchange",
+        lambda **_: FakeExchangeClient(
+            pages=[
+                [
+                    [60_000, 100.0, 105.0, 95.0, 104.0, 10.0],
+                    [120_000, 110.0, 112.0, 108.0, 109.0, 12.0],
+                ],
+                [
+                    [120_000, 110.0, 112.0, 108.0, 109.0, 12.0],
+                    [180_000, 109.0, 114.0, 107.0, 113.0, 14.0],
+                ],
+                [],
+            ]
+        ),
+    )
+
+
+def _ccxt_source() -> CCXTDataSource:
+    return CCXTDataSource(
+        exchange="binance",
+        market="spot",
+        symbol="BTC/USDT",
+        timeframe="1m",
+        start=60_000,
+    )
+
+
 def test_backtest_engine_runs_materialized_bar_series() -> None:
     result = BacktestEngine(
         initial_cash=1_000.0,
@@ -104,29 +135,9 @@ def test_backtest_engine_rejects_source_results_that_are_not_bar_series() -> Non
 def test_backtest_runner_accepts_paginated_ccxt_source_rows(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setattr(exchange_backend, "_DEFAULT_PAGINATION_LIMIT", 2)
-    fake_client = FakeExchangeClient(
-        pages=[
-            [
-                [60_000, 100.0, 105.0, 95.0, 104.0, 10.0],
-                [120_000, 110.0, 112.0, 108.0, 109.0, 12.0],
-            ],
-            [
-                [120_000, 110.0, 112.0, 108.0, 109.0, 12.0],
-                [180_000, 109.0, 114.0, 107.0, 113.0, 14.0],
-            ],
-            [],
-        ]
-    )
-    monkeypatch.setattr(exchange_backend, "_make_ccxt_exchange", lambda **_: fake_client)
+    _install_paginated_exchange(monkeypatch)
 
-    bars = CCXTDataSource(
-        exchange="binance",
-        market="spot",
-        symbol="BTC/USDT",
-        timeframe="1m",
-        start=60_000,
-    ).load()
+    bars = _ccxt_source().load()
 
     result = run_engine_backtest(
         bars=bars,
@@ -142,32 +153,10 @@ def test_backtest_runner_accepts_paginated_ccxt_source_rows(
 def test_backtest_engine_runs_exchange_backed_source_path(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setattr(exchange_backend, "_DEFAULT_PAGINATION_LIMIT", 2)
-    fake_client = FakeExchangeClient(
-        pages=[
-            [
-                [60_000, 100.0, 105.0, 95.0, 104.0, 10.0],
-                [120_000, 110.0, 112.0, 108.0, 109.0, 12.0],
-            ],
-            [
-                [120_000, 110.0, 112.0, 108.0, 109.0, 12.0],
-                [180_000, 109.0, 114.0, 107.0, 113.0, 14.0],
-            ],
-            [],
-        ]
-    )
-    monkeypatch.setattr(exchange_backend, "_make_ccxt_exchange", lambda **_: fake_client)
-
-    source = CCXTDataSource(
-        exchange="binance",
-        market="spot",
-        symbol="BTC/USDT",
-        timeframe="1m",
-        start=60_000,
-    )
+    _install_paginated_exchange(monkeypatch)
 
     result = run_engine_backtest_from_source(
-        source=source,
+        source=_ccxt_source(),
         strategy=DeterministicEntryExitStrategy,
     )
 

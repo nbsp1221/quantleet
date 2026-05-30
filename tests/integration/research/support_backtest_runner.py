@@ -468,6 +468,14 @@ def make_bar_series(
     )
 
 
+def stop_market_gap_below_sell_rows() -> tuple[TimeBar, ...]:
+    return (
+        TimeBar(timestamp=60, open=100.0, high=104.0, low=96.0, close=104.0, volume=10.0),
+        TimeBar(timestamp=120, open=105.0, high=108.0, low=103.0, close=106.0, volume=12.0),
+        TimeBar(timestamp=180, open=90.0, high=92.0, low=88.0, close=91.0, volume=14.0),
+    )
+
+
 def fixture_bar_series() -> BarSeries:
     return make_bar_series(fixture_rows())
 

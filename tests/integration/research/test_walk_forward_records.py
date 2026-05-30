@@ -3,17 +3,17 @@ from __future__ import annotations
 import json
 
 from quantleet.research import WalkForwardStudy
-from tests.integration.research.test_walk_forward_study import (
+from tests.integration.research.support_parameter_studies import (
     WfaRoundTripStrategy,
-    crossing_bars,
     engine,
+    walk_forward_bars,
 )
 
 
 def test_real_wfa_records_are_portable_and_joinable() -> None:
     result = WalkForwardStudy(
         engine=engine(),
-        bars=crossing_bars(),
+        bars=walk_forward_bars(),
         strategy=WfaRoundTripStrategy,
     ).run(
         parameters={"fast": [2, 3], "slow": [3, 5]},

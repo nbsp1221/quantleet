@@ -54,6 +54,7 @@ lint = "ruff check ."
 format = "ruff format ."
 format-check = "ruff format --check ."
 dead-code = "vulture"
+duplicate-code = "npx --yes jscpd@4.2.4 --config .jscpd.json --noTips"
 dependency-check = "deptry src"
 perf-check = "pytest tests/perf -q -x --run-perf"
 check-runtime = ["check", "perf-check"]
@@ -99,6 +100,7 @@ check = [
     "format-check",
     "lint",
     "dead-code",
+    "duplicate-code",
     "dependency-check",
     "typecheck",
     "coverage-gates",
@@ -182,6 +184,7 @@ lint = "ruff check ."
 format = "ruff format ."
 format-check = "ruff format --check ."
 dead-code = "vulture"
+duplicate-code = "npx --yes jscpd@4.2.4 --config .jscpd.json --noTips"
 dependency-check = "deptry src"
 perf-check = "pytest tests/perf -q -x --run-perf"
 check-runtime = ["check", "perf-check"]
@@ -227,6 +230,7 @@ check = [
     "format-check",
     "lint",
     "dead-code",
+    "duplicate-code",
     "dependency-check",
     "typecheck",
     "coverage-gates",
@@ -284,6 +288,7 @@ lint = "ruff check ."
 format = "ruff format ."
 format-check = "ruff format --check ."
 dead-code = "vulture"
+duplicate-code = "npx --yes jscpd@4.2.4 --config .jscpd.json --noTips"
 dependency-check = "deptry src"
 perf-check = "pytest tests/perf -q -x --run-perf"
 check-runtime = ["check", "perf-check"]
@@ -329,6 +334,7 @@ check = [
     "format-check",
     "lint",
     "dead-code",
+    "duplicate-code",
     "dependency-check",
     "typecheck",
     "coverage-gates",

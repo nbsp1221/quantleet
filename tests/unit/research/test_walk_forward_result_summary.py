@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 from quantleet.research import WalkForwardStudy
+from tests.integration.research.support_parameter_studies import (
+    WfaRoundTripStrategy,
+    walk_forward_bars,
+)
 from tests.integration.research.test_walk_forward_failures import OneSelectedTestFailureEngine
-from tests.integration.research.test_walk_forward_study import WfaRoundTripStrategy, crossing_bars
 from tests.unit.research.support_parameter_study import NoTradeStrategy, make_bars, make_engine
 
 
@@ -43,7 +46,7 @@ def test_oos_summary_uses_independent_successful_test_folds_only() -> None:
 def test_oos_summary_excludes_failed_folds_from_numeric_aggregates() -> None:
     result = WalkForwardStudy(
         engine=OneSelectedTestFailureEngine(),
-        bars=crossing_bars(),
+        bars=walk_forward_bars(),
         strategy=WfaRoundTripStrategy,
     ).run(
         parameters={"fast": [2], "slow": [3]},

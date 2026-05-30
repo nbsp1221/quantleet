@@ -10,6 +10,7 @@ from tests.integration.research.support_backtest_runner import (
     StopMarketGapBelowSellStrategy,
     make_bar_series,
     run_engine_backtest,
+    stop_market_gap_below_sell_rows,
 )
 
 
@@ -51,14 +52,8 @@ def test_canonical_stop_market_gap_above_entry_matches_public_result_contract() 
 
 
 def test_canonical_stop_market_gap_below_exit_matches_public_result_contract() -> None:
-    rows = (
-        TimeBar(timestamp=60, open=100.0, high=104.0, low=96.0, close=104.0, volume=10.0),
-        TimeBar(timestamp=120, open=105.0, high=108.0, low=103.0, close=106.0, volume=12.0),
-        TimeBar(timestamp=180, open=90.0, high=92.0, low=88.0, close=91.0, volume=14.0),
-    )
-
     result = run_engine_backtest(
-        bars=make_bar_series(rows),
+        bars=make_bar_series(stop_market_gap_below_sell_rows()),
         strategy=StopMarketGapBelowSellStrategy,
         costs=CostConfig(tick_size=1.0, slippage_ticks=0.0, fee_rate=0.0),
     )

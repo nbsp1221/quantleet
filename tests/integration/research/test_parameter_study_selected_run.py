@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 from quantleet.backtest import BacktestResult
 from quantleet.research import ParameterStudy
-from tests.integration.research.test_parameter_study_grid_search import (
+from tests.integration.research.support_parameter_studies import (
     ParameterizedRoundTripStrategy,
     crossing_bars,
     engine,

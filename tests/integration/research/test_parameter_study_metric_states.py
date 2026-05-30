@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from quantleet.research import ParameterStudy
-from tests.integration.research.test_parameter_study_grid_search import crossing_bars, engine
+from tests.integration.research.support_parameter_studies import crossing_bars, engine
 from tests.unit.research.support_parameter_study import NoTradeStrategy
 
 

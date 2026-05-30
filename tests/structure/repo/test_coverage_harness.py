@@ -26,6 +26,7 @@ def test_poe_check_includes_quality_and_coverage_gates() -> None:
         "format-check",
         "lint",
         "dead-code",
+        "duplicate-code",
         "dependency-check",
         "typecheck",
         "coverage-gates",

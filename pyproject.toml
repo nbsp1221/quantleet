@@ -59,6 +59,7 @@ lint = { cmd = "ruff check .", help = "Run Ruff lint checks" }
 format = { cmd = "ruff format .", help = "Format the repository with Ruff" }
 "format-check" = { cmd = "ruff format --check .", help = "Check repository formatting with Ruff" }
 "dead-code" = { cmd = "vulture", help = "Run Vulture dead-code checks" }
+"duplicate-code" = { cmd = "npx --yes jscpd@4.2.4 --config .jscpd.json --noTips", help = "Run jscpd duplicate-code checks" }
 "dependency-check" = { cmd = "deptry src", help = "Run Deptry dependency declaration checks" }
 "perf-check" = { cmd = "pytest tests/perf -q -x --run-perf", help = "Run the canonical performance regression gate" }
 "check-runtime" = { sequence = ["check", "perf-check"], help = "Run the stronger explicit check lane for runtime-sensitive backtest or research changes" }
@@ -80,7 +81,7 @@ build = { cmd = "uv build", help = "Build the package artifacts" }
 "repo-check" = { cmd = "uv run python scripts/repo_check.py", help = "Run repository harness checks" }
 "notebook-validate" = { cmd = "uv run python scripts/notebook_validate.py", help = "Execute tracked notebooks" }
 "live-smoke" = { cmd = "uv run python scripts/live_smoke.py", help = "Run the live smoke harness script" }
-check = { sequence = ["format-check", "lint", "dead-code", "dependency-check", "typecheck", "coverage-gates", "build", "twine-check", "repo-check", "notebook-validate"], help = "Run the default local quality gate" }
+check = { sequence = ["format-check", "lint", "dead-code", "duplicate-code", "dependency-check", "typecheck", "coverage-gates", "build", "twine-check", "repo-check", "notebook-validate"], help = "Run the default local quality gate" }
 
 [tool.pytest.ini_options]
 addopts = ["--import-mode=importlib"]

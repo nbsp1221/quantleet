@@ -5,58 +5,7 @@ import importlib
 import pytest
 
 import quantleet.integrations.venues.ccxt.market_data as exchange_backend
-
-
-class FakeExchangeClient:
-    def __init__(
-        self,
-        rows: list[list[float]] | None = None,
-        *,
-        pages: list[list[list[float]]] | None = None,
-        options: dict | None = None,
-    ) -> None:
-        if rows is not None and pages is not None:
-            raise ValueError("rows and pages are mutually exclusive")
-        self.rows = rows or []
-        self.pages = pages[:] if pages is not None else None
-        self.options = options or {}
-        self.calls: list[dict[str, object]] = []
-
-    def parse_timeframe(self, timeframe: str) -> int:
-        mapping = {
-            "1s": 1,
-            "1m": 60,
-            "3m": 180,
-            "5m": 300,
-            "1h": 3600,
-            "1d": 86400,
-            "1w": 604800,
-            "1M": 2592000,
-        }
-        return mapping[timeframe]
-
-    def fetch_ohlcv(
-        self,
-        symbol: str,
-        timeframe: str,
-        since: int | None = None,
-        limit: int | None = None,
-        params: dict[str, object] | None = None,
-    ) -> list[list[float]]:
-        self.calls.append(
-            {
-                "symbol": symbol,
-                "timeframe": timeframe,
-                "since": since,
-                "limit": limit,
-                "params": params,
-            }
-        )
-        if self.pages is not None:
-            if self.pages:
-                return self.pages.pop(0)
-            return []
-        return self.rows
+from tests.support_ccxt import FakeExchangeClient
 
 
 def _ccxt_source_type() -> type:
@@ -219,33 +168,6 @@ def test_ccxt_source_treats_limit_as_total_returned_row_cap(
 
 
 def test_ccxt_source_accepts_provider_native_bounded_timeframes(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    fake_client = FakeExchangeClient(
-        pages=[
-            [
-                [1_700_000_000_000, 1.0, 2.0, 0.5, 1.5, 10.0],
-            ],
-            [],
-        ]
-    )
-
-    monkeypatch.setattr(exchange_backend, "_make_ccxt_exchange", lambda **_: fake_client)
-
-    source = _ccxt_source_type()(
-        exchange="binance",
-        market="spot",
-        symbol="BTC/USDT",
-        timeframe="1M",
-        start=1_700_000_000_000,
-    )
-
-    bars = source.load()
-
-    assert tuple(bar.timestamp for bar in bars.rows) == (1_700_000_000_000,)
-
-
-def test_ccxt_source_accepts_provider_native_monthly_timeframe_for_bounded_queries(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     fake_client = FakeExchangeClient(

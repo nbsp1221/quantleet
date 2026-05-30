@@ -9,7 +9,7 @@ from quantleet.data import BarSeries
 from quantleet.research import ParameterStudy
 from quantleet.strategy import Strategy, StrategyConfig
 from quantleet.trading.domain.events import BarEvent
-from tests.integration.research.test_parameter_study_grid_search import crossing_bars, engine
+from tests.integration.research.support_parameter_studies import crossing_bars, engine
 from tests.unit.research.support_parameter_study import NoTradeStrategy
 
 

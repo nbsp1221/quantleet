@@ -6,10 +6,10 @@ from quantleet.backtest import BacktestResult, BacktestStrategyConstructionError
 from quantleet.data import BarSeries
 from quantleet.research import WalkForwardStudy
 from quantleet.strategy import Strategy, StrategyConfig
-from tests.integration.research.test_walk_forward_study import (
+from tests.integration.research.support_parameter_studies import (
     WfaRoundTripStrategy,
-    crossing_bars,
     engine,
+    walk_forward_bars,
 )
 
 
@@ -54,7 +54,7 @@ class SelectedConstructionFailureEngine:
 def test_selected_test_failure_is_recorded_and_later_folds_continue() -> None:
     result = WalkForwardStudy(
         engine=OneSelectedTestFailureEngine(),
-        bars=crossing_bars(),
+        bars=walk_forward_bars(),
         strategy=WfaRoundTripStrategy,
     ).run(
         parameters={"fast": [2], "slow": [3]},
@@ -73,7 +73,7 @@ def test_selected_test_failure_is_recorded_and_later_folds_continue() -> None:
 def test_selected_test_construction_failure_uses_public_failure_stage() -> None:
     result = WalkForwardStudy(
         engine=SelectedConstructionFailureEngine(),
-        bars=crossing_bars(),
+        bars=walk_forward_bars(),
         strategy=WfaRoundTripStrategy,
     ).run(
         parameters={"fast": [2], "slow": [3]},
@@ -90,7 +90,7 @@ def test_selected_test_construction_failure_uses_public_failure_stage() -> None:
 def test_rejected_train_candidate_does_not_fail_fold_when_another_row_is_eligible() -> None:
     result = WalkForwardStudy(
         engine=engine(),
-        bars=crossing_bars(),
+        bars=walk_forward_bars(),
         strategy=WfaRoundTripStrategy,
     ).run(
         parameters={"fast": [2, 5], "slow": [3]},
@@ -111,7 +111,7 @@ def test_rejected_train_candidate_does_not_fail_fold_when_another_row_is_eligibl
 def test_no_eligible_training_row_does_not_fabricate_test_result() -> None:
     result = WalkForwardStudy(
         engine=engine(),
-        bars=crossing_bars(),
+        bars=walk_forward_bars(),
         strategy=WfaRoundTripStrategy,
     ).run(
         parameters={"fast": [2], "slow": [3]},
@@ -130,7 +130,7 @@ def test_no_eligible_training_row_does_not_fabricate_test_result() -> None:
 def test_failed_fold_records_include_failure_metadata() -> None:
     result = WalkForwardStudy(
         engine=OneSelectedTestFailureEngine(),
-        bars=crossing_bars(),
+        bars=walk_forward_bars(),
         strategy=WfaRoundTripStrategy,
     ).run(
         parameters={"fast": [2], "slow": [3]},
